@@ -10,6 +10,8 @@ Cada versión del proyecto tendrá notas en español en GitHub Releases con los 
 | Número de actualización Android (`versionCode`) | `2` |
 | Etiqueta Git | `v0.2.0` |
 | Página de publicación | [Release v0.2.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.2.0) |
+| Estado | Publicada el 2 de octubre de 2026, hora de México |
+| Commit etiquetado | `aa29990847f10e80421fca15efe59a09b25838be`, integrado mediante [PR #2](https://github.com/Spidey123134/citizensecurity/pull/2) |
 
 La versión prepara la revisión de la validación del reporte y del par de coordenadas usando el contrato existente. Añade ejemplos de consola para un reporte personalizado y para tres casos de ubicación: válida, par incompleto y fuera de rango. También documenta la futura conexión de los datos con Google Maps y el reparto del equipo.
 

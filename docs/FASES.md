@@ -24,7 +24,7 @@ Las interfaces, el menú, la navegación y el login corresponden al compañero (
 
 La fase 2 está implementada y probada, lista para revisar sus resultados. Después de presentarlos, se elige el siguiente incremento pequeño; la integración visual de Google Maps quedó acordada como próxima línea de trabajo. Cada entrega debe mostrar su resultado observable y las pruebas pertinentes; si necesita ajustes, se atienden antes de pasar a otra función.
 
-La versión `0.2.0` está verificada localmente. Su publicación en GitHub Releases se registrará cuando ocurra, siguiendo [Releases](RELEASES.md). Una versión publicada no sustituye la aceptación funcional del usuario.
+La [release v0.2.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.2.0) se publicó el 2 de octubre de 2026, hora de México, sobre el commit `aa29990` integrado en `main`. Las comprobaciones están en [Validación](VALIDACION.md) y el proceso de publicación en [Releases](RELEASES.md). Las fases 1 y 2 siguen disponibles para revisión funcional; una versión publicada no sustituye la aceptación funcional del usuario.
 
 ## Alcance pendiente de acuerdo
 
