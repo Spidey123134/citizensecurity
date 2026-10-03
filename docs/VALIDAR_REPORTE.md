@@ -20,7 +20,7 @@ En el desarrollo `0.3.0 — Unreleased`, descripción y referencia también rech
 
 Las cuatro regresiones nuevas del dominio están aprobadas, junto con las 28 anteriores: 32 pruebas. La instrumentación añade regresiones para texto y cero negativo: 7 pruebas aprobadas. La evidencia antes y después del arreglo está en [Validación](VALIDACION.md). La release `v0.2.0` conserva su código original; estas correcciones pertenecen al incremento sin publicar.
 
-La revisión para `0.3.1 — Unreleased` mantiene estas reglas. Una comprobación adicional en Android confirmó que diez casos de texto aceptado, incluidos `U+FFFE` interno y `U+FFFF`, se conservan exactamente al consultar y reabrir; el candidato a otro fallo Unicode quedó descartado. La suite de persistencia pasa a 9 pruebas, incluyendo la corrección de cancelación durante la espera descrita en [Contrato de guardado](GUARDAR_REPORTE.md). Los resultados y el bloqueo de compilación de la interfaz recién subida se registran por separado en [Validación](VALIDACION.md).
+La revisión de mantenimiento `0.2.1` mantiene estas reglas. Una comprobación adicional en Android confirmó que diez casos de texto aceptado, incluidos `U+FFFE` interno y `U+FFFF`, se conservan exactamente al consultar y reabrir; el candidato a otro fallo Unicode quedó descartado. La suite de persistencia pasa a 9 pruebas, incluyendo la corrección de cancelación durante la espera descrita en [Contrato de guardado](GUARDAR_REPORTE.md). Los resultados y la integración con la pantalla de carga del compañero se registran en [Validación](VALIDACION.md). El identificador provisional `0.3.1` no llegó a publicarse.
 
 ## Ejemplo de consola
 

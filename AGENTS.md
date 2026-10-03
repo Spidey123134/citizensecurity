@@ -3,7 +3,7 @@
 Lee README.md y docs/TRABAJO_EQUIPO.md antes de editar.
 
 - Proyecto Android académico en Kotlin para reportes de incidentes. Mantén el nombre CITIZENSECURITY y el paquete com.example.citizensecurity.
-- El compañero desarrolla las interfaces y el login: pantallas, layouts, componentes visuales y navegación. Ya añadió SplashActivity y el layout visual de login; el recurso activity_splash y la autenticación siguen pendientes de su parte. Conserva sus cambios y no implementes su login por iniciativa propia.
+- El compañero desarrolla las interfaces y el login: pantallas, layouts, componentes visuales y navegación. Ya añadió SplashActivity, activity_splash.xml y el layout visual de login; la autenticación sigue pendiente de su parte. Conserva sus cambios y no implementes su login por iniciativa propia.
 - Nuestra primera función es validar y guardar un reporte local, con consulta para comprobar que persistió. Se implementa en core/domain y core/data, sin crear formularios, menús, login, simulador, GPS, fotos ni servidor.
 - La línea nueva acordada es ubicar el incidente en Google Maps. Nuestra parte recibe, valida y conserva las coordenadas; el compañero desarrolla la vista del mapa, el marcador y sus controles. El incremento 0.2.0 demuestra la validación de puntos sin añadir todavía el SDK o configurar un servicio externo.
 - Trabaja una función por vez. Presenta sus resultados y pruebas al usuario antes de pasar a otra función. No amplíes el alcance por iniciativa propia.
@@ -17,4 +17,4 @@ Lee README.md y docs/TRABAJO_EQUIPO.md antes de editar.
 - Mantén CHANGELOG.md y docs/FASES.md al entregar un incremento. Distingue código implementado, pruebas ejecutadas y revisión del usuario; no marques una fase revisada sin esa revisión.
 - Entrega los incrementos acordados por versión mediante GitHub Releases, con etiqueta, cambios concretos y pruebas reales. Sigue docs/RELEASES.md; conserva las etiquetas publicadas y no presentes la publicación como aceptación funcional del usuario.
 - El usuario pidió mantener la fase 3 y la próxima versión 0.3.0 en Unreleased. Documenta y comparte sus cambios sin crear una etiqueta o publicar esa release hasta que el usuario cambie esta indicación.
-- La revisión posterior de la base 0.1.0 prepara el parche 0.3.1 en Unreleased. Conserva los cambios de fase 3; tampoco publiques una etiqueta o release del parche sin una nueva indicación del usuario.
+- El usuario aclaró que el siguiente mantenimiento es 0.2.1, sobre main actualizado. 0.3.1 fue un identificador provisional sin publicar. Conserva el código adelantado de fase 3, pero registra la entrega 0.3.0 como Unreleased hasta que el usuario llegue a esa fase. Preparar e integrar 0.2.1 no equivale a publicar una release.

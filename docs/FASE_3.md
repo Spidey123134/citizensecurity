@@ -1,8 +1,8 @@
 # Fase 3: guardar un reporte local
 
-Esta fase está autorizada, implementada y probada desde **`0.3.0 — Unreleased`**. Se conserva en el parche actual **`0.3.1 — Unreleased`**, con la corrección de cancelación comprobada en Android. La aplicación integrada con la nueva interfaz del compañero todavía no compila por el recurso de splash ausente. La aceptación funcional del usuario sigue pendiente. Ambas versiones permanecen sin etiqueta ni release.
+La **fase 3 y `0.3.0` permanecen en Unreleased**, con entrega pendiente. Hay código adelantado y comprobaciones técnicas que se conservan, pero todavía no se ha llegado a esta entrega ni a su aceptación funcional. El siguiente mantenimiento se prepara como **`0.2.1`** sobre `main` actualizado; `0.3.1` fue un identificador provisional de pruebas sin publicar.
 
-Se aprovechan `NewReport`, `ReportLocation`, `ReportRepository` y `SqliteReportRepository`, que ya existen. La nueva tarea `:core:data:guardarReporte` hace observable el guardado de un reporte válido y el rechazo de uno inválido, reutilizando la instrumentación Android. También se corrigieron dos fallos de conservación de los datos. El esquema de la base sigue siendo el mismo.
+Se aprovechan `NewReport`, `ReportLocation`, `ReportRepository` y `SqliteReportRepository`, que ya existen. La tarea adelantada `:core:data:guardarReporte` hace observable el guardado de un reporte válido y el rechazo de uno inválido, reutilizando la instrumentación Android. El código y los resultados anteriores se mantienen como preparación para revisar esta fase. El esquema de la base sigue siendo el mismo.
 
 ## Resultado que se revisará
 
@@ -57,13 +57,13 @@ SQLite documenta que al enlazar texto UTF-16 puede retirar la marca de orden de 
 
 Las regresiones fallaron antes de corregir y aprobaron después. La reproducción y los cambios se registran en [Changelog](../CHANGELOG.md) bajo `Unreleased`.
 
-## Mantenimiento 0.3.1
+## Historial del mantenimiento identificado provisionalmente como 0.3.1
 
 Se reprodujo un fallo del repositorio original: un segundo guardado cancelado mientras esperaba el monitor terminaba insertándose después de liberar el primer guardado. La corrección comprueba la cancelación al adquirir el monitor, antes de iniciar la acción SQLite. La suite posterior de 9 pruebas instrumentadas aprobó en API 37, junto con los ejemplos y los JSON de guardado y rechazo; la tarea de 32 unitarias reutilizó su resultado anterior mediante `UP-TO-DATE`.
 
 La comprobación adicional de diez casos Unicode conservó los textos exactamente en Android. Se conserva como cobertura de regresión sin cambiar las reglas del validador. Este mantenimiento continúa la misma fase de guardado; no añade otra función.
 
-Esas pruebas se ejecutaron antes de incorporar `7e90109`, que no modificó el dominio ni los datos. El compañero añadió splash y login visual; la autenticación sigue pendiente. En el estado integrado, falta `activity_splash.xml`, por lo que `app` no compila y no se generó su APK final. La evidencia y el límite de la integración están en [Validación](VALIDACION.md).
+Esas pruebas se ejecutaron antes de incorporar `7e90109`, que no modificó el dominio ni los datos. Su splash y login visual inicialmente quedaron sin `activity_splash.xml`, bloqueando la compilación. El compañero añadió el recurso en `e18e636`, ya incorporado desde `main` para el mantenimiento `0.2.1`. Ese estado aprobó compilación, lint y 9 instrumentadas, con número interno Android `4`; la integración del PR sigue pendiente. La autenticación permanece pendiente. [Validación](VALIDACION.md) conserva el historial y los resultados nuevos, que no convierten este trabajo adelantado en una entrega de fase 3.
 
 ## Evidencia de 0.3.0 y alcance
 

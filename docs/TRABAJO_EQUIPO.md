@@ -8,13 +8,17 @@
 | Nuestra parte | Primera función: validar y guardar un reporte local | `core/domain` y `core/data`, con sus pruebas |
 | Ambos | Contratos, manifiesto, herramientas y cambios que conecten las dos áreas | Se coordinan antes de modificar |
 
-El compañero añadió `SplashActivity` y el layout visual de login en `7e90109`. La autenticación permanece pendiente y falta `activity_splash.xml`, que bloquea la compilación de `app`. El trabajo de datos conserva sus cambios y no añade pantallas, login ni navegación por iniciativa propia.
+El compañero añadió `SplashActivity` y el layout visual de login en `7e90109`, y completó `activity_splash.xml` en `e18e636`, ya incorporado desde `main`. La autenticación permanece pendiente. El trabajo de datos conserva sus cambios y no añade pantallas, login ni navegación por iniciativa propia.
 
 La guía [Inicio del equipo](INICIO_EQUIPO.md) explica cómo clonar la base y comenzar desde una rama propia. Los estados de cada paso se mantienen en [Fases de trabajo](FASES.md) y los cambios entregados en el [Changelog](../CHANGELOG.md). Una prueba técnica aprobada no sustituye la revisión del usuario sobre el comportamiento de la función.
 
 ## Incremento actual y ubicación con mapa
 
-La última release publicada es `v0.2.0`, con la [validación del reporte](VALIDAR_REPORTE.md). El trabajo de [fase 3](FASE_3.md) y las correcciones de fase 2 de `0.3.0` se conservan sin publicar. El desarrollo actual es `0.3.1 — Unreleased`: se reprodujo y corrigió un fallo de la base `0.1.0` durante una espera cancelada. Las pruebas de datos aprobaron antes del commit visual, que no cambió esas capas. Se sincronizó la base con las novedades del compañero, restaurando en el manifiesto la aplicación compartida y la exclusión de respaldos; las pantallas se conservan. La revisión se prepara mediante PR borrador y permanece sin integrar en `main` hasta que esté el recurso de splash faltante. La aceptación funcional continúa pendiente y ambas versiones siguen sin release ni etiqueta.
+La última release publicada es `v0.2.0`, con la [validación del reporte](VALIDAR_REPORTE.md). El mantenimiento actual es `0.2.1`, preparado y comprobado con la base actualizada del compañero; [PR #4](https://github.com/Spidey123134/citizensecurity/pull/4) registra su integración con `main`. Usa número interno Android `4`, independiente del nombre visible. Reúne correcciones y la base visual completa del compañero, conservando la aplicación compartida y la exclusión de respaldos. `0.3.1` fue un identificador provisional sin etiqueta ni release. La release de mantenimiento continúa sin publicar.
+
+La [fase 3](FASE_3.md) y `0.3.0` siguen en `Unreleased`: existe trabajo adelantado, pero todavía no se llega a su entrega. El código y la evidencia técnica anterior se conservan. Preparar e integrar el mantenimiento no publica una release ni acepta funcionalmente esta fase.
+
+La comprobación actual pasó compilación, lint y 9 pruebas instrumentadas. Las 13 advertencias visuales de `app` quedan para el trabajo del compañero; no se cambió su interfaz ni se afirma una comprobación manual de las pantallas o del login. Los resultados están en [Validación](VALIDACION.md).
 
 Google Maps quedó acordado como próxima línea de trabajo. Nuestra parte recibe, valida y conserva `latitude` y `longitude` en `ReportLocation` y SQLite. El compañero desarrolla la vista del mapa, el pin y la confirmación de ubicación. Ambos coordinan la conexión con el contrato y la configuración compartida. El SDK, el proyecto de Google, la clave y la facturación siguen pendientes; no hay un mapa real en esta entrega ni captura GPS.
 
