@@ -4,11 +4,13 @@
 
 | Responsable | Área | Archivos |
 | --- | --- | --- |
-| Compañero (`vazdavr-sudo`) | Interfaces, menú, diseño y navegación | `app/src/main`, excepto la composición compartida de dependencias |
+| Compañero (`vazdavr-sudo`) | Interfaces, menú, diseño, navegación y login | `app/src/main`, excepto la composición compartida de dependencias; la implementación del login se coordina al definir ese alcance |
 | Nuestra parte | Primera función: validar y guardar un reporte local | `core/domain` y `core/data`, con sus pruebas |
 | Ambos | Contratos, manifiesto, herramientas y cambios que conecten las dos áreas | Se coordinan antes de modificar |
 
 La aplicación inicial es un contenedor vacío para desarrollar las interfaces. El trabajo de datos no añade pantallas, textos internos de desarrollo, login ni navegación por iniciativa propia.
+
+La guía [Inicio del equipo](INICIO_EQUIPO.md) explica cómo clonar la base y comenzar desde una rama propia. Los estados de cada paso se mantienen en [Fases de trabajo](FASES.md) y los cambios entregados en el [Changelog](../CHANGELOG.md). Una prueba técnica aprobada no sustituye la revisión del usuario sobre el comportamiento de la función.
 
 ## Ciclo de cada función
 

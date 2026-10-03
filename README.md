@@ -18,6 +18,16 @@ El módulo `app` contiene una actividad y un contenedor vacío: las interfaces, 
 
 Lee [Trabajo del equipo](docs/TRABAJO_EQUIPO.md) y [Contrato de la primera función](docs/GUARDAR_REPORTE.md).
 
+Para revisar la función por pasos, empieza con [Recibir los datos del reporte](docs/RECIBIR_REPORTE.md). Incluye un ejemplo de consola que reutiliza `NewReport` y permite cambiar los cinco datos sin una pantalla.
+
+## Seguimiento del proyecto
+
+- [Inicio del equipo](docs/INICIO_EQUIPO.md): clonar la base, configurar la PC y subir una función desde una rama propia.
+- [Changelog](CHANGELOG.md): cambios realizados y comprobaciones ejecutadas.
+- [Fases de trabajo](docs/FASES.md): estado de cada paso, responsable y resultado que se revisará.
+
+El compañero `vazdavr-sudo` desarrolla las interfaces y el login. Nuestra parte se centra en la lógica y los datos del reporte. Se revisa una función por vez antes de elegir la siguiente.
+
 ## Herramientas
 
 Java 27 para ejecutar Gradle; Java/Kotlin JVM 17 para el código Android. El segundo ajuste determina el bytecode de la aplicación, no la versión del JDK instalado. Android mínimo 8.0 / API 26.
