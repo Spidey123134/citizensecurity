@@ -170,3 +170,29 @@ El APK actual está en `app/build/outputs/apk/debug/app-debug.apk`, con `1173131
 El mantenimiento y su integración con `main` se registran en [PR #4](https://github.com/Spidey123134/citizensecurity/pull/4). No se ha creado una etiqueta o release `v0.2.1`; la última publicada sigue siendo `v0.2.0`.
 
 El código adelantado de fase 3 permanece disponible; su entrega `0.3.0` sigue en `Unreleased`. La revisión funcional del usuario, la autenticación, teléfono físico y API 26 continúan pendientes.
+
+## Acoplamiento técnico de la interfaz en 0.2.1
+
+Comprobación del 3 de octubre de 2026. Se añadió el [puente de la interfaz](ACOPLAR_INTERFAZ.md): `ReportViewModel`, su fábrica compartida y la propiedad de `MainActivity`, ahora `ComponentActivity`. Se conservan el XML del login, los recursos, el splash y el manifiesto del mantenimiento anterior. El formulario y la autenticación siguen pendientes del compañero.
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :core:domain:test :core:data:guardarReporte :core:data:lintDebug :app:lintDebug :app:assembleDebug --console=plain
+```
+
+Resultado: `BUILD SUCCESSFUL` en 41 segundos. La primera ejecución aprobó 5 pruebas nuevas del puente y ejecutó nuevamente las 9 de SQLite en Android 17 / API 37, con XML fechado `2026-10-03T16:47:13Z`. Las 32 del dominio fueron `UP-TO-DATE`, con el resultado anterior `2026-10-03T05:39:56.971Z`. No se presentan como una nueva ejecución.
+
+Después se añadió la prueba de cancelación al liberar el `ViewModelStore` y se ejecutó:
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :app:lintDebug --console=plain
+```
+
+Resultado: `BUILD SUCCESSFUL` en 3 segundos; las **6 pruebas del puente** aprobaron, sin fallos, errores u omisiones. Cubren guardado suspendido y exitoso, bloqueo de una segunda solicitud en curso, errores por campo con corrección, fallo de almacenamiento con reintento, propagación de cancelación, conservación del modelo al reutilizar su store y cancelación al liberarlo. El modelo liberado ignora nuevas solicitudes y el repositorio compartido permanece disponible.
+
+Lint de `core/data` terminó sin incidencias. Lint de `app` conserva 0 errores y las mismas 13 advertencias visuales detalladas arriba. La demostración de guardado produjo el folio `b8019a9f-293e-4cb5-b09d-9c149395c670`, recuperó el mismo reporte al reabrir y exportó los JSON sin insertar el caso inválido.
+
+APK debug actual: `app/build/outputs/apk/debug/app-debug.apk`, versión `0.2.1`, código `4`, `11731372` bytes y SHA-256 `fd43c29f7059264f72d1600e325a1eb1cedf7e48673700c2f6b1330c608a0b44`. Firma v2 verificada mediante `apksigner`. Sustituye al APK local anterior; el hash anterior permanece como historial.
+
+Las pruebas del puente usan un repositorio controlado en JVM y un `ViewModelStore` real. Comprueban el contrato de conservación y cancelación del modelo; no representan una rotación real de una actividad ni un flujo completo desde un formulario. La persistencia real se verifica por separado mediante las 9 pruebas instrumentadas. Compilación y lint comprueban la integración técnica con la base del compañero. La revisión visual, el formulario, el login, teléfono físico y API 26 siguen pendientes.
+
+Esta conexión se prepara dentro de `0.2.1`, sin publicar etiqueta o release. La última release sigue siendo `v0.2.0`; fase 3 y `0.3.0` permanecen en `Unreleased`.

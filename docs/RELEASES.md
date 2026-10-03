@@ -8,6 +8,8 @@ La aplicación está preparada con `versionName = "0.2.1"` y `versionCode = 4`, 
 
 El mantenimiento reúne la corrección de cancelación durante una espera y la restauración de la aplicación compartida y las reglas de respaldo del manifiesto, conservando la base visual del compañero. Se mantiene el código adelantado de fase 3; su entrega `0.3.0` sigue en `Unreleased`.
 
+También prepara el [puente para la interfaz de reportes](ACOPLAR_INTERFAZ.md), con modelo conservado por la actividad y estados de guardado, errores por campo y folio. La composición reutiliza el repositorio compartido; el formulario y la autenticación continúan pendientes del compañero. Esta conexión se incorpora al mantenimiento en preparación, sin publicar otra versión.
+
 `0.3.1` fue un identificador provisional de pruebas sin publicar, corregido a `0.2.1` por indicación del usuario. Se conserva el número interno Android `versionCode = 4`, independiente del nombre visible; cambiar la numeración no borra el desarrollo ni su evidencia anterior. El APK está verificado localmente, con los resultados y el SHA-256 en [Validación](VALIDACION.md). Las 13 advertencias visuales de lint se mantienen para el compañero; las pantallas no tuvieron comprobación manual y la autenticación sigue pendiente.
 
 ## Historial del identificador provisional 0.3.1
@@ -63,7 +65,7 @@ La aplicación todavía tiene un contenedor visual vacío; los ejemplos de conso
 Para el incremento actual, la comprobación completa es:
 
 ```powershell
-.\gradlew.bat :core:domain:test :core:domain:validarReporte :core:domain:validarUbicaciones :core:data:guardarReporte :core:data:lintDebug :app:lintDebug :app:assembleDebug --console=plain
+.\gradlew.bat :app:testDebugUnitTest :core:domain:test :core:domain:validarReporte :core:domain:validarUbicaciones :core:data:guardarReporte :core:data:lintDebug :app:lintDebug :app:assembleDebug --console=plain
 ```
 
 La tarea `guardarReporte` requiere un emulador o teléfono y depende de `connectedDebugAndroidTest`; no hace falta ejecutar de nuevo esa instrumentación en un comando separado. Los ejemplos de validación muestran resultados y pueden terminar normalmente aun cuando una entrada sea inválida; comprueba los mensajes y registra los casos usados. Las pruebas automáticas y los informes de lint proporcionan las comprobaciones de regresión.

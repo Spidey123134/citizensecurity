@@ -17,7 +17,17 @@ Preparado y comprobado sobre la base actualizada del compañero el 3 de octubre 
 - Base del compañero sincronizada con splash y login visual de `7e90109` y con `activity_splash.xml` de [su commit `e18e636`](https://github.com/Spidey123134/citizensecurity/commit/e18e636ff60ea19a13e01ddf98c3de67d158e692). El bloqueo por el recurso faltante quedó resuelto; la autenticación sigue pendiente.
 - Fase 3 y `0.3.0` permanecen en `Unreleased`, con código adelantado y entrega pendiente. Ese trabajo se conserva.
 
+### Acoplamiento técnico de la interfaz
+
+- `ReportViewModel` conecta el repositorio con estados de solo lectura: `Idle`, `Saving`, `Saved`, `Invalid` y `Error`. Bloquea solicitudes simultáneas, devuelve errores por campo y propaga la cancelación.
+- Fábrica compartida en `CitizenSecurityApplication` y propiedad `MainActivity.reportViewModel` obtenida con `ViewModelProvider`. `MainActivity` usa `ComponentActivity`, conservando el XML y login visual del compañero.
+- Guía [Acoplar interfaz](docs/ACOPLAR_INTERFAZ.md) para conectar el futuro botón, observar el estado con el ciclo de vida y mostrar errores y folio.
+- Puente comprobado con 6 pruebas JVM y 9 instrumentadas de SQLite aprobadas en API 37; las 32 unitarias de dominio conservaron su resultado anterior mediante `UP-TO-DATE`. Lint sin errores y APK generado, con las 13 advertencias visuales existentes de `app`. [Validación](docs/VALIDACION.md) registra los resultados y el artefacto.
+- Todavía no hay formulario de reportes, autenticación, listeners de guardado ni un flujo visual o rotación real comprobados. El mantenimiento `0.2.1` continúa sin etiqueta ni release, y fase 3 / `0.3.0` permanece en `Unreleased`.
+
 ### Comprobaciones
+
+Estos resultados corresponden al mantenimiento anterior al nuevo puente; la comprobación adicional del acoplamiento se registra arriba y en [Validación](docs/VALIDACION.md).
 
 - Comprobación completa del estado `0.2.1`, con el splash del compañero: `BUILD SUCCESSFUL`.
 - 9 pruebas instrumentadas ejecutadas y aprobadas en API 37, sin fallos, errores u omisiones. Las 32 unitarias mantuvieron su resultado aprobado anterior mediante `UP-TO-DATE`.
