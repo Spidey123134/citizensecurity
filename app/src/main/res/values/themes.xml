@@ -1,5 +1,6 @@
 <resources>
     <style name="Theme.CitizenSecurity" parent="android:style/Theme.Material.Light.NoActionBar">
-        <item name="android:fontFamily">sans</item>
+        <!-- Changed font family from invalid "sans" to standard Android system font "sans-serif" to prevent LayoutLib assetStream null render exceptions -->
+        <item name="android:fontFamily">sans-serif</item>
     </style>
 </resources>
