@@ -2,9 +2,58 @@
 
 Registro de cambios del proyecto. Las fechas usan la hora de México. Los cambios publicados en una rama quedan disponibles para revisión; la integración en `main` se registra cuando ocurre.
 
-## Unreleased — próxima 0.3.0
+## 0.2.1 — mantenimiento en preparación
 
-Trabajo solicitado el 2 de octubre de 2026: fase 3 y revisión de la validación de fase 2. La versión permanece sin publicar y sin etiqueta `v0.3.0`; la última release publicada es `v0.2.0`.
+Preparado y comprobado sobre la base actualizada del compañero el 3 de octubre de 2026. Su integración con `main` se registra mediante [PR #4](https://github.com/Spidey123134/citizensecurity/pull/4). No se ha publicado una etiqueta o release `v0.2.1`; la última release sigue siendo `v0.2.0`.
+
+### Corregido
+
+- Una operación cancelada mientras esperaba el monitor podía insertar el reporte al conseguir el turno. El repositorio comprueba la cancelación dentro del monitor, antes de ejecutar SQLite.
+- Restauración de `CitizenSecurityApplication` y de la exclusión de respaldos de la base local, conservando la interfaz del compañero.
+
+### Actualizado
+
+- Numeración del próximo mantenimiento: `0.2.1`, con número interno Android `versionCode = 4`, independiente del nombre visible. `0.3.1` fue un identificador provisional sin publicar y no es la próxima versión.
+- Base del compañero sincronizada con splash y login visual de `7e90109` y con `activity_splash.xml` de [su commit `e18e636`](https://github.com/Spidey123134/citizensecurity/commit/e18e636ff60ea19a13e01ddf98c3de67d158e692). El bloqueo por el recurso faltante quedó resuelto; la autenticación sigue pendiente.
+- Fase 3 y `0.3.0` permanecen en `Unreleased`, con código adelantado y entrega pendiente. Ese trabajo se conserva.
+
+### Comprobaciones
+
+- Comprobación completa del estado `0.2.1`, con el splash del compañero: `BUILD SUCCESSFUL`.
+- 9 pruebas instrumentadas ejecutadas y aprobadas en API 37, sin fallos, errores u omisiones. Las 32 unitarias mantuvieron su resultado aprobado anterior mediante `UP-TO-DATE`.
+- Ejemplos y exportación JSON correctos. Lint de datos sin incidencias; `app` con 0 errores y 13 advertencias visuales que se conservan para el trabajo del compañero.
+- APK debug `0.2.1` / código `4` generado y firma v2 verificada. [Validación](docs/VALIDACION.md) registra el SHA-256 y los límites. No se hizo una comprobación manual de las nuevas pantallas ni se implementó autenticación.
+
+## 0.3.1 — identificador provisional de pruebas, sin publicar
+
+Durante la revisión del 3 de octubre de 2026 se usó `0.3.1` para identificar el parche y sus pruebas. No tuvo etiqueta ni release. La numeración se corrigió después a `0.2.1`, manteniendo el código y la evidencia. Este bloque registra aquella comprobación previa sobre `7e90109`, cuando aún faltaba el recurso de splash; el compañero lo añadió después en `e18e636`.
+
+### Corregido
+
+- Una llamada a `create` cancelada mientras esperaba el monitor podía insertar el reporte al obtener el turno. El repositorio comprueba de nuevo la cancelación dentro del monitor, antes de ejecutar la operación SQLite.
+- Restauración en el manifiesto de `CitizenSecurityApplication` y de la exclusión de respaldos de la base local, conservando el tema, el icono, el launcher y los cambios visuales del compañero.
+
+### Añadido
+
+- Regresión de cancelación durante la espera, que reprodujo la inserción indebida antes de la corrección.
+- Cobertura de diez casos de texto Unicode que se conservaron exactamente en Android; ese candidato se descartó como fallo y no se cambiaron las reglas del validador.
+
+### Actualizado
+
+- Identificador temporal de pruebas Android `0.3.1`, `versionCode = 4`; después se corrigió a `0.2.1`.
+- Seguimiento del parche, conservando el historial sin publicar de `0.3.0` y el esquema de la base.
+- Base sincronizada con la nueva `SplashActivity` y el layout visual de login del compañero. La autenticación sigue pendiente; no se modificaron sus pantallas.
+
+### Verificado
+
+- Antes de corregir, la regresión de cancelación falló: quedaron 2 registros cuando se esperaba conservar solo el primero. El segundo guardado se había cancelado antes de liberar el monitor.
+- La comprobación Unicode pasó sus diez casos en API 37.
+- Después de corregir, las 9 pruebas instrumentadas aprobaron en API 37 antes de incorporar el commit visual. Las 32 unitarias conservaron su resultado anterior; Gradle marcó la tarea como `UP-TO-DATE`. Los ejemplos y JSON de guardado y rechazo también aprobaron en esa comprobación.
+- En aquel estado integrado, lint de `core/data` y `:app:processDebugMainManifest` aprobaron. `:app:assembleDebug` falló porque faltaba `activity_splash.xml` y `:app:lintDebug` se bloqueó por el mismo recurso. No se generó un APK de aquel estado ni se verificó la interfaz; el bloqueo quedó resuelto al recibir `e18e636`. [Validación](docs/VALIDACION.md) conserva el historial.
+
+## 0.3.0 — fase 3 adelantada, Unreleased
+
+Trabajo adelantado de guardado local, con pruebas técnicas realizadas el 2 de octubre de 2026. El código y la demostración existen, pero la entrega de fase 3 permanece pendiente: `0.3.0` sigue en `Unreleased`, sin etiqueta ni release. La última publicada es `v0.2.0`.
 
 ### Añadido
 

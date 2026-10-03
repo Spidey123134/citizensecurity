@@ -6,7 +6,7 @@ Proyecto Android académico en Kotlin para registrar y consultar incidentes. El 
 
 Validar y guardar un reporte local con categoría, prioridad, descripción, fecha y ubicación escrita o coordenadas. La consulta por folio permite comprobar que el registro permanece después de reabrir la base.
 
-El módulo `app` contiene una actividad y un contenedor vacío: las interfaces, el menú y la navegación corresponden al compañero. No se incluye una interfaz provisional de formulario ni datos de demostración al iniciar.
+El compañero añadió `SplashActivity` y un layout visual de login en [su commit `7e90109`](https://github.com/Spidey123134/citizensecurity/commit/7e90109c82b1b35e3dfdec76ac6624fa2f699fff). Completó el recurso `activity_splash.xml` en [el commit `e18e636`](https://github.com/Spidey123134/citizensecurity/commit/e18e636ff60ea19a13e01ddf98c3de67d158e692), ya incorporado desde `main` actualizado. La autenticación todavía está pendiente; las interfaces continúan bajo su responsabilidad.
 
 ## Estructura
 
@@ -22,7 +22,9 @@ Para revisar la función por pasos, empieza con [Recibir los datos del reporte](
 
 El incremento **0.2.0** permite [validar el reporte y su ubicación](docs/VALIDAR_REPORTE.md). Se puede comprobar un punto válido, un par de coordenadas incompleto y un punto fuera de rango. Esta es nuestra parte inicial para conectar después la selección de un punto en Google Maps.
 
-El desarrollo actual es **0.3.0 — Unreleased**: [fase 3, guardar un reporte local](docs/FASE_3.md), junto con correcciones de fase 2. El comando `:core:data:guardarReporte` ejecuta las pruebas Android, muestra un folio real y exporta evidencia del guardado, reapertura y rechazo en bases temporales. Requiere un emulador o teléfono. La última release publicada continúa siendo `v0.2.0`.
+El mantenimiento actual es **0.2.1**, con número interno Android `4`, preparado y comprobado sobre la base actualizada del compañero. [PR #4](https://github.com/Spidey123134/citizensecurity/pull/4) registra su integración con `main`. Corrige el guardado de una operación cancelada mientras esperaba entrar al repositorio y conserva los cambios visuales del compañero. Compilación, lint y las 9 pruebas instrumentadas aprobaron. Todavía no se publicó una release `0.2.1`; la última publicada continúa siendo `v0.2.0`.
+
+La [fase 3 de guardado local](docs/FASE_3.md) y la versión **0.3.0 permanecen en Unreleased**: existe código adelantado, pero su entrega sigue pendiente. El comando `:core:data:guardarReporte` ya permite comprobar el folio, la reapertura y el rechazo en bases temporales; esa demostración se conserva como preparación de la fase. `0.3.1` fue un identificador provisional de pruebas, sin etiqueta ni release. La evidencia por versión está en [Validación](docs/VALIDACION.md).
 
 ## Seguimiento del proyecto
 
@@ -48,7 +50,7 @@ Abre esta carpeta completa en Android Studio. Usa JDK 27 para Gradle y Android S
 .\gradlew.bat :core:data:connectedDebugAndroidTest
 ```
 
-El segundo comando requiere un emulador o teléfono. Los resultados reales de la primera revisión se registran en [Validación](docs/VALIDACION.md).
+El segundo comando requiere un emulador o teléfono. El estado completo de `0.2.1`, con el splash del compañero, aprobó la comprobación. `app` conserva 13 advertencias visuales de lint y la autenticación sigue pendiente. Los resultados y los límites se registran en [Validación](docs/VALIDACION.md).
 
 ## Siguientes incrementos
 

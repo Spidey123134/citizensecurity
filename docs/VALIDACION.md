@@ -95,10 +95,78 @@ Después se ejecutó:
 
 Resultado: `BUILD SUCCESSFUL`. 32 pruebas unitarias y 7 instrumentadas aprobadas, sin fallos, errores u omisiones. La instrumentación se ejecutó en el mismo emulador Android 17 / API 37. Lint de `core/data` sin incidencias y `app` con 0 errores y las 2 advertencias existentes. Los ejemplos de validación conservaron sus resultados.
 
-`guardarReporte` depende de la instrumentación completa, lee la evidencia JSON capturada en Logcat y la exporta a `core/data/build/reports/fase3/<dispositivo>/reporte.json` y `rechazo.json`. La consola mostró un folio generado por SQLite, coordenadas `19.4326077, -99.1332088` y la recuperación del mismo reporte al reabrir. El caso inválido conservó un registro previo y no insertó otro. Cada prueba usa y elimina una base temporal; la demostración no modifica la base productiva.
+`guardarReporte` depende de la instrumentación completa, lee la evidencia JSON capturada en Logcat y la exporta a `core/data/build/reports/fase3/<dispositivo>/reporte.json` y `rechazo.json`. La consola mostró un folio UUID generado por el repositorio, coordenadas `19.4326077, -99.1332088` y la recuperación del mismo reporte al reabrir. El caso inválido conservó un registro previo y no insertó otro. Cada prueba usa y elimina una base temporal; la demostración no modifica la base productiva.
 
 Los datos son ejemplos conocidos con reloj fijo para comprobar fechas y nanosegundos. El folio se genera en cada ejecución; `generatedAt` registra el momento real de emisión de la evidencia. La demostración no depende de una interfaz ni de Google Maps.
 
 APK local de desarrollo: versión `0.3.0`, código `3`, 11 729 718 bytes. SHA-256 `5132185a350c8c17f7291c3d741442d03e5e7d335c9d64f0c77e5aa3e5a42ee9`; firma verificada mediante `apksigner`. El artefacto reemplaza el APK local anterior. La versión permanece **Unreleased**, sin etiqueta ni release publicada. La última publicada sigue siendo `v0.2.0`.
 
 La aceptación funcional del usuario, el teléfono físico y API 26 siguen pendientes. Se conservan los límites de herramientas indicados al inicio de este documento.
+
+## Historial de pruebas con identificador provisional 0.3.1
+
+Revisión del 3 de octubre de 2026, hora de México. Se usó `0.3.1` como identificador provisional para comprobar la corrección de un fallo presente desde la base `0.1.0`. No tuvo etiqueta ni release; el siguiente mantenimiento se prepara como `0.2.1`, conservando esta evidencia y el trabajo adelantado de fase 3.
+
+### Reproducción antes de la corrección
+
+En Android 17 / API 37, `cancelarMientrasEsperaNoGuardaOtroReporte` falló: quedaron 2 registros cuando debía quedar solo el primero. La segunda corrutina se había cancelado mientras esperaba el monitor, antes de liberar la primera. La evidencia previa está en `.gradle/validacion/parche-0.3.1-antes-fix.xml` y su log local, fuera de Git; el nombre conserva el identificador provisional. El XML registra 1 prueba y 1 fallo, con fecha `2026-10-03T15:39:19Z`.
+
+La corrección comprueba la cancelación dentro del monitor, antes de llamar a la acción SQLite. El alcance del contrato está en [Guardar reporte](GUARDAR_REPORTE.md).
+
+### Candidato descartado
+
+Se comprobaron diez textos Unicode, incluidos `U+FFFE` y `U+FFFF` interiores. El cursor y la reapertura conservaron exactamente los datos en Android. La prueba diagnóstica pasó en API 37, con fecha `2026-10-03T15:36:41Z`; no se modificó el validador. La prueba queda como cobertura de ese comportamiento.
+
+### Comprobación del parche antes del commit visual
+
+Después de corregir se ejecutó el comando completo de la fase 3, con los ejemplos, las suites, lint y la compilación. Las 9 pruebas instrumentadas aprobaron en API 37, sin fallos, errores u omisiones; el XML registra `2026-10-03T15:41:01Z`. Los ejemplos de fase 2 y la exportación JSON de guardado y rechazo terminaron correctamente.
+
+Las 32 unitarias conservaron su resultado aprobado anterior: la tarea fue `UP-TO-DATE`, con XML previo fechado `2026-10-03T05:39:56Z` (2 de octubre, hora de México). No se presenta como una nueva ejecución de esos 32 casos. Lint de datos terminó sin incidencias y `app` conservaba sus 2 advertencias. En ese estado se generó y verificó un APK `0.3.1`; ese artefacto corresponde a la base anterior al commit visual y no representa el estado integrado actual.
+
+### Comprobación anterior del estado integrado con 7e90109
+
+Se incorporó como base [el commit `7e90109`](https://github.com/Spidey123134/citizensecurity/commit/7e90109c82b1b35e3dfdec76ac6624fa2f699fff), con `SplashActivity`, login visual, tema y configuración del compañero. Ese commit no cambió `core/domain` ni `core/data`, por lo que la evidencia de datos anterior sigue aplicando a esas capas. La autenticación no está implementada.
+
+Se restauraron en el manifiesto `CitizenSecurityApplication` y los atributos que excluyen la base de los respaldos, conservando el launcher de splash, icono, tema y cambios visuales. La comprobación del estado integrado dio estos resultados:
+
+| Comprobación integrada | Resultado |
+| --- | --- |
+| `:core:data:lintDebug` | Aprobado, sin incidencias |
+| `:app:processDebugMainManifest` | Aprobado después de restaurar la aplicación compartida y las reglas de respaldo |
+| `:app:assembleDebug` | Falló en `SplashActivity.kt:15`: referencia `activity_splash` sin resolver |
+| `:app:lintDebug` | Bloqueado por el mismo recurso faltante |
+| APK del estado integrado | No generado |
+
+En aquel estado faltaba `app/src/main/res/layout/activity_splash.xml`; no se creó una pantalla por cuenta del trabajo de datos. El compañero añadió después el recurso en `e18e636`, ya incorporado desde `main` para el mantenimiento `0.2.1`. El bloqueo descrito en esta tabla es histórico.
+
+Aquella aplicación de pruebas usó versión `0.3.1`, código `4`, sin etiqueta ni release. El historial y la evidencia de `0.3.0` permanecen arriba; su entrega sigue en `Unreleased`. La última release publicada es `v0.2.0`.
+
+## Mantenimiento 0.2.1 sobre main actualizado
+
+Preparación del 3 de octubre de 2026. La base incorpora [el commit del compañero `e18e636`](https://github.com/Spidey123134/citizensecurity/commit/e18e636ff60ea19a13e01ddf98c3de67d158e692), que añadió `activity_splash.xml` y resolvió el recurso ausente de la comprobación anterior. Se conservan su splash, login visual y la configuración compartida del manifiesto.
+
+La aplicación se preparó como `0.2.1`, con número interno Android `4`, independiente del nombre visible. Sobre la base actualizada se ejecutó:
+
+```powershell
+.\gradlew.bat :core:domain:test :core:domain:validarReporte :core:domain:validarUbicaciones :core:data:guardarReporte :core:data:lintDebug :app:lintDebug :app:assembleDebug --console=plain
+```
+
+El resultado fue `BUILD SUCCESSFUL`, en 10 segundos. Las 9 pruebas instrumentadas se ejecutaron de nuevo y aprobaron, sin fallos, errores u omisiones; el XML registra `2026-10-03T16:18:03Z`. La tarea del dominio fue `UP-TO-DATE`: mantiene las 32 pruebas aprobadas del XML previo `2026-10-03T05:39:56.971Z`, sin presentarlas como nueva ejecución.
+
+| Comprobación de 0.2.1 | Resultado |
+| --- | --- |
+| Ejemplos de validación y ubicación | Correctos |
+| Instrumentación Android 17 / API 37 | 9 aprobadas; 0 fallos, errores u omitidas |
+| `guardarReporte` y exportación JSON | Correctos; folio de esta ejecución `b5f75018-f4eb-4a0a-a452-4e5cb9efde4d` |
+| Lint de `core/data` | 0 incidencias |
+| Lint de `app` | 0 errores; 13 advertencias visuales |
+| APK debug | Generado, versión `0.2.1`, número interno `4` |
+| Firma del APK | Verificada mediante `apksigner`, esquema v2 |
+
+Las advertencias de `app` son `Autofill` (2), `CustomSplashScreen` (1), `HardcodedText` (6), `Overdraw` (2), `UnusedResources` (1) y `UselessLeaf` (1). Corresponden al trabajo visual del compañero y se conservan visibles; no se cambió su interfaz para ocultarlas. Esta comprobación verifica compilación y persistencia, sin una prueba manual de las pantallas nuevas ni del login.
+
+El APK actual está en `app/build/outputs/apk/debug/app-debug.apk`, con `11731314` bytes y SHA-256 `278b64be115563aeed7544eeeab01c2faec673ce52034879ec50705f6bec95c6`. Sustituye el artefacto local anterior, cuyos identificadores y hashes se conservan arriba como historial.
+
+El mantenimiento y su integración con `main` se registran en [PR #4](https://github.com/Spidey123134/citizensecurity/pull/4). No se ha creado una etiqueta o release `v0.2.1`; la última publicada sigue siendo `v0.2.0`.
+
+El código adelantado de fase 3 permanece disponible; su entrega `0.3.0` sigue en `Unreleased`. La revisión funcional del usuario, la autenticación, teléfono físico y API 26 continúan pendientes.

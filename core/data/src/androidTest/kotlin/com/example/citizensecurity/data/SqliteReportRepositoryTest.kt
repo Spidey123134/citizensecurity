@@ -248,6 +248,67 @@ class SqliteReportRepositoryTest {
     }
 
     @Test
+    fun unicodeValidoSeConservaEnCursorYDespuesDeReabrir() = runBlocking {
+        val repository = newRepository()
+        val inputs = listOf(
+            "U+FFFF inicial" to "\uFFFF123456789",
+            "U+FFFE interno" to "12345\uFFFE67890",
+            "U+FFFE final" to "123456789\uFFFE",
+            "U+FFFF interno" to "12345\uFFFF67890",
+            "U+FFFF final" to "123456789\uFFFF",
+            "U+FEFF interno" to "12345\uFEFF67890",
+            "U+FDD0 interno" to "12345\uFDD067890",
+            "U+10FFFE emparejado" to "123456789\uDBFF\uDFFE",
+            "U+10FFFF emparejado" to "123456789\uDBFF\uDFFF",
+            "Emoji emparejado" to "123456789\uD83D\uDD25",
+        )
+        val savedReports = mutableListOf<Pair<String, Report>>()
+        val failures = mutableListOf<String>()
+        inputs.forEach { (label, input) ->
+            try {
+                val saved = repository.create(
+                    draft().copy(description = input, location = ReportLocation(input)),
+                )
+                savedReports.add(label to saved)
+                if (saved.description != input || saved.location.reference != input) {
+                    failures.add("$label cambió antes de confirmar el guardado.")
+                }
+                val restored = repository.findById(saved.id)
+                Log.i(
+                    "ReporteLocal",
+                    "$label; entrada: ${input.codeUnits()}; " +
+                        "descripción en cursor: ${restored?.description?.codeUnits()}; " +
+                        "referencia en cursor: ${restored?.location?.reference?.codeUnits()}.",
+                )
+                if (saved != restored) {
+                    failures.add(
+                        "$label cambió al consultar el folio: " +
+                            "${restored?.description?.codeUnits()}; " +
+                            "${restored?.location?.reference?.codeUnits()}.",
+                    )
+                }
+            } catch (error: Exception) {
+                failures.add("$label produjo ${error.javaClass.simpleName}: ${error.message}.")
+            }
+        }
+        repository.close()
+
+        val reopened = newRepository()
+        savedReports.forEach { (label, saved) ->
+            val restored = reopened.findById(saved.id)
+            if (saved != restored) {
+                failures.add(
+                    "$label cambió al reabrir la base: " +
+                        "${restored?.description?.codeUnits()}; " +
+                        "${restored?.location?.reference?.codeUnits()}.",
+                )
+            }
+        }
+        assertTrue(failures.joinToString("\n"), failures.isEmpty())
+        assertEquals("Todos los casos deben haberse guardado.", inputs.size, savedReports.size)
+    }
+
+    @Test
     fun cerrarEsIdempotenteEImpideUsarLaInstanciaSinBorrarSuArchivo() = runBlocking {
         val repository = newRepository()
         val saved = repository.create(draft())
