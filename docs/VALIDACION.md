@@ -53,3 +53,32 @@ La base SQLite se excluye de las copias automáticas en nube y de la transferenc
 - Informes de lint: `app/build/reports/` y `core/data/build/reports/`.
 
 Los artefactos y las rutas locales del SDK/JDK quedan fuera de Git. Esta entrega todavía no incluye un flujo visual para guardar reportes ni una prueba en un teléfono físico o en API 26; el compañero conectará su interfaz al contrato documentado.
+
+## Verificación del incremento 0.2.0
+
+Realizada el 2 de octubre de 2026, hora de México, con las mismas herramientas. Los ejemplos nuevos reutilizan las reglas del dominio y no modifican los contratos ni el esquema de SQLite.
+
+```powershell
+.\gradlew.bat :core:domain:recibirReporte :core:domain:validarReporte :core:domain:validarUbicaciones :core:domain:test --console=plain
+.\gradlew.bat :core:domain:test --rerun-tasks --console=plain
+.\gradlew.bat :core:data:lintDebug :app:lintDebug :app:assembleDebug :core:data:connectedDebugAndroidTest --console=plain
+```
+
+Todos terminaron correctamente. Se ejecutaron también entradas personalizadas: coordenadas completas con referencia vacía y tipo/prioridad en minúsculas; cinco errores de conversión en una entrada; y cuatro errores simultáneos de las reglas. Los errores se mostraron por campo en español, sin una excepción visible de conversión.
+
+| Revisión de 0.2.0 | Resultado |
+| --- | --- |
+| Recepción anterior | Conserva los cinco datos recibidos |
+| Reporte predeterminado y coordenadas completas | Reporte válido |
+| Coordenada ausente y latitud fuera de rango | Error de coordenadas en cada caso |
+| Pruebas JVM | 28 aprobadas; 0 fallos, errores u omitidas; ejecutadas de nuevo con `--rerun-tasks` |
+| Pruebas SQLite, emulador API 37 | 5 aprobadas; 0 fallos, errores u omitidas en esta ejecución |
+| Lint | `core/data`: sin incidencias; `app`: 0 errores, 2 advertencias existentes |
+| APK debug | Versión `0.2.0`, `versionCode = 2`; firma verificada con `apksigner` |
+| Separación del ejemplo | El JAR productivo excluye `src/examples` |
+
+Los ejemplos terminan normalmente al mostrar datos inválidos: `BUILD SUCCESSFUL` confirma la ejecución, mientras `Reporte válido.` o los errores indican el resultado de validación. Se conserva un reloj fijo para los tres casos y un único instante actual para la fecha predeterminada del reporte personalizado.
+
+APK local: `app/build/outputs/apk/debug/app-debug.apk`, 11 729 718 bytes. SHA-256: `c7c56d5b8b7234af95c2424c313f774cff12eb4b257c8c89db8523d22b53a1a0`. Este reemplaza el artefacto local de la primera entrega; no se adjunta un APK a la release 0.2.0. GitHub publica el código fuente y las notas de esta versión.
+
+El mapa real, la configuración de Google Cloud y la interfaz siguen pendientes. La verificación funcional del usuario, el teléfono físico y API 26 también quedan pendientes. Las advertencias de herramientas y los límites de compatibilidad indicados arriba siguen vigentes.
