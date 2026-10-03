@@ -16,3 +16,4 @@ Lee README.md y docs/TRABAJO_EQUIPO.md antes de editar.
 - La configuración del proyecto y los contratos compartidos se coordinan con el equipo. El desarrollo posterior usa ramas de tarea y revisión de cambios.
 - Mantén CHANGELOG.md y docs/FASES.md al entregar un incremento. Distingue código implementado, pruebas ejecutadas y revisión del usuario; no marques una fase revisada sin esa revisión.
 - Entrega los incrementos acordados por versión mediante GitHub Releases, con etiqueta, cambios concretos y pruebas reales. Sigue docs/RELEASES.md; conserva las etiquetas publicadas y no presentes la publicación como aceptación funcional del usuario.
+- El usuario pidió mantener la fase 3 y la próxima versión 0.3.0 en Unreleased. Documenta y comparte sus cambios sin crear una etiqueta o publicar esa release hasta que el usuario cambie esta indicación.

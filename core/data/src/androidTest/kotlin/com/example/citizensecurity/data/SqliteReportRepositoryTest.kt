@@ -1,12 +1,14 @@
 package com.example.citizensecurity.data
 
 import android.content.Context
+import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.InvalidReportException
 import com.example.citizensecurity.domain.NewReport
 import com.example.citizensecurity.domain.Priority
+import com.example.citizensecurity.domain.Report
 import com.example.citizensecurity.domain.ReportField
 import com.example.citizensecurity.domain.ReportLocation
 import com.example.citizensecurity.domain.ReportStatus
@@ -16,6 +18,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.UUID
 import kotlinx.coroutines.runBlocking
+import org.json.JSONObject
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -72,6 +75,7 @@ class SqliteReportRepositoryTest {
     fun reporteInvalidoNoModificaLosDatosGuardados() = runBlocking {
         val repository = newRepository()
         val saved = repository.create(draft())
+        val rejectedErrors = JSONObject()
         val invalid = draft().copy(
             description = "Corto",
             occurredAt = NOW.plusSeconds(61),
@@ -85,10 +89,24 @@ class SqliteReportRepositoryTest {
             assertTrue(error.errors.errors.containsKey(ReportField.DESCRIPTION))
             assertTrue(error.errors.errors.containsKey(ReportField.OCCURRED_AT))
             assertTrue(error.errors.errors.containsKey(ReportField.LOCATION_COORDINATES))
+            error.errors.errors.forEach { (field, message) ->
+                rejectedErrors.put(field.name, message)
+            }
         }
         repository.close()
 
-        assertEquals(listOf(saved), newRepository().list())
+        val reopenedReports = newRepository().list()
+        assertEquals(listOf(saved), reopenedReports)
+        emitEvidence(
+            "FASE3_RECHAZO",
+            JSONObject()
+                .put("rejected", true)
+                .put("inserted", false)
+                .put("countBefore", 1)
+                .put("countAfter", reopenedReports.size)
+                .put("preservedFolio", saved.id)
+                .put("errors", rejectedErrors),
+        )
     }
 
     @Test
@@ -123,6 +141,110 @@ class SqliteReportRepositoryTest {
         assertEquals("", restored!!.location.reference)
         assertEquals(19.4326077, restored.location.latitude!!, 0.0)
         assertEquals(-99.1332088, restored.location.longitude!!, 0.0)
+        emitEvidence(
+            "FASE3_GUARDADO",
+            JSONObject()
+                .put("saved", saved.toEvidence())
+                .put("restored", restored.toEvidence())
+                .put("reopened", true)
+                .put("clock", "fixed"),
+        )
+    }
+
+    @Test
+    fun unicodeNoRepresentableSeRechazaSinAlterarLosDatosGuardados() = runBlocking {
+        val repository = newRepository()
+        val saved = repository.create(draft())
+        val invalidInputs = listOf(
+            Triple(
+                "Descripción con sustituto alto aislado",
+                ReportField.DESCRIPTION,
+                draft().copy(description = "Hay una luminaria \uD800 dañada frente al parque."),
+            ),
+            Triple(
+                "Descripción con sustituto bajo aislado",
+                ReportField.DESCRIPTION,
+                draft().copy(description = "Hay una luminaria \uDC00 dañada frente al parque."),
+            ),
+            Triple(
+                "Descripción con marca de orden de bytes inicial",
+                ReportField.DESCRIPTION,
+                draft().copy(description = "\uFEFFHay una luminaria dañada frente al parque."),
+            ),
+            Triple(
+                "Descripción con marca de orden de bytes invertida inicial",
+                ReportField.DESCRIPTION,
+                draft().copy(description = "\uFFFEHay una luminaria dañada frente al parque."),
+            ),
+            Triple(
+                "Referencia con sustituto alto aislado",
+                ReportField.LOCATION_REFERENCE,
+                draft().copy(location = ReportLocation("Frente \uD800 al parque central")),
+            ),
+            Triple(
+                "Referencia con sustituto bajo aislado",
+                ReportField.LOCATION_REFERENCE,
+                draft().copy(location = ReportLocation("Frente \uDC00 al parque central")),
+            ),
+            Triple(
+                "Referencia con marca de orden de bytes inicial",
+                ReportField.LOCATION_REFERENCE,
+                draft().copy(location = ReportLocation("\uFEFFFrente al parque central")),
+            ),
+            Triple(
+                "Referencia con marca de orden de bytes invertida inicial",
+                ReportField.LOCATION_REFERENCE,
+                draft().copy(location = ReportLocation("\uFFFEFrente al parque central")),
+            ),
+        )
+        val failures = mutableListOf<String>()
+        invalidInputs.forEach { (label, field, input) ->
+            try {
+                val accepted = repository.create(input)
+                val restored = repository.findById(accepted.id)
+                failures.add(
+                    "$label fue aceptado. Descripción recuperada: " +
+                        "${restored?.description?.codeUnits()}; referencia recuperada: " +
+                        "${restored?.location?.reference?.codeUnits()}.",
+                )
+            } catch (error: InvalidReportException) {
+                if (field !in error.errors.errors) {
+                    failures.add("$label no devolvió el error esperado para $field.")
+                }
+            } catch (error: Exception) {
+                failures.add("$label produjo ${error.javaClass.simpleName}: ${error.message}.")
+            }
+        }
+        repository.close()
+
+        val reopenedReports = newRepository().list()
+        if (reopenedReports != listOf(saved)) {
+            failures.add(
+                "La base reabierta contiene ${reopenedReports.size} registros; " +
+                    "debe conservar solo el reporte válido inicial.",
+            )
+        }
+        assertTrue(failures.joinToString("\n"), failures.isEmpty())
+    }
+
+    @Test
+    fun ceroNegativoSeNormalizaYSeConservaIgualAlReabrir() = runBlocking {
+        val repository = newRepository()
+        val saved = repository.create(
+            draft().copy(location = ReportLocation(latitude = -0.0, longitude = -0.0)),
+        )
+        repository.close()
+        val restored = newRepository().findById(saved.id)!!
+        assertEquals(
+            "Latitud guardada: ${saved.location.latitude!!.toRawBits()}; " +
+                "latitud recuperada: ${restored.location.latitude!!.toRawBits()}.",
+            0.0.toRawBits(),
+            saved.location.latitude!!.toRawBits(),
+        )
+        assertEquals(0.0.toRawBits(), saved.location.longitude!!.toRawBits())
+        assertEquals(0.0.toRawBits(), restored.location.latitude!!.toRawBits())
+        assertEquals(0.0.toRawBits(), restored.location.longitude!!.toRawBits())
+        assertEquals(saved, restored)
     }
 
     @Test
@@ -152,6 +274,33 @@ class SqliteReportRepositoryTest {
         occurredAt = NOW.minusSeconds(60),
         location = ReportLocation("Frente al parque central"),
     )
+
+    private fun Report.toEvidence() = JSONObject()
+        .put("id", id)
+        .put("type", type.name)
+        .put("priority", priority.name)
+        .put("description", description)
+        .put("occurredAt", occurredAt.toString())
+        .put("createdAt", createdAt.toString())
+        .put("status", status.name)
+        .put(
+            "location",
+            JSONObject()
+                .put("reference", location.reference)
+                .put("latitude", location.latitude ?: JSONObject.NULL)
+                .put("longitude", location.longitude ?: JSONObject.NULL),
+        )
+
+    private fun emitEvidence(marker: String, result: JSONObject) {
+        result.put("package", context.packageName)
+            .put("temporaryDatabase", true)
+            .put("databaseName", databaseName)
+            .put("generatedAt", Instant.now().toString())
+        Log.i("ReporteLocal", "$marker=$result")
+    }
+
+    private fun String.codeUnits(): String =
+        map { "U+${it.code.toString(16).uppercase().padStart(4, '0')}" }.joinToString(" ")
 
     private class MutableClock(var current: Instant) : Clock() {
         override fun getZone(): ZoneId = ZoneOffset.UTC

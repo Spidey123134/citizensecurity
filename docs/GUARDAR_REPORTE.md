@@ -29,9 +29,11 @@ Las reglas se comprueban otra vez dentro de `create`, aunque la interfaz haga un
 - Referencia escrita: entre 5 y 200 puntos Unicode cuando se proporciona. Puede quedar vacía si hay coordenadas completas y válidas.
 - Coordenadas: se proporcionan juntas; deben ser finitas, con latitud entre −90 y 90 y longitud entre −180 y 180. Una coordenada inválida se rechaza incluso si hay una referencia válida.
 - Fecha del incidente: igual o posterior a `1970-01-01T00:00:00Z`; se permite hasta un minuto por delante del reloj usado para guardar.
-- Descripción y referencia rechazan el carácter nulo `U+0000`.
+- Descripción y referencia rechazan `U+0000`, UTF-16 mal formado y las marcas de orden de bytes `U+FEFF` o `U+FFFE` al inicio después de quitar espacios. Los emojis correctamente codificados siguen permitidos. Estas reglas evitan que el texto devuelto cambie al guardarlo en SQLite.
 
 Los campos de texto se guardan sin espacios de los extremos. Las fechas conservan segundos y nanosegundos. Si el borrador es inválido, `create` lanza `InvalidReportException` y no inserta datos. `exception.errors.errors` es un `Map<ReportField, String>`: permite colocar cada mensaje junto a `DESCRIPTION`, `LOCATION_REFERENCE`, `LOCATION_COORDINATES` u `OCCURRED_AT`. Los errores de almacenamiento se propagan; la interfaz confirma el guardado solo después de recibir el `Report`.
+
+El cero negativo `-0.0` en latitud o longitud se normaliza a `0.0` antes de construir el reporte devuelto y de insertarlo. Esta representación coincide con la que conserva SQLite; las demás coordenadas mantienen su valor. La demostración de [Fase 3](FASE_3.md) permite comprobar el folio, las coordenadas y la reapertura sin una pantalla.
 
 Para validar antes de guardar se puede usar `ReportValidator().validate(draft, Instant.now())`. Su resultado expone `errors` e `isValid`; esa revisión no sustituye la validación del repositorio.
 

@@ -2,6 +2,18 @@
 
 Cada versión del proyecto tendrá notas en español en GitHub Releases con los cambios, comprobaciones ejecutadas y límites de la entrega. La fuente de cambios es [Changelog](../CHANGELOG.md); el estado funcional se consulta en [Fases](FASES.md).
 
+## 0.3.0 — Unreleased
+
+Incremento implementado y probado localmente, sin etiqueta `v0.3.0` y sin release publicada. La aplicación está configurada con `versionName = "0.3.0"` y `versionCode = 3`. La release y la etiqueta publicadas de `v0.2.0` se conservan. La aceptación funcional del nuevo resultado sigue pendiente.
+
+**Añadido:** la tarea `:core:data:guardarReporte` reutiliza la instrumentación Android para mostrar un reporte guardado con folio, los datos recibidos y las coordenadas recuperadas después de reabrir. También comprueba el rechazo de un borrador inválido sin añadir registros. Exporta `reporte.json` y `rechazo.json` por dispositivo, usando bases temporales independientes que se eliminan al terminar.
+
+**Corregido:** el validador rechaza texto Unicode que no puede conservarse al guardar, con errores por campo; el repositorio normaliza los ceros de coordenadas para que el reporte devuelto y el recuperado coincidan. Las regresiones reprodujeron los fallos antes de corregirlos y aprobaron después.
+
+**Comprobado:** suites unitarias e instrumentadas en API 37 aprobadas, ejemplos ejecutados, evidencia JSON exportada, lint sin errores y APK debug `0.3.0` construido. `app` conserva sus 2 advertencias existentes. Los resultados completos se mantienen en [Validación](VALIDACION.md) y [Changelog](../CHANGELOG.md); la demostración de guardado y sus JSON se describen en [Fase 3](FASE_3.md).
+
+Este incremento mantiene el esquema SQLite y los campos del contrato del reporte. No añade interfaces, login ni SDK de Google Maps. Las fechas fijas del reporte pertenecen al caso de prueba; `generatedAt` de los JSON contiene la hora real de generación. La verificación en teléfono físico y API 26 sigue pendiente. No se publica un APK adjunto ni una nueva release: el trabajo se conserva como `Unreleased`.
+
 ## Entrega 0.2.0
 
 | Identificador | Valor de la entrega |
@@ -30,15 +42,13 @@ La aplicación todavía tiene un contenedor visual vacío; los ejemplos de conso
 5. Publica GitHub Release con las notas en español. Adjunta el APK de esa versión si forma parte de la entrega, indicando si es debug o release y su SHA-256.
 6. Comprueba que la etiqueta corresponde al commit integrado, que la release está publicada y que los adjuntos corresponden al artefacto verificado. Registra el enlace y la evidencia de publicación en el changelog y las fases.
 
-Para la base actual, las comprobaciones son:
+Para el incremento actual, la comprobación completa es:
 
 ```powershell
-.\gradlew.bat :core:domain:validarReporte :core:domain:validarUbicaciones --console=plain
-.\gradlew.bat :core:domain:test :core:data:lintDebug :app:lintDebug :app:assembleDebug --console=plain
-.\gradlew.bat :core:data:connectedDebugAndroidTest --console=plain
+.\gradlew.bat :core:domain:test :core:domain:validarReporte :core:domain:validarUbicaciones :core:data:guardarReporte :core:data:lintDebug :app:lintDebug :app:assembleDebug --console=plain
 ```
 
-La instrumentación requiere un emulador o teléfono. Los ejemplos muestran resultados y pueden terminar normalmente aun cuando una entrada sea inválida; comprueba los mensajes y registra los casos usados. Las pruebas automáticas y los informes de lint proporcionan las comprobaciones de regresión.
+La tarea `guardarReporte` requiere un emulador o teléfono y depende de `connectedDebugAndroidTest`; no hace falta ejecutar de nuevo esa instrumentación en un comando separado. Los ejemplos de validación muestran resultados y pueden terminar normalmente aun cuando una entrada sea inválida; comprueba los mensajes y registra los casos usados. Las pruebas automáticas y los informes de lint proporcionan las comprobaciones de regresión.
 
 Las claves, contraseñas, configuración personal, bases de datos y respaldos permanecen fuera del repositorio y de los adjuntos. Las notas y los mensajes de publicación describen el producto, sus cambios y cómo revisarlos, sin nombres de asistentes ni datos personales.
 

@@ -22,6 +22,8 @@ Para revisar la función por pasos, empieza con [Recibir los datos del reporte](
 
 El incremento **0.2.0** permite [validar el reporte y su ubicación](docs/VALIDAR_REPORTE.md). Se puede comprobar un punto válido, un par de coordenadas incompleto y un punto fuera de rango. Esta es nuestra parte inicial para conectar después la selección de un punto en Google Maps.
 
+El desarrollo actual es **0.3.0 — Unreleased**: [fase 3, guardar un reporte local](docs/FASE_3.md), junto con correcciones de fase 2. El comando `:core:data:guardarReporte` ejecuta las pruebas Android, muestra un folio real y exporta evidencia del guardado, reapertura y rechazo en bases temporales. Requiere un emulador o teléfono. La última release publicada continúa siendo `v0.2.0`.
+
 ## Seguimiento del proyecto
 
 - [Inicio del equipo](docs/INICIO_EQUIPO.md): clonar la base, configurar la PC y subir una función desde una rama propia.

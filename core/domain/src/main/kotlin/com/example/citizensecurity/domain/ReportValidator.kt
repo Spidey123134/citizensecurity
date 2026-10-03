@@ -26,7 +26,7 @@ class ReportValidator {
         val description = draft.description.trim()
         val descriptionLength = description.characterCount()
         when {
-            '\u0000' in description -> {
+            '\u0000' in description || description.hasUnsupportedUnicode() -> {
                 errors[ReportField.DESCRIPTION] = "La descripción contiene un carácter no permitido."
             }
             descriptionLength !in 10..1_000 -> {
@@ -58,7 +58,7 @@ class ReportValidator {
         }
 
         when {
-            '\u0000' in reference -> {
+            '\u0000' in reference || reference.hasUnsupportedUnicode() -> {
                 errors[ReportField.LOCATION_REFERENCE] =
                     "La referencia de ubicación contiene un carácter no permitido."
             }
@@ -87,4 +87,21 @@ class ReportValidator {
     }
 
     private fun String.characterCount(): Int = codePointCount(0, length)
+
+    /** Estos caracteres impiden conservar el texto al guardarlo; los emojis válidos se permiten. */
+    private fun String.hasUnsupportedUnicode(): Boolean {
+        if (startsWith('\uFEFF') || startsWith('\uFFFE')) return true
+        var index = 0
+        while (index < length) {
+            val current = this[index]
+            if (Character.isHighSurrogate(current)) {
+                if (index + 1 == length || !Character.isLowSurrogate(this[index + 1])) return true
+                index += 2
+            } else {
+                if (Character.isLowSurrogate(current)) return true
+                index++
+            }
+        }
+        return false
+    }
 }
