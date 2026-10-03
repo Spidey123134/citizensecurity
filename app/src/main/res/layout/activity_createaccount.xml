@@ -61,7 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="24dp"
-        android:text="Iniciar Sesión"
+        android:text="Crear Cuenta"
         android:textColor="#1F6036"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -74,7 +74,7 @@
         android:layout_marginTop="16dp">
 
         <TextView
-            android:id="@+id/create_account_link"
+            android:id="@+id/login_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="48dp"
@@ -82,7 +82,7 @@
             android:gravity="center"
             android:layout_centerInParent="true"
             android:padding="8dp"
-            android:text="Crear cuenta"
+            android:text="Iniciar sesión"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:textStyle="bold"

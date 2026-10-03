@@ -2,51 +2,273 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tools_container"
-    android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="vertical" android:padding="24dp">
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="@string/tools_title" android:textSize="24sp" android:textStyle="bold" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="12dp" android:text="@string/tools_explanation" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="16dp" android:labelFor="@id/tools_type" android:text="@string/tools_type_label" />
-        <Spinner android:id="@+id/tools_type" android:layout_width="match_parent" android:layout_height="48dp" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:labelFor="@id/tools_priority" android:text="@string/tools_priority_label" />
-        <Spinner android:id="@+id/tools_priority" android:layout_width="match_parent" android:layout_height="48dp" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:labelFor="@id/tools_description" android:text="@string/tools_description_label" />
-        <EditText android:id="@+id/tools_description" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:minHeight="64dp" android:inputType="textMultiLine" android:importantForAutofill="no"
-            android:text="@string/tools_example_description" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:labelFor="@id/tools_date" android:text="@string/tools_date_label" />
-        <!-- El formato ISO-8601 UTC requiere letras T/Z; el teclado de fecha no permite escribirlo. -->
-        <EditText android:id="@+id/tools_date" android:layout_width="match_parent" android:layout_height="48dp"
-            android:inputType="textNoSuggestions" android:importantForAutofill="no" tools:ignore="TextFields" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:labelFor="@id/tools_reference" android:text="@string/tools_reference_label" />
-        <EditText android:id="@+id/tools_reference" android:layout_width="match_parent" android:layout_height="48dp"
-            android:inputType="textCapSentences" android:importantForAutofill="no" android:text="@string/tools_example_reference" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:labelFor="@id/tools_latitude" android:text="@string/tools_latitude_label" />
-        <EditText android:id="@+id/tools_latitude" android:layout_width="match_parent" android:layout_height="48dp"
-            android:inputType="numberDecimal|numberSigned" android:importantForAutofill="no" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:labelFor="@id/tools_longitude" android:text="@string/tools_longitude_label" />
-        <EditText android:id="@+id/tools_longitude" android:layout_width="match_parent" android:layout_height="48dp"
-            android:inputType="numberDecimal|numberSigned" android:importantForAutofill="no" />
-        <Button android:id="@+id/tools_receive" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="@string/tools_receive" />
-        <Button android:id="@+id/tools_validate" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="@string/tools_validate" />
-        <Button android:id="@+id/tools_locations" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="@string/tools_locations" />
-        <TextView android:id="@+id/tools_result" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="16dp" android:text="@string/tools_ready" android:textIsSelectable="true"
-            android:freezesText="true" android:accessibilityLiveRegion="polite" />
-        <Button android:id="@+id/tools_back" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="20dp" android:text="@string/tools_back" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#0D231E">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Encabezado con título actualizado y sin texto descriptivo -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="Citizen Security"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#2ECC71" />
+
+        <!-- SECCIÓN 1: Detalles del reporte -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#163832"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/tools_type"
+                android:text="@string/tools_type_label"
+                android:textColor="#E2E8F0"
+                android:textSize="13sp" />
+
+            <Spinner
+                android:id="@+id/tools_type"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/tools_priority"
+                android:text="@string/tools_priority_label"
+                android:textColor="#E2E8F0"
+                android:textSize="13sp" />
+
+            <Spinner
+                android:id="@+id/tools_priority"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/tools_description"
+                android:text="@string/tools_description_label"
+                android:textColor="#E2E8F0"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/tools_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:minHeight="70dp"
+                android:gravity="top"
+                android:padding="10dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#718096"
+                android:background="#0D231E"
+                android:inputType="textMultiLine"
+                android:importantForAutofill="no"
+                android:text="@string/tools_example_description" />
+
+        </LinearLayout>
+
+        <!-- SECCIÓN 2: Ubicación y Fecha -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:background="#163832"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/tools_date"
+                android:text="@string/tools_date_label"
+                android:textColor="#E2E8F0"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/tools_date"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:padding="10dp"
+                android:textColor="#FFFFFF"
+                android:background="#0D231E"
+                android:inputType="textNoSuggestions"
+                android:importantForAutofill="no"
+                tools:ignore="TextFields" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/tools_reference"
+                android:text="@string/tools_reference_label"
+                android:textColor="#E2E8F0"
+                android:textSize="13sp" />
+
+            <EditText
+                android:id="@+id/tools_reference"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:padding="10dp"
+                android:textColor="#FFFFFF"
+                android:background="#0D231E"
+                android:inputType="textCapSentences"
+                android:importantForAutofill="no"
+                android:text="@string/tools_example_reference" />
+
+            <!-- Latitud y Longitud -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@id/tools_latitude"
+                        android:text="@string/tools_latitude_label"
+                        android:textColor="#E2E8F0"
+                        android:textSize="13sp" />
+
+                    <EditText
+                        android:id="@+id/tools_latitude"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="4dp"
+                        android:padding="10dp"
+                        android:textColor="#FFFFFF"
+                        android:background="#0D231E"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:importantForAutofill="no" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@id/tools_longitude"
+                        android:text="@string/tools_longitude_label"
+                        android:textColor="#E2E8F0"
+                        android:textSize="13sp" />
+
+                    <EditText
+                        android:id="@+id/tools_longitude"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="4dp"
+                        android:padding="10dp"
+                        android:textColor="#FFFFFF"
+                        android:background="#0D231E"
+                        android:inputType="numberDecimal|numberSigned"
+                        android:importantForAutofill="no" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- SECCIÓN 3: Botones de Acción -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/tools_receive"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:backgroundTint="#2ECC71"
+                android:textColor="#FFFFFF"
+                android:text="@string/tools_receive" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <Button
+                    android:id="@+id/tools_validate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:backgroundTint="#163832"
+                    android:textColor="#2ECC71"
+                    android:text="@string/tools_validate" />
+
+                <Button
+                    android:id="@+id/tools_locations"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:backgroundTint="#163832"
+                    android:textColor="#2ECC71"
+                    android:text="@string/tools_locations" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tools_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:padding="12dp"
+                android:background="#163832"
+                android:text="@string/tools_ready"
+                android:textColor="#00E676"
+                android:textAlignment="center"
+                android:textIsSelectable="true"
+                android:freezesText="true"
+                android:accessibilityLiveRegion="polite" />
+
+            <Button
+                android:id="@+id/tools_back"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="#0D231E"
+                android:textColor="#A0AEC0"
+                android:text="@string/tools_back" />
+
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>
