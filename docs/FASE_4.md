@@ -1,6 +1,6 @@
 # Fase 4: consultar un reporte local
 
-El usuario autorizó comenzar **`0.4.0 — Unreleased`**. Este incremento prepara consulta por folio y estado, reutilizando `ReportRepository.findById` y `list`. La aplicación usa `versionName = "0.4.0"` y número interno Android `versionCode = 7`. No hay etiqueta ni release de esta versión; la comprobación técnica aprobó y la aceptación funcional sigue pendiente.
+El usuario autorizó cerrar la entrega **`0.4.0`**, integrarla a `main` y publicarla con la etiqueta [v0.4.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0). Este incremento incorpora consulta por folio y estado, reutilizando `ReportRepository.findById` y `list`. La aplicación usa `versionName = "0.4.0"` y número interno Android `versionCode = 7`. La comprobación técnica aprobó; la aceptación funcional sigue pendiente y `0.3.0` conserva su estado Unreleased.
 
 La consulta corresponde a la organización y lectura de reportes del [plan del proyecto](PLAN_DEL_PROYECTO.md), especialmente las secciones 2 y 4.4 del PDF. La base es local y no tiene cuentas ni particiones por usuario: esta entrega no completa la consulta de reportes propios ni el seguimiento administrativo del documento.
 
@@ -60,6 +60,6 @@ La comprobación de `0.4.0` aprobó: 24 JVM de app (8 de consulta, 8 de guardado
 
 Se reprodujeron y corrigieron dos errores: publicar un error de consulta o un resultado de guardado después de cancelarse el trabajo. Los modelos comprueban su actividad antes de publicar resultados o errores y vuelven a Idle al cancelar, incluso antes de iniciar. La cancelación del modelo no equivale a revertir una escritura que ya haya terminado.
 
-La base incorpora main y sus herramientas oficiales 0.2.1. Ese botón conserva solo las funciones de fases 1 y 2; no expone la consulta de 0.4. La aplicación usa código Android 7, superior al 6 oficial, pero su APK experimental no sustituye la instalación oficial del emulador ni se adjunta a una release.
+La entrega incorpora la base de `main` y las herramientas introducidas en 0.2.1. Ese botón conserva solo las funciones de fases 1 y 2; no expone la consulta de 0.4. La aplicación usa código Android 7, superior al 6 de 0.2.1. La consulta de esta entrega se comprueba con la tarea Gradle y queda disponible mediante el contrato para la futura pantalla del compañero; instalar su APK no añade esa pantalla.
 
 No se afirma un flujo visual probado ni rotación real de la pantalla. Tampoco hay cambios de estado, administración, autenticación, sincronización, servidor, GPS, SDK de mapas, fotografías o notificaciones. Las coordenadas guardadas se leen mediante el contrato existente; no se añade una migración.

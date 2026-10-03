@@ -215,9 +215,9 @@ Artefacto para pruebas: `citizensecurity-0.2.1-debug.apk`, versión `0.2.1`, có
 
 La verificación en teléfono físico y API 26 sigue pendiente. La revisión funcional del usuario, el formulario real, la autenticación, el mapa y las entregas de fases 3 y 4 también permanecen pendientes. **0.3.0 y 0.4.0 siguen en Unreleased**; las herramientas oficiales no los exponen.
 
-## Consulta local 0.4.0 — Unreleased
+## Preparación de consulta local 0.4.0 — antes del cierre
 
-Trabajo retomado el 3 de octubre de 2026 en la rama feature/consulta-reportes-0.4.0, desde el avance local conservado 474d07c e incorporando main c9f9058. La entrega oficial continúa en 0.2.1; este incremento usa versión 0.4.0 y código Android 7, sin etiqueta ni release. El botón de herramientas conserva exclusivamente recepción y validación de la línea 0.2. La consulta de 0.4 no tiene pantalla.
+Estado previo al cierre de esta versión. Trabajo retomado el 3 de octubre de 2026 en la rama feature/consulta-reportes-0.4.0, desde el avance local conservado 474d07c e incorporando main c9f9058. La entrega oficial continúa en 0.2.1; este incremento usa versión 0.4.0 y código Android 7, sin etiqueta ni release. El botón de herramientas conserva exclusivamente recepción y validación de la línea 0.2. La consulta de 0.4 no tiene pantalla.
 
 Antes de corregir se ejecutó `:app:testDebugUnitTest`: **24 pruebas, 2 fallos**. Una consulta cancelada que después lanzaba IOException publicaba Error; el guardado cancelado podía publicar Saved, Invalid o Error según el retorno del repositorio. Se añadieron comprobaciones ensureActive antes de publicar esos estados. El avance anterior también corregía el estado Saving que quedaba pendiente cuando se liberaba el modelo antes de iniciar su coroutine; conserva su regresión. Las evidencias del fallo previo están fuera de Git en `.gradle/validacion/cancelacion-red-xml` y `0.4.0-cancelacion-red.log`.
 
@@ -236,3 +236,22 @@ APK debug experimental local: 0.4.0 / código 7, 11761878 bytes, SHA-256 18607b2
 La guía FASE_4 y el plan conservan la estructura del PDF: la consulta por folio prepara 4.4, pero no completa reportes propios por cuenta, historial o cambios administrativos de estado. Autenticación real, mapa, GPS, fotos, servidor y notificaciones siguen pendientes. **0.3.0 y 0.4.0 permanecen en Unreleased**.
 
 La publicación oficial v0.2.1 se verificó el 3 de octubre de 2026 a las 18:27:40 UTC: release pública sin prerelease, etiqueta sobre c9f9058699d761f4041f9cd67ab0759b40e5e1a8 y APK adjunto con digest SHA-256 idéntico al artefacto comprobado. La etiqueta anterior v0.2.0 conserva aa29990847f10e80421fca15efe59a09b25838be. Solo se publican las etiquetas v0.2.0 y v0.2.1; las de 0.3 y 0.4 no se crean.
+
+
+## Cierre de la entrega 0.4.0
+
+El 3 de octubre de 2026 el usuario solicitó terminar la versión 0.4.0 que estaba en desarrollo. Se conserva ese número, código Android **7**, y se prepara la integración mediante [PR #7](https://github.com/Spidey123134/citizensecurity/pull/7) y la [Release v0.4.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0). **0.3.0 permanece Unreleased**, sin etiqueta ni release propia; las etiquetas previas conservan su historial.
+
+El código y el APK corresponden a la comprobación completa de 0.4.0 registrada arriba: **24 JVM de app + 32 de dominio + 10 instrumentadas SQLite = 66 aprobadas**, sin errores ni fallos. El cierre posterior modifica documentación; no se presenta como otra ejecución de esas suites. Se conserva lint de app debug/release con 0 errores y 13 advertencias visuales previas, lint de datos sin incidencias y ambas compilaciones aprobadas.
+
+Se comprobó la firma APK v2 y se instaló el APK **0.4.0 / código 7** sobre la aplicación existente en el emulador API 37 con `adb install -r`, sin desinstalar ni borrar sus datos. La comprobación visual aprobó el botón de desarrollador, recepción, validación, punto válido, par incompleto y punto fuera de rango; giro a horizontal y regreso conservando resultado y fecha; regreso al inicio y entrada mediante **admin / admin**, con el campo de contraseña borrado al entrar. La evidencia está fuera de Git en `.gradle/validacion/release04-ui.json`, `release04-inicio.png` y `release04-ubicaciones.png`. El APK no incorpora una pantalla para la consulta nueva.
+
+| Artefacto de pruebas | Valor |
+| --- | --- |
+| Archivo | `citizensecurity-0.4.0-debug.apk` |
+| Versión / código | `0.4.0` / `7` |
+| Tamaño | `11761878` bytes |
+| SHA-256 | `18607b274b7fa1ea72fb56422818b04563d5aa4aa0c8aa342d01bf261e67851e` |
+| Firma | APK v2, debug para pruebas académicas |
+
+El APK release sin firma se conserva como comprobación de compilación y no se distribuye. La consulta se demuestra por Gradle en una base temporal y queda preparada en el contrato para que el compañero conecte su pantalla. Pantalla y rotación del flujo de consulta, autenticación real, mapa, teléfono físico, API 26 y aceptación funcional del usuario siguen pendientes. La prueba visual de las herramientas existentes no completa esos pendientes.

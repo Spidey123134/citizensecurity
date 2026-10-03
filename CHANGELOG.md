@@ -2,9 +2,9 @@
 
 Registro de cambios del proyecto. Las fechas usan la hora de México. Los cambios publicados en una rama quedan disponibles para revisión; la integración en `main` se registra cuando ocurre.
 
-## 0.4.0 — consulta local, Unreleased
+## 0.4.0 — Consulta local por folio — 2026-10-03
 
-Incremento autorizado el 3 de octubre de 2026, conservado desde el avance `474d07c` y actualizado con la base oficial `0.2.1`. Usa versión Android `0.4.0`, código **7**, en una rama separada. No tiene etiqueta ni release; la entrega oficial continúa siendo `v0.2.1` y fase 3 / `0.3.0` sigue en **Unreleased**.
+Entrega de consulta local que incorpora la base oficial `0.2.1` y conserva el trabajo anterior. Versión Android **0.4.0**, código **7**, integrada mediante [PR #7](https://github.com/Spidey123134/citizensecurity/pull/7). [Release v0.4.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0). La fase 3 / **0.3.0 sigue en Unreleased**, sin etiqueta ni release propia.
 
 ### Añadido
 
@@ -24,9 +24,10 @@ Incremento autorizado el 3 de octubre de 2026, conservado desde el avance `474d0
 - Antes de corregir, 2 de las 24 pruebas JVM de app fallaron con las regresiones de cancelación.
 - Después de corregir: 24 JVM de app aprobadas (8 de guardado, 8 de consulta y 8 de herramientas), 32 unitarias de dominio ejecutadas de nuevo y 10 instrumentadas SQLite aprobadas en Android 17 / API 37, sin fallos ni errores.
 - Demostraciones `consultarReporte` y `guardarReporte` con JSON correctos; lint debug y release sin errores, datos sin incidencias y las 13 advertencias visuales previas del compañero.
-- APK debug y APK release sin firma compilados. [Validación](docs/VALIDACION.md) registra la evidencia de esta rama; no se instaló su APK sobre la aplicación oficial del usuario.
+- Prueba visual del APK 0.4.0 en API 37: botón de desarrollador, acceso admin / admin, recepción, validación, tres casos de coordenadas y rotación conservando resultado y fecha aprobados.
+- APK debug firmado para pruebas y APK release sin firma compilados. [Validación](docs/VALIDACION.md) registra la evidencia y el SHA-256 del artefacto. Las notas de versión y las guías distinguen la función técnica de la futura pantalla de consulta.
 
-No se añade una interfaz de consulta. El botón de desarrollador y `admin / admin` conservan exclusivamente las funciones oficiales de fases 1 y 2. La consulta local no identifica usuarios ni completa el requisito de reportes propios o seguimiento administrativo del PDF. La integración en `main`, la publicación, el flujo visual, la rotación real y la aceptación funcional del usuario siguen pendientes.
+La función de consulta y su demostración quedan disponibles desde `main`. La pantalla de consulta sigue con el compañero. El botón de desarrollador y `admin / admin` conservan recepción y validación de fases 1 y 2. La consulta local no identifica usuarios ni completa reportes propios o seguimiento administrativo del PDF. Flujo visual de consulta, rotación real, teléfono físico, API 26 y aceptación funcional siguen pendientes. El cierre de 0.4.0 no publica la entrega separada 0.3.0.
 
 ## 0.2.1 — Herramientas de funciones publicadas — 2026-10-03
 
