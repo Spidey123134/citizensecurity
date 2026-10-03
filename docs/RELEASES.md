@@ -2,15 +2,23 @@
 
 Cada versión del proyecto tendrá notas en español en GitHub Releases con los cambios, comprobaciones ejecutadas y límites de la entrega. La fuente de cambios es [Changelog](../CHANGELOG.md); el estado funcional se consulta en [Fases](FASES.md).
 
-## 0.2.1 — siguiente mantenimiento en preparación
+## Entrega oficial 0.2.1
 
-La aplicación está preparada con `versionName = "0.2.1"` y `versionCode = 4`, sobre la base actualizada con `activity_splash.xml` del compañero (`e18e636`). Compilación, lint y 9 pruebas instrumentadas aprobaron; las 32 unitarias conservaron su resultado anterior mediante `UP-TO-DATE`. [PR #4](https://github.com/Spidey123134/citizensecurity/pull/4) registra la integración del mantenimiento con `main`. No se ha creado una etiqueta ni publicado una release `v0.2.1`. La última publicada sigue siendo `v0.2.0`.
+| Identificador | Valor |
+| --- | --- |
+| Versión visible | `0.2.1` |
+| Número de actualización Android | `6` |
+| Etiqueta | `v0.2.1` |
+| Publicación | [Release v0.2.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.2.1) |
+| Base | `main` actualizado, con splash y login visual del compañero |
 
-El mantenimiento reúne la corrección de cancelación durante una espera y la restauración de la aplicación compartida y las reglas de respaldo del manifiesto, conservando la base visual del compañero. Se mantiene el código adelantado de fase 3; su entrega `0.3.0` sigue en `Unreleased`.
+**Desarrollador · funciones 0.2** y **admin / admin** permiten comprobar las funciones publicadas de fases 1 y 2, tanto en debug como en release. El login es una demostración local sin cuentas, sesiones ni privilegios reales. [Funciones publicadas](FUNCIONES_PUBLICADAS.md) describe los controles.
 
-También prepara el [puente para la interfaz de reportes](ACOPLAR_INTERFAZ.md), con modelo conservado por la actividad y estados de guardado, errores por campo y folio. La composición reutiliza el repositorio compartido; el formulario y la autenticación continúan pendientes del compañero. Esta conexión se incorpora al mantenimiento en preparación, sin publicar otra versión.
+Se conservan las correcciones y el puente técnico de los PR #4 y #5. **0.3.0 y 0.4.0 siguen en Unreleased**, sin etiquetas ni releases; 0.4 continúa en su rama separada. Las herramientas oficiales no ofrecen guardado ni consulta de esas fases.
 
-`0.3.1` fue un identificador provisional de pruebas sin publicar, corregido a `0.2.1` por indicación del usuario. Se conserva el número interno Android `versionCode = 4`, independiente del nombre visible; cambiar la numeración no borra el desarrollo ni su evidencia anterior. El APK está verificado localmente, con los resultados y el SHA-256 en [Validación](VALIDACION.md). Las 13 advertencias visuales de lint se mantienen para el compañero; las pantallas no tuvieron comprobación manual y la autenticación sigue pendiente.
+Se aprobaron 14 JVM de app, 9 instrumentadas SQLite en API 37, lint debug/release y ambas compilaciones. Las 32 de dominio conservaron su resultado aprobado mediante `UP-TO-DATE`; quedan 13 advertencias visuales previas. El APK adjunto se identifica como **debug**, firmado para pruebas, con SHA-256 en [Validación](VALIDACION.md). El APK release sin firma se compiló como comprobación y no se distribuye.
+
+`0.3.1` fue un identificador provisional sin publicar. El código Android se elevó a 6 para actualizar compilaciones locales recientes sin borrar datos. `v0.2.0` conserva su commit original.
 
 ## Historial del identificador provisional 0.3.1
 

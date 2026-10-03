@@ -26,6 +26,10 @@
             android:name=".MainActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".release.ReleasedToolsActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>

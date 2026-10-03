@@ -16,11 +16,13 @@ La guía [Inicio del equipo](INICIO_EQUIPO.md) explica cómo clonar la base y co
 
 ## Incremento actual y ubicación con mapa
 
-La última release publicada es `v0.2.0`, con la [validación del reporte](VALIDAR_REPORTE.md). El mantenimiento actual es `0.2.1`, preparado y comprobado con la base actualizada del compañero; [PR #4](https://github.com/Spidey123134/citizensecurity/pull/4) registra su integración con `main`. Usa número interno Android `4`, independiente del nombre visible. Reúne correcciones y la base visual completa del compañero, conservando la aplicación compartida y la exclusión de respaldos. `0.3.1` fue un identificador provisional sin etiqueta ni release. La release de mantenimiento continúa sin publicar.
+La entrega oficial de la línea `0.2` es **0.2.1**, código Android **6**, sobre `main` actualizado. Conserva la interfaz del compañero, las correcciones y el puente técnico de los PR #4 y #5. [Release v0.2.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.2.1).
 
-La [fase 3](FASE_3.md) y `0.3.0` siguen en `Unreleased`: existe trabajo adelantado, pero todavía no se llega a su entrega. El código y la evidencia técnica anterior se conservan. Preparar e integrar el mantenimiento no publica una release ni acepta funcionalmente esta fase.
+El usuario autorizó el botón **Desarrollador · funciones 0.2**, la pantalla sencilla de herramientas y el acceso local **admin / admin** para probar funciones publicadas. Es una excepción expresa al reparto inicial: el compañero conserva el diseño, la navegación general, el formulario y la futura autenticación real. La demostración no crea cuentas, sesiones ni permisos administrativos.
 
-La comprobación actual pasó compilación, lint y 9 pruebas instrumentadas. Las 13 advertencias visuales de `app` quedan para el trabajo del compañero; no se cambió su interfaz ni se afirma una comprobación manual de las pantallas o del login. Los resultados están en [Validación](VALIDACION.md).
+**Fase 3 / 0.3.0 y el avance 0.4.0 siguen en Unreleased**. Las herramientas oficiales no presentan botones de guardado ni consulta. 0.4 continúa en su rama después de comprobar main; su integración y publicación siguen pendientes.
+
+Se aprobaron 14 JVM de app, 9 instrumentadas SQLite, lint y compilación debug/release. Las 13 advertencias visuales previas se conservan. [Validación](VALIDACION.md) registra las comprobaciones y sus límites.
 
 Google Maps quedó acordado como próxima línea de trabajo. Nuestra parte recibe, valida y conserva `latitude` y `longitude` en `ReportLocation` y SQLite. El compañero desarrolla la vista del mapa, el pin y la confirmación de ubicación. Ambos coordinan la conexión con el contrato y la configuración compartida. El SDK, el proyecto de Google, la clave y la facturación siguen pendientes; no hay un mapa real en esta entrega ni captura GPS.
 

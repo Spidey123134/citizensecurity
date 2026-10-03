@@ -1,0 +1,37 @@
+<resources>
+    <item name="released_tools_entry" type="id" />
+    <string name="released_tools_entry">Desarrollador · funciones 0.2</string>
+    <string name="demo_login_hint">Acceso de demostración: admin / admin</string>
+    <string name="demo_login_error">Usa admin / admin para el acceso de demostración.</string>
+    <string name="tools_title">Funciones publicadas · 0.2</string>
+    <string name="tools_explanation">Revisa los datos del reporte y valida su ubicación. Esta pantalla corresponde a las funciones publicadas de la versión 0.2.</string>
+    <string name="tools_type_label">Categoría</string>
+    <string name="tools_priority_label">Prioridad</string>
+    <string name="tools_description_label">Descripción</string>
+    <string name="tools_date_label">Fecha del incidente (UTC)</string>
+    <string name="tools_reference_label">Referencia escrita</string>
+    <string name="tools_latitude_label">Latitud (opcional)</string>
+    <string name="tools_longitude_label">Longitud (opcional)</string>
+    <string name="tools_coordinates_label">Coordenadas</string>
+    <string name="tools_example_description">Hay una luminaria dañada frente al parque.</string>
+    <string name="tools_example_reference">Frente al parque central</string>
+    <string name="tools_receive">Ver datos recibidos</string>
+    <string name="tools_validate">Validar reporte</string>
+    <string name="tools_locations">Probar ubicaciones</string>
+    <string name="tools_back">Volver al inicio</string>
+    <string name="tools_ready">Modifica los datos y pulsa una función para comprobar el resultado.</string>
+    <string name="tools_received">Datos recibidos.</string>
+    <string name="tools_result_summary">%1$s\n\n%2$s</string>
+    <string name="tools_valid">Los datos cumplen la validación.</string>
+    <string name="tools_approved">Aprobado</string>
+    <string name="tools_location_valid">Punto válido</string>
+    <string name="tools_location_incomplete">Par incompleto</string>
+    <string name="tools_location_outside">Punto fuera de rango</string>
+    <string name="tools_report">Categoría: %1$s\nPrioridad: %2$s\nFecha: %3$s\nDescripción: %4$s\nReferencia: %5$s\nCoordenadas: %6$s, %7$s</string>
+    <string-array name="tools_types">
+        <item>Emergencia</item><item>Robo</item><item>Accidente</item><item>Incendio</item><item>Riesgo</item><item>Otro</item>
+    </string-array>
+    <string-array name="tools_priorities">
+        <item>Baja</item><item>Media</item><item>Alta</item>
+    </string-array>
+</resources>
