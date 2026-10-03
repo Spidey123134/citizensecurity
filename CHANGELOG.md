@@ -2,6 +2,32 @@
 
 Registro de cambios del proyecto. Las fechas usan la hora de México. Los cambios publicados en una rama quedan disponibles para revisión; la integración en `main` se registra cuando ocurre.
 
+## 0.4.0 — consulta local, Unreleased
+
+Incremento autorizado el 3 de octubre de 2026, conservado desde el avance `474d07c` y actualizado con la base oficial `0.2.1`. Usa versión Android `0.4.0`, código **7**, en una rama separada. No tiene etiqueta ni release; la entrega oficial continúa siendo `v0.2.1` y fase 3 / `0.3.0` sigue en **Unreleased**.
+
+### Añadido
+
+- Consulta local por folio mediante `ReportQueryViewModel` y estados de solo lectura: `Idle`, `Loading`, `Found`, `NotFound`, `InvalidFolio` y `Error`. Reutiliza `ReportRepository.findById`, valida el formato UUID y evita consultas simultáneas.
+- Fábrica con el repositorio compartido y propiedad `MainActivity.reportQueryViewModel`, para conectar después los controles del compañero sin acceder a SQLite desde la pantalla.
+- Demostración `:core:data:consultarReporte`: comprueba una base vacía, recupera dos reportes completos después de reabrir SQLite, conserva el estado inicial y el orden del listado, y devuelve resultado inexistente para un folio ausente sin modificar registros. Exporta JSON de una base temporal que se elimina al terminar.
+- [Plan del proyecto](docs/PLAN_DEL_PROYECTO.md) basado en las secciones reales del PDF y [guía de fase 4](docs/FASE_4.md), con el alcance local y los requisitos pendientes. El contrato y el esquema productivo de SQLite se conservan.
+
+### Corregido
+
+- El guardado podía permanecer en `Saving` al liberar el modelo antes de iniciar su coroutine. La finalización cancelada restaura `Idle` sin llamar al repositorio; la regresión se conserva.
+- El modelo de guardado podía publicar `Saved`, errores por campo o un error de almacenamiento después de cancelarse si el repositorio devolvía un resultado o lanzaba una excepción tardía. Comprueba la cancelación antes de publicar esos estados.
+- El modelo de consulta podía presentar un error de lectura después de cancelarse. Comprueba la cancelación antes de publicar `Error` y conserva el retorno a `Idle` de la operación cancelada.
+
+### Comprobado
+
+- Antes de corregir, 2 de las 24 pruebas JVM de app fallaron con las regresiones de cancelación.
+- Después de corregir: 24 JVM de app aprobadas (8 de guardado, 8 de consulta y 8 de herramientas), 32 unitarias de dominio ejecutadas de nuevo y 10 instrumentadas SQLite aprobadas en Android 17 / API 37, sin fallos ni errores.
+- Demostraciones `consultarReporte` y `guardarReporte` con JSON correctos; lint debug y release sin errores, datos sin incidencias y las 13 advertencias visuales previas del compañero.
+- APK debug y APK release sin firma compilados. [Validación](docs/VALIDACION.md) registra la evidencia de esta rama; no se instaló su APK sobre la aplicación oficial del usuario.
+
+No se añade una interfaz de consulta. El botón de desarrollador y `admin / admin` conservan exclusivamente las funciones oficiales de fases 1 y 2. La consulta local no identifica usuarios ni completa el requisito de reportes propios o seguimiento administrativo del PDF. La integración en `main`, la publicación, el flujo visual, la rotación real y la aceptación funcional del usuario siguen pendientes.
+
 ## 0.2.1 — Herramientas de funciones publicadas — 2026-10-03
 
 Mantenimiento oficial de la línea `0.2`, sobre `main` actualizado. [Release v0.2.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.2.1). Se conserva `v0.2.0`; fase 3 / `0.3.0` y el avance `0.4.0` siguen en **Unreleased**.

@@ -11,6 +11,7 @@ import com.example.citizensecurity.domain.Report
 import com.example.citizensecurity.domain.ReportField
 import com.example.citizensecurity.domain.ReportRepository
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,16 +40,23 @@ class ReportViewModel(private val repository: ReportRepository) : ViewModel() {
 
         scope.launch {
             try {
-                mutableState.value = ReportSaveState.Saved(repository.create(draft))
+                val report = repository.create(draft)
+                ensureActive()
+                mutableState.value = ReportSaveState.Saved(report)
             } catch (cancelled: CancellationException) {
-                mutableState.value = ReportSaveState.Idle
                 throw cancelled
             } catch (invalid: InvalidReportException) {
+                ensureActive()
                 mutableState.value = ReportSaveState.Invalid(invalid.errors.errors.toMap())
             } catch (_: Exception) {
+                ensureActive()
                 mutableState.value = ReportSaveState.Error(
                     "No se pudo guardar el reporte. Intenta nuevamente.",
                 )
+            }
+        }.invokeOnCompletion { cause ->
+            if (cause is CancellationException) {
+                mutableState.compareAndSet(ReportSaveState.Saving, ReportSaveState.Idle)
             }
         }
     }

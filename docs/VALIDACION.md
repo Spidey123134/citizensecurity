@@ -214,3 +214,25 @@ Prueba visual en el emulador: entrada por el botón, recepción de datos, valida
 Artefacto para pruebas: `citizensecurity-0.2.1-debug.apk`, versión `0.2.1`, código Android **6**, 12243909 bytes y SHA-256 `c0a666bcc975ec6604aad982388475b675d1527f806e98cab1f6fcbaf40b2bfc`. Firma APK v2 comprobada mediante apksigner. El APK release sin firma se compiló y no se distribuye. La numeración interna permite actualizar el APK experimental local con código 5 conservando datos.
 
 La verificación en teléfono físico y API 26 sigue pendiente. La revisión funcional del usuario, el formulario real, la autenticación, el mapa y las entregas de fases 3 y 4 también permanecen pendientes. **0.3.0 y 0.4.0 siguen en Unreleased**; las herramientas oficiales no los exponen.
+
+## Consulta local 0.4.0 — Unreleased
+
+Trabajo retomado el 3 de octubre de 2026 en la rama feature/consulta-reportes-0.4.0, desde el avance local conservado 474d07c e incorporando main c9f9058. La entrega oficial continúa en 0.2.1; este incremento usa versión 0.4.0 y código Android 7, sin etiqueta ni release. El botón de herramientas conserva exclusivamente recepción y validación de la línea 0.2. La consulta de 0.4 no tiene pantalla.
+
+Antes de corregir se ejecutó `:app:testDebugUnitTest`: **24 pruebas, 2 fallos**. Una consulta cancelada que después lanzaba IOException publicaba Error; el guardado cancelado podía publicar Saved, Invalid o Error según el retorno del repositorio. Se añadieron comprobaciones ensureActive antes de publicar esos estados. El avance anterior también corregía el estado Saving que quedaba pendiente cuando se liberaba el modelo antes de iniciar su coroutine; conserva su regresión. Las evidencias del fallo previo están fuera de Git en `.gradle/validacion/cancelacion-red-xml` y `0.4.0-cancelacion-red.log`.
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :core:domain:test :core:data:consultarReporte :core:data:guardarReporte :core:data:lintDebug :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease --console=plain
+```
+
+Resultado posterior: **BUILD SUCCESSFUL en 17 segundos**. Se ejecutaron y aprobaron 24 JVM de app (8 de guardado, 8 de consulta y 8 de herramientas oficiales), 32 unitarias de dominio y 10 instrumentadas SQLite en Android 17 / API 37; sin fallos ni errores. Al utilizar un checkout nuevo, las 32 de dominio sí se ejecutaron nuevamente. Lint debug/release mantiene 0 errores y 13 advertencias visuales previas; lint de datos no presenta incidencias. Ambas compilaciones aprobaron. Las pruebas de la consulta usan repositorio controlado para estados y cancelación; la instrumentación verifica SQLite real por separado.
+
+La prueba SQLite de consulta comprobó base vacía, dos reportes con coordenadas, cierre y reapertura, recuperación exacta, estado REPORTED, orden estable ante fechas iguales, UUID inexistente y entrada literal de SQL sin interpretar. Hubo 2 registros antes y después de las lecturas. La tarea consultarReporte exportó consulta.json con generatedAt 2026-10-03T18:24:35.017038Z, temporaryDatabase=true, reopened=true y clock=fixed; los dos folios fueron 8b61f59d-2045-499b-beec-ec7d57d762bf y dc21a494-0d56-4aa2-b8bc-e5b3de122034. guardarReporte exportó también sus JSON. Las bases de prueba son temporales y se eliminan al terminar; no se accede a la base productiva.
+
+El primer intento del avance previo se bloqueó por una prueba JUnit cuyo retorno inferido era Int (resultado de Log.i); se declaró Unit explícitamente. La ejecución de 10 pruebas posterior aprobó esa corrección y el resto de la suite.
+
+APK debug experimental local: 0.4.0 / código 7, 11761878 bytes, SHA-256 18607b274b7fa1ea72fb56422818b04563d5aa4aa0c8aa342d01bf261e67851e; firma APK v2 comprobada. El APK release sin firma se compiló. No se distribuyen ni sustituyen el APK oficial instalado en el emulador. No se afirma prueba visual de consulta, de una pantalla de reportes ni rotación real de ese flujo. Teléfono físico, API 26 y aceptación funcional permanecen pendientes.
+
+La guía FASE_4 y el plan conservan la estructura del PDF: la consulta por folio prepara 4.4, pero no completa reportes propios por cuenta, historial o cambios administrativos de estado. Autenticación real, mapa, GPS, fotos, servidor y notificaciones siguen pendientes. **0.3.0 y 0.4.0 permanecen en Unreleased**.
+
+La publicación oficial v0.2.1 se verificó el 3 de octubre de 2026 a las 18:27:40 UTC: release pública sin prerelease, etiqueta sobre c9f9058699d761f4041f9cd67ab0759b40e5e1a8 y APK adjunto con digest SHA-256 idéntico al artefacto comprobado. La etiqueta anterior v0.2.0 conserva aa29990847f10e80421fca15efe59a09b25838be. Solo se publican las etiquetas v0.2.0 y v0.2.1; las de 0.3 y 0.4 no se crean.

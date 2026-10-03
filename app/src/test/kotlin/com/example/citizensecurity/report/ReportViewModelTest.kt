@@ -149,6 +149,26 @@ class ReportViewModelTest {
     }
 
     @Test
+    fun liberarElStoreAntesDeIniciarNoDejaUnGuardadoPendiente() = runTest(mainDispatcher) {
+        val repository = FakeRepository { savedReport(it) }
+        val store = newStore()
+        val model = ViewModelProvider(store, ReportViewModel.factory(repository))[ReportViewModel::class.java]
+
+        model.save(draft())
+        assertEquals(ReportSaveState.Saving, model.state.value)
+        assertTrue(repository.requests.isEmpty())
+        store.clear()
+        runCurrent()
+
+        assertEquals(ReportSaveState.Idle, model.state.value)
+        assertTrue("La solicitud cancelada antes de iniciar no debe llegar al repositorio.", repository.requests.isEmpty())
+        model.save(draft())
+        runCurrent()
+        assertEquals(ReportSaveState.Idle, model.state.value)
+        assertTrue(repository.requests.isEmpty())
+    }
+
+    @Test
     fun liberarElStoreCancelaElGuardadoSinCancelarElRepositorioCompartido() = runTest(mainDispatcher) {
         val completion = CompletableDeferred<Report>()
         val repository = FakeRepository { completion.await() }
@@ -191,6 +211,35 @@ class ReportViewModelTest {
         assertSame(first, restored)
         assertEquals(ReportSaveState.Saved(savedReport(draft())), restored.state.value)
         assertEquals(listOf(draft()), repository.requests)
+    }
+
+    @Test
+    fun resultadoDelRepositorioTrasCancelarNoSePublicaComoGuardadoOError() = runTest(mainDispatcher) {
+        val errors = ValidationErrors(mapOf(ReportField.DESCRIPTION to "La descripción es demasiado corta."))
+        val cases = listOf<Pair<String, suspend (NewReport) -> Report>>(
+            "Fallo de almacenamiento" to { throw IOException("El archivo no está disponible.") },
+            "Borrador inválido" to { throw InvalidReportException(errors) },
+            "Reporte devuelto" to { savedReport(it) },
+        )
+        val actualStates = mutableListOf<Pair<String, ReportSaveState>>()
+        cases.forEach { (label, outcome) ->
+            val repository = FakeRepository { requested ->
+                currentCoroutineContext()[Job]!!.cancel()
+                outcome(requested)
+            }
+            val model = newModel(repository)
+
+            model.save(draft())
+            runCurrent()
+
+            assertTrue("$label debe mantener cancelado el trabajo.", repository.jobs.single()!!.isCancelled)
+            assertEquals(listOf(draft()), repository.requests)
+            actualStates.add(label to model.state.value)
+        }
+        assertEquals(
+            cases.map { (label, _) -> label to ReportSaveState.Idle },
+            actualStates,
+        )
     }
 
     private fun newModel(repository: ReportRepository): ReportViewModel =

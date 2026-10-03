@@ -20,6 +20,18 @@ Se aprobaron 14 JVM de app, 9 instrumentadas SQLite en API 37, lint debug/releas
 
 `0.3.1` fue un identificador provisional sin publicar. El código Android se elevó a 6 para actualizar compilaciones locales recientes sin borrar datos. `v0.2.0` conserva su commit original.
 
+## Desarrollo 0.4.0 — consulta local, Unreleased
+
+El incremento autorizado de consulta se conserva desde `474d07c` y continúa en una rama separada, actualizada con la base oficial `0.2.1`. Usa `versionName = "0.4.0"` y `versionCode = 7`, superior al código 6 de la entrega oficial. No tiene etiqueta, release ni APK publicado; `v0.2.1` sigue siendo la entrega oficial y fase 3 / `0.3.0` permanece en `Unreleased`.
+
+**Añadido:** `ReportQueryViewModel`, fábrica compartida y propiedad `MainActivity.reportQueryViewModel`; consulta UUID con estados de encontrado, inexistente, formato inválido o fallo de lectura. La tarea `:core:data:consultarReporte` comprueba la reapertura de dos reportes, su estado inicial, el orden y la ausencia de cambios al consultar, y exporta `consulta.json` en una base temporal. El [plan del proyecto](PLAN_DEL_PROYECTO.md) relaciona la [fase 4](FASE_4.md) con el apartado 4.4 del PDF y conserva sus requisitos pendientes.
+
+**Corregido:** los modelos de guardado y consulta comprueban la cancelación antes de publicar resultados o errores tardíos del repositorio. Las dos regresiones JVM fallaron antes de corregir y aprobaron después.
+
+**Comprobado:** 24 JVM de app (8 de guardado, 8 de consulta y 8 de herramientas), 32 unitarias de dominio ejecutadas de nuevo y 10 instrumentadas SQLite en API 37 aprobadas, sin fallos ni errores. Los JSON de consulta y guardado fueron correctos; lint debug/release terminó sin errores y se compilaron el APK debug y el APK release sin firma. Datos sin incidencias y 13 advertencias visuales previas. [Validación](VALIDACION.md) conserva los comandos y artefactos reales de la comprobación.
+
+La rama no añade una pantalla de consulta y conserva el esquema SQLite. El botón de desarrollador y `admin / admin` siguen limitados a funciones oficiales de fases 1 y 2. Las cuentas, el aislamiento de reportes propios y el seguimiento administrativo siguen pendientes. No se instaló el APK 0.4 sobre la aplicación oficial del usuario; flujo visual, rotación real, integración en `main`, publicación y aceptación funcional permanecen pendientes.
+
 ## Historial del identificador provisional 0.3.1
 
 Durante la auditoría se usó `versionName = "0.3.1"` y `versionCode = 4`, sin etiqueta ni release. Se conservan los resultados de esas pruebas como historial. El siguiente mantenimiento es `0.2.1`; este identificador no señala una próxima entrega.
@@ -32,7 +44,7 @@ La base se sincronizó con `7e90109`, que añadió splash y login visual del com
 
 ## 0.3.0 — fase 3 adelantada, Unreleased
 
-Trabajo adelantado, con código existente y pruebas locales del 2 de octubre de 2026. La entrega de fase 3 sigue pendiente; `0.3.0` permanece en `Unreleased`, sin etiqueta ni release. Su APK de desarrollo usó `versionName = "0.3.0"` y `versionCode = 3`; el mantenimiento actual se prepara como `0.2.1`. Las pruebas técnicas no sustituyen la entrega ni la aceptación funcional de la fase.
+Trabajo adelantado, con código existente y pruebas locales del 2 de octubre de 2026. La entrega de fase 3 sigue pendiente; `0.3.0` permanece en `Unreleased`, sin etiqueta ni release. Su APK de desarrollo usó `versionName = "0.3.0"` y `versionCode = 3`; la entrega oficial posterior es `0.2.1`, código 6, y la rama de consulta usa `0.4.0`, código 7. Las pruebas técnicas no sustituyen la entrega ni la aceptación funcional de la fase.
 
 **Añadido:** la tarea `:core:data:guardarReporte` reutiliza la instrumentación Android para mostrar un reporte guardado con folio, los datos recibidos y las coordenadas recuperadas después de reabrir. También comprueba el rechazo de un borrador inválido sin añadir registros. Exporta `reporte.json` y `rechazo.json` por dispositivo, usando bases temporales independientes que se eliminan al terminar.
 
@@ -70,13 +82,13 @@ La aplicación todavía tiene un contenedor visual vacío; los ejemplos de conso
 5. Publica GitHub Release con las notas en español. Adjunta el APK de esa versión si forma parte de la entrega, indicando si es debug o release y su SHA-256.
 6. Comprueba que la etiqueta corresponde al commit integrado, que la release está publicada y que los adjuntos corresponden al artefacto verificado. Registra el enlace y la evidencia de publicación en el changelog y las fases.
 
-Para el incremento actual, la comprobación completa es:
+Para comprobar el avance `0.4.0 — Unreleased` en su rama:
 
 ```powershell
-.\gradlew.bat :app:testDebugUnitTest :core:domain:test :core:domain:validarReporte :core:domain:validarUbicaciones :core:data:guardarReporte :core:data:lintDebug :app:lintDebug :app:assembleDebug --console=plain
+.\gradlew.bat :app:testDebugUnitTest :core:domain:test :core:data:consultarReporte :core:data:guardarReporte :core:data:lintDebug :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease --console=plain
 ```
 
-La tarea `guardarReporte` requiere un emulador o teléfono y depende de `connectedDebugAndroidTest`; no hace falta ejecutar de nuevo esa instrumentación en un comando separado. Los ejemplos de validación muestran resultados y pueden terminar normalmente aun cuando una entrada sea inválida; comprueba los mensajes y registra los casos usados. Las pruebas automáticas y los informes de lint proporcionan las comprobaciones de regresión.
+Las tareas `consultarReporte` y `guardarReporte` requieren un emulador o teléfono y comparten la dependencia `connectedDebugAndroidTest`; en la misma ejecución no hace falta repetir esa instrumentación en un comando separado. Exportan evidencia fuera de Git y no consultan la base productiva del usuario. Los ejemplos de validación muestran resultados y pueden terminar normalmente aun cuando una entrada sea inválida; comprueba los mensajes y registra los casos usados. Las pruebas automáticas y los informes de lint proporcionan las comprobaciones de regresión.
 
 Las claves, contraseñas, configuración personal, bases de datos y respaldos permanecen fuera del repositorio y de los adjuntos. Las notas y los mensajes de publicación describen el producto, sus cambios y cómo revisarlos, sin nombres de asistentes ni datos personales.
 
