@@ -26,7 +26,7 @@ Registro de cambios del proyecto. Las fechas usan la hora de México. Los cambio
 - Lint y generación del APK correctos; las dos advertencias existentes de la interfaz inicial están documentadas en [Validación](docs/VALIDACION.md).
 - El artefacto `domain.jar` contiene solo el código productivo del dominio; el ejemplo permanece fuera del APK.
 
-Cambios disponibles en [PR #1](https://github.com/Spidey123134/citizensecurity/pull/1), rama `feature/recibir-reporte`. La revisión del usuario sobre este paso sigue pendiente.
+Entrega integrada en `main` el 2 de octubre de 2026 mediante [PR #1](https://github.com/Spidey123134/citizensecurity/pull/1), con el ejemplo de recepción, changelog, fases y guía del equipo. El commit de integración es `328977d`. La revisión funcional del usuario sobre este paso sigue pendiente.
 
 ## 2026-10-02 — Base inicial 0.1.0
 
