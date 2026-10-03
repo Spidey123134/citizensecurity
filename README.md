@@ -24,7 +24,9 @@ Para revisar la función por pasos, empieza con [Recibir los datos del reporte](
 
 El incremento **0.2.0** permite [validar el reporte y su ubicación](docs/VALIDAR_REPORTE.md). Se puede comprobar un punto válido, un par de coordenadas incompleto y un punto fuera de rango. Esta es nuestra parte inicial para conectar después la selección de un punto en Google Maps.
 
-El mantenimiento actual es **0.2.1**, con número interno Android `4`, preparado y comprobado sobre la base actualizada del compañero. [PR #4](https://github.com/Spidey123134/citizensecurity/pull/4) registra su integración con `main`. Corrige el guardado de una operación cancelada mientras esperaba entrar al repositorio y conserva los cambios visuales del compañero. Compilación, lint y las 9 pruebas instrumentadas aprobaron. Todavía no se publicó una release `0.2.1`; la última publicada continúa siendo `v0.2.0`.
+La entrega oficial de la línea `0.2` es **0.2.1**, código Android **6**, sobre `main` actualizado y conservando el splash y el login visual del compañero. Incluye **Desarrollador · funciones 0.2** para probar recepción, validación y coordenadas en debug y release. **admin / admin** abre esas mismas herramientas como demostración local; las cuentas reales y los permisos administrativos siguen pendientes. Consulta [Funciones publicadas](docs/FUNCIONES_PUBLICADAS.md) y [Release v0.2.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.2.1).
+
+Las herramientas oficiales no ofrecen guardado ni consulta de fases Unreleased. El avance **0.4.0 — Unreleased** se conserva y continúa en una rama separada después de comprobar la base oficial.
 
 La [fase 3 de guardado local](docs/FASE_3.md) y la versión **0.3.0 permanecen en Unreleased**: existe código adelantado, pero su entrega sigue pendiente. El comando `:core:data:guardarReporte` ya permite comprobar el folio, la reapertura y el rechazo en bases temporales; esa demostración se conserva como preparación de la fase. `0.3.1` fue un identificador provisional de pruebas, sin etiqueta ni release. La evidencia por versión está en [Validación](docs/VALIDACION.md).
 
@@ -52,7 +54,7 @@ Abre esta carpeta completa en Android Studio. Usa JDK 27 para Gradle y Android S
 .\gradlew.bat :core:data:connectedDebugAndroidTest
 ```
 
-El segundo comando requiere un emulador o teléfono. El estado completo de `0.2.1`, con el splash del compañero, aprobó la comprobación. `app` conserva 13 advertencias visuales de lint y la autenticación sigue pendiente. Los resultados y los límites se registran en [Validación](docs/VALIDACION.md).
+El segundo comando requiere un emulador o teléfono. `0.2.1` aprobó 14 pruebas JVM de app, 9 instrumentadas SQLite y compilación y lint debug/release. Las 32 de dominio conservaron su resultado aprobado mediante `UP-TO-DATE`. Se mantienen 13 advertencias visuales previas del compañero, sin incidencias nuevas en las herramientas. La comprobación visual y los límites están en [Validación](docs/VALIDACION.md).
 
 ## Siguientes incrementos
 

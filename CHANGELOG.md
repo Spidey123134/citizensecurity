@@ -2,37 +2,31 @@
 
 Registro de cambios del proyecto. Las fechas usan la hora de México. Los cambios publicados en una rama quedan disponibles para revisión; la integración en `main` se registra cuando ocurre.
 
-## 0.2.1 — mantenimiento en preparación
+## 0.2.1 — Herramientas de funciones publicadas — 2026-10-03
 
-Preparado y comprobado sobre la base actualizada del compañero el 3 de octubre de 2026. Su integración con `main` se registra mediante [PR #4](https://github.com/Spidey123134/citizensecurity/pull/4). No se ha publicado una etiqueta o release `v0.2.1`; la última release sigue siendo `v0.2.0`.
+Mantenimiento oficial de la línea `0.2`, sobre `main` actualizado. [Release v0.2.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.2.1). Se conserva `v0.2.0`; fase 3 / `0.3.0` y el avance `0.4.0` siguen en **Unreleased**.
 
-### Corregido
+### Añadido
 
-- Una operación cancelada mientras esperaba el monitor podía insertar el reporte al conseguir el turno. El repositorio comprueba la cancelación dentro del monitor, antes de ejecutar SQLite.
-- Restauración de `CitizenSecurityApplication` y de la exclusión de respaldos de la base local, conservando la interfaz del compañero.
+- Botón **Desarrollador · funciones 0.2** junto al login del compañero, disponible en debug y release.
+- Herramientas de recepción de datos, validación del reporte y tres ejemplos de coordenadas: punto válido, par incompleto y fuera de rango. Reutilizan `NewReport` y `ReportValidator`; no guardan ni consultan reportes.
+- Acceso local de demostración **admin / admin** a las mismas herramientas. Se borra la contraseña del campo al entrar; no crea cuentas, sesiones ni privilegios administrativos.
+- Guía [Funciones publicadas](docs/FUNCIONES_PUBLICADAS.md). Versión Android `0.2.1`, código **6**, para actualizar las compilaciones locales recientes conservando sus datos.
 
-### Actualizado
+### Corregido y conservado
 
-- Numeración del próximo mantenimiento: `0.2.1`, con número interno Android `versionCode = 4`, independiente del nombre visible. `0.3.1` fue un identificador provisional sin publicar y no es la próxima versión.
-- Base del compañero sincronizada con splash y login visual de `7e90109` y con `activity_splash.xml` de [su commit `e18e636`](https://github.com/Spidey123134/citizensecurity/commit/e18e636ff60ea19a13e01ddf98c3de67d158e692). El bloqueo por el recurso faltante quedó resuelto; la autenticación sigue pendiente.
-- Fase 3 y `0.3.0` permanecen en `Unreleased`, con código adelantado y entrega pendiente. Ese trabajo se conserva.
+- Cancelación comprobada dentro del monitor antes de ejecutar SQLite, aplicación compartida y exclusión de respaldos restauradas, integradas mediante [PR #4](https://github.com/Spidey123134/citizensecurity/pull/4).
+- Puente `ReportViewModel`, fábrica compartida y `MainActivity.reportViewModel`, integrados mediante [PR #5](https://github.com/Spidey123134/citizensecurity/pull/5). El futuro formulario puede observar progreso, errores por campo y folio sin acceder a SQLite.
+- Splash y XML del compañero conservados. La autenticación real, el formulario de guardado y el mapa siguen pendientes.
 
-### Acoplamiento técnico de la interfaz
+### Comprobado
 
-- `ReportViewModel` conecta el repositorio con estados de solo lectura: `Idle`, `Saving`, `Saved`, `Invalid` y `Error`. Bloquea solicitudes simultáneas, devuelve errores por campo y propaga la cancelación.
-- Fábrica compartida en `CitizenSecurityApplication` y propiedad `MainActivity.reportViewModel` obtenida con `ViewModelProvider`. `MainActivity` usa `ComponentActivity`, conservando el XML y login visual del compañero.
-- Guía [Acoplar interfaz](docs/ACOPLAR_INTERFAZ.md) para conectar el futuro botón, observar el estado con el ciclo de vida y mostrar errores y folio.
-- Puente comprobado con 6 pruebas JVM y 9 instrumentadas de SQLite aprobadas en API 37; las 32 unitarias de dominio conservaron su resultado anterior mediante `UP-TO-DATE`. Lint sin errores y APK generado, con las 13 advertencias visuales existentes de `app`. [Validación](docs/VALIDACION.md) registra los resultados y el artefacto.
-- Todavía no hay formulario de reportes, autenticación, listeners de guardado ni un flujo visual o rotación real comprobados. El mantenimiento `0.2.1` continúa sin etiqueta ni release, y fase 3 / `0.3.0` permanece en `Unreleased`.
+- 14 pruebas JVM de app aprobadas: 6 del puente y 8 de recepción y acceso. Las 32 de dominio conservaron su resultado aprobado mediante `UP-TO-DATE`.
+- 9 pruebas instrumentadas SQLite aprobadas en Android 17 / API 37 y JSON de la demostración existente generado en bases temporales.
+- Lint debug y release sin errores; 13 advertencias visuales previas del compañero. APK debug y APK release sin firma compilados. Firma v2 del APK debug verificada.
+- Prueba visual del botón, recepción, validación, tres ubicaciones y acceso de demostración. Evidencia y límites en [Validación](docs/VALIDACION.md).
 
-### Comprobaciones
-
-Estos resultados corresponden al mantenimiento anterior al nuevo puente; la comprobación adicional del acoplamiento se registra arriba y en [Validación](docs/VALIDACION.md).
-
-- Comprobación completa del estado `0.2.1`, con el splash del compañero: `BUILD SUCCESSFUL`.
-- 9 pruebas instrumentadas ejecutadas y aprobadas en API 37, sin fallos, errores u omisiones. Las 32 unitarias mantuvieron su resultado aprobado anterior mediante `UP-TO-DATE`.
-- Ejemplos y exportación JSON correctos. Lint de datos sin incidencias; `app` con 0 errores y 13 advertencias visuales que se conservan para el trabajo del compañero.
-- APK debug `0.2.1` / código `4` generado y firma v2 verificada. [Validación](docs/VALIDACION.md) registra el SHA-256 y los límites. No se hizo una comprobación manual de las nuevas pantallas ni se implementó autenticación.
+La publicación no sustituye la revisión funcional del usuario. Las herramientas oficiales no exponen funciones de las fases Unreleased.
 
 ## 0.3.1 — identificador provisional de pruebas, sin publicar
 
@@ -63,7 +57,7 @@ Durante la revisión del 3 de octubre de 2026 se usó `0.3.1` para identificar e
 
 ## 0.3.0 — fase 3 adelantada, Unreleased
 
-Trabajo adelantado de guardado local, con pruebas técnicas realizadas el 2 de octubre de 2026. El código y la demostración existen, pero la entrega de fase 3 permanece pendiente: `0.3.0` sigue en `Unreleased`, sin etiqueta ni release. La última publicada es `v0.2.0`.
+Trabajo adelantado de guardado local, con pruebas técnicas realizadas el 2 de octubre de 2026. El código y la demostración existen, pero la entrega de fase 3 permanece pendiente: `0.3.0` sigue en `Unreleased`, sin etiqueta ni release. Su publicación sigue pendiente.
 
 ### Añadido
 

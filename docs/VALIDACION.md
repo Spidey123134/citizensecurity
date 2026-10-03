@@ -196,3 +196,21 @@ APK debug actual: `app/build/outputs/apk/debug/app-debug.apk`, versión `0.2.1`,
 Las pruebas del puente usan un repositorio controlado en JVM y un `ViewModelStore` real. Comprueban el contrato de conservación y cancelación del modelo; no representan una rotación real de una actividad ni un flujo completo desde un formulario. La persistencia real se verifica por separado mediante las 9 pruebas instrumentadas. Compilación y lint comprueban la integración técnica con la base del compañero. La revisión visual, el formulario, el login, teléfono físico y API 26 siguen pendientes.
 
 Esta conexión se prepara dentro de `0.2.1`, sin publicar etiqueta o release. La última release sigue siendo `v0.2.0`; fase 3 y `0.3.0` permanecen en `Unreleased`.
+
+## Herramientas oficiales y acceso de demostración en 0.2.1
+
+Comprobación del 3 de octubre de 2026, sobre main `4fa64f6`, sin nuevos commits del compañero al consultar origin. Se conserva su splash y XML del login. El botón de desarrollador y el acceso público local `admin / admin` exponen exclusivamente recepción, validación y tres casos de coordenadas de fases 1 y 2. Ambos existen en debug y release. No se añaden acciones de guardado o consulta a las herramientas ni cuentas o privilegios reales.
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :core:domain:test :core:data:guardarReporte :core:data:lintDebug :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease --console=plain
+```
+
+Resultado: `BUILD SUCCESSFUL` en 13 segundos. Se ejecutaron y aprobaron 14 pruebas JVM de app (6 del puente, 8 de conversión de datos y acceso de demostración), sin fallos ni errores. Las 32 de dominio conservaron el resultado anterior mediante `UP-TO-DATE`. Las 9 pruebas instrumentadas SQLite volvieron a aprobar en Android 17 / API 37; la demostración exportó sus JSON desde bases temporales.
+
+Después de mejorar recursos de texto y los márgenes de las barras del sistema se ejecutaron `:app:testDebugUnitTest`, lint debug/release y ambas compilaciones: `BUILD SUCCESSFUL` en 7 segundos, 14 JVM aprobadas. El ajuste final de contraste del texto del acceso volvió a comprobarse mediante lint debug/release y ambas compilaciones: `BUILD SUCCESSFUL` en 4 segundos. Los informes finales mantienen 0 errores y las 13 advertencias visuales previas del compañero; las herramientas nuevas no añaden advertencias. La supresión localizada TextFields corresponde al teclado de una fecha ISO-8601 UTC que requiere letras T/Z.
+
+Prueba visual en el emulador: entrada por el botón, recepción de datos, validación del ejemplo, punto válido, par incompleto y latitud fuera de rango, rotación a horizontal y regreso conservando resultado y fecha, regreso al inicio y entrada mediante `admin / admin`. Se comprobó que el campo de contraseña se borra al entrar. Evidencia local en `.gradle/validacion/release02-ui.json` y capturas; fuera de Git. La prueba del acceso se hizo sin desinstalar la aplicación ni borrar sus datos.
+
+Artefacto para pruebas: `citizensecurity-0.2.1-debug.apk`, versión `0.2.1`, código Android **6**, 12243909 bytes y SHA-256 `c0a666bcc975ec6604aad982388475b675d1527f806e98cab1f6fcbaf40b2bfc`. Firma APK v2 comprobada mediante apksigner. El APK release sin firma se compiló y no se distribuye. La numeración interna permite actualizar el APK experimental local con código 5 conservando datos.
+
+La verificación en teléfono físico y API 26 sigue pendiente. La revisión funcional del usuario, el formulario real, la autenticación, el mapa y las entregas de fases 3 y 4 también permanecen pendientes. **0.3.0 y 0.4.0 siguen en Unreleased**; las herramientas oficiales no los exponen.
