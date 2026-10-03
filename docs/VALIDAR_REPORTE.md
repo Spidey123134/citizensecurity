@@ -16,6 +16,10 @@ El ejemplo recibe los mismos datos del [paso 1](RECIBIR_REPORTE.md) y permite a�
 
 Una referencia válida no permite pasar coordenadas incompletas o fuera de rango. Un par válido permite dejar la referencia vacía; si se escribe una referencia, también debe cumplir sus reglas. Validar no modifica ni guarda el borrador. La normalización y una nueva validación ocurren dentro de `ReportRepository.create` al guardar.
 
+En el desarrollo `0.3.0 — Unreleased`, descripción y referencia también rechazan UTF-16 mal formado y `U+FEFF`/`U+FFFE` al inicio del texto después de quitar espacios. Devuelven el mismo error por campo que los caracteres no permitidos. Los emojis bien codificados y `U+FEFF` en el interior siguen permitidos. La auditoría reprodujo en Android que esas entradas iniciales cambiaban al guardarse, según el comportamiento de [enlace de textos en SQLite](https://www.sqlite.org/c3ref/bind_blob.html).
+
+Las cuatro regresiones nuevas del dominio están aprobadas, junto con las 28 anteriores: 32 pruebas. La instrumentación añade regresiones para texto y cero negativo: 7 pruebas aprobadas. La evidencia antes y después del arreglo está en [Validación](VALIDACION.md). La release `v0.2.0` conserva su código original; estas correcciones pertenecen al incremento sin publicar.
+
 ## Ejemplo de consola
 
 Con `JAVA_HOME` configurado para JDK 27:

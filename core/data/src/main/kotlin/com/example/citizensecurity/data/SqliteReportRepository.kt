@@ -53,7 +53,11 @@ class SqliteReportRepository(
     override suspend fun create(draft: NewReport): Report = withOpenRepository {
         val normalized = draft.copy(
             description = draft.description.trim(),
-            location = draft.location.copy(reference = draft.location.reference.trim()),
+            location = draft.location.copy(
+                reference = draft.location.reference.trim(),
+                latitude = draft.location.latitude.canonicalizeZero(),
+                longitude = draft.location.longitude.canonicalizeZero(),
+            ),
         )
         val createdAt = clock.instant()
         val errors = validator.validate(normalized, createdAt)
@@ -166,6 +170,11 @@ class SqliteReportRepository(
     private fun Cursor.getOptionalDouble(column: String): Double? {
         val index = getColumnIndexOrThrow(column)
         return if (isNull(index)) null else getDouble(index)
+    }
+
+    /** SQLite conserva cero sin signo; el reporte devuelto usa la misma representación. */
+    private fun Double?.canonicalizeZero(): Double? = this?.let { value ->
+        if (value == 0.0) 0.0 else value
     }
 
     companion object {

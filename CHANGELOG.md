@@ -2,6 +2,37 @@
 
 Registro de cambios del proyecto. Las fechas usan la hora de México. Los cambios publicados en una rama quedan disponibles para revisión; la integración en `main` se registra cuando ocurre.
 
+## Unreleased — próxima 0.3.0
+
+Trabajo solicitado el 2 de octubre de 2026: fase 3 y revisión de la validación de fase 2. La versión permanece sin publicar y sin etiqueta `v0.3.0`; la última release publicada es `v0.2.0`.
+
+### Añadido
+
+- Demostración `:core:data:guardarReporte`: ejecuta la instrumentación Android existente, muestra un folio UUID generado por el repositorio y comprueba la recuperación del mismo reporte y sus coordenadas después de reabrir SQLite.
+- Evidencia de rechazo de un reporte inválido sin insertar datos ni alterar los registros previos. Los resultados reales se exportan a JSON bajo `core/data/build/reports/fase3/`, fuera de Git.
+- Guía [Fase 3](docs/FASE_3.md) y seguimiento de la entrega `0.3.0 — Unreleased`.
+- Cuatro regresiones unitarias y dos instrumentadas para los fallos encontrados.
+
+### Corregido
+
+- La validación aceptaba texto UTF-16 mal formado que SQLite cambiaba al guardar. Ahora lo rechaza con el error del campo correspondiente, conservando emojis y caracteres Unicode válidos.
+- Las marcas `U+FEFF` y `U+FFFE` al inicio del texto podían desaparecer o alterar los caracteres al guardarlos. Ahora se rechazan después de quitar los espacios de los extremos, antes de insertar.
+- Coordenadas `-0.0` producían un reporte devuelto diferente del recuperado. El guardado las normaliza a `0.0`, como SQLite, manteniendo el resto de los valores.
+
+### Actualizado
+
+- Versión de desarrollo Android `0.3.0`, `versionCode = 3`.
+- Contrato de textos y normalización, fases y proceso de Releases. La revisión funcional de este incremento sigue pendiente.
+
+### Verificado
+
+- Fallos reproducidos antes del arreglo: 3 de las 32 pruebas unitarias y 2 de las 7 instrumentadas fallaron con las regresiones añadidas.
+- Después del arreglo: 32 unitarias y 7 instrumentadas aprobadas, sin fallos, errores ni omisiones; instrumentación en API 37.
+- Demostración de guardado, ejemplos de fase 2, lint y APK debug correctos. Lint de datos sin incidencias; `app` conserva sus dos advertencias conocidas.
+- Firma del APK comprobada. [Validación](docs/VALIDACION.md) registra los comandos, el SHA-256 y los límites.
+
+Las bases usadas por la demostración son temporales y se eliminan al terminar las pruebas. El contrato y el esquema productivo se conservan; las interfaces, el mapa y el login continúan con el compañero.
+
 ## 0.2.0 — 2026-10-02 — Validación de reportes y ubicación
 
 ### Añadido

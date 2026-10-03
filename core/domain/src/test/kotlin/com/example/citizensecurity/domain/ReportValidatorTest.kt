@@ -57,6 +57,43 @@ class ReportValidatorTest {
     }
 
     @Test
+    fun descriptionRejectsUnpairedSurrogates() {
+        for (suffix in listOf("\uD800", "\uDC00", "\uD800x", "\uDC00\uD800")) {
+            assertError(draft(description = "123456789$suffix"), ReportField.DESCRIPTION)
+        }
+    }
+
+    @Test
+    fun referenceRejectsUnpairedSurrogatesEvenWithValidCoordinates() {
+        for (suffix in listOf("\uD800", "\uDC00", "\uD800x", "\uDC00\uD800")) {
+            assertError(
+                draft(location = ReportLocation("1234$suffix", latitude = 19.4, longitude = -99.1)),
+                ReportField.LOCATION_REFERENCE,
+            )
+        }
+    }
+
+    @Test
+    fun initialByteOrderMarksAreRejectedAfterTrimming() {
+        for (mark in listOf('\uFEFF', '\uFFFE')) {
+            val errors = validate(draft(
+                description = "\t$mark" + "123456789",
+                location = ReportLocation(" $mark" + "1234"),
+            ))
+            assertTrue(errors.errors.containsKey(ReportField.DESCRIPTION))
+            assertTrue(errors.errors.containsKey(ReportField.LOCATION_REFERENCE))
+        }
+    }
+
+    @Test
+    fun validSurrogatePairsAndAnInternalByteOrderMarkRemainValid() {
+        assertTrue(validate(draft(
+            description = "Árbol 🔥 junto\uFEFF al parque.",
+            location = ReportLocation("Parque 🏠 con\uFEFF entrada"),
+        )).isValid)
+    }
+
+    @Test
     fun referenceAcceptsFiveUnicodeCharacters() {
         assertTrue(validate(draft(location = ReportLocation("🏠".repeat(5)))).isValid)
     }

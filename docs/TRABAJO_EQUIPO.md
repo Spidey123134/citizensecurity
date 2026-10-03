@@ -14,7 +14,7 @@ La guía [Inicio del equipo](INICIO_EQUIPO.md) explica cómo clonar la base y co
 
 ## Incremento actual y ubicación con mapa
 
-El 2 de octubre de 2026 el usuario autorizó la fase 2: validar el reporte y sus coordenadas, y preparar la versión `0.2.0` en GitHub Releases. Se reutilizan el validador y el contrato existentes; la aceptación funcional de los nuevos resultados permanece pendiente. La guía [Validar reporte](VALIDAR_REPORTE.md) describe los comandos y resultados esperados.
+La última release publicada es `v0.2.0`, con la [validación del reporte](VALIDAR_REPORTE.md). El 2 de octubre de 2026 el usuario autorizó trabajar la [fase 3](FASE_3.md) y revisar la fase 2 para corregir fallos. El desarrollo actual es `0.3.0 — Unreleased`, con una demostración del guardado real, reapertura y rechazo mediante las pruebas Android. La aceptación funcional de los nuevos resultados sigue pendiente; esta versión permanece sin publicar por indicación del usuario.
 
 Google Maps quedó acordado como próxima línea de trabajo. Nuestra parte recibe, valida y conserva `latitude` y `longitude` en `ReportLocation` y SQLite. El compañero desarrolla la vista del mapa, el pin y la confirmación de ubicación. Ambos coordinan la conexión con el contrato y la configuración compartida. El SDK, el proyecto de Google, la clave y la facturación siguen pendientes; no hay un mapa real en esta entrega ni captura GPS.
 
