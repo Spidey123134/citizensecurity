@@ -1,6 +1,6 @@
 # Fase 3: guardar un reporte local
 
-Esta fase está autorizada, implementada y probada en **`0.3.0 — Unreleased`**. El resultado está listo para revisión; la aceptación funcional del usuario sigue pendiente. No se crea una etiqueta `v0.3.0` ni se publica una release de esa versión.
+Esta fase está autorizada, implementada y probada desde **`0.3.0 — Unreleased`**. Se conserva en el parche actual **`0.3.1 — Unreleased`**, con la corrección de cancelación comprobada en Android. La aplicación integrada con la nueva interfaz del compañero todavía no compila por el recurso de splash ausente. La aceptación funcional del usuario sigue pendiente. Ambas versiones permanecen sin etiqueta ni release.
 
 Se aprovechan `NewReport`, `ReportLocation`, `ReportRepository` y `SqliteReportRepository`, que ya existen. La nueva tarea `:core:data:guardarReporte` hace observable el guardado de un reporte válido y el rechazo de uno inválido, reutilizando la instrumentación Android. También se corrigieron dos fallos de conservación de los datos. El esquema de la base sigue siendo el mismo.
 
@@ -57,7 +57,15 @@ SQLite documenta que al enlazar texto UTF-16 puede retirar la marca de orden de 
 
 Las regresiones fallaron antes de corregir y aprobaron después. La reproducción y los cambios se registran en [Changelog](../CHANGELOG.md) bajo `Unreleased`.
 
-## Evidencia y alcance
+## Mantenimiento 0.3.1
+
+Se reprodujo un fallo del repositorio original: un segundo guardado cancelado mientras esperaba el monitor terminaba insertándose después de liberar el primer guardado. La corrección comprueba la cancelación al adquirir el monitor, antes de iniciar la acción SQLite. La suite posterior de 9 pruebas instrumentadas aprobó en API 37, junto con los ejemplos y los JSON de guardado y rechazo; la tarea de 32 unitarias reutilizó su resultado anterior mediante `UP-TO-DATE`.
+
+La comprobación adicional de diez casos Unicode conservó los textos exactamente en Android. Se conserva como cobertura de regresión sin cambiar las reglas del validador. Este mantenimiento continúa la misma fase de guardado; no añade otra función.
+
+Esas pruebas se ejecutaron antes de incorporar `7e90109`, que no modificó el dominio ni los datos. El compañero añadió splash y login visual; la autenticación sigue pendiente. En el estado integrado, falta `activity_splash.xml`, por lo que `app` no compila y no se generó su APK final. La evidencia y el límite de la integración están en [Validación](VALIDACION.md).
+
+## Evidencia de 0.3.0 y alcance
 
 El 2 de octubre de 2026, hora de México, se ejecutó la comprobación completa:
 
@@ -77,6 +85,6 @@ El 2 de octubre de 2026, hora de México, se ejecutó la comprobación completa:
 
 La ejecución produjo el folio `876baa82-27fc-445b-8277-5e56ca8ecab3` con estado `REPORTED`, latitud `19.4326077` y longitud `-99.1332088`. `saved` y `restored` contienen el mismo reporte. En el caso de rechazo quedó 1 registro antes y después, con `inserted = false`. Estos folios son evidencia de esa ejecución; cada nuevo guardado genera otro UUID.
 
-El APK local está en `app/build/outputs/apk/debug/app-debug.apk`, tiene `11729718` bytes y SHA-256 `5132185a350c8c17f7291c3d741442d03e5e7d335c9d64f0c77e5aa3e5a42ee9`. No se publica como adjunto en este incremento. La verificación en teléfono físico y API 26 continúa pendiente. El contexto de las comprobaciones está en [Validación](VALIDACION.md), el estado en [Fases](FASES.md) y el trabajo de la versión en [Releases](RELEASES.md).
+El APK de esa ejecución `0.3.0` se generó en `app/build/outputs/apk/debug/app-debug.apk`, con `11729718` bytes y SHA-256 `5132185a350c8c17f7291c3d741442d03e5e7d335c9d64f0c77e5aa3e5a42ee9`. La misma ruta se reutiliza al construir una versión posterior; este hash identifica el artefacto anterior. No se publica como adjunto. La verificación en teléfono físico y API 26 continúa pendiente. El contexto de las comprobaciones está en [Validación](VALIDACION.md), el estado en [Fases](FASES.md) y el trabajo de la versión en [Releases](RELEASES.md).
 
-La fase no incorpora interfaces, login, SDK de Google Maps, GPS, servidor ni una nueva migración. Las pantallas y el mapa corresponden al compañero (`vazdavr-sudo`). Nuestra parte recibe, valida y conserva el par de coordenadas. El guardado sigue siendo local.
+La fase de datos conserva su alcance de recepción, validación y persistencia local del par de coordenadas, sin una nueva migración. Las pantallas, el mapa y la autenticación corresponden al compañero (`vazdavr-sudo`); sus cambios visuales de splash y login se conservan. El SDK de Google Maps, GPS y servidor siguen pendientes.

@@ -29,7 +29,7 @@ Usa un nombre de rama nuevo si `feature/interfaz-inicial` ya existe; si estás c
 1. Abre la carpeta `citizensecurity` completa en Android Studio.
 2. Configura JDK 27 para Gradle e instala Android SDK Platform 37.0 y Build Tools 37.0.0.
 3. Configura la ruta del SDK de tu PC cuando Android Studio lo solicite. `local.properties` y los ajustes locales del IDE quedan fuera de Git.
-4. Sincroniza Gradle. La actividad inicial contiene un contenedor vacío para desarrollar las interfaces.
+4. Sincroniza Gradle. El compañero añadió `SplashActivity` y el diseño visual de login a `main`. La compilación de la aplicación está pendiente de que añada `app/src/main/res/layout/activity_splash.xml`, usado por su pantalla de inicio. El parche de lógica se revisa por separado, según [Versiones](RELEASES.md).
 
 Para ejecutar los comandos desde una terminal de Windows, configura también `JAVA_HOME`. Sustituye la ruta del ejemplo por la de tu propio JDK 27; el ajuste del JDK dentro del IDE no configura esta variable de la terminal.
 
@@ -40,6 +40,8 @@ $env:JAVA_HOME = 'C:\ruta\a\tu\jdk-27'
 ```
 
 El primer comando de Gradle muestra cómo el contrato recibe los datos del reporte. El segundo comprueba las reglas existentes, lint y compilación. La prueba de persistencia con `:core:data:connectedDebugAndroidTest` requiere un emulador o teléfono; sus resultados iniciales están en [Validación](VALIDACION.md).
+
+Mientras falte el layout de inicio, `:app:lintDebug` y `:app:assembleDebug` no pueden terminar. Las tareas de `core/domain` y `core/data` siguen disponibles para comprobar nuestra parte.
 
 ## Dónde trabaja cada uno
 

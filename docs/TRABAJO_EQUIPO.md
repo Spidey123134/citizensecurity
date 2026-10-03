@@ -8,13 +8,13 @@
 | Nuestra parte | Primera función: validar y guardar un reporte local | `core/domain` y `core/data`, con sus pruebas |
 | Ambos | Contratos, manifiesto, herramientas y cambios que conecten las dos áreas | Se coordinan antes de modificar |
 
-La aplicación inicial es un contenedor vacío para desarrollar las interfaces. El trabajo de datos no añade pantallas, textos internos de desarrollo, login ni navegación por iniciativa propia.
+El compañero añadió `SplashActivity` y el layout visual de login en `7e90109`. La autenticación permanece pendiente y falta `activity_splash.xml`, que bloquea la compilación de `app`. El trabajo de datos conserva sus cambios y no añade pantallas, login ni navegación por iniciativa propia.
 
 La guía [Inicio del equipo](INICIO_EQUIPO.md) explica cómo clonar la base y comenzar desde una rama propia. Los estados de cada paso se mantienen en [Fases de trabajo](FASES.md) y los cambios entregados en el [Changelog](../CHANGELOG.md). Una prueba técnica aprobada no sustituye la revisión del usuario sobre el comportamiento de la función.
 
 ## Incremento actual y ubicación con mapa
 
-La última release publicada es `v0.2.0`, con la [validación del reporte](VALIDAR_REPORTE.md). El 2 de octubre de 2026 el usuario autorizó trabajar la [fase 3](FASE_3.md) y revisar la fase 2 para corregir fallos. El desarrollo actual es `0.3.0 — Unreleased`, con una demostración del guardado real, reapertura y rechazo mediante las pruebas Android. La aceptación funcional de los nuevos resultados sigue pendiente; esta versión permanece sin publicar por indicación del usuario.
+La última release publicada es `v0.2.0`, con la [validación del reporte](VALIDAR_REPORTE.md). El trabajo de [fase 3](FASE_3.md) y las correcciones de fase 2 de `0.3.0` se conservan sin publicar. El desarrollo actual es `0.3.1 — Unreleased`: se reprodujo y corrigió un fallo de la base `0.1.0` durante una espera cancelada. Las pruebas de datos aprobaron antes del commit visual, que no cambió esas capas. Se sincronizó la base con las novedades del compañero, restaurando en el manifiesto la aplicación compartida y la exclusión de respaldos; las pantallas se conservan. La revisión se prepara mediante PR borrador y permanece sin integrar en `main` hasta que esté el recurso de splash faltante. La aceptación funcional continúa pendiente y ambas versiones siguen sin release ni etiqueta.
 
 Google Maps quedó acordado como próxima línea de trabajo. Nuestra parte recibe, valida y conserva `latitude` y `longitude` en `ReportLocation` y SQLite. El compañero desarrolla la vista del mapa, el pin y la confirmación de ubicación. Ambos coordinan la conexión con el contrato y la configuración compartida. El SDK, el proyecto de Google, la clave y la facturación siguen pendientes; no hay un mapa real en esta entrega ni captura GPS.
 

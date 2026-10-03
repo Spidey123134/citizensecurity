@@ -18,6 +18,7 @@ import java.time.Instant
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 
 /**
@@ -127,6 +128,8 @@ class SqliteReportRepository(
 
     private suspend fun <T> withOpenRepository(action: () -> T): T = withContext(ioDispatcher) {
         synchronized(lock) {
+            // Esperar el monitor no comprueba la cancelación de la corrutina.
+            ensureActive()
             check(!closed) { "El repositorio de reportes está cerrado." }
             action()
         }

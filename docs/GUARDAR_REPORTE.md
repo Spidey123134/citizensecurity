@@ -57,6 +57,8 @@ suspend fun guardarReporte(
 
 Las tres operaciones son `suspend`; SQLite se ejecuta internamente en `Dispatchers.IO`. No uses `runBlocking` en la interfaz ni crees un repositorio por cada recomposición. La instancia compartida pertenece a la aplicación y dura lo que su proceso; una pantalla no debe cerrarla. Las instancias separadas de `SqliteReportRepository` admiten `close()` cuando termina su uso: cerrar es idempotente, conserva el archivo y exige una instancia nueva para volver a consultarlo.
 
+En `0.3.1 — Unreleased`, si la corrutina se cancela mientras espera a otra operación del repositorio, la solicitud se detiene antes de acceder a SQLite y devuelve `CancellationException`. Una creación cancelada durante esa espera no añade un reporte. Esta comprobación ocurre al obtener el acceso exclusivo; cancelar una operación que ya comenzó no garantiza deshacer una transacción confirmada. La interfaz debe propagar la cancelación de su corrutina, según la [documentación de Kotlin](https://kotlinlang.org/api/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/ensure-active.html).
+
 ## Persistencia local
 
 Los reportes quedan en el archivo privado `citizensecurity_local_v1.db`, esquema versión 1. Cerrar la conexión o reiniciar la aplicación conserva los registros; borrar los datos de la aplicación o desinstalarla elimina esta base local. Se utiliza un archivo nuevo, sin abrir la base del proyecto anterior. Los cambios de esquema posteriores requieren migraciones explícitas que conserven los datos.

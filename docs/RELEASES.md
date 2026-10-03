@@ -2,9 +2,19 @@
 
 Cada versión del proyecto tendrá notas en español en GitHub Releases con los cambios, comprobaciones ejecutadas y límites de la entrega. La fuente de cambios es [Changelog](../CHANGELOG.md); el estado funcional se consulta en [Fases](FASES.md).
 
-## 0.3.0 — Unreleased
+## 0.3.1 — Unreleased
 
-Incremento implementado y probado localmente, sin etiqueta `v0.3.0` y sin release publicada. La aplicación está configurada con `versionName = "0.3.0"` y `versionCode = 3`. La release y la etiqueta publicadas de `v0.2.0` se conservan. La aceptación funcional del nuevo resultado sigue pendiente.
+Parche de desarrollo con `versionName = "0.3.1"` y `versionCode = 4`, sin etiqueta `v0.3.1` ni release publicada. Incluye el trabajo previo de `0.3.0`, que también permanece sin publicar. La última release continúa siendo `v0.2.0`.
+
+Se reprodujo un fallo heredado de `0.1.0`: un guardado cancelado mientras esperaba el monitor podía insertar al conseguir el turno. La corrección comprueba la cancelación dentro del monitor, antes de ejecutar SQLite. La regresión falló antes de corregir y la suite posterior de 9 pruebas instrumentadas aprobó en API 37. Las 32 unitarias mantuvieron su resultado anterior mediante `UP-TO-DATE`.
+
+Un segundo candidato, texto Unicode interior, conservó exactamente los diez casos comprobados en Android. Se mantiene su prueba como cobertura y el validador conserva sus reglas. El parche conserva el esquema y la función de reportes.
+
+La base se sincronizó con `7e90109`, que añadió splash y login visual del compañero, sin autenticación implementada. Se restauró la aplicación compartida y la exclusión de respaldos en el manifiesto, conservando sus cambios visuales. El estado integrado no genera APK: falta `activity_splash.xml`; la compilación y lint de `app` se bloquean por ese recurso. La revisión se prepara como PR borrador y no se integra en `main` hasta resolverlo. [Validación](VALIDACION.md) distingue las pruebas de datos aprobadas antes del commit visual del estado actual de la aplicación. No se publica etiqueta, release ni APK del parche.
+
+## 0.3.0 — base previa también Unreleased
+
+Incremento implementado y probado localmente el 2 de octubre de 2026, sin etiqueta `v0.3.0` y sin release publicada. Su APK de desarrollo usó `versionName = "0.3.0"` y `versionCode = 3`; el desarrollo actual es `0.3.1`. La release y la etiqueta publicadas de `v0.2.0` se conservan. La aceptación funcional sigue pendiente.
 
 **Añadido:** la tarea `:core:data:guardarReporte` reutiliza la instrumentación Android para mostrar un reporte guardado con folio, los datos recibidos y las coordenadas recuperadas después de reabrir. También comprueba el rechazo de un borrador inválido sin añadir registros. Exporta `reporte.json` y `rechazo.json` por dispositivo, usando bases temporales independientes que se eliminan al terminar.
 

@@ -6,7 +6,7 @@ Proyecto Android académico en Kotlin para registrar y consultar incidentes. El 
 
 Validar y guardar un reporte local con categoría, prioridad, descripción, fecha y ubicación escrita o coordenadas. La consulta por folio permite comprobar que el registro permanece después de reabrir la base.
 
-El módulo `app` contiene una actividad y un contenedor vacío: las interfaces, el menú y la navegación corresponden al compañero. No se incluye una interfaz provisional de formulario ni datos de demostración al iniciar.
+El compañero añadió `SplashActivity` y un layout visual de login en [su commit `7e90109`](https://github.com/Spidey123134/citizensecurity/commit/7e90109c82b1b35e3dfdec76ac6624fa2f699fff). La autenticación aún no está implementada. Falta `app/src/main/res/layout/activity_splash.xml`, por lo que la aplicación integrada todavía no compila; las interfaces continúan bajo su responsabilidad.
 
 ## Estructura
 
@@ -22,7 +22,9 @@ Para revisar la función por pasos, empieza con [Recibir los datos del reporte](
 
 El incremento **0.2.0** permite [validar el reporte y su ubicación](docs/VALIDAR_REPORTE.md). Se puede comprobar un punto válido, un par de coordenadas incompleto y un punto fuera de rango. Esta es nuestra parte inicial para conectar después la selección de un punto en Google Maps.
 
-El desarrollo actual es **0.3.0 — Unreleased**: [fase 3, guardar un reporte local](docs/FASE_3.md), junto con correcciones de fase 2. El comando `:core:data:guardarReporte` ejecuta las pruebas Android, muestra un folio real y exporta evidencia del guardado, reapertura y rechazo en bases temporales. Requiere un emulador o teléfono. La última release publicada continúa siendo `v0.2.0`.
+El desarrollo actual es **0.3.1 — Unreleased**, un parche sobre el trabajo de `0.3.0`, que tampoco se publicó. Conserva la [fase 3 de guardado local](docs/FASE_3.md) y corrige una operación cancelada mientras esperaba entrar al repositorio. Las 9 pruebas instrumentadas del parche aprobaron antes de incorporar la nueva interfaz; ese commit no cambió el dominio ni los datos. La revisión del parche se prepara mediante un PR borrador, sin integrarlo en `main` hasta resolver el recurso faltante. La última release publicada continúa siendo `v0.2.0`.
+
+El comando `:core:data:guardarReporte` ejecuta las pruebas Android, muestra un folio real y exporta evidencia del guardado, reapertura y rechazo en bases temporales. Requiere un emulador o teléfono. El estado de compilación de la aplicación y la evidencia por versión están en [Validación](docs/VALIDACION.md).
 
 ## Seguimiento del proyecto
 
@@ -48,7 +50,7 @@ Abre esta carpeta completa en Android Studio. Usa JDK 27 para Gradle y Android S
 .\gradlew.bat :core:data:connectedDebugAndroidTest
 ```
 
-El segundo comando requiere un emulador o teléfono. Los resultados reales de la primera revisión se registran en [Validación](docs/VALIDACION.md).
+El segundo comando requiere un emulador o teléfono. En el estado integrado actual, `:app:assembleDebug` y `:app:lintDebug` se bloquean por `activity_splash` ausente. Lint de `core/data` y el procesamiento del manifiesto aprobaron. Los resultados completos se registran en [Validación](docs/VALIDACION.md).
 
 ## Siguientes incrementos
 
