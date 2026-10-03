@@ -14,6 +14,7 @@ Lee README.md y docs/TRABAJO_EQUIPO.md antes de editar.
 - Las migraciones de SQLite deben ser explícitas y preservar datos. No uses recreación destructiva ni conviertas guardado local en envío a autoridades.
 - Valida las reglas con pruebas unitarias y la persistencia con instrumentación en un dispositivo o emulador. Ejecuta lint y assembleDebug. Documenta en español qué se ejecutó y sus límites.
 - La configuración del proyecto y los contratos compartidos se coordinan con el equipo. El desarrollo posterior usa ramas de tarea y revisión de cambios.
+- El usuario solicitó acoplar la interfaz con la función de reportes. La composición compartida usa `ReportViewModel` en `app`, la fábrica de `CitizenSecurityApplication` y `MainActivity.reportViewModel`. Conserva los layouts y el login del compañero; conecta su futuro formulario mediante `NewReport` y los estados del modelo, siguiendo docs/ACOPLAR_INTERFAZ.md.
 - Mantén CHANGELOG.md y docs/FASES.md al entregar un incremento. Distingue código implementado, pruebas ejecutadas y revisión del usuario; no marques una fase revisada sin esa revisión.
 - Entrega los incrementos acordados por versión mediante GitHub Releases, con etiqueta, cambios concretos y pruebas reales. Sigue docs/RELEASES.md; conserva las etiquetas publicadas y no presentes la publicación como aceptación funcional del usuario.
 - El usuario pidió mantener la fase 3 y la próxima versión 0.3.0 en Unreleased. Documenta y comparte sus cambios sin crear una etiqueta o publicar esa release hasta que el usuario cambie esta indicación.

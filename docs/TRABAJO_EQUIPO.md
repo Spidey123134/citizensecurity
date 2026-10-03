@@ -10,6 +10,8 @@
 
 El compañero añadió `SplashActivity` y el layout visual de login en `7e90109`, y completó `activity_splash.xml` en `e18e636`, ya incorporado desde `main`. La autenticación permanece pendiente. El trabajo de datos conserva sus cambios y no añade pantallas, login ni navegación por iniciativa propia.
 
+El acoplamiento solicitado se realiza con `ReportViewModel` en `app`, una fábrica que reutiliza el repositorio de `CitizenSecurityApplication` y la propiedad `MainActivity.reportViewModel`. El modelo recibe `NewReport` y devuelve estados de progreso, errores por campo o el reporte guardado. La guía [Acoplar la interfaz](ACOPLAR_INTERFAZ.md) permite conectar el futuro formulario sin acceder a SQLite desde la pantalla. El diseño, los eventos de los controles y la autenticación corresponden al compañero.
+
 La guía [Inicio del equipo](INICIO_EQUIPO.md) explica cómo clonar la base y comenzar desde una rama propia. Los estados de cada paso se mantienen en [Fases de trabajo](FASES.md) y los cambios entregados en el [Changelog](../CHANGELOG.md). Una prueba técnica aprobada no sustituye la revisión del usuario sobre el comportamiento de la función.
 
 ## Incremento actual y ubicación con mapa

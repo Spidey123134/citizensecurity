@@ -18,6 +18,8 @@ El compañero añadió `SplashActivity` y un layout visual de login en [su commi
 
 Lee [Trabajo del equipo](docs/TRABAJO_EQUIPO.md) y [Contrato de la primera función](docs/GUARDAR_REPORTE.md).
 
+La [conexión de la interfaz con los reportes](docs/ACOPLAR_INTERFAZ.md) ofrece un `ReportViewModel` con progreso de guardado, errores por campo y confirmación con folio. `MainActivity` conserva el layout del compañero y obtiene el modelo del repositorio compartido. El formulario de reportes y la autenticación siguen pendientes de su parte.
+
 Para revisar la función por pasos, empieza con [Recibir los datos del reporte](docs/RECIBIR_REPORTE.md). Incluye un ejemplo de consola que reutiliza `NewReport` y permite cambiar los cinco datos sin una pantalla.
 
 El incremento **0.2.0** permite [validar el reporte y su ubicación](docs/VALIDAR_REPORTE.md). Se puede comprobar un punto válido, un par de coordenadas incompleto y un punto fuera de rango. Esta es nuestra parte inicial para conectar después la selección de un punto en Google Maps.
@@ -46,7 +48,7 @@ Las versiones de las dependencias están fijadas en `gradle/libs.versions.toml`;
 Abre esta carpeta completa en Android Studio. Usa JDK 27 para Gradle y Android SDK Platform 37.0 / Build Tools 37.0.0. La ruta del SDK se guarda en `local.properties`, fuera de Git. El JDK local del IDE se configura con `GRADLE_LOCAL_JAVA_HOME` en `.gradle/config.properties`.
 
 ```powershell
-.\gradlew.bat :core:domain:test :core:data:lintDebug :app:lintDebug :app:assembleDebug
+.\gradlew.bat :app:testDebugUnitTest :core:domain:test :core:data:lintDebug :app:lintDebug :app:assembleDebug
 .\gradlew.bat :core:data:connectedDebugAndroidTest
 ```
 
