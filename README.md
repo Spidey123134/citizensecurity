@@ -20,11 +20,14 @@ Lee [Trabajo del equipo](docs/TRABAJO_EQUIPO.md) y [Contrato de la primera funci
 
 Para revisar la función por pasos, empieza con [Recibir los datos del reporte](docs/RECIBIR_REPORTE.md). Incluye un ejemplo de consola que reutiliza `NewReport` y permite cambiar los cinco datos sin una pantalla.
 
+El incremento **0.2.0** permite [validar el reporte y su ubicación](docs/VALIDAR_REPORTE.md). Se puede comprobar un punto válido, un par de coordenadas incompleto y un punto fuera de rango. Esta es nuestra parte inicial para conectar después la selección de un punto en Google Maps.
+
 ## Seguimiento del proyecto
 
 - [Inicio del equipo](docs/INICIO_EQUIPO.md): clonar la base, configurar la PC y subir una función desde una rama propia.
 - [Changelog](CHANGELOG.md): cambios realizados y comprobaciones ejecutadas.
 - [Fases de trabajo](docs/FASES.md): estado de cada paso, responsable y resultado que se revisará.
+- [Releases](https://github.com/Spidey123134/citizensecurity/releases): entregas por versión con sus cambios y comprobaciones. El proceso se describe en [Publicar una versión](docs/RELEASES.md).
 
 El compañero `vazdavr-sudo` desarrolla las interfaces y el login. Nuestra parte se centra en la lógica y los datos del reporte. Se revisa una función por vez antes de elegir la siguiente.
 
@@ -47,4 +50,4 @@ El segundo comando requiere un emulador o teléfono. Los resultados reales de la
 
 ## Siguientes incrementos
 
-Se elige el siguiente incremento después de revisar esta función. Cuentas, sincronización, fotografías, GPS, administración y notificaciones quedan pendientes. La configuración de un servicio externo deberá acordarse antes de añadirlo.
+La siguiente línea acordada es seleccionar dónde ocurrió el incidente en Google Maps. Nuestra parte recibe, valida y conserva las coordenadas; el compañero desarrolla la vista del mapa y sus controles. El mapa y la configuración de Google Cloud todavía están pendientes. Se revisa este incremento antes de conectar el servicio. Cuentas, sincronización, fotografías, GPS, administración y notificaciones siguen pendientes.

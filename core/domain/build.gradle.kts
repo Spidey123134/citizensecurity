@@ -39,3 +39,31 @@ tasks.register<JavaExec>("recibirReporte") {
         )
     })
 }
+
+tasks.register<JavaExec>("validarReporte") {
+    group = "verification"
+    description = "Valida un reporte manual con las reglas existentes, sin guardarlo."
+    classpath = examples.runtimeClasspath
+    mainClass.set("com.example.citizensecurity.examples.ValidarReporte")
+    jvmArgs("-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8")
+    argumentProviders.add(CommandLineArgumentProvider {
+        listOf(
+            providers.gradleProperty("tipo").getOrElse("RISK"),
+            providers.gradleProperty("descripcion")
+                .getOrElse("Hay una luminaria dañada frente al parque."),
+            providers.gradleProperty("prioridad").getOrElse("MEDIUM"),
+            providers.gradleProperty("fecha").getOrElse(""),
+            providers.gradleProperty("ubicacion").getOrElse("Frente al parque central"),
+            providers.gradleProperty("latitud").getOrElse(""),
+            providers.gradleProperty("longitud").getOrElse(""),
+        )
+    })
+}
+
+tasks.register<JavaExec>("validarUbicaciones") {
+    group = "verification"
+    description = "Muestra la validación de tres puntos de ubicación, sin guardarlos."
+    classpath = examples.runtimeClasspath
+    mainClass.set("com.example.citizensecurity.examples.ValidarUbicaciones")
+    jvmArgs("-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8")
+}
