@@ -41,6 +41,8 @@ Para validar antes de guardar se puede usar `ReportValidator().validate(draft, I
 
 `CitizenSecurityApplication.reportRepository` proporciona la instancia compartida. Desde una actividad, `application as CitizenSecurityApplication` obtiene la aplicación configurada. La siguiente función se llama desde una corrutina del ciclo de vida de la pantalla o del `ViewModel`, después de construir el borrador con los datos de la interfaz:
 
+Para los controles del formulario, usa el [puente de guardado](ACOPLAR_INTERFAZ.md), que administra progreso, errores y cancelación. La [consulta por folio](FASE_4.md) usa otro modelo sobre la misma instancia; `findById` conserva su búsqueda exacta y `ReportQueryViewModel` normaliza la entrada del usuario antes de consultarlo.
+
 ```kotlin
 import com.example.citizensecurity.CitizenSecurityApplication
 import com.example.citizensecurity.domain.NewReport

@@ -24,9 +24,11 @@ Para revisar la función por pasos, empieza con [Recibir los datos del reporte](
 
 El incremento **0.2.0** permite [validar el reporte y su ubicación](docs/VALIDAR_REPORTE.md). Se puede comprobar un punto válido, un par de coordenadas incompleto y un punto fuera de rango. Esta es nuestra parte inicial para conectar después la selección de un punto en Google Maps.
 
-La entrega oficial de la línea `0.2` es **0.2.1**, código Android **6**, sobre `main` actualizado y conservando el splash y el login visual del compañero. Incluye **Desarrollador · funciones 0.2** para probar recepción, validación y coordenadas en debug y release. **admin / admin** abre esas mismas herramientas como demostración local; las cuentas reales y los permisos administrativos siguen pendientes. Consulta [Funciones publicadas](docs/FUNCIONES_PUBLICADAS.md) y [Release v0.2.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.2.1).
+La versión actual de `main` es **0.4.0**, código Android **7**. Incorpora la consulta local por folio, la lectura del estado inicial y las correcciones de cancelación, conservando el splash, el login visual y el acceso de demostración de **0.2.1**. [Release v0.4.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0). El compañero se actualiza desde `main`; las Releases conservan cada entrega y sus notas.
 
-Las herramientas oficiales no ofrecen guardado ni consulta de fases Unreleased. El avance **0.4.0 — Unreleased** se conserva y continúa en una rama separada después de comprobar la base oficial.
+La [fase 4](docs/FASE_4.md) ofrece `ReportQueryViewModel`, su fábrica y `MainActivity.reportQueryViewModel` para conectar el futuro control del compañero. La demostración `:core:data:consultarReporte` recupera dos reportes después de reabrir SQLite y comprueba que las lecturas no modifican sus datos. Distingue folio inválido, inexistente y fallo de lectura. El [plan del proyecto](docs/PLAN_DEL_PROYECTO.md) relaciona este alcance con el PDF.
+
+El botón **Desarrollador · funciones 0.2** y **admin / admin** siguen disponibles para recepción, validación y coordenadas de fases 1 y 2. Son herramientas locales; no crean cuentas ni permisos administrativos. La consulta de 0.4 se comprueba mediante Gradle y su contrato técnico; su pantalla sigue pendiente del compañero. [Funciones publicadas](docs/FUNCIONES_PUBLICADAS.md) explica ambas formas de revisión.
 
 La [fase 3 de guardado local](docs/FASE_3.md) y la versión **0.3.0 permanecen en Unreleased**: existe código adelantado, pero su entrega sigue pendiente. El comando `:core:data:guardarReporte` ya permite comprobar el folio, la reapertura y el rechazo en bases temporales; esa demostración se conserva como preparación de la fase. `0.3.1` fue un identificador provisional de pruebas, sin etiqueta ni release. La evidencia por versión está en [Validación](docs/VALIDACION.md).
 
@@ -35,6 +37,7 @@ La [fase 3 de guardado local](docs/FASE_3.md) y la versión **0.3.0 permanecen e
 - [Inicio del equipo](docs/INICIO_EQUIPO.md): clonar la base, configurar la PC y subir una función desde una rama propia.
 - [Changelog](CHANGELOG.md): cambios realizados y comprobaciones ejecutadas.
 - [Fases de trabajo](docs/FASES.md): estado de cada paso, responsable y resultado que se revisará.
+- [Plan del proyecto](docs/PLAN_DEL_PROYECTO.md): requisitos del PDF, alcance de la consulta local y funciones pendientes.
 - [Releases](https://github.com/Spidey123134/citizensecurity/releases): entregas por versión con sus cambios y comprobaciones. El proceso se describe en [Publicar una versión](docs/RELEASES.md).
 
 El compañero `vazdavr-sudo` desarrolla las interfaces y el login. Nuestra parte se centra en la lógica y los datos del reporte. Se revisa una función por vez antes de elegir la siguiente.
@@ -51,10 +54,12 @@ Abre esta carpeta completa en Android Studio. Usa JDK 27 para Gradle y Android S
 
 ```powershell
 .\gradlew.bat :app:testDebugUnitTest :core:domain:test :core:data:lintDebug :app:lintDebug :app:assembleDebug
-.\gradlew.bat :core:data:connectedDebugAndroidTest
+.\gradlew.bat :core:data:consultarReporte
 ```
 
-El segundo comando requiere un emulador o teléfono. `0.2.1` aprobó 14 pruebas JVM de app, 9 instrumentadas SQLite y compilación y lint debug/release. Las 32 de dominio conservaron su resultado aprobado mediante `UP-TO-DATE`. Se mantienen 13 advertencias visuales previas del compañero, sin incidencias nuevas en las herramientas. La comprobación visual y los límites están en [Validación](docs/VALIDACION.md).
+El segundo comando está disponible en `main` de `0.4.0`, requiere un emulador o teléfono y ejecuta la suite instrumentada antes de mostrar y exportar la consulta. Usa una base temporal y no consulta ni modifica los reportes productivos del usuario.
+
+La entrega oficial `0.2.1` aprobó 14 pruebas JVM de app y 9 instrumentadas SQLite; las 32 de dominio conservaron su resultado mediante `UP-TO-DATE`. La entrega `0.4.0` aprobó 24 JVM de app, las 32 de dominio ejecutadas de nuevo y 10 instrumentadas en API 37, además de los JSON de consulta y guardado. Ambas comprobaciones incluyeron lint y compilación debug/release sin errores; se mantienen 13 advertencias visuales previas y datos sin incidencias. La comprobación visual de las herramientas oficiales y los límites están en [Validación](docs/VALIDACION.md). La consulta visual, la rotación real de ese futuro flujo y la aceptación funcional de `0.4.0` siguen pendientes. El APK debug se identifica como compilación para pruebas académicas.
 
 ## Siguientes incrementos
 

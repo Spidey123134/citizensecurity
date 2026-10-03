@@ -34,6 +34,54 @@ dependencies {
 
 val instrumentedResults = layout.buildDirectory.dir("outputs/androidTest-results/connected/debug")
 val savingEvidence = layout.buildDirectory.dir("reports/fase3")
+val queryEvidence = layout.buildDirectory.dir("reports/fase4")
+
+tasks.register("consultarReporte") {
+    group = "verification"
+    description = "Consulta folios y sus estados después de reabrir una base temporal Android."
+    dependsOn("connectedDebugAndroidTest")
+    inputs.dir(instrumentedResults)
+    outputs.dir(queryEvidence)
+    outputs.upToDateWhen { false }
+    doLast {
+        val testClass = "com.example.citizensecurity.data.SqliteReportQueryTest"
+        val logName = "logcat-$testClass-consultarFoliosTrasReabrirConservaDatosYOrdenSinModificarRegistros.txt"
+        val logs = instrumentedResults.get().asFile.walkTopDown()
+            .filter { it.isFile && it.name == logName }.sortedBy { it.absolutePath }.toList()
+        check(logs.isNotEmpty()) {
+            "Falta la evidencia de consulta. Ejecuta la instrumentación completa en un dispositivo."
+        }
+        logs.forEach { log ->
+            val json = log.useLines { lines ->
+                lines.firstOrNull { it.contains("FASE4_CONSULTA=") }
+                    ?.substringAfter("FASE4_CONSULTA=")
+            }
+            check(json != null) { "Falta el resultado de consulta en ${log.name}." }
+            val evidence = groovy.json.JsonSlurper().parseText(json) as Map<*, *>
+            val reports = evidence["found"] as List<*>
+            val orderedFolios = evidence["orderedFolios"] as List<*>
+            check(evidence["temporaryDatabase"] == true && evidence["reopened"] == true)
+            check(evidence["emptyCount"] == 0 && evidence["missingFound"] == false)
+            check(evidence["countBefore"] == 2 && evidence["countAfter"] == 2 && reports.size == 2)
+            val foundFolios = reports.map { (it as Map<*, *>)["id"] }
+            check(orderedFolios == foundFolios.sortedByDescending { it.toString() })
+            val output = queryEvidence.get().asFile.resolve(log.parentFile.name)
+            check(output.isDirectory || output.mkdirs()) { "No se pudo crear la carpeta de evidencia." }
+            output.resolve("consulta.json").writeText(
+                groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(evidence)), Charsets.UTF_8,
+            )
+            logger.lifecycle("Consulta comprobada en ${log.parentFile.name}, con base temporal reabierta.")
+            reports.forEach { entry ->
+                val report = entry as Map<*, *>
+                logger.lifecycle("Folio: ${report["id"]}; estado: ${report["status"]}; tipo: ${report["type"]}")
+            }
+            logger.lifecycle("Folio inexistente: ${evidence["missingFolio"]}; resultado: sin reporte.")
+            logger.lifecycle("Registros antes y después de consultar: ${evidence["countBefore"]} / ${evidence["countAfter"]}.")
+            logger.lifecycle("Orden estable para fechas iguales: ${orderedFolios.joinToString(", ")}.")
+            logger.lifecycle("Evidencia JSON: ${output.resolve("consulta.json").absolutePath}")
+        }
+    }
+}
 
 tasks.register("guardarReporte") {
     group = "verification"

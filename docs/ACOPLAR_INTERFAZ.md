@@ -2,6 +2,8 @@
 
 El puente técnico conecta la actividad con la lógica y los datos existentes mediante `ReportViewModel`, en `com.example.citizensecurity.report`. `MainActivity` usa `ComponentActivity` y expone `reportViewModel`; conserva el XML y el login visual del compañero. La conexión no añade un formulario, autenticación ni guardado automático. El compañero puede utilizar este contrato al construir su pantalla de reportes.
 
+La consulta de `0.4.0 — Unreleased` usa un modelo independiente: `MainActivity.reportQueryViewModel`. Recibe el folio con `findByFolio` y expone estados de consulta sin cambiar los del guardado. La conexión y los casos de revisión están en [Fase 4](FASE_4.md). El formulario sigue siendo trabajo del compañero.
+
 ## Obtener la instancia
 
 En `MainActivity`, usa la propiedad ya preparada:
