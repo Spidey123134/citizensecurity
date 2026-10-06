@@ -67,3 +67,19 @@ tasks.register<JavaExec>("validarUbicaciones") {
     mainClass.set("com.example.citizensecurity.examples.ValidarUbicaciones")
     jvmArgs("-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8")
 }
+
+tasks.register<JavaExec>("seleccionarUbicacion") {
+    group = "verification"
+    description = "Demuestra selección, confirmación y cancelación de un punto sin guardarlo."
+    classpath = examples.runtimeClasspath
+    mainClass.set("com.example.citizensecurity.examples.SeleccionarUbicacion")
+    jvmArgs("-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8")
+}
+
+tasks.register<JavaExec>("comprobarProximidad") {
+    group = "verification"
+    description = "Demuestra el límite de 5 km con ubicaciones ficticias, sin guardar reportes."
+    classpath = examples.runtimeClasspath
+    mainClass.set("com.example.citizensecurity.examples.ComprobarProximidad")
+    jvmArgs("-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8")
+}

@@ -99,6 +99,48 @@ class SqliteReportCancellationTest {
         }
     }
 
+    @Test
+    fun cancelarDespuesDeAdquirirElMonitorYAntesDeInsertarNoGuardaReporte(): Unit = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val databaseName = "citizensecurity_test_${UUID.randomUUID()}.db"
+        val dispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+        val clock = BlockingClock(NOW)
+        val repository = SqliteReportRepository(context, databaseName, clock, dispatcher)
+        assertTrue("La base temporal debe comenzar vacía.", repository.list().isEmpty())
+        val saving = async(Dispatchers.Default) { repository.create(draft()) }
+
+        try {
+            assertTrue(
+                "El guardado debe haber adquirido el monitor y llegado al reloj antes de cancelarse.",
+                clock.firstRequested.await(TIMEOUT_SECONDS, TimeUnit.SECONDS),
+            )
+            saving.cancel()
+            clock.releaseFirst.countDown()
+            saving.join()
+            assertTrue("El trabajo de guardado debe conservar la cancelación.", saving.isCancelled)
+            repository.close()
+
+            SqliteReportRepository(
+                context,
+                databaseName,
+                Clock.fixed(NOW, ZoneOffset.UTC),
+            ).use { reopened ->
+                assertEquals(
+                    "Cancelar antes de comenzar la transacción no debe insertar un reporte sin confirmación.",
+                    emptyList<Report>(),
+                    reopened.list(),
+                )
+            }
+        } finally {
+            clock.releaseFirst.countDown()
+            withContext(NonCancellable) { saving.cancelAndJoin() }
+            repository.close()
+            dispatcher.close()
+            check(databaseName.matches(Regex("citizensecurity_test_[a-f0-9-]{36}\\.db")))
+            context.deleteDatabase(databaseName)
+        }
+    }
+
     private fun draft() = NewReport(
         type = IncidentType.RISK,
         priority = Priority.MEDIUM,
@@ -112,7 +154,7 @@ class SqliteReportCancellationTest {
             frame.className.startsWith(SqliteReportRepository::class.java.name)
         }
 
-    /** Retiene únicamente la primera creación hasta observar y cancelar la segunda solicitud. */
+    /** Retiene la primera creación en el reloj hasta observar y cancelar la solicitud probada. */
     private class BlockingClock(private val now: Instant) : Clock() {
         val firstRequested = CountDownLatch(1)
         val releaseFirst = CountDownLatch(1)

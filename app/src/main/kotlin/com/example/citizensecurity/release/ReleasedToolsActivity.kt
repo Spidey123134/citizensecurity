@@ -9,7 +9,12 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.citizensecurity.R
+import com.example.citizensecurity.data.TemporaryReportSaveExample
 import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.NewReport
 import com.example.citizensecurity.domain.Priority
@@ -17,11 +22,16 @@ import com.example.citizensecurity.domain.ReportField
 import com.example.citizensecurity.domain.ReportLocation
 import com.example.citizensecurity.domain.ReportValidator
 import java.time.Instant
+import kotlinx.coroutines.launch
 
 class ReleasedToolsActivity : ComponentActivity() {
     private lateinit var result: TextView
     private lateinit var type: Spinner
     private lateinit var priority: Spinner
+    private val exampleModel: SaveExampleViewModel by lazy {
+        val example = TemporaryReportSaveExample(applicationContext)
+        ViewModelProvider(this, SaveExampleViewModel.factory(example::run))[SaveExampleViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +54,33 @@ class ReleasedToolsActivity : ComponentActivity() {
         findViewById<Button>(R.id.tools_receive).setOnClickListener { receive(validate = false) }
         findViewById<Button>(R.id.tools_validate).setOnClickListener { receive(validate = true) }
         findViewById<Button>(R.id.tools_locations).setOnClickListener { demonstrateLocations() }
+        findViewById<Button>(R.id.tools_save_example).setOnClickListener {
+            exampleModel.runExample()
+            showExample(exampleModel.state.value)
+        }
         findViewById<Button>(R.id.tools_back).setOnClickListener { finish() }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                exampleModel.state.collect(::showExample)
+            }
+        }
+    }
+
+    private fun showExample(state: SaveExampleState) {
+        findViewById<Button>(R.id.tools_save_example).isEnabled = state != SaveExampleState.Running
+        findViewById<TextView>(R.id.tools_example_result).text = when (state) {
+            SaveExampleState.Idle -> getString(R.string.tools_example_ready)
+            SaveExampleState.Running -> getString(R.string.tools_example_running)
+            SaveExampleState.Failed -> getString(R.string.tools_example_failed)
+            is SaveExampleState.Saved -> {
+                val report = state.report
+                getString(
+                    R.string.tools_example_saved,
+                    report.id,
+                    format(NewReport(report.type, report.priority, report.description, report.occurredAt, report.location)),
+                )
+            }
+        }
     }
 
     private fun receive(validate: Boolean) {

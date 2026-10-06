@@ -259,6 +259,34 @@
                 android:freezesText="true"
                 android:accessibilityLiveRegion="polite" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/tools_example_hint"
+                android:textColor="#E2E8F0" />
+
+            <Button
+                android:id="@+id/tools_save_example"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#163832"
+                android:textColor="#2ECC71"
+                android:text="@string/tools_save_example" />
+
+            <TextView
+                android:id="@+id/tools_example_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="12dp"
+                android:background="#163832"
+                android:textColor="#00E676"
+                android:text="@string/tools_example_ready"
+                android:textIsSelectable="true"
+                android:freezesText="true"
+                android:accessibilityLiveRegion="polite" />
+
             <Button
                 android:id="@+id/tools_back"
                 android:layout_width="match_parent"

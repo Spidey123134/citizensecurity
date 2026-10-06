@@ -154,6 +154,22 @@ class ReportValidatorTest {
     }
 
     @Test
+    fun coordinateMessagesRemainStableForIncompleteAndInvalidPoints() {
+        val incomplete = validate(draft(location = ReportLocation("Frente al parque", latitude = 19.4)))
+        val invalid = validate(draft(location = ReportLocation("Frente al parque", latitude = 91.0, longitude = 0.0)))
+
+        assertEquals(
+            "Agrega tanto la latitud como la longitud.",
+            incomplete.errors[ReportField.LOCATION_COORDINATES],
+        )
+        assertEquals(
+            "Las coordenadas deben ser finitas: latitud entre -90 y 90, " +
+                "y longitud entre -180 y 180.",
+            invalid.errors[ReportField.LOCATION_COORDINATES],
+        )
+    }
+
+    @Test
     fun outOfRangeCoordinatesAreRejectedEvenWithAReference() {
         for (location in listOf(
             ReportLocation("Frente al parque", latitude = 90.0001, longitude = 0.0),

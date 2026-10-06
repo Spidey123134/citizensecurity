@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application
+        android:allowBackup="false"
+        android:label="Verificación de ubicación"
+        android:testOnly="true"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity
+            android:name=".LocationPermissionHarnessActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LocationFlowHarnessActivity"
+            android:exported="false" />
+    </application>
+</manifest>

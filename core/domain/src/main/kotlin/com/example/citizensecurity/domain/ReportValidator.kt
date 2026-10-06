@@ -43,18 +43,8 @@ class ReportValidator {
         val hasLatitude = latitude != null
         val hasLongitude = longitude != null
 
-        when {
-            hasLatitude != hasLongitude -> {
-                errors[ReportField.LOCATION_COORDINATES] =
-                    "Agrega tanto la latitud como la longitud."
-            }
-            latitude != null && longitude != null &&
-                (!latitude.isFinite() || !longitude.isFinite() ||
-                    latitude !in -90.0..90.0 || longitude !in -180.0..180.0) -> {
-                errors[ReportField.LOCATION_COORDINATES] =
-                    "Las coordenadas deben ser finitas: latitud entre -90 y 90, " +
-                    "y longitud entre -180 y 180."
-            }
+        coordinateError(latitude, longitude)?.let { error ->
+            errors[ReportField.LOCATION_COORDINATES] = error
         }
 
         when {

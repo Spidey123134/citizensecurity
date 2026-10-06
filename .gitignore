@@ -4,6 +4,7 @@
 *.iml
 **/build/
 local.properties
+secrets.properties
 captures/
 .externalNativeBuild/
 .cxx/

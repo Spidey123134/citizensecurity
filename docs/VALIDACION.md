@@ -1,4 +1,6 @@
-# Validación de la primera entrega
+# Validación y comprobaciones del proyecto
+
+La comprobación actual corresponde a **0.4.0a: puente de ubicación y borrador**, al final del documento. Los cortes 0.3.10 y 0.3.11 conservan sus resultados históricos propios. La validación oficial 0.4.0a quedó completada; la [Release v0.4.0a](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0a) es la referencia de publicación y APK.
 
 Verificación local realizada el 2 de octubre de 2026, hora de México. Esta revisión cubre el contrato de validación y el guardado local; el diseño de pantallas corresponde al compañero.
 
@@ -238,9 +240,9 @@ La guía FASE_4 y el plan conservan la estructura del PDF: la consulta por folio
 La publicación oficial v0.2.1 se verificó el 3 de octubre de 2026 a las 18:27:40 UTC: release pública sin prerelease, etiqueta sobre c9f9058699d761f4041f9cd67ab0759b40e5e1a8 y APK adjunto con digest SHA-256 idéntico al artefacto comprobado. La etiqueta anterior v0.2.0 conserva aa29990847f10e80421fca15efe59a09b25838be. Solo se publican las etiquetas v0.2.0 y v0.2.1; las de 0.3 y 0.4 no se crean.
 
 
-## Cierre de la entrega 0.4.0
+## Historial de la publicación 0.4.0 realizada sin instrucción
 
-El 3 de octubre de 2026 el usuario solicitó terminar la versión 0.4.0 que estaba en desarrollo. Se conserva ese número, código Android **7**, y se prepara la integración mediante [PR #7](https://github.com/Spidey123134/citizensecurity/pull/7) y la [Release v0.4.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0). **0.3.0 permanece Unreleased**, sin etiqueta ni release propia; las etiquetas previas conservan su historial.
+El 3 de octubre de 2026 el usuario pidió terminar la versión 0.4.0 y explicarle los cambios. No pidió integrarla en `main` ni publicarla. La integración del [PR #7](https://github.com/Spidey123134/citizensecurity/pull/7) y la [Release v0.4.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0), versión 0.4.0 / código 7, se realizaron por una interpretación equivocada; los registros que atribuían autorización eran incorrectos. La publicación ocurrió a las 20:02:05 UTC y su etiqueta apunta a `08ab2d5f88d4b48733f0a415cd931a8efc9c1726`. Por la instrucción posterior del usuario se conserva esa publicación existente, sin retirarla ni revertirla. **0.3.0 no tiene etiqueta ni Release propia**, aunque su lógica adelantada sí estaba incluida en artefactos publicados. Esto registra el historial, no autoriza otras acciones externas.
 
 El código y el APK corresponden a la comprobación completa de 0.4.0 registrada arriba: **24 JVM de app + 32 de dominio + 10 instrumentadas SQLite = 66 aprobadas**, sin errores ni fallos. El cierre posterior modifica documentación; no se presenta como otra ejecución de esas suites. Se conserva lint de app debug/release con 0 errores y 13 advertencias visuales previas, lint de datos sin incidencias y ambas compilaciones aprobadas.
 
@@ -255,3 +257,461 @@ Se comprobó la firma APK v2 y se instaló el APK **0.4.0 / código 7** sobre la
 | Firma | APK v2, debug para pruebas académicas |
 
 El APK release sin firma se conserva como comprobación de compilación y no se distribuye. La consulta se demuestra por Gradle en una base temporal y queda preparada en el contrato para que el compañero conecte su pantalla. Pantalla y rotación del flujo de consulta, autenticación real, mapa, teléfono físico, API 26 y aceptación funcional del usuario siguen pendientes. La prueba visual de las herramientas existentes no completa esos pendientes.
+
+## Preparación local 0.3.1 y pulido 0.4.0
+
+Comprobación del 3 de octubre de 2026, hora de México. La preparación local usa **0.3.1 / código Android 8** y conserva la interfaz y el acceso de demostración. El código 8 permite actualizar en el emulador el APK 0.4.0 / código 7 sin desinstalar ni borrar datos. No se ha creado un commit, subido cambios, integrado una rama, creado una etiqueta ni publicado otra Release. El `main` remoto y la publicación anterior conservan su estado 0.4.0.
+
+El usuario eligió mostrar **solo un ejemplo ficticio de guardado**. `TemporaryReportSaveExample` recibe únicamente el contexto de aplicación y utiliza un repositorio SQLite en memoria (`databaseName = null`). No toma los campos del formulario, no abre la base productiva y cierra su base antes de devolver el reporte. `SaveExampleViewModel` conserva solo el resultado para mostrarlo, bloquea solicitudes simultáneas y reutiliza el mismo folio hasta salir. El guardado de datos reales y la consulta 0.4 no tienen controles visibles en debug ni release. La lógica conservada en el código no queda privada por ocultar sus controles.
+
+Se reprodujo un fallo del repositorio: un guardado cancelado después de adquirir el monitor y mientras esperaba al reloj podía insertar un reporte sin confirmación. La nueva regresión instrumentada falló antes del arreglo: **1 prueba ejecutada, 1 fallo**, con lista esperada vacía y un reporte encontrado. Evidencia fuera de Git en `.gradle/validacion/0.3.1-cancelacion-red.log` y `0.3.1-cancelacion-red-xml/`. La corrección comprueba actividad antes de comenzar la transacción y antes de marcarla como correcta; si se cancela antes de confirmar, el cierre de la transacción revierte la inserción. No promete revertir una escritura que ya terminó de confirmarse.
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :core:domain:test :core:data:consultarReporte :core:data:guardarReporte :core:data:lintDebug :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease --console=plain
+```
+
+Resultado posterior: **BUILD SUCCESSFUL en 14 segundos**, 211 tareas (91 ejecutadas y 120 actualizadas). Se ejecutaron **30 JVM de app** (6 del ejemplo, 8 de herramientas, 8 de guardado y 8 de consulta) y **15 instrumentadas SQLite** (2 de cancelación, 1 de consulta, 8 del repositorio y 4 del ejemplo), sin fallos, errores ni omisiones. Las **32 unitarias de dominio fueron `UP-TO-DATE`**, conservando su XML aprobado del `2026-10-03T05:39:56.971Z`; no se presentan como otra ejecución. En total son 45 pruebas ejecutadas ahora y 32 resultados anteriores conservados. La regresión nueva de cancelación aprobó después del arreglo.
+
+Las cuatro pruebas del ejemplo comprueban datos ficticios, ausencia de acceso a archivos de base, aislamiento entre instancias en memoria, pérdida al cerrar y conservación de un registro centinela en una base nombrada de instrumentación. El contexto detector rechaza aperturas fuera del archivo de pruebas permitido y cualquier borrado. Esa base nombrada de pruebas se conserva; nunca es la base productiva. Los JSON de `guardarReporte` y `consultarReporte` se exportaron correctamente; las lecturas conservaron 2 registros antes y después.
+
+Lint de app debug/release mantiene **0 errores y 13 advertencias visuales previas**; lint de datos no tiene incidencias. Ambas compilaciones aprobaron. Se verificó la firma APK v2. El APK release sin firma se compiló como comprobación local, sin distribuirlo.
+
+| Artefacto local | Valor |
+| --- | --- |
+| Archivo | `app/build/outputs/apk/debug/app-debug.apk` |
+| Versión / código | `0.3.1` / `8` |
+| Tamaño | `11781182` bytes |
+| SHA-256 | `4d90496173872814b1457c9f194133092b8cedcf959140a5fad7586ae33ee890` |
+| Firma | APK v2, debug para comprobación local |
+
+Comprobación visual real en el emulador API 37: actualización mediante `adb install -r`, entrada por desarrollador y por **admin / admin**, recepción, validación y tres casos de coordenadas correctos. Se modificó el formulario y el ejemplo siguió usando sus datos ficticios fijos. El folio `da873322-eac6-40b1-93e5-37b9b945654d`, el resultado y la fecha se conservaron al repetir y girar a horizontal y regresar. El resultado del ejemplo aparece separado de la validación. Salir y volver dejó el ejemplo listo para otra demostración; la contraseña se limpió al ingresar.
+
+Se recorrió toda la pantalla y solo aparecieron cinco botones: recepción, validación, ubicaciones, ejemplo de guardado y regreso al inicio. No hay botones para guardar el formulario o consultar folios. Los nombres y SHA-256 de los archivos de base de datos de la aplicación coincidieron antes y después: los archivos heredados `reports.db` y `reports.db-journal` permanecieron intactos y no se añadió ninguna base de reportes. La evidencia está fuera de Git en `.gradle/validacion/preparacion031-ui.json`, `preparacion031-inicio.png` y `preparacion031-ejemplo.png`; el log de compilación y pruebas está en `0.3.1-pulido.log`.
+
+**0.3.0 y el pulido de 0.4.0 permanecen Unreleased.** La nueva 0.3.1 es una preparación local para una futura versión oficial; su publicación requiere instrucción precisa. Teléfono físico, API 26, autenticación real, mapa, formulario real, flujo visual de consulta y aceptación funcional siguen pendientes.
+
+## Inicio local 0.3.2 — Selección de ubicación — 3 de octubre de 2026
+
+Incremento solicitado como **0.3.2 / código Android 9 — Unreleased**, en lugar del futuro nombre 0.5.0. Se reutiliza y conserva la preparación local 0.3.1 / código 8. No se crea un commit, subida, integración, etiqueta o Release ni se retira el historial publicado. El primer paso de [Fase 6](FASE_6.md) implementa selección provisional, confirmación y cancelación independientes de Android; no añade mapa, SDK, GPS, servicios ni controles nuevos.
+
+Se ejecutó desde la raíz con JDK 27 y emulador `emulator-5554`, API 37:
+
+```powershell
+.\gradlew.bat :core:domain:test :app:testDebugUnitTest :core:data:connectedDebugAndroidTest :core:data:lintDebug :app:lintDebug :app:assembleDebug --console=plain
+.\gradlew.bat :core:domain:seleccionarUbicacion --console=plain
+```
+
+La primera ejecución terminó **BUILD SUCCESSFUL in 20s**, 127 tareas, 39 ejecutadas y 88 `UP-TO-DATE`. Las tres tareas de pruebas se ejecutaron de nuevo; sus XML corresponden al 3 de octubre, alrededor de las 23:02 UTC. No se reutilizan aquí los resultados anteriores de 0.3.1 como una ejecución nueva.
+
+| Comprobación ejecutada | Resultado |
+| --- | --- |
+| Dominio JVM | **47 aprobadas**: 14 de selección y 33 de validación. De estas, 14 de selección y una regresión de mensajes son nuevas. |
+| App JVM | **30 aprobadas**: 6 del ejemplo ficticio, 8 de herramientas, 8 de guardado y 8 de consulta. |
+| SQLite instrumentadas API 37 | **15 aprobadas**: 2 de cancelación, 1 de consulta, 8 del repositorio y 4 del ejemplo ficticio. |
+| Total ejecutado | **92**, cero fallos, errores u omisiones. No es una suma acumulada con ejecuciones históricas. |
+| Lint debug | App sin errores, **13 advertencias visuales previas**; datos sin incidencias. |
+| APK debug | Compilación aprobada; versión 0.3.2, código 9 y firma APK v2 comprobados. |
+| Ejemplo de selección | **BUILD SUCCESSFUL in 3s**; salida correcta para ausencia de propuesta, selección válida, cancelación y propuesta inválida posterior. |
+
+Las pruebas nuevas cubren que proponer y confirmar no mutan el borrador ni las sesiones anteriores; conservar referencia exacta, precisión y ceros negativos; admitir límites inclusivos; rechazar valores no finitos y el siguiente valor representable fuera de rango; impedir retorno silencioso a un punto válido después de proponer uno inválido; corregir/reemplazar propuestas; cancelar incluso una ubicación inicial incompleta; y dejar la validación de referencia y del reporte completo a `ReportValidator`. La regla de coordenadas se comparte con el validador anterior; la regresión adicional comprueba que sus mensajes no cambian.
+
+La demostración técnica imprime la ubicación original `19.4326077, -99.1332088`, una propuesta `20.123456789012344, -98.98765432109876` y la ubicación confirmada con la misma precisión `Double`. Cancelar devuelve la ubicación original y proponer después `91.0, 0.0` devuelve `InvalidCoordinates`, sin confirmar el punto previo. Es un ejemplo con datos ficticios del source set `examples`, fuera del código productivo; no abre repositorios ni guarda reportes.
+
+| Artefacto local | Valor |
+| --- | --- |
+| Archivo de desarrollo | `app/build/outputs/apk/debug/app-debug.apk` |
+| Versión / código | `0.3.2` / `9` |
+| Tamaño | `11781182` bytes |
+| SHA-256 | `096255850e8f0148f32706416cf3669bf8888127889c6cf54e0758ca3b1adc3d` |
+| Firma | APK v2, debug para comprobación local |
+| Base 0.3.1 conservada | `.gradle/validacion/citizensecurity-0.3.1-debug.apk`, mismo hash `4d90496173872814b1457c9f194133092b8cedcf959140a5fad7586ae33ee890` |
+
+La comparación de los APK confirma **43 recursos compilados idénticos byte a byte** y el mismo listado de recursos que 0.3.1, incluidos los layouts y strings. La nueva lógica de dominio sí está incluida en el DEX del APK 0.3.2, sin controles que la abran. Los archivos de interfaz y splash del compañero no tienen cambios frente a HEAD. No se instaló el APK de desarrollo sobre la app del emulador: `dumpsys package` confirmó que conserva **0.3.1 / código 8**. No se hizo una nueva comprobación visual manual de esta versión ni se presenta la prueba visual anterior como si lo fuera.
+
+Evidencia local fuera de Git: `.gradle/validacion/0.3.2-inicio.log`, `0.3.2-seleccion.log` e `inicio032.json`. HEAD, la referencia local de `origin/main` y `v0.4.0` permanecieron en `08ab2d5f88d4b48733f0a415cd931a8efc9c1726`; el área de staging quedó vacía. No se modificó el historial. [Avance](AVANCE.md) registra **7/28 hitos, 25% estimado de construcción del plan**, con el mapa real pendiente; no mide tiempo ni aceptación del usuario.
+
+**0.3.2 permanece Unreleased y local.** Guardado real y toda consulta 0.4 continúan sin acceso visual. SDK, mapa por zonas y marcadores, integración y rotación de la pantalla del compañero, GPS, cuentas, reportes propios, administración, fotografías, notificaciones, teléfono físico, API 26 y aceptación funcional siguen pendientes. Lint y compilación release no se repitieron en este inicio de desarrollo; sus resultados anteriores pertenecen a 0.3.1.
+
+### Lectura del nuevo `main` del compañero
+
+Al cerrar el incremento, `git ls-remote origin refs/heads/main refs/tags/v0.4.0` devolvió **main `b665a56a9761ec5c083cabc638eba1674c7bf78b`** y **etiqueta v0.4.0 `08ab2d5f88d4b48733f0a415cd931a8efc9c1726`**. Se leyó el commit con la API pública de GitHub: autor `vazdavr-sudo`, mensaje «cambiar interfaz», padre `08ab2d5`, fecha `2026-10-03T21:52:51Z`. Cambia `activity_main.xml` y `activity_released_tools.xml`, añade `activity_createaccount.xml` y `gradle/gradle-daemon-jvm.properties` con toolchain 25. No modifica versiones Android, Kotlin, contratos ni persistencia.
+
+El XML remoto conserva los controles anteriores, pero no tiene los IDs `tools_save_example` y `tools_example_result` requeridos por la preparación local. La compatibilidad del contrato puro de ubicación no se afecta; incorporar el rediseño completo requiere un acoplamiento que conserve el ejemplo solicitado y revise la configuración del JDK. No se ejecutó `fetch`, `pull`, merge o reemplazo de layouts; las referencias locales y los cambios sin commit permanecieron intactos. Las pruebas de esta sección pertenecen a la copia local, **no a una combinación con ese rediseño aún pendiente**.
+
+La evidencia de esa lectura está en `.gradle/validacion/main-remoto-b665a56.json` y `activity_released_tools-b665a56.xml`, fuera de Git. No se prueba ni se modifica la creación de cuentas del compañero; el nuevo archivo es visual. La publicación v0.4.0 se conserva y el avance sigue 7/28 hitos.
+
+## 0.3.3: proximidad del incidente al teléfono — 3 de octubre de 2026, México
+
+Preparación local **0.3.3 / código Android 10 — Unreleased**. El usuario confirmó **5 km alrededor del teléfono**. La regla usa un punto seleccionado y evidencia Android independiente: precisión de 0 a 100 m, lectura de hasta 2 minutos por reloj monotónico y sin marca mock. La condición conservadora es **distancia aproximada + precisión <= 5.000 m**. La proximidad se comprueba al confirmar y nuevamente en el repositorio productivo, antes de abrir escritura, comenzar y confirmar la transacción. No se añadió mapa, SDK, captura de ubicación ni permisos al manifiesto.
+
+### Ejecuciones
+
+Con JDK 27 y emulador API 37, serial `emulator-5554`:
+
+```powershell
+.\gradlew.bat :core:domain:test :core:domain:comprobarProximidad :app:testDebugUnitTest :core:data:connectedDebugAndroidTest :core:data:lintDebug :app:lintDebug :app:assembleDebug --console=plain
+```
+
+Terminó **BUILD SUCCESSFUL in 32s**, 129 tareas, 56 ejecutadas y 73 `UP-TO-DATE`. Las tres tareas de pruebas se ejecutaron de nuevo: 86 de dominio, 30 de app y 31 instrumentadas, **147 diferentes**. Sus XML corresponden al 4 de octubre alrededor de las 02:00 UTC, todavía 3 de octubre en México.
+
+Se añadió un caso de lectura caducada después de insertar y antes de confirmar la transacción. Se ejecutó:
+
+```powershell
+.\gradlew.bat :core:data:connectedDebugAndroidTest :core:data:lintDebug --console=plain
+```
+
+Terminó **BUILD SUCCESSFUL in 10s**, 73 tareas, 8 ejecutadas y 65 `UP-TO-DATE`. Las 32 instrumentadas aprobaron; XML alrededor de las 02:02 UTC. Las 31 comunes se repitieron; no se suman como pruebas diferentes. Los resultados vigentes de ambas ejecuciones verifican **148 pruebas diferentes: 86 + 30 + 32**, cero fallos, errores u omisiones.
+
+| Suite | Resultado |
+| --- | --- |
+| Dominio | 86: 33 de proximidad, 6 de confirmación protegida, 14 de selección y 33 de validación. |
+| App JVM | 30: 6 del ejemplo ficticio, 8 de herramientas, 8 de guardado y 8 de consulta. |
+| Instrumentación Android API 37 | 32: 8 del guard de proximidad SQLite, 9 de evidencia Android y las 15 anteriores de SQLite/ejemplo. |
+| Lint debug | App sin errores, 13 advertencias visuales anteriores; datos sin incidencias. |
+| APK debug | Compilado, versión 0.3.3 / código 10 y firma APK v2 comprobados. |
+
+### Comportamiento comprobado
+
+La demostración de consola permitió un punto a unos 200 m de la lectura ficticia en México; rechazó París con el teléfono en México; permitió un punto a unos 13 m con el teléfono junto a París; y rechazó falta de evidencia, lectura antigua y marca de simulación. El ejemplo utiliza el source set `examples`, fuera del APK, no captura GPS ni guarda reportes.
+
+Las pruebas puras usan referencias analíticas para Ecuador, polos, antípodas y meridiano internacional. Cubren precisión sumada al radio, límites inclusivos y el siguiente valor representable fuera del límite, `NaN`/infinito, tiempos negativos/futuros y valores `Long` extremos sin desbordamiento. La confirmación protegida conserva referencia y precisión, no utiliza la ubicación original como un pin implícito y no reutiliza una aprobación al cambiar el punto o caducar la lectura.
+
+Las 9 instrumentadas de evidencia usan objetos nativos `Location` sintéticos, sin acceder al GPS. Comprueban copia inmutable, diferencia entre precisión ausente y cero explícito, independencia del reloj de calendario, permiso denegado/revocado, `SecurityException`, limpieza y marca mock. El caso mock ejecutó la API 31+ en API 37; el fallback de API 26–30 queda pendiente de ejecución en esas plataformas.
+
+Las 8 del guard SQLite comprueban: rechazo sin evidencia antes de crear un archivo de base; guardado cercano con las coordenadas finales; sustitución del punto por Francia sin insertar; lectura antigua o mock sin insertar; rollback si la lectura se vuelve mock antes de confirmar; rollback si caduca después de insertar; caducidad mientras se espera el reloj del repositorio; y rechazo de un reporte con solo referencia escrita en el camino protegido. Las comprobaciones usan bases aisladas de prueba, principalmente en memoria, no la base productiva. Las 4 pruebas existentes del ejemplo ficticio siguen aprobando sin evidencia del teléfono.
+
+La composición productiva fue revisada: las fábricas de `CitizenSecurityApplication` comparten un repositorio con `NearbySqliteReportGuard`; `MainActivity` conserva esas fábricas. No se conectaron eventos nuevos ni se cambió el login. Con el manifiesto actual sin permiso de ubicación ni captura conectada, falta evidencia y un eventual guardado productivo se rechaza antes de abrir la base. La comprobación es de composición/código y del guard instrumentado, no de GPS real ni de un flujo visual de reportar.
+
+### Artefacto y estado local
+
+| Artefacto | Valor |
+| --- | --- |
+| APK | `app/build/outputs/apk/debug/app-debug.apk` |
+| Versión / código | `0.3.3` / `10` |
+| Tamaño | `11797562` bytes |
+| SHA-256 | `52b71e7d819532c46560a37aa1c7e6bfa8fc25ef6d9c4ccc736206a5947c4a61` |
+| Firma | APK v2, debug para comprobación local |
+| Base conservada | `.gradle/validacion/citizensecurity-0.3.2-debug.apk`, hash `096255850e8f0148f32706416cf3669bf8888127889c6cf54e0758ca3b1adc3d` |
+
+Los 43 recursos compilados coinciden byte a byte con la base 0.3.2, incluidos layouts y strings. El DEX contiene `NearbyIncidentPolicy` y el guard SQLite; el ejemplo de consola no se empaqueta. Los archivos del login, splash y `MainActivity` del compañero siguen sin cambios frente a HEAD. `dumpsys package` confirma que la app instalada conserva **0.3.1 / código 8**; no se instaló el APK de desarrollo sobre ella. HEAD y las referencias locales permanecen intactos, staging vacío y sin nuevas etiquetas.
+
+La evidencia local fuera de Git está en `.gradle/validacion/0.3.3-proximidad.log`, `0.3.3-rollback.log` y `proximidad033.json`. No se ejecutó fetch, pull, integración o publicación; el último corte remoto observado sigue registrado en la sección 0.3.2.
+
+**Límites:** [Proximidad](PROXIMIDAD_REPORTES.md) distingue el radio esférico aproximado y la precisión estimada del teléfono de garantías de posición o veracidad del incidente. No impide toda falsificación de ubicación. La pantalla futura debe pedir confirmación explícita tras cambiar el pin; el repositorio comprueba proximidad del borrador, no un gesto visual todavía inexistente. GPS real, permisos y SDK integrados, pantalla de mapa, teléfono físico, API 26–30 y aceptación funcional siguen pendientes. Lint y compilación release no se repitieron; las comprobaciones de este desarrollo son debug. Se conserva **7/28 hitos, 25%**, y la preparación queda **Unreleased y local**.
+
+
+## 0.3.4: solicitud y renovación de ubicación
+
+Preparación local **0.3.4 / código Android 11 — Unreleased**, del 3 de octubre de 2026, hora de México. Fuente GPS y controlador de una solicitud explícita; no hay permisos nuevos, interfaz, login, mapa, servicio de fondo ni captura automática. Continúa la fase 6 y conserva las bases anteriores.
+
+Con JDK 27 y `ANDROID_SERIAL=emulator-5554`, desde la raíz del proyecto:
+
+```powershell
+.\gradlew.bat :core:domain:test :core:data:testDebugUnitTest :app:testDebugUnitTest :core:data:connectedDebugAndroidTest :core:data:lintDebug :app:lintDebug :app:assembleDebug --console=plain
+```
+
+Resultado: **BUILD SUCCESSFUL en 20 segundos**, 132 tareas, 57 ejecutadas y 75 UP-TO-DATE. Los cuatro grupos de pruebas se ejecutaron; sus XML actuales no tienen fallos, errores u omitidas.
+
+| Grupo | Pruebas diferentes aprobadas |
+| --- | --- |
+| Dominio | 86 |
+| JVM app | 30 |
+| JVM datos: renovación de ubicación | 20 |
+| Instrumentadas de datos en API 37 | 49: 32 anteriores y 17 de fuente Android |
+| Total | **185** |
+
+Los 20 casos JVM nuevos cubren permiso denegado/revocado, GPS apagado, ausencia de lectura, timeout, cancelación externa, solicitudes simultáneas, reintento, rechazo de coordenadas, precisión, antigüedad, simulación y una carrera de caducidad durante la publicación. Esta última confirma que devolver `TimedOut` no conserva evidencia recién publicada. `Ready` no permite cualquier punto: confirmar y escribir siguen aplicando la proximidad de 5 km.
+
+Las 17 instrumentadas de la fuente emplean metadatos de `Location` nativo y un backend GPS interno controlado: primera lectura, listener retirado, callbacks síncronos/tardíos, cancelación anterior/durante el registro, cancelación desde otro hilo, proveedor deshabilitado y errores parciales. También verifican uso de contexto de aplicación y consulta del gestor real con permiso denegado. No se cambian permisos o proveedores del sistema ni se captura una posición real.
+
+La primera compilación avisó de una sobrecarga obsoleta `async(Job)` en un test nuevo. Se corrigió para cancelar el Job hijo propio, manteniendo concurrencia estructurada; se repitieron solo instrumentación y lint de datos:
+
+```powershell
+.\gradlew.bat :core:data:connectedDebugAndroidTest :core:data:lintDebug --console=plain
+```
+
+Resultado: **BUILD SUCCESSFUL en 10 segundos**, 73 tareas, 8 ejecutadas y 65 UP-TO-DATE; las mismas **49 instrumentadas** aprobaron sin aquella advertencia Kotlin. Esta repetición no eleva el total de 185 pruebas diferentes. Quedan avisos de herramientas externas de Gradle/Java registrados en los logs; no se cambió el runtime por este paso.
+
+Lint debug: datos sin incidencias; app sin errores ni fallos fatales y con **13 advertencias visuales previas**. Compilación debug y firma APK v2 correctas. Los **43 recursos compilados** son idénticos a 0.3.3, con la misma lista de archivos. El DEX incluye la fuente Android, el controlador y el guard; el ejemplo de consola permanece fuera. `output-metadata.json` confirma 0.3.4 / código 11.
+
+| Artefacto local ignorado por Git | Bytes | SHA-256 |
+| --- | --- | --- |
+| `.gradle/validacion/citizensecurity-0.3.4-debug.apk` | 11.797.566 | `5ba57509235b73696eb033689459642fe43d25f1913d3527a7c693106b479e6a` |
+| Base conservada `.gradle/validacion/citizensecurity-0.3.3-debug.apk` | 11.797.562 | `52b71e7d819532c46560a37aa1c7e6bfa8fc25ef6d9c4ccc736206a5947c4a61` |
+
+Logs locales: `.gradle/validacion/0.3.4-ubicacion.log` y `0.3.4-cancelacion.log`; resumen XML/lint/APK/recursos y Git en `ubicacion034.json`, obtenido mediante `comprobar-ubicacion-034.py`. La copia 0.3.3 conserva su hash. La app del usuario instalada en el emulador sigue **0.3.1 / código 8**; no se instaló 0.3.4 sobre ella.
+
+**Límites y estado:** fuente primera lectura solamente; si resulta antigua, imprecisa o simulada se rechaza y necesita un reintento explícito. El timeout técnico de 15 segundos es configurable. No se ejecutó GPS real, teléfono físico, flujo interactivo de permisos, API 26–29, mapa Google Maps ni integración de las pantallas del compañero. La ausencia de permisos en el manifiesto impide esa captura desde la app visible actual. Lint y compilación release no se repitieron. Se conserva **7/28 hitos, 25%**, sin aceptación funcional del flujo completo.
+
+Lectura final de Git: HEAD, referencia local cacheada origin/main y etiqueta existente v0.4.0 siguen en `08ab2d5f88d4b48733f0a415cd931a8efc9c1726`; índice vacío. No se ejecutaron fetch, pull, commit, subida, integración, etiqueta, Release nueva o borrado. MainActivity, SplashActivity, sus layouts y el manifiesto no cambiaron respecto de esa base. El último corte remoto observado continúa siendo el registrado en 0.3.2; no se presenta la referencia cacheada como una nueva consulta remota.
+
+
+## 0.3.4: incorporación del SDK Google Maps
+
+Complemento local Unreleased, código Android **11**. SDK real `play-services-maps:20.0.0` verificado en Google Maven y notas oficiales. La clave está ausente en `secrets.properties` y en la variable `MAPS_API_KEY`; no se imprime ningún secreto. Se declaran metadato API_KEY, internet y ubicación COARSE/FINE. Esto no concede permiso ni carga automáticamente el mapa.
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :app:lintDebug :app:assembleDebug --console=plain
+```
+
+**BUILD SUCCESSFUL en 35 segundos**, 91 tareas: 90 ejecutadas y una UP-TO-DATE. **41 JVM de app aprobadas**: las 30 previas y 11 nuevas de `IncidentMapSession`, sin fallos, errores u omitidas. Lint debug de app: cero errores/fatales y 13 advertencias anteriores. Las pruebas cubren último toque, coordenadas inválidas posteriores, falta de evidencia, antigüedad, simulación, lejanía, cancelación y cierre ante eventos tardíos. El adaptador compila contra `GoogleMap` y `OnMapClickListener` reales; no se simula un mapa cargado en estas pruebas.
+
+Las otras 155 pruebas de dominio/datos son evidencia del corte anterior de captura; no se repitieron en este complemento. Las 30 pruebas de app repetidas no se cuentan como nuevas. El cierre anterior de 185 casos permanece separado.
+
+| Artefacto local ignorado por Git | Bytes | SHA-256 |
+| --- | --- | --- |
+| `.gradle/validacion/citizensecurity-0.3.4-maps-debug.apk` | 12.513.889 | `9b28b216c36b4950dcfb53f887cf2c2c5cba6d7da3eceb24f7595b56b32bfba5` |
+
+Firma v2 y metadatos 0.3.4 / código 11 correctos. El DEX contiene GoogleMap, binding y sesión. El APK anterior 0.3.4 de captura conserva su hash `5ba57509235b73696eb033689459642fe43d25f1913d3527a7c693106b479e6a`; no se sobrescribió. Los recursos compilados pueden cambiar por el SDK añadido: no se repite la afirmación de 43 recursos idénticos del corte anterior.
+
+Log `.gradle/validacion/0.3.4-google-maps.log` y resumen `maps034.json`, ignorados por Git. `:app:signingReport` aprobó y su SHA-1 debug se documenta en [Google Maps](GOOGLE_MAPS.md); ese certificado no es una clave de API ni habilita Google Cloud. No se instaló la preparación sobre la app del usuario. HEAD sigue en `08ab2d5` y el índice vacío; MainActivity, SplashActivity y sus layouts no cambiaron. El manifiesto sí cambió por esta incorporación del SDK y permisos declarados. No hubo commit, subida, fetch, pull, integración, etiqueta, Release o borrado.
+
+**Pendientes:** clave Android habilitada/restringida, facturación y API configuradas en Cloud, pantalla/pin/controles del compañero, permiso en tiempo de ejecución, captura GPS real y carga/flujo del mapa probados. [Avance](AVANCE.md) mantiene **7/28 = 25%**: compilar con una clave vacía no completa el hito SDK configurado. No hay mapa operativo visible en el menú actual.
+
+
+## 0.3.4: pulido de cancelación del mapa
+
+Revisión local solicitada para corregir fallos existentes. Se conservan 0.3.4 / código Android 11, Unreleased, y avance 7/28 = 25%.
+
+Tras una confirmación aceptada, `IncidentMapSession.cancel()` podía devolver la ubicación original y permitir que un consumidor reemplazara las coordenadas confirmadas. Ahora conserva la ubicación terminal: cancelar una sesión abierta devuelve el original; después de confirmar devuelve exactamente el objeto confirmado. La regresión comprueba cancelación repetida, conservación del punto y rechazo de eventos/confirmaciones posteriores, sin nueva lectura de evidencia.
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :app:lintDebug :app:assembleDebug --console=plain
+```
+
+**BUILD SUCCESSFUL en 6 segundos**, 91 tareas: 16 ejecutadas y 75 UP-TO-DATE. **42 JVM de app aprobadas**, cero fallos, errores u omitidas: 30 previas y 12 de selección del mapa. Lint sin errores/fatales, con las mismas 13 advertencias. Compilación debug y firma v2 correctas. Las suites de dominio e instrumentación no se repitieron para este cambio de app; su evidencia previa permanece separada.
+
+Artefacto ignorado `.gradle/validacion/citizensecurity-0.3.4-maps-pulido-debug.apk`: 12.518.362 bytes, SHA-256 `ab035028e592d230ccaa2c9e0d190f240893e142ae6282d65f5bbfce8f0ce455`. El APK de la incorporación inicial de Maps conserva su hash y no se sobrescribe. Log `0.3.4-maps-pulido.log` y resumen `maps-pulido034.json`, dentro de `.gradle/validacion/`.
+
+Revisión adicional de renovación GPS, evidencia y configuración: sin otro fallo material identificado. Se corrigió una contradicción en la guía que afirmaba en presente que no había permisos ni SDK, pese a su incorporación. La primera lectura imprecisa sigue rechazándose y necesita reintento explícito: es la limitación documentada de esta fuente, sin ampliación de alcance.
+
+No se modificó interfaz/login, configuró Google Cloud, instaló el APK del usuario, capturó GPS real ni cargó un mapa real. Sin commit, subida, integración, etiqueta, Release o borrado. La clave, permisos interactivos y conexión visual de Maps siguen pendientes.
+
+
+## 0.3.7: cierre del flujo y conservación de datos
+
+Preparación **0.3.7 / código 14, Unreleased**, local, del 3 de octubre de 2026 (México). Los cambios de GPS, coordinación del modelo y protección SQLite forman los incrementos lógicos 0.3.5–0.3.7; se entrega un único artefacto 0.3.7, sin APK históricos independientes 0.3.5/0.3.6. El [detalle de cambios](INCREMENTOS_035_037.md) describe el contrato para el compañero.
+
+```powershell
+.\gradlew.bat :core:domain:test :core:data:testDebugUnitTest :app:testDebugUnitTest :core:data:connectedDebugAndroidTest :core:data:lintDebug :app:lintDebug :app:assembleDebug :app:lintRelease :app:assembleRelease --console=plain
+.\gradlew.bat :core:data:connectedDebugAndroidTest :core:data:lintDebug --console=plain
+.\gradlew.bat :app:testDebugUnitTest :core:data:connectedDebugAndroidTest :core:data:lintDebug :app:lintDebug :app:assembleDebug :app:lintRelease :app:assembleRelease --console=plain
+```
+
+Las tres ejecuciones aprobaron. La integral terminó en **48 segundos**, 214 tareas (159 ejecutadas, 55 UP-TO-DATE). La intermedia repitió instrumentación y lint de datos tras ajustar una prueba. La final terminó en **13 segundos**, 207 tareas (34 ejecutadas, 173 UP-TO-DATE); eliminó la llamada super vacía que lint señaló y el último `async(Job)` obsoleto de las pruebas, conservando concurrencia estructurada con supervisor. Las repeticiones no aumentan el número de casos.
+
+| Suite | Casos diferentes | Estado en este lote |
+| --- | ---: | --- |
+| Dominio | 86 | Resultado anterior reutilizado por UP-TO-DATE; dominio sin cambios en este lote |
+| JVM app | 74 | Ejecutados; 23 nuevos del modelo y 9 de prerequisitos Maps |
+| JVM datos | 27 | Ejecutados; 7 nuevos de renovación GPS |
+| Instrumentadas API 37 | 62 | Ejecutadas; 5 nuevas de fuente GPS, 2 de evidencia y 6 de corrupción/cancelación SQLite |
+| Total registrado | 249 | 163 diferentes ejecutados; 86 reutilizados |
+
+**Cero fallos, errores y omitidas** en los XML comprobados. **52 casos nuevos** respecto del corte 0.3.4 con Maps pulido. Se cubren evidencia revocada al publicar, fallos ordinarios del proveedor/reloj, retirada transitoria y persistente, cancelación, respuestas tardías, pin modificado durante captura, salida y renovación, confirmación caducada o lejana y errores de prerequisitos.
+
+Las seis nuevas SQLite usan archivos de prueba con nombre aleatorio y limpieza restringida a ese nombre: tres comprueban corrupción al abrir/listar/crear, preservando los bytes y fallando de nuevo al reintentar; tres cancelan en cada guard y comprueban que no hay inserción, incluida la transacción anterior al commit. El handler propio evita la eliminación del archivo dañado y no cambia esquema/migraciones. No intenta reparar una base corrupta ni revierte un commit ya realizado.
+
+Compilaciones **debug y release aprobadas**; release permanece **sin firma configurada**. `apksigner verify --verbose` verificó la firma **v2** del APK debug. Lint datos sin incidencias; app debug y release sin errores/fatales y **13 advertencias visuales previas**. No se ocultaron mediante baseline. Persisten advertencias de herramientas Gradle/JDK/Unsafe externas, registradas en los logs; se retiraron los avisos nuevos de nuestro modelo/pruebas.
+
+| Artefacto local ignorado | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `.gradle/validacion/citizensecurity-0.3.7-debug.apk` | 12.550.218 | `e9c47af988133c0a2887d1a6e4d1e9df98209e05d2093c18df3327339d86f98e` |
+| `.gradle/validacion/citizensecurity-0.3.7-release-unsigned.apk` | 8.975.964 | `774ed6b551612c4f49d37dad47d3904a65aad977498124c8865a394c41e7fbe6` |
+
+Metadatos de ambos: **0.3.7 / 14**. El DEX contiene Maps SDK, modelo, ambos componentes nuevos y guard productivo; el ejemplo de consola sigue excluido. Los **86 archivos de recursos compilados** y su contenido coinciden con el APK 0.3.4 Maps pulido. Se verificaron intactos los hashes de las copias 0.3.1, 0.3.2, 0.3.3 y los tres cortes 0.3.4.
+
+Recibo local `.gradle/validacion/cierre037.json`, script `comprobar-cierre-037.py`, logs `0.3.7-integracion.log`, `0.3.7-cierre-nativo.log`, `0.3.7-cierre.log` y `0.3.7-firma.log`. HEAD permanece en `08ab2d5f88d4b48733f0a415cd931a8efc9c1726` y el índice vacío. `MainActivity`, `SplashActivity` y sus layouts no cambiaron respecto de esa base. No se consultó ni integró el remoto en este lote ni se ejecutó commit, subida, etiqueta o Release. Las herramientas siguen mostrando solo funciones básicas y ejemplo en memoria; guardado real y consulta siguen ocultos.
+
+La comprobación de paquete confirma que el emulador conserva la app del usuario **0.3.1 / código 8**; no se instaló la preparación sobre ella. La instrumentación usa un paquete técnico separado, bases aisladas y callbacks nativos con backend controlado. No acredita una posición GPS real.
+
+**Pendientes y límites:** clave Android/Cloud y restricciones, facturación/API, mapa renderizado con pin y controles, permiso interactivo, GPS real, teléfono físico y API 26–29. `MapsReadiness.Ready` verifica solo configuración y servicios locales; una clave presente no asegura autorización ni red. Si Android rechaza ambas retiradas de un listener no se garantiza que lo haya desregistrado, aunque la solicitud ya rechaza lecturas y eventos tardíos. El filtro local de 5 km reduce reportes lejanos; no acredita un crimen ni impide toda falsificación. No hay flujo completo aceptado ni garantía de ausencia de errores o seguridad de producción. [Avance](AVANCE.md) conserva **7/28 = 25%**.
+
+
+## 0.3.8: permiso de ubicación en primer plano
+
+Preparación **0.3.8 / código Android 15, Unreleased**, local, del **5 de octubre de 2026 (México)**. El usuario pidió el siguiente paso y confirmó que todavía no hay clave Google. [Permisos de ubicación](PERMISOS_UBICACION.md) documenta el modelo, contrato AndroidX y conexión pendiente de los controles del compañero.
+
+La primera ejecución falló al compilar cuatro llamadas de pruebas con un índice separado por salto de línea. Se corrigieron con `.get(...)`, sin habilitar un lenguaje experimental. La siguiente aprobó 120 JVM, pero lint detuvo el cierre: Google Maps resolvía **Fragment 1.1.0**, incompatible con Activity Result. `dependencyInsight` identificó el origen transitivo; se añadió una restricción a **1.9.1**, estable según las [notas oficiales](https://developer.android.com/jetpack/androidx/releases/fragment). No se añadió baseline ni suppress. La dependencia resuelta y la ejecución final comprueban la corrección.
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:lintRelease :app:assembleRelease :app:dependencyInsight --dependency androidx.fragment --configuration debugRuntimeClasspath --console=plain
+```
+
+**BUILD SUCCESSFUL en 1 minuto 36 segundos**, 174 tareas (173 ejecutadas, una UP-TO-DATE). **121 JVM de app aprobadas**, cero fallos, errores y omitidas:
+
+| Casos de app | Cantidad | Comprobación |
+| --- | ---: | --- |
+| Modelos y herramientas anteriores | 74 | Ejecutados de nuevo |
+| LocationPermissionViewModel | 25 | Preciso/aproximado/ausente, rationale, cancelación, estado retenido, callback restaurado, revocación, fallos y modelo limpiado |
+| PreciseLocationPermissionBinding | 22 | Registro/solicitud explícita, COARSE+FINE, visibilidad, dobles, relectura actual, cierre, reintento y conexión sin captura automática |
+| Total | 121 | 47 nuevos respecto de 0.3.7; las repeticiones no se suman |
+
+Los cuatro casos nuevos de cierre cubren un error de lectura/check/callback/lanzamiento posterior a cerrar el puente: no borra hechos ni libera otra petición del modelo retenido. El caso de integración concede el permiso en un registro controlado y comprueba que `IncidentLocationViewModel` conserva el pin y no solicita GPS hasta la acción explícita. La cancelación se propaga; una comprobación fallida no se convierte en permiso concedido.
+
+Las **86 de dominio, 27 JVM de datos y 62 instrumentadas API 37** pertenecen al corte anterior 0.3.7 y **no se ejecutaron en esta preparación**. Dominio, repositorio y fuente GPS no cambiaron. No se informa un total de 296 como si fueran pruebas ejecutadas aquí. Las pruebas nuevas emplean el contrato AndroidX real con `ActivityResultCaller` y lectores controlados; no se ejecutó un diálogo de permiso Android, una rotación nativa ni captura real.
+
+Compilaciones debug y release correctas; release queda **sin firma configurada**. Firma debug v2 verificada con `apksigner`. Lint app debug y release: **0 errores/fatales y 13 advertencias visuales anteriores**. `dependencyInsight` confirma `androidx.fragment:fragment:1.9.1` por restricción y conflicto con 1.0.0/1.1.0 de Maps. Se conservaron avisos de herramientas Gradle/JDK y empaquetado sin stripping de `libandroidx.graphics.path.so`; no son errores de compilación ni se declararon corregidos.
+
+| Artefacto local ignorado | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `.gradle/validacion/citizensecurity-0.3.8-debug.apk` | 12.698.574 | `3b6e19e4712dd547b2f57cf44c990f2cc6e62f3982ac68abd175ecb5f5248ca6` |
+| `.gradle/validacion/citizensecurity-0.3.8-release-unsigned.apk` | 9.078.168 | `6706f79e4e35058faf22677604c7c2ef83b502b8557a850e455e493bcdd6d53c` |
+
+Metadatos de ambos: **0.3.8 / código 15**. El DEX contiene modelo y puente nuevos, contrato de permisos, modelo del mapa y guard productivo. Las copias debug y release sin firma de 0.3.7 conservan sus hashes. La actualización de dependencia puede cambiar recursos compilados: no se afirma identidad con el APK anterior. No cambiaron MainActivity, SplashActivity ni sus layouts respecto de la base local preservada; los accesos reales siguen ocultos y las herramientas conservan el ejemplo en memoria.
+
+Recibo `.gradle/validacion/cierre038.json`, script `comprobar-cierre-038.py` y logs `0.3.8-permisos.log` (compilación de pruebas fallida), `0.3.8-cierre.log` (lint detenido), `0.3.8-fragment-antes.log`, `0.3.8-final.log` y `0.3.8-firma.log`. HEAD sigue en `08ab2d5f88d4b48733f0a415cd931a8efc9c1726`, índice vacío. No se ejecutó fetch, pull, commit, subida, integración, etiqueta, Release ni borrado de trabajo. No había dispositivo conectado; no se instaló la preparación ni se alteraron permisos de la app del usuario.
+
+**Pendientes:** conectar controles y presentación del compañero, comprobar diálogo/rechazo/ubicación aproximada/rotación nativos, obtener GPS real y probar confirmación cercana/lejana; después, Cloud/clave y mapa renderizado. El permiso preciso no garantiza calidad o vigencia de una lectura, y el callback no verifica un incidente ni autoriza guardarlo. La regla de 5 km y revalidación productiva siguen vigentes. Fase 6 abierta, **7/28 = 25%**, sin aceptación funcional del flujo completo.
+
+
+## 0.3.9: diálogo nativo de permisos en laboratorio aislado
+
+Cierre local del **5 de octubre de 2026**, **0.3.9 / código Android 16 — Unreleased**. Sigue fase técnica 6; no cambia pantallas/login, guardado real o consulta. El laboratorio `verification/location` comparte las fuentes originales del puente mediante `AndroidSourceSet.kotlin.directories`, sin copiar o mover código.
+
+La primera compilación falló en 38 segundos porque el directorio Kotlin compartido estaba registrado en el conjunto Java. Se corrigió siguiendo la [migración oficial al Kotlin integrado de AGP 9](https://developer.android.com/build/migrate-to-built-in-kotlin), sin desactivar el soporte integrado o añadir flags experimentales. La primera compilación no se presenta como validación aprobada.
+
+Con JDK **27+35**, Gradle **9.8**, AGP **9.4.1**, compilador Kotlin **2.4.20** y emulador **Medium_Phone_API_37.0**, Android **17 / API 37**, se ejecutó:
+
+```powershell
+.\gradlew.bat :verification:location:connectedPreciseDebugAndroidTest :verification:location:connectedApproximateDebugAndroidTest :verification:location:connectedDeniedDebugAndroidTest :verification:location:lintPreciseDebug :verification:location:lintApproximateDebug :verification:location:lintDeniedDebug :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:lintRelease :app:assembleRelease --console=plain
+```
+
+**BUILD SUCCESSFUL en 2 min 25 s**, 402 tareas, 298 ejecutadas y 104 `UP-TO-DATE`. Los XML confirman **121 JVM de app ejecutadas de nuevo** y **3 flujos instrumentados nuevos**, uno por decisión/paquete: **124 pruebas ejecutadas**, cero fallos, errores u omitidas. No se repitieron las 86 de dominio, 27 JVM de datos o 62 instrumentadas de datos del corte anterior; sus resultados permanecen como historia. Las 47 pruebas nuevas de 0.3.8 no son 47 pruebas añadidas otra vez en este paso.
+
+| Paquete técnico, sufijo | Decisión en el diálogo | Resultado actual comprobado | Pruebas |
+| --- | --- | --- | --- |
+| `.precise` | Precisa, permitir durante uso | FINE y COARSE concedidos, `Precise` | 1 aprobada |
+| `.approximate` | Aproximada, permitir durante uso | Solo COARSE concedido, `Approximate` | 1 aprobada |
+| `.denied` | Rechazar | FINE y COARSE ausentes, `Denied` | 1 aprobada |
+
+Cada flujo comprueba registro sin diálogo automático, una petición explícita, bloqueo de la segunda, `Activity.recreate()` nativo mientras PermissionController conserva el diálogo, identidad del ViewModel retenida, puente anterior inactivo y callback entregado al nuevo dueño. Después comprueba otra recreación, la lectura actual de permisos, cierre del dueño y una Activity nueva sin autorización inventada. Las esperas son acotadas; los controles se identifican por recursos del PermissionController y el diálogo debe contener la etiqueta de la aplicación técnica.
+
+Los XML fusionados confirman paquetes separados de `com.example.citizensecurity`, `testOnly=true`, `allowBackup=false`, Activity del laboratorio no exportada y sin launcher, sin Application productiva ni API_KEY de Maps. Los registros `LOCATION_PERMISSION_NATIVE` quedan en los logcat por variante y en `.gradle/validacion/cierre039.json`. El laboratorio no solicita captura GPS. Al concluir, no quedaron instalados sus paquetes en el emulador; solo se instalaron fixtures técnicos mediante las tareas de verificación.
+
+Lint de app debug/release: **0 errores**, las mismas **13 advertencias visuales anteriores**. Lint de las tres variantes del laboratorio: **0 errores y 2 advertencias por variante**, `DataExtractionRules` y `MissingApplicationIcon`; pertenecen a la app técnica sin launcher ni datos de reportes, no a una nueva pantalla del producto. No se ocultaron errores o advertencias mediante suppress/baseline. Persisten avisos de herramientas de Java/Gradle y empaquetado sin retirar símbolos de `libandroidx.graphics.path.so`; no son pruebas fallidas.
+
+Debug y release sin firma compilan. `apksigner verify --verbose` comprobó firma debug **v2**. No se instaló ninguno de estos APK sobre la aplicación del usuario:
+
+| Artefacto local ignorado por Git | Tamaño | SHA-256 |
+| --- | --- | --- |
+| `citizensecurity-0.3.9-debug.apk` | 12,698,570 bytes | `2445a2857f971729d1852373ed28a4e5366d34b8b26a0b528974df9934c5f3bf` |
+| `citizensecurity-0.3.9-release-unsigned.apk` | 9,078,164 bytes | `54185b139e08e127f808087969e9bc650fcf5a56e21f30ff9c5f70fbcf128b41` |
+
+Se conservan por hash los APK archivados de 0.3.7 y 0.3.8. La app instalada sigue en **0.3.1 / código 8**, con la misma fecha de actualización **2026-10-03 20:31:07** y SHA-256 del APK **`4d90496173872814b1457c9f194133092b8cedcf959140a5fad7586ae33ee890`**. También se compararon todos los recursos de `app/src/main/res`, MainActivity, SplashActivity y ReleasedToolsActivity con su estado al iniciar este paso: no cambiaron. HEAD continúa en `08ab2d5f88d4b48733f0a415cd931a8efc9c1726` y el índice está vacío.
+
+La prueba verifica **recreación de Activity**, no un giro de sensor, muerte del proceso, teléfono físico, GPS válido o Google Maps renderizado. Clave Cloud, conexión de los controles del compañero, estados GPS dentro de su pantalla y lectura válida del dispositivo siguen pendientes. La política de 5 km y rechazo de lectura simulada no se relajó. **7/28 = 25%**; no acredita el flujo completo ni ausencia de todos los errores.
+
+[Guía del laboratorio](PRUEBAS_PERMISOS_ANDROID.md) explica su repetición y aislamiento. Todo permanece local y Unreleased, sin commit, subida, integración, etiqueta o Release nueva.
+
+
+## 0.3.10: composición Android de permiso, captura y confirmación
+
+Cierre local del **5 de octubre de 2026 (México)**, **0.3.10 / código Android 17 — Unreleased**. El usuario autorizó el siguiente incremento de fase 6: probar juntos permiso, gesto de captura, evidencia aceptada y confirmación dentro de 5 km, incluidos rechazo, GPS apagado, timeout y salida de la pantalla. Este corte amplía `verification/location`; no cambia la lógica productiva, interfaz o login. [Flujo Android](FLUJO_UBICACION_ANDROID.md) documenta la composición y conexión pendiente.
+
+Con JDK 27+35, Gradle 9.8, AGP 9.4.1, Kotlin 2.4.20 y emulador Medium_Phone_API_37.0, Android 17/API 37, se ejecutó:
+
+```powershell
+.\gradlew.bat :verification:location:connectedPreciseDebugAndroidTest :verification:location:connectedApproximateDebugAndroidTest :verification:location:connectedDeniedDebugAndroidTest :verification:location:connectedFlowDebugAndroidTest :verification:location:lintPreciseDebug :verification:location:lintApproximateDebug :verification:location:lintDeniedDebug :verification:location:lintFlowDebug :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:lintRelease :app:assembleRelease --console=plain
+```
+
+**BUILD SUCCESSFUL en 1 min 41 s**, 478 tareas (177 ejecutadas y 301 `UP-TO-DATE`). Aprobaron los tres diálogos nativos extendidos y 16 casos de flujo. Al contrastar resultados, se detectó que la selección por lista de clases había dejado fuera los dos casos de `AndroidGpsSourceNativeTest`, aunque se habían compilado en el APK de pruebas. No se presenta esa primera ejecución como 21 casos.
+
+Se corrigió exclusivamente el filtro de `.flow` para seleccionar la suite JUnit explícita `LocationFlowAndroidSuite`, con las dos clases. Después se ejecutó:
+
+```powershell
+.\gradlew.bat :verification:location:connectedFlowDebugAndroidTest :verification:location:lintFlowDebug --console=plain
+```
+
+**BUILD SUCCESSFUL en 41 s**, 117 tareas (13 ejecutadas y 104 `UP-TO-DATE`). Los XML finales de `.flow` confirman **18 casos = 16 de `LocationFlowNativeTest` + 2 de `AndroidGpsSourceNativeTest`**, cero fallos, errores u omitidos. El total propio del corte es **21 casos Android distintos ejecutados y aprobados**, con **18 definiciones nuevas y tres casos anteriores extendidos**. Los 16 repetidos no se suman dos veces.
+
+Las **121 JVM de app quedaron `UP-TO-DATE`**; sus XML conservan 121 aprobadas de la ejecución previa, sin ejecución nueva en 0.3.10. Las 86 de dominio, 27 JVM de datos y 62 instrumentadas de datos tampoco se ejecutaron aquí. No se declara un total de 142 pruebas ejecutadas en este incremento.
+
+| Grupo Android | Casos | Evidencia propia |
+| --- | ---: | --- |
+| Preciso, aproximado y rechazo | 3 | Diálogo real, recreación con solicitud pendiente, hechos actuales, pin conservado y cero capturas automáticas. Un gesto posterior llega una vez a la fuente solo con preciso y rechaza su lectura marcada mock; los otros dos no llegan a ella |
+| Composición del flujo | 16 | Permiso nativo real y ciclo Android con lectura/reloj/estado GPS controlados: confirmación cerca y rechazo lejos, calidad/vigencia, timeout/error, concurrencia, onStop, recreación, respuesta tardía y sesión cerrada |
+| Proveedor y adaptador Android | 2 | Registro real de GPS cancelado antes del callback sin evidencia; objeto Location marcado mock convertido por el adaptador y rechazado por renovación/evidencia/modelo |
+| Total distinto | 21 | Sin duplicar repeticiones; 18 definiciones nuevas |
+
+La matriz de 16 usa `ControllablePhoneLocationSource` **solo en el laboratorio**. Comprueba FINE mediante el sistema, pero sus lecturas, estado de GPS y reloj monotónico son fixtures. El reloj sintético es coherente con las lecturas; los tiempos de espera cortos se configuran únicamente allí. El producto conserva **15 segundos**, precisión máxima **100 m**, vigencia máxima **2 minutos** y radio **5 km**. Una lectura sintética con `isMock=false` sirve para ejercitar aceptación, sin acreditar un teléfono físico o alterar la política productiva.
+
+`LocationFlowHarnessActivity` conecta los modelos originales mediante `ViewModelProvider`: los conserva al recrear, almacena applicationContext en dependencias, llama `locationModel.onStop()` y mantiene el puente de permisos hasta `onDestroy()`. No tiene launcher, controles de producto ni persistencia. La prueba de respuesta tardía mantiene una fuente deliberadamente no cancelable, sale mediante el ciclo Android y comprueba que no publica evidencia; su Deferred se libera al terminar incluso si una aserción falla.
+
+El caso del proveedor usa `AndroidPhoneLocationSource` y `LocationManager` originales con permiso preciso real y Activity visible. El registro devuelve una solicitud esperando, que se cancela en el hilo principal **antes de entregar el callback**. Comprueba cancelación y ausencia de evidencia, sin obtener un fix, cambiar ajustes, inyectar coordenadas, añadir proveedores de prueba ni configurar una app de ubicación simulada. El segundo caso crea un objeto `Location` marcado mock dentro del proceso; no modifica el proveedor Android.
+
+Los logcat generan `LOCATION_PERMISSION_NATIVE` con `automaticCaptureCalls=0` en las tres decisiones, `explicitCaptureCalls=1` con preciso y cero en aproximado/rechazo, `phoneEvidencePublished=false` y `productionApplicationTargeted=false`. `LOCATION_GPS_NATIVE` acredita `nativeRegistrationReturned=true`, `cancelledBeforeCallback=true`, `evidencePublished=false` y **`physicalFixProven=false`**. Estos recibos se contrastan con XML y se conservan en `.gradle/validacion/cierre0310.json`.
+
+Los cuatro manifiestos fusionados confirman paquetes exactos distintos del producto, `testOnly=true`, `allowBackup=false`, sin Application productiva ni API_KEY de Maps. Ambas Activities técnicas están no exportadas y sin launcher. Los DEX de debug y release productivos contienen las clases reales, sin `ControllablePhoneLocationSource`, `LocationFlowHarnessActivity`, su fixture o la suite técnica. Al terminar, el runner había retirado todos los paquetes del laboratorio.
+
+**Lint app debug/release: cero errores/fatales y 13 advertencias anteriores**. Las cuatro variantes técnicas tienen **cero errores/fatales y dos advertencias cada una**, `DataExtractionRules` y `MissingApplicationIcon`; no son nuevas pantallas o datos de reportes del producto. No se ocultaron incidencias con suppress/baseline. Persisten los avisos de Java/Gradle y empaquetado anteriores, sin considerarlos corregidos. Debug y release compilan; release permanece **sin firma configurada**. `apksigner verify --verbose` verificó firma debug **v2**.
+
+| Artefacto local ignorado por Git | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `.gradle/validacion/citizensecurity-0.3.10-debug.apk` | 12.698.574 | `2fb298372e3e3846acf4ba7143e00167052a19f0aad379c9184ba4703e31c021` |
+| `.gradle/validacion/citizensecurity-0.3.10-release-unsigned.apk` | 9.078.152 | `f6db2a720ee770b44d6aa00e9e3f201f3466f7d21a734e15338cd77841b25c6b` |
+
+Metadatos de ambos: **0.3.10 / código 17**. Los archivos archivados 0.3.7, 0.3.8 y 0.3.9 conservan sus SHA-256. El paquete instalado del usuario sigue en **0.3.1 / código 8**, misma fecha de actualización **2026-10-03 20:31:07** y SHA-256 **`4d90496173872814b1457c9f194133092b8cedcf959140a5fad7586ae33ee890`**. Todos los recursos de `app/src/main/res`, MainActivity, SplashActivity y ReleasedToolsActivity coinciden con el estado inicial conservado; no se instaló `:app`, borró su base o restableció sus permisos. HEAD sigue en `08ab2d5f88d4b48733f0a415cd931a8efc9c1726`, índice vacío, sin fetch/pull/commit/subida/integración/etiqueta/Release. El emulador temporal se cerró después de verificar ese estado.
+
+Recibo `cierre0310.json`, comprobador `comprobar-cierre-0310.py` y logs `0.3.10-pruebas.log`, `0.3.10-flujo-completo.log` y `0.3.10-firma.log`, todos bajo `.gradle/validacion` ignorado. Los resultados por clase permanecen en `verification/location/build/outputs/androidTest-results/connected/debug/flavors`.
+
+**Límites:** lecturas/estados GPS controlados no equivalen a una posición física. Registro/cancelación antes del callback no demuestra toda la retirada del listener si falla el servicio. Este corte no prueba revocación o cambio de FINE durante una captura nativa, muerte del proceso, sensor de orientación, API 26–30, teléfono físico, controles del compañero ni Google Maps renderizado. La clave Cloud y pantalla integrada siguen pendientes. La regla de 5 km no acredita la veracidad del incidente ni evita toda manipulación del dispositivo. Se conserva **fase 6 abierta, 7/28 = 25%**, sin aceptación funcional completa. Todo sigue local y Unreleased.
+
+## 0.3.11: evidencia GPS vigente después de Ready
+
+Trabajo pendiente cerrado antes de preparar 0.4.0a. Ejecución del 5 de octubre de 2026, versión 0.3.11 / código 18, local y Unreleased en ese corte. Recibo local ignorado: `.gradle/validacion/cierre0311.json`.
+
+`PhoneLocationEvidence` requiere FINE y GPS disponible al publicar y consultar; una pérdida observada o fallo de comprobación invalida la lectura. Recuperar GPS no restaura el fix: exige renovación explícita. Se consulta disponibilidad al acceder, sin observer continuo. Application comparte fuente entre renovación y evidencia; el guard SQLite usa el mismo lector antes de escribir y antes del commit.
+
+Dos casos reprodujeron el defecto antes del fix: confirmar con proveedor apagado y conservar evidencia al recrear después de observar GPS apagado. El ensayo previo falló de forma esperada (20 casos, dos fallos). La ejecución corregida y final terminó en `BUILD SUCCESSFUL in 1m 58s` (517 tareas, 206 ejecutadas, 311 reutilizadas).
+
+| Grupo ejecutado | Aprobados |
+| --- | ---: |
+| JVM app | 121 |
+| JVM datos | 38 |
+| Instrumentación datos/SQLite | 64 |
+| Tres decisiones nativas de permiso | 3 |
+| Flujo Android, incluidas dos del proveedor | 21 |
+| **Total distinto ejecutado** | **247** |
+
+**16 definiciones nuevas:** 10 disponibilidad de evidencia + una renovación JVM, dos guard SQLite y tres composición Android. Cero fallos, errores u omitidos en los XML finales. Las 86 de dominio no se ejecutaron otra vez; no se suman a 247. Debug y release sin firma compilaron, firma debug v2 válida, lint sin errores: app 13 advertencias anteriores; datos cero; laboratorio dos por variante.
+
+APK debug archivado: 12.698.578 bytes; SHA-256 `4fbc0b56eacb0c8b4eb84e7155a653e59082419e422ae51105839882be35be1d`. APK release sin firma: 9.078.156 bytes; SHA-256 `5775107a57669fae0e7679adef05ce453bc7cfb8ea5d90b9d58a3b0555e887cd`. Los APK previos, la instalación productiva 0.3.1/código8, pantallas, HEAD e índice de aquel corte quedaron conservados. No repetir ese comparador de HEAD tras los commits autorizados de 0.4.0a.
+
+Proveedor/reloj controlados en regresiones; permiso/ciclo Android reales y bases de prueba aisladas. No se obtuvo una posición física, no se mostró un mapa con clave y no se instaló `:app` sobre el producto.
+
+## 0.4.0a: puente de ubicación y borrador
+
+Validación completada del conjunto integrado, versión 0.4.0a / código19, 6 de octubre de 2026. El usuario autorizó expresamente subida a main y Release v0.4.0a.
+
+El merge local 433b3fb incorpora origin/main b665a56. Los layouts login y creación de cuenta se conservan; herramientas mantiene el rediseño remoto íntegro y añade los controles ya solicitados del ejemplo en memoria. El descriptor generado por Gradle requiere JDK27, sin URLs anteriores de JDK25. No se activa guardado real/consulta ni se instala la app productiva sobre 0.3.1.
+
+Las nuevas pruebas verifican lifecycle, callbacks obsoletos, borrador editable, límites Unicode y SavedStateRegistry/Parcel. Recrear Activity o restaurar Bundle no acredita muerte de proceso real, reinicio ni persistencia después de forzar cierre. El ejemplo temporal conserva su aislamiento. Clave Google, GPS físico, renderizado Maps y conexión visual siguen pendientes.
+
+### Ejecución final y resultados 0.4.0a
+
+```powershell
+.\gradlew.bat :core:domain:test :core:data:testDebugUnitTest :core:data:connectedDebugAndroidTest :core:data:lintDebug :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:lintRelease :app:assembleRelease :verification:location:connectedPreciseDebugAndroidTest :verification:location:connectedApproximateDebugAndroidTest :verification:location:connectedDeniedDebugAndroidTest :verification:location:connectedFlowDebugAndroidTest :verification:location:lintPreciseDebug :verification:location:lintApproximateDebug :verification:location:lintDeniedDebug :verification:location:lintFlowDebug --console=plain
+```
+
+`BUILD SUCCESSFUL in 2m`: 519 tareas, 101 ejecutadas y 418 reutilizadas. Cero fallos, errores u omitidos en los XML finales. Recibo ignorado `.gradle/validacion/cierre040a.json`; el primer pase aprobó antes de corregir reapertura y constructor SavedStateHandle y no se suma nuevamente.
+
+| Grupo | Resultado del pase final |
+| --- | ---: |
+| JVM app | 171 ejecutadas y aprobadas |
+| Android datos/SQLite | 64 ejecutadas y aprobadas |
+| Android flujo | 28 ejecutadas y aprobadas |
+| Android permiso preciso/aproximado/rechazo | 3 ejecutadas y aprobadas |
+| **Total distinto ejecutado** | **266** |
+| Dominio JVM | 86 reutilizadas, UP-TO-DATE |
+| Datos JVM | 38 reutilizadas, UP-TO-DATE |
+
+**57 definiciones nuevas respecto de 0.3.11:** 13 JVM puente, cuatro JVM clicks Maps, cuatro JVM reapertura del modelo, 29 JVM borrador, cinco Android puente/reapertura y dos Android borrador. La recuperación nativa comprueba factory de Activity, recreación y registro SavedState/Parcel con un dueño nuevo; no ejecuta muerte de proceso real.
+
+El pulido permite confirmar, cancelar y volver a abrir la selección en la misma Activity/modelo, exige captura nueva e ignora respuestas viejas. Se retiró el constructor SavedStateHandle de uso exclusivo de pruebas de la ruta productiva: factory usa createSavedStateHandle, sin suppressions de lint.
+
+Lint sin errores: datos cero incidencias; app debug/release **19 advertencias visuales** del conjunto integrado; laboratorio dos por variante (`DataExtractionRules`, `MissingApplicationIcon`). Las advertencias de app corresponden a splash, overdraw, autofill, recursos no utilizados, texto fijo y sugerencias de layout/estilo. No se ocultaron ni se cambió la interfaz del compañero para silenciarlas. No se afirma que el producto carezca de toda advertencia o riesgo.
+
+APK académico debug firmado, versión0.4.0a/código19: **12.747.894 bytes**, SHA-256 `2bfc260619b6be4921dd4dfaf6ddccd26fbab7f65b234db5fa3246acb391c1f8`, firma v2 verificada. Release sin firma compilada: **9.096.364 bytes**, SHA-256 `91b3feb22b544b48f03aec83a3ba257befb52a9e79e21f626864497213d908f7`; no es el APK instalable adjunto. El paquete productivo instalado0.3.1/código8 conserva hash, fechas y versión; no se instala :app. Los paquetes del laboratorio se retiraron al terminar; fixtures ausentes de ambos DEX productivos. APK037/038/039/0310/0311 preservados por hash.
+
+La publicación oficial fue autorizada por instrucción humana precisa. [Release v0.4.0a](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0a) es la referencia para APK debug académico, suma SHA-256 y cambios; no se borran o reescriben versiones anteriores. La aceptación del flujo visual, Google Cloud, GPS físico y guardado real permanecen pendientes.

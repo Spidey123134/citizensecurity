@@ -1,10 +1,10 @@
 <resources>
     <item name="released_tools_entry" type="id" />
-    <string name="released_tools_entry">Desarrollador · funciones 0.2</string>
+    <string name="released_tools_entry">Desarrollador · funciones básicas</string>
     <string name="demo_login_hint">Acceso de demostración: admin / admin</string>
     <string name="demo_login_error">Usa admin / admin para el acceso de demostración.</string>
-    <string name="tools_title">Funciones publicadas · 0.2</string>
-    <string name="tools_explanation">Revisa los datos del reporte y valida su ubicación. Esta pantalla corresponde a las funciones publicadas de la versión 0.2.</string>
+    <string name="tools_title">Funciones básicas · 0.3.1</string>
+    <string name="tools_explanation">Revisa los datos del reporte y valida su ubicación. También puedes probar un ejemplo de guardado con datos ficticios y temporales.</string>
     <string name="tools_type_label">Categoría</string>
     <string name="tools_priority_label">Prioridad</string>
     <string name="tools_description_label">Descripción</string>
@@ -20,6 +20,12 @@
     <string name="tools_locations">Probar ubicaciones</string>
     <string name="tools_back">Volver al inicio</string>
     <string name="tools_ready">Modifica los datos y pulsa una función para comprobar el resultado.</string>
+    <string name="tools_save_example">Ejemplo de guardado</string>
+    <string name="tools_example_hint">El ejemplo utiliza datos ficticios, independientes de los campos anteriores. No registra un incidente real.</string>
+    <string name="tools_example_ready">Pulsa el botón para obtener un folio de ejemplo.</string>
+    <string name="tools_example_running">Preparando el ejemplo…</string>
+    <string name="tools_example_failed">No se pudo completar el ejemplo. Intenta nuevamente.</string>
+    <string name="tools_example_saved">Ejemplo completado.\nFolio temporal: %1$s\n\n%2$s\n\nNo se guardó un incidente real. El resultado permanece mientras esta pantalla siga abierta.</string>
     <string name="tools_received">Datos recibidos.</string>
     <string name="tools_result_summary">%1$s\n\n%2$s</string>
     <string name="tools_valid">Los datos cumplen la validación.</string>

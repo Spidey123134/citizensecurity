@@ -17,6 +17,7 @@ import java.time.Clock
 import java.time.Instant
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -27,14 +28,16 @@ import kotlinx.coroutines.withContext
  * Las operaciones suspendidas hacen su trabajo de SQLite en [ioDispatcher].
  *
  * El nombre predeterminado corresponde exclusivamente al proyecto nuevo. [databaseName] permite
- * aislar archivos durante las pruebas. Después de [close], la instancia no se puede reutilizar;
- * se crea otra instancia para reabrir el mismo archivo.
+ * aislar archivos durante las pruebas; un valor nulo crea una base exclusivamente en memoria.
+ * Después de [close], la instancia no se puede reutilizar. Una instancia nueva puede reabrir
+ * un archivo, pero cada base en memoria empieza vacía y se pierde al cerrar.
  */
 class SqliteReportRepository(
     context: Context,
-    databaseName: String = DATABASE_NAME,
+    databaseName: String? = DATABASE_NAME,
     private val clock: Clock = Clock.systemUTC(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val createGuard: (NewReport) -> Unit = {},
 ) : ReportRepository, Closeable {
 
     private val lock = Any()
@@ -44,9 +47,11 @@ class SqliteReportRepository(
 
     init {
         require(
-            databaseName.isNotBlank() &&
-                databaseName.endsWith(".db") &&
-                '/' !in databaseName && '\\' !in databaseName,
+            databaseName == null || (
+                databaseName.isNotBlank() &&
+                    databaseName.endsWith(".db") &&
+                    '/' !in databaseName && '\\' !in databaseName
+                ),
         ) { "El nombre de la base debe ser un archivo .db sin una ruta." }
         helper = ReportDatabase(context.applicationContext, databaseName)
     }
@@ -74,10 +79,19 @@ class SqliteReportRepository(
             createdAt = createdAt,
             status = ReportStatus.REPORTED,
         )
+        ensureActive()
+        createGuard(normalized)
+        ensureActive()
         val database = helper.writableDatabase
+        ensureActive()
+        createGuard(normalized)
+        ensureActive()
         database.beginTransaction()
         try {
             database.insertOrThrow(TABLE, null, report.toValues())
+            ensureActive()
+            createGuard(normalized)
+            ensureActive()
             database.setTransactionSuccessful()
         } finally {
             database.endTransaction()
@@ -126,7 +140,7 @@ class SqliteReportRepository(
         }
     }
 
-    private suspend fun <T> withOpenRepository(action: () -> T): T = withContext(ioDispatcher) {
+    private suspend fun <T> withOpenRepository(action: CoroutineScope.() -> T): T = withContext(ioDispatcher) {
         synchronized(lock) {
             // Esperar el monitor no comprueba la cancelación de la corrutina.
             ensureActive()

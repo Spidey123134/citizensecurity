@@ -1,13 +1,15 @@
 package com.example.citizensecurity.data
 
 import android.content.Context
+import android.database.DatabaseErrorHandler
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 
-/** Archivo propio de esta base nueva; no abre ni modifica la base del proyecto anterior. */
-internal class ReportDatabase(context: Context, databaseName: String) :
-    SQLiteOpenHelper(context.applicationContext, databaseName, null, VERSION) {
+/** Base local propia; un nombre nulo crea una base en memoria que se descarta al cerrar. */
+internal class ReportDatabase(context: Context, databaseName: String?) :
+    SQLiteOpenHelper(context.applicationContext, databaseName, null, VERSION, PRESERVE_CORRUPTION) {
 
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
@@ -80,5 +82,17 @@ internal class ReportDatabase(context: Context, databaseName: String) :
 
     private companion object {
         const val VERSION = 1
+        // El manejador predeterminado borra la base corrupta. Fallar impide ese borrado y
+        // el reintento que podría recrearla vacía; reparar datos requiere otro alcance.
+        val PRESERVE_CORRUPTION = DatabaseErrorHandler { database ->
+            try {
+                database.close()
+            } catch (_: SQLiteException) {
+                // Cerrar puede fallar por la propia corrupción; nunca se eliminan archivos.
+            }
+            throw SQLiteDatabaseCorruptException(
+                "La base local contiene datos dañados. No se ha eliminado ni recreado.",
+            )
+        }
     }
 }

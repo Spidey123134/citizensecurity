@@ -1,10 +1,32 @@
 # Fase 3: guardar un reporte local
 
-La **fase 3 y `0.3.0` permanecen en Unreleased**, con entrega pendiente. Hay código adelantado y comprobaciones técnicas que se conservan, pero todavía no se ha llegado a esta entrega ni a su aceptación funcional. El siguiente mantenimiento se prepara como **`0.2.1`** sobre `main` actualizado; `0.3.1` fue un identificador provisional de pruebas sin publicar.
+El incremento activo **0.3.2 — Unreleased** reutiliza la base 0.3.1 descrita aquí y mantiene el mismo alcance visible. No activa el guardado de datos reales ni la consulta; su lógica nueva de ubicación se documenta aparte en [Fase 6](FASE_6.md).
+
+La **fase 3 y `0.3.0` permanecen en Unreleased**, con entrega separada y aceptación funcional pendientes. Su lógica ya estaba incluida en versiones publicadas anteriores: ese marcador no la mantenía fuera del APK ni vuelve privada la fuente. La indicación actual es dejar oculto el guardado de datos reales y mostrar únicamente un ejemplo ficticio.
+
+La copia local se prepara como **`0.3.1`**, código Android **8**, para una futura versión oficial, sin commit, subida, integración, etiqueta ni Release nueva. El `main` remoto mantiene la publicación histórica 0.4.0 / código 7. El código 8 permite actualizar ese APK conservando datos; el antiguo identificador provisional 0.3.1 / código 4 es otro estado de pruebas.
 
 Se aprovechan `NewReport`, `ReportLocation`, `ReportRepository` y `SqliteReportRepository`, que ya existen. La tarea adelantada `:core:data:guardarReporte` hace observable el guardado de un reporte válido y el rechazo de uno inválido, reutilizando la instrumentación Android. El código y los resultados anteriores se mantienen como preparación para revisar esta fase. El esquema de la base sigue siendo el mismo.
 
+## Único ejemplo visible en la preparación 0.3.1
+
+El botón **Ejemplo de guardado**, dentro de las herramientas de desarrollador, muestra un guardado ficticio con folio, categoría, prioridad, fecha, descripción, referencia y coordenadas. Tipo, prioridad, descripción, referencia y coordenadas son fijos; el repositorio genera el folio y las fechas se obtienen del reloj del ejemplo. El estado inicial `REPORTED` forma parte del contrato y se comprueba en las pruebas instrumentadas. Usa una instancia independiente de SQLite en memoria (`name = null`); no crea archivos de base de datos, no toma los campos del formulario y no utiliza el repositorio productivo de `CitizenSecurityApplication`.
+
+Mientras se ejecuta, bloquea otra solicitud. `SaveExampleViewModel.runExample()` ofrece estados `Idle`, `Running`, `Saved(report)` y `Failed`; llama a `TemporaryReportSaveExample.run()` sin recibir un borrador. La base en memoria se cierra antes de devolver el reporte; lo que permanece en el modelo es ese resultado. Lo conserva al rotar y permite volver a verlo sin insertar un segundo ejemplo hasta salir de las herramientas. Al salir se descarta el resultado de esa sesión; no se elimina ni altera la base de reportes reales.
+
+La recepción, validación y los tres casos de coordenadas continúan disponibles. El botón de desarrollador y `admin / admin` conservan su acceso de demostración local. No aparece un botón para guardar datos del formulario ni para consultar folios; la consulta 0.4 queda oculta. Los pasos están en [Funciones visibles](FUNCIONES_PUBLICADAS.md), y la comprobación de este ejemplo se registra aparte del historial en [Validación](VALIDACION.md).
+
+El compañero puede preparar el formulario según el contrato existente, pero debe mantener sin conectar los eventos de guardado real hasta una instrucción precisa. El ejemplo no debe cambiarse para leer el formulario ni sustituirse por el repositorio productivo.
+
+La comprobación local actual aprobó las 6 JVM del ejemplo y sus 4 instrumentadas, incluidas en 30 JVM de app y 15 instrumentadas API 37 ejecutadas y aprobadas. Las 32 de dominio conservaron su resultado mediante `UP-TO-DATE`. La comprobación visual real aprobó independencia del formulario, conservación al rotar, mismo folio al repetir y reinicio del ejemplo al salir y volver, sin cambios en las bases productivas. [Validación](VALIDACION.md) registra aparte la evidencia completa.
+
+## Pulido actual del guardado conservado
+
+Se reprodujo otra cancelación indebida: después de adquirir el monitor, cancelar durante la obtención de la fecha todavía permitía insertar un registro. La regresión falló en API 37 con 1 registro cuando se esperaban 0. El repositorio comprueba la cancelación antes de iniciar la transacción y antes de confirmar su éxito; después del arreglo la regresión aprobó dentro de las 15 instrumentadas actuales. Esto no revierte una transacción que ya haya sido confirmada. El guardado real continúa oculto y el esquema se conserva.
+
 ## Resultado que se revisará
+
+Los siguientes casos corresponden al contrato técnico conservado de guardado real; no son nuevos controles habilitados de la aplicación.
 
 | Caso | Entrada | Resultado esperado |
 | --- | --- | --- |
@@ -63,7 +85,7 @@ Se reprodujo un fallo del repositorio original: un segundo guardado cancelado mi
 
 La comprobación adicional de diez casos Unicode conservó los textos exactamente en Android. Se conserva como cobertura de regresión sin cambiar las reglas del validador. Este mantenimiento continúa la misma fase de guardado; no añade otra función.
 
-Esas pruebas se ejecutaron antes de incorporar `7e90109`, que no modificó el dominio ni los datos. Su splash y login visual inicialmente quedaron sin `activity_splash.xml`, bloqueando la compilación. El compañero añadió el recurso en `e18e636`, ya incorporado desde `main` para el mantenimiento `0.2.1`. Ese estado aprobó compilación, lint y 9 instrumentadas, con número interno Android `4`; la integración del PR sigue pendiente. La autenticación permanece pendiente. [Validación](VALIDACION.md) conserva el historial y los resultados nuevos, que no convierten este trabajo adelantado en una entrega de fase 3.
+Esas pruebas se ejecutaron antes de incorporar `7e90109`, que no modificó el dominio ni los datos. Su splash y login visual inicialmente quedaron sin `activity_splash.xml`, bloqueando la compilación. El compañero añadió el recurso en `e18e636`. El estado previo de mantenimiento aprobó compilación, lint y 9 instrumentadas con código Android `4`; después se integró y publicó como `0.2.1` / código 6. La autenticación permanece pendiente. [Validación](VALIDACION.md) conserva esos estados históricos, que no equivalen a activar el guardado real ni a publicar una entrega separada 0.3.0.
 
 ## Evidencia de 0.3.0 y alcance
 

@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "CITIZENSECURITY"
-include(":app", ":core:domain", ":core:data")
+include(":app", ":core:domain", ":core:data", ":verification:location")

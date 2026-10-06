@@ -1,5 +1,9 @@
 # Contrato de la primera función
 
+En **0.3.3 — Unreleased**, la composición productiva de `CitizenSecurityApplication` exige cercanía al teléfono antes de escribir: punto con coordenadas, evidencia reciente, precisión suficiente, sin marca mock y radio de 5 km. Un reporte con solo referencia escrita puede seguir siendo válido en los ejemplos técnicos genéricos, pero no pasa el guard productivo. Las pantallas deben reutilizar esa fábrica protegida; [Proximidad](PROXIMIDAD_REPORTES.md) explica los requisitos. El ejemplo ficticio en memoria permanece independiente y no solicita GPS.
+
+En la preparación local **0.3.1**, este contrato de datos reales sigue sin acceso desde la interfaz. El ejemplo visible usa datos ficticios y una base en memoria independientes; se describe en [Funciones básicas](FUNCIONES_PUBLICADAS.md). Conectar el formulario al repositorio o activar la consulta requiere una instrucción precisa.
+
 La interfaz reúne los datos de un incidente y construye un `NewReport`. El repositorio valida y guarda ese borrador en el dispositivo. Un guardado correcto devuelve un `Report` con folio UUID, fecha de creación y estado inicial `REPORTED`.
 
 ## API compartida
