@@ -34,6 +34,11 @@ class IncidentLocationFlowBinding(
 ) : AutoCloseable {
     private val lifecycle = owner.lifecycle
     private var closed = false
+
+    /** Permite preparar un gesto coordinado sin alterar un borrador fuera de pantalla. */
+    val isInteractive: Boolean get() = !closed && lifecycle.currentState == Lifecycle.State.RESUMED
+    internal val isOpen: Boolean get() = !closed
+    internal fun belongsTo(owner: LifecycleOwner): Boolean = lifecycle === owner.lifecycle
     private val observer = LifecycleEventObserver { _, event ->
         if (!closed) when (event) {
             Lifecycle.Event.ON_RESUME -> permissionBinding.check()
@@ -77,6 +82,13 @@ class IncidentLocationFlowBinding(
     /** null también indica dueño inactivo; el modelo conserva las demás reglas de confirmación. */
     fun confirm(): NearbyLocationConfirmation? = if (isResumed()) model.confirm() else null
 
+    /** Cancela solo por un gesto visible; conserva la ubicación anterior del borrador. */
+    fun cancelSelection(): Boolean {
+        if (!isResumed()) return false
+        model.cancel()
+        return true
+    }
+
     /** Una MapView puede terminar antes que la Activity; detiene GPS sin cerrar sus permisos. */
     fun onMapViewClosed() {
         if (!closed) model.onStop()
@@ -95,7 +107,7 @@ class IncidentLocationFlowBinding(
         }
     }
 
-    private fun isResumed() = !closed && lifecycle.currentState == Lifecycle.State.RESUMED
+    private fun isResumed() = isInteractive
 
     companion object {
         // Referencias débiles: el registro no prolonga la vida de una Activity o de su puente.

@@ -26,13 +26,14 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 
-/** Eventos del adaptador controlados: no representa Google Maps renderizado ni GPS físico. */
+/** Eventos del adaptador controlados: no representa MapLibre renderizado ni GPS físico. */
 @OptIn(ExperimentalCoroutinesApi::class)
 class IncidentLocationMapBindingTest {
     private val dispatcher = StandardTestDispatcher()
@@ -58,17 +59,17 @@ class IncidentLocationMapBindingTest {
         val h = harness()
         val host = Host()
         connect(host, h.flow)
-        host.click(48.8566, 2.3522)
+        assertFalse(host.click(48.8566, 2.3522))
         assertTrue(h.model.state.value is IncidentLocationState.Idle)
         h.owner.resume()
-        host.click(fix.latitude, fix.longitude)
+        assertTrue(host.click(fix.latitude, fix.longitude))
         val selected = h.model.state.value.proposal
         assertTrue(h.model.state.value is IncidentLocationState.PointSelected)
         h.owner.pause()
-        host.click(48.8566, 2.3522)
+        assertFalse(host.click(48.8566, 2.3522))
         assertEquals(selected, h.model.state.value.proposal)
         h.owner.stop()
-        host.click(48.8566, 2.3522)
+        assertFalse(host.click(48.8566, 2.3522))
         assertEquals(selected, h.model.state.value.proposal)
         h.owner.resume()
         runCurrent()
@@ -96,7 +97,7 @@ class IncidentLocationMapBindingTest {
         assertTrue(cancelled)
         assertEquals(1, host.removals)
         assertNull(host.currentListener)
-        host.deliverLate(48.8566, 2.3522)
+        assertFalse(host.deliverLate(48.8566, 2.3522))
         assertEquals(pin, h.model.state.value.proposal)
         assertNull(h.flow.confirm())
         assertEquals(LocationPermissionAction.AlreadyGranted, h.flow.requestPermission())
@@ -155,7 +156,7 @@ class IncidentLocationMapBindingTest {
         }
         runCurrent()
         assertTrue(cancelled)
-        host.deliverLate(48.8566, 2.3522)
+        assertFalse(host.deliverLate(48.8566, 2.3522))
         assertEquals(pin, h.model.state.value.proposal)
         assertNull(h.flow.confirm())
         assertEquals(0, h.caller.unregisters)
@@ -198,10 +199,10 @@ class IncidentLocationMapBindingTest {
         var registrations = 0
         var removals = 0
         var failRemoval = false
-        var currentListener: ((Double, Double) -> Unit)? = null
-        private var previous: ((Double, Double) -> Unit)? = null
+        var currentListener: ((Double, Double) -> Boolean)? = null
+        private var previous: ((Double, Double) -> Boolean)? = null
 
-        override fun setListener(listener: ((Double, Double) -> Unit)?) {
+        override fun setListener(listener: ((Double, Double) -> Boolean)?) {
             if (listener == null) {
                 removals++
                 if (failRemoval) error("El SDK no retiró el listener.")
@@ -212,8 +213,8 @@ class IncidentLocationMapBindingTest {
             currentListener = listener
         }
 
-        fun click(latitude: Double, longitude: Double) { currentListener?.invoke(latitude, longitude) }
-        fun deliverLate(latitude: Double, longitude: Double) { previous?.invoke(latitude, longitude) }
+        fun click(latitude: Double, longitude: Double): Boolean = currentListener?.invoke(latitude, longitude) == true
+        fun deliverLate(latitude: Double, longitude: Double): Boolean = previous?.invoke(latitude, longitude) == true
     }
 
     private class Owner : LifecycleOwner {

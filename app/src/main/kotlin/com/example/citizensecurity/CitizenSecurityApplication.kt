@@ -9,19 +9,19 @@ import com.example.citizensecurity.data.SqliteReportRepository
 import com.example.citizensecurity.data.NearbySqliteReportGuard
 import com.example.citizensecurity.data.PhoneLocationEvidence
 import com.example.citizensecurity.domain.ReportRepository
+import com.example.citizensecurity.domain.ReportMapRepository
 import com.example.citizensecurity.domain.ReportLocation
 import com.example.citizensecurity.maps.IncidentLocationViewModel
 import com.example.citizensecurity.maps.MapsConfiguration
 import com.example.citizensecurity.maps.MapsReadinessChecker
-import com.google.android.gms.common.GoogleApiAvailability
+import com.example.citizensecurity.maps.ReportMapViewModel
 import com.example.citizensecurity.report.ReportQueryViewModel
 import com.example.citizensecurity.report.ReportViewModel
 
 class CitizenSecurityApplication : Application() {
     val mapsReadinessChecker by lazy {
         MapsReadinessChecker(
-            { MapsConfiguration.isConfigured(this) },
-            { GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) },
+            { MapsConfiguration.initialize(this) },
         )
     }
 
@@ -47,17 +47,22 @@ class CitizenSecurityApplication : Application() {
         )
     }
 
-    val reportRepository: ReportRepository by lazy {
+    private val sharedReportRepository by lazy {
         val guard = NearbySqliteReportGuard(
             deviceLocation = phoneLocationEvidence::currentFix,
             elapsedRealtimeNanos = SystemClock::elapsedRealtimeNanos,
         )
         SqliteReportRepository(this, createGuard = guard::check)
     }
+    val reportRepository: ReportRepository get() = sharedReportRepository
+    val reportMapRepository: ReportMapRepository get() = sharedReportRepository
     val reportViewModelFactory: ViewModelProvider.Factory by lazy {
         ReportViewModel.factory(reportRepository)
     }
     val reportQueryViewModelFactory: ViewModelProvider.Factory by lazy {
         ReportQueryViewModel.factory(reportRepository)
+    }
+    val reportMapViewModelFactory: ViewModelProvider.Factory by lazy {
+        ReportMapViewModel.factory(reportMapRepository)
     }
 }

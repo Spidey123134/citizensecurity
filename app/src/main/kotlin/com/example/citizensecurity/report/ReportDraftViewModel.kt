@@ -93,6 +93,13 @@ class ReportDraftViewModel(
             copy(location = location.copy(reference = reference))
         }
 
+    /** Recupera la apertura retenida al recrear la Activity; no abre otra sesión ni pide GPS. */
+    fun currentLocationSelection(): ReportLocationSelectionRequest? = if (closed) null else selection
+
+    /** Comprobar antes de entregar un callback al flujo evita modificar una apertura posterior. */
+    fun isCurrentLocationSelection(token: ReportLocationSelectionToken): Boolean =
+        !closed && selection?.token === token
+
     /** Abrir otra selección invalida la anterior y no altera ningún campo del borrador. */
     fun beginLocationSelection(): ReportLocationSelectionRequest? {
         if (closed) return null

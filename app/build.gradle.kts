@@ -1,19 +1,6 @@
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-}
-
-val mapsSecrets = Properties().apply {
-    val secretsFile = rootProject.file("secrets.properties")
-    if (secretsFile.isFile) secretsFile.inputStream().use { load(it) }
-}
-val mapsApiKey = providers.environmentVariable("MAPS_API_KEY")
-    .orElse(mapsSecrets.getProperty("MAPS_API_KEY", ""))
-    .get().trim()
-require(mapsApiKey.isEmpty() || mapsApiKey.matches(Regex("[A-Za-z0-9_-]+"))) {
-    "MAPS_API_KEY contiene caracteres inválidos. Revisa el archivo local, sin publicar su contenido."
 }
 
 android {
@@ -28,7 +15,6 @@ android {
         targetSdk = 37
         versionCode = 19
         versionName = "0.4.0a"
-        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
     }
     buildFeatures { compose = true }
     compileOptions {
@@ -47,10 +33,10 @@ kotlin {
 dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
-    implementation(libs.google.maps)
+    implementation(libs.maplibre)
     constraints {
         implementation(libs.androidx.fragment) {
-            because("Google Maps incorpora Fragment antiguo; Activity Result necesita una versión compatible.")
+            because("MapLibre incorpora Fragment 1.8.9; Activity Result necesita una versión compatible.")
         }
     }
     implementation(platform(libs.compose.bom))

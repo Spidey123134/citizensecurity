@@ -10,5 +10,6 @@ import org.junit.runners.Suite
     AndroidGpsSourceNativeTest::class,
     IncidentLocationFlowBindingNativeTest::class,
     ReportDraftNativeTest::class,
+    ReportLocationFlowNativeTest::class,
 )
 class LocationFlowAndroidSuite

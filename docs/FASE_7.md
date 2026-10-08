@@ -1,5 +1,7 @@
 # Fase 7: borrador editable y regreso del mapa
 
+Este documento conserva el contrato entregado en 0.4.0a. Para la conexión local posterior usa el coordinador comprobado de [Fase 8](FASE_8.md) y la [guía de acoplamiento](ACOPLAR_INTERFAZ.md): verifica tokens antes de tocar el flujo y reserva la identidad de la vista antes de solicitar el mapa asíncrono. La composición manual siguiente se mantiene como antecedente de la Release.
+
 La **0.4.0a / código Android 19**, del **6 de octubre de 2026**, completa este segundo paso técnico junto con el puente de ubicación de fase 6. El usuario solicitó terminar lo pendiente, avanzar dos fases y publicar esta actualización como Release oficial. La implementación y sus comprobaciones técnicas están completadas; [Validación](VALIDACION.md) registra resultados efectivos, y [Versiones](RELEASES.md) enlaza el estado de la Release.
 
 Esta fase corresponde al apartado **4.2 Reporte de emergencia o robo** del PDF y conecta la entrada del reporte con **4.3 Geolocalización** y **4.5 Mapa de incidentes**. La fase técnica 7 no equivale al apartado 4.7 Notificaciones: el PDF enumera funciones del producto, mientras estas fases organizan nuestro trabajo. El avance por requisitos conserva **7/28 hitos = 25%**, según [Avance](AVANCE.md).

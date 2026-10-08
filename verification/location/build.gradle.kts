@@ -18,6 +18,10 @@ android {
     }
     flavorDimensions += "permission"
     productFlavors {
+        create("physical") {
+            dimension = "permission"
+            applicationIdSuffix = ".physical"
+        }
         create("precise") {
             dimension = "permission"
             applicationIdSuffix = ".precise"
@@ -68,10 +72,10 @@ kotlin {
 dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
-    implementation(libs.google.maps)
+    implementation(libs.maplibre)
     constraints {
         implementation(libs.androidx.fragment) {
-            because("El contrato Activity Result requiere Fragment compatible con Google Maps.")
+            because("El contrato Activity Result requiere Fragment compatible con MapLibre.")
         }
     }
     implementation(libs.activity.compose)

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="physical_app_name">Comprobar ubicación</string>
+    <string name="physical_idle">Sin captura. Autoriza el permiso y pulsa Probar GPS.</string>
+    <string name="physical_description">Comprobación de ubicación\n\nSolo recoge una lectura al pulsar Probar GPS. Comprueba precisión, vigencia, simulaciones y el radio de 5 km. No guarda coordenadas ni reportes.</string>
+    <string name="physical_permission">Autorizar ubicación precisa</string>
+    <string name="physical_capture">Probar GPS</string>
+    <string name="physical_waiting">Esperando una lectura precisa, hasta 15 segundos…</string>
+    <string name="physical_validated">GPS válido. Punto cercano permitido; punto a más de 5 km bloqueado. No se guardó ningún reporte.</string>
+    <string name="physical_invalid">La comprobación no autorizó la ubicación. Renueva la lectura.</string>
+    <string name="physical_permission_required">Falta permiso preciso.</string>
+    <string name="physical_disabled">Activa la ubicación del teléfono.</string>
+    <string name="physical_timeout">GPS no respondió en 15 segundos. Prueba con mejor señal.</string>
+    <string name="physical_pending">Ya hay una captura pendiente.</string>
+    <string name="physical_unavailable">No se obtuvo una ubicación válida.</string>
+</resources>
