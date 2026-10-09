@@ -1,6 +1,8 @@
 package com.example.citizensecurity.release
 
 import android.os.Bundle
+import android.content.Intent
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -59,6 +61,17 @@ class ReleasedToolsActivity : ComponentActivity() {
             showExample(exampleModel.state.value)
         }
         findViewById<Button>(R.id.tools_back).setOnClickListener { finish() }
+        if (resources.getBoolean(R.bool.preview_interface_enabled)) {
+            findViewById<Button>(R.id.tools_preview_interface).apply {
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    startActivity(Intent().setClassName(
+                        this@ReleasedToolsActivity,
+                        "com.example.citizensecurity.preview.ReportDraftActivity",
+                    ))
+                }
+            }
+        }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 exampleModel.state.collect(::showExample)
