@@ -1,5 +1,15 @@
 # Fases de CITIZENSECURITY
 
+## Entrega oficial 0.5.0
+
+**Entrega 0.5.0 / código Android 20 — 9 de octubre de 2026.** El usuario autorizó integrar el avance del PR #8 a main y publicar esta Release oficial, al confirmar 0.5.0. Incluye las fases 8 a 11: coordinación de borrador y ubicación, consulta SQLite por zona, MapLibre/OpenFreeMap con calles y marcadores. La publicación se verifica en [Release v0.5.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.0). La interfaz y el login del compañero se conservan: la pantalla productiva del mapa todavía no está acoplada y los accesos al guardado y consulta reales siguen ocultos. Oficial identifica esta entrega del proyecto, no acredita aceptación productiva completa. Avance: **10/28 = 35.7%**, sin cambiar los hitos o sus pesos.
+
+La evidencia funcional previa de fase 11 conserva **325 casos distintos aprobados y 57 definiciones nuevas**; el GPS físico se comprobó por separado. Para 0.5.0 se compilaron de nuevo debug/release y lint, sin errores; no se presenta la evidencia anterior como pruebas nuevas. Se conservan las versiones y APK anteriores.
+
+## Registro histórico anterior a 0.5.0
+
+Los estados Unreleased y las autorizaciones siguientes describen sus cortes originales. El código de fases 8 a 11 se incluye en la entrega 0.5.0; los pendientes visuales se conservan.
+
 **Fase activa: 11 — incidentes por zona y marcadores — Unreleased, local; cerrada técnicamente el 8 de octubre de 2026, iniciada el 7.** [Fase 11](FASE_11.md) conecta SQLite, modelo, binding y host MapLibre, sin crear una pantalla productiva. **325 casos distintos aprobados, 57 definiciones nuevas**, compilación debug/release, firma debug v2 y lint sin errores; [Validación](VALIDACION.md) separa pase, repeticiones, advertencias y conservación final. La oficial conserva **0.4.0a / código Android 19**; no hay publicación nueva.
 
 Se comprobaron el mapa por zonas con marcadores sobre Liberty y GPS físico válido en Motorola/API36 después de un primer TIMEOUT: fuente real, aproximadamente 6.668 m de precisión, 46 ms de antigüedad, cercanía permitida y distancia rechazada, sin marca de simulación, coordenadas guardadas o reportes creados. Se acreditan únicamente dos hitos existentes: **4.3 captura del dispositivo en 2/4 y 4.5 mapa por zonas/marcadores en 3/4; 10/28 = 35.7%**, manteniendo los mismos hitos y pesos. La pantalla del compañero aún no existe en el repositorio; su integración y aceptación visual permanecen pendientes. Guardado real/consulta continúan ocultos. Los 18 APK anteriores y productos del teléfono 0.4.0/código 7 y emulador 0.3.1/código 8 se conservaron por hash y fechas; el recibo cierre-fase11.json acredita HEAD/índice y 63 archivos de base intactos.

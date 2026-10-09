@@ -1,5 +1,15 @@
 # Avance del plan del proyecto
 
+## Entrega oficial 0.5.0
+
+**Entrega 0.5.0 / código Android 20 — 9 de octubre de 2026.** El usuario autorizó integrar el avance del PR #8 a main y publicar esta Release oficial, al confirmar 0.5.0. Incluye las fases 8 a 11: coordinación de borrador y ubicación, consulta SQLite por zona, MapLibre/OpenFreeMap con calles y marcadores. La publicación se verifica en [Release v0.5.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.0). La interfaz y el login del compañero se conservan: la pantalla productiva del mapa todavía no está acoplada y los accesos al guardado y consulta reales siguen ocultos. Oficial identifica esta entrega del proyecto, no acredita aceptación productiva completa. Avance: **10/28 = 35.7%**, sin cambiar los hitos o sus pesos.
+
+La evidencia funcional previa de fase 11 conserva **325 casos distintos aprobados y 57 definiciones nuevas**; el GPS físico se comprobó por separado. Para 0.5.0 se compilaron de nuevo debug/release y lint, sin errores; no se presenta la evidencia anterior como pruebas nuevas. Se conservan las versiones y APK anteriores.
+
+## Registro histórico anterior a 0.5.0
+
+Los estados Unreleased y las autorizaciones siguientes describen sus cortes originales. El código de fases 8 a 11 se incluye en la entrega 0.5.0; los pendientes visuales se conservan.
+
 **Trabajo activo: fase 11 — incidentes por zona y marcadores — Unreleased, local; cierre técnico del 8 de octubre de 2026**, iniciado el día 7. [Fase 11](FASE_11.md) une SQLite, región visible, filtros y MapLibre real, sin añadir una pantalla productiva. El laboratorio comprobó dos marcadores y nombres de calles, sustitución al mover cámara, límite/`hasMore`, filtros/vacío, recarga de estilo, cancelación y recreación. **325 casos distintos aprobados, 57 definiciones nuevas**; debug/release y firma debug correctos, lint sin errores. [Validación](VALIDACION.md) separa repeticiones y resultados anteriores.
 
 **Avance actual: 10/28 = 35.7%.** Se acreditan dos hitos existentes con los mismos pesos: **4.5 mapa por zonas y marcadores** deja Mapas en **3/4**, y **4.3 captura del dispositivo** deja Geolocalización en **2/4**. El Motorola Edge 50 Fusion, API 36, obtuvo una lectura GPS real con precisión estimada de **6.67 m** y antigüedad de **46 ms al evaluar**: punto cercano permitido y punto a unos 11 km rechazado. El primer intento agotó 15 segundos; cerca de una ventana respondió, sin cambiar radio, precisión, antigüedad, proveedor o límite de espera. Es una prueba física manual, separada del recuento automatizado y del mapa fijo del laboratorio, sin coordenadas persistidas ni reportes creados.

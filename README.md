@@ -1,5 +1,23 @@
 # CITIZENSECURITY
 
+## Entrega oficial 0.5.0
+
+**Entrega 0.5.0 / código Android 20 — 9 de octubre de 2026.** El usuario autorizó integrar el avance del PR #8 a main y publicar esta Release oficial, al confirmar 0.5.0. Incluye las fases 8 a 11: coordinación de borrador y ubicación, consulta SQLite por zona, MapLibre/OpenFreeMap con calles y marcadores. La publicación se verifica en [Release v0.5.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.0). La interfaz y el login del compañero se conservan: la pantalla productiva del mapa todavía no está acoplada y los accesos al guardado y consulta reales siguen ocultos. Oficial identifica esta entrega del proyecto, no acredita aceptación productiva completa. Avance: **10/28 = 35.7%**, sin cambiar los hitos o sus pesos.
+
+La evidencia funcional previa de fase 11 conserva **325 casos distintos aprobados y 57 definiciones nuevas**; el GPS físico se comprobó por separado. Para 0.5.0 se compilaron de nuevo debug/release y lint, sin errores; no se presenta la evidencia anterior como pruebas nuevas. Se conservan las versiones y APK anteriores.
+
+Para actualizar el código del equipo, guarda o confirma primero tus cambios propios y ejecuta:
+
+```bash
+git fetch origin
+git switch main
+git pull --ff-only origin main
+```
+
+## Registro histórico anterior a 0.5.0
+
+Los estados Unreleased y las autorizaciones siguientes describen sus cortes originales. El código de fases 8 a 11 se incluye en la entrega 0.5.0; los pendientes visuales se conservan.
+
 **Avance compartido para el equipo — Unreleased.** La rama [development/fase-11-mapa-zonas](https://github.com/Spidey123134/citizensecurity/tree/development/fase-11-mapa-zonas) reúne las fases 8 a 11, necesarias para el mapa por zonas validado. El usuario autorizó subir este código el 8 de octubre de 2026. Se conserva main y la Release oficial 0.4.0a; no se crea otra Release ni se integra automáticamente. El siguiente paso sigue siendo acoplar la pantalla del compañero. Los resultados de 325 pruebas y 35.7% del plan pertenecen al cierre técnico previo a esta subida.
 
 Para obtener esta preparación, conserva primero cualquier cambio propio y ejecuta `git fetch origin`; desde una copia que todavía no tenga la rama local, usa `git switch --track origin/development/fase-11-mapa-zonas`. La pantalla productiva y los accesos reales siguen pendientes de acuerdo.

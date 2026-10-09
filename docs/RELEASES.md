@@ -1,5 +1,15 @@
 # Versiones y GitHub Releases
 
+## Entrega oficial 0.5.0
+
+**Entrega 0.5.0 / código Android 20 — 9 de octubre de 2026.** El usuario autorizó integrar el avance del PR #8 a main y publicar esta Release oficial, al confirmar 0.5.0. Incluye las fases 8 a 11: coordinación de borrador y ubicación, consulta SQLite por zona, MapLibre/OpenFreeMap con calles y marcadores. La publicación se verifica en [Release v0.5.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.0). La interfaz y el login del compañero se conservan: la pantalla productiva del mapa todavía no está acoplada y los accesos al guardado y consulta reales siguen ocultos. Oficial identifica esta entrega del proyecto, no acredita aceptación productiva completa. Avance: **10/28 = 35.7%**, sin cambiar los hitos o sus pesos.
+
+La evidencia funcional previa de fase 11 conserva **325 casos distintos aprobados y 57 definiciones nuevas**; el GPS físico se comprobó por separado. Para 0.5.0 se compilaron de nuevo debug/release y lint, sin errores; no se presenta la evidencia anterior como pruebas nuevas. Se conservan las versiones y APK anteriores.
+
+## Registro histórico anterior a 0.5.0
+
+Los estados Unreleased y las autorizaciones siguientes describen sus cortes originales. El código de fases 8 a 11 se incluye en la entrega 0.5.0; los pendientes visuales se conservan.
+
 **Subida de código autorizada el 8 de octubre de 2026.** La preparación validada de fases 8 a 11 se comparte en [development/fase-11-mapa-zonas](https://github.com/Spidey123134/citizensecurity/tree/development/fase-11-mapa-zonas), con una propuesta en borrador para revisión. Permanece **Unreleased**; no es una nueva Release ni una integración a main. La última oficial conserva 0.4.0a/código 19 y sus APK. La autorización cubre esta subida, no futuras integraciones, etiquetas o publicaciones.
 
 El trabajo activo es **[fase 11 — Unreleased](FASE_11.md)**, iniciado el **7 de octubre de 2026** y cerrado técnicamente el **8**: conexión local de incidentes por zona a marcadores MapLibre, sin crear otra pantalla o activar consulta/guardado reales. La última publicación continúa siendo **0.4.0a / código Android 19**. Los artefactos técnicos mantienen ese metadato y se identifican por separado; no reemplazan archivos publicados. Terminar y probar este corte no autoriza commit, subida, integración, etiqueta o Release.

@@ -1,5 +1,17 @@
 # Trabajo del equipo
 
+## Entrega oficial 0.5.0
+
+**Entrega 0.5.0 / código Android 20 — 9 de octubre de 2026.** El usuario autorizó integrar el avance del PR #8 a main y publicar esta Release oficial, al confirmar 0.5.0. Incluye las fases 8 a 11: coordinación de borrador y ubicación, consulta SQLite por zona, MapLibre/OpenFreeMap con calles y marcadores. La publicación se verifica en [Release v0.5.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.0). La interfaz y el login del compañero se conservan: la pantalla productiva del mapa todavía no está acoplada y los accesos al guardado y consulta reales siguen ocultos. Oficial identifica esta entrega del proyecto, no acredita aceptación productiva completa. Avance: **10/28 = 35.7%**, sin cambiar los hitos o sus pesos.
+
+La evidencia funcional previa de fase 11 conserva **325 casos distintos aprobados y 57 definiciones nuevas**; el GPS físico se comprobó por separado. Para 0.5.0 se compilaron de nuevo debug/release y lint, sin errores; no se presenta la evidencia anterior como pruebas nuevas. Se conservan las versiones y APK anteriores.
+
+Autorización vigente: integrar, etiquetar y publicar esta entrega 0.5.0. No autoriza publicar próximos incrementos, borrar datos, activar funciones ocultas ni cambiar la interfaz o el login. Los registros anteriores de no publicación pertenecen a sus cortes históricos y quedan superados únicamente para esta entrega.
+
+## Registro histórico anterior a 0.5.0
+
+Los estados Unreleased y las autorizaciones siguientes describen sus cortes originales. El código de fases 8 a 11 se incluye en la entrega 0.5.0; los pendientes visuales se conservan.
+
 - Autorización de subida del 8 de octubre de 2026: el usuario pidió expresamente subir a GitHub el avance validado. Autoriza el commit y subida del conjunto dependiente de fases 8 a 11 a la rama development/fase-11-mapa-zonas y una propuesta de cambios en borrador para revisión. Mantén Unreleased, main y Release 0.4.0a intactos; no autoriza integrar, etiquetar, publicar otra Release ni crear la interfaz del compañero. El recibo cierre-fase11.json corresponde al cierre técnico anterior al commit: sus comparadores de HEAD/índice son históricos y no deben repetirse contra la subida. La revisión remota encontró main en 9e73fac75521c0cf446136809911a74e7e7cc357, sin nuevas pantallas. No se cambia código o repite validación ya aprobada por esta subida. Para cualquier publicación posterior vuelve a exigir una instrucción precisa.
 
 Lee README.md y docs/TRABAJO_EQUIPO.md antes de editar.

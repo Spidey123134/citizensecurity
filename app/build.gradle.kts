@@ -13,8 +13,8 @@ android {
         applicationId = "com.example.citizensecurity"
         minSdk = 26
         targetSdk = 37
-        versionCode = 19
-        versionName = "0.4.0a"
+        versionCode = 20
+        versionName = "0.5.0"
     }
     buildFeatures { compose = true }
     compileOptions {

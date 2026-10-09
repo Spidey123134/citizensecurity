@@ -1,5 +1,20 @@
 # Validación y comprobaciones del proyecto
 
+## Preparación oficial 0.5.0 — 9 de octubre de 2026
+
+Autorizada integración y publicación de 0.5.0/código Android 20. Este corte cambia metadatos y documentación, sin modificar las funciones o la interfaz. Compilación :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease: BUILD SUCCESSFUL en 10 s; 168 tareas, 30 ejecutadas y 138 reutilizadas. Lint: cero errores y 19 advertencias anteriores en cada variante. No se instalan APK sobre la app del usuario ni se sustituyen los archivos anteriores.
+
+Los 325 casos y 57 definiciones nuevas del cierre de fase 11 son evidencia previa, no pruebas ejecutadas de nuevo por este cambio de versión. GPS físico validado por separado. La pantalla productiva del mapa y aceptación del flujo siguen pendientes.
+
+| Artefacto archivado | Tamaño | SHA-256 |
+| --- | --- | --- |
+| citizensecurity-0.5.0-academico.apk | 54423081 | `c3f62aa5fc8b030e11bae6b1518c5171538a046d8dd4e6da1b24ab956a21317b` |
+| citizensecurity-0.5.0-release-unsigned.apk | 50606415 | `4455ecad7a64f5769e75a23f3fdd8a4581d3e5b86dee8bc6fd12e4804fb7e6a7` |
+
+El APK académico debug es el instalable adjunto; el release sin firma se conserva solo como evidencia local.
+
+## Registro de validaciones anteriores
+
 La comprobación activa es **[fase 11 — Unreleased](FASE_11.md)**: incidentes por zona y marcadores, iniciada el **7** y cerrada técnicamente el **8 de octubre de 2026**. **325 casos distintos aprobados, 57 definiciones nuevas**, debug/release, firma debug v2 y lint sin errores. Se comprobó el mapa nativo con dos reportes SQLite ficticios y GPS físico en el teléfono del usuario por separado. La oficial conserva 0.4.0a/código19; interfaz productiva y aceptación pendientes.
 
 ## Cierre de fase 11 — 7 y 8 de octubre de 2026

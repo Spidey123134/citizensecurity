@@ -1,5 +1,23 @@
 # Trabajo del equipo
 
+## Entrega oficial 0.5.0
+
+**Entrega 0.5.0 / código Android 20 — 9 de octubre de 2026.** El usuario autorizó integrar el avance del PR #8 a main y publicar esta Release oficial, al confirmar 0.5.0. Incluye las fases 8 a 11: coordinación de borrador y ubicación, consulta SQLite por zona, MapLibre/OpenFreeMap con calles y marcadores. La publicación se verifica en [Release v0.5.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.0). La interfaz y el login del compañero se conservan: la pantalla productiva del mapa todavía no está acoplada y los accesos al guardado y consulta reales siguen ocultos. Oficial identifica esta entrega del proyecto, no acredita aceptación productiva completa. Avance: **10/28 = 35.7%**, sin cambiar los hitos o sus pesos.
+
+La evidencia funcional previa de fase 11 conserva **325 casos distintos aprobados y 57 definiciones nuevas**; el GPS físico se comprobó por separado. Para 0.5.0 se compilaron de nuevo debug/release y lint, sin errores; no se presenta la evidencia anterior como pruebas nuevas. Se conservan las versiones y APK anteriores.
+
+Para actualizar el código del equipo, guarda o confirma primero tus cambios propios y ejecuta:
+
+```bash
+git fetch origin
+git switch main
+git pull --ff-only origin main
+```
+
+## Registro histórico anterior a 0.5.0
+
+Los estados Unreleased y las autorizaciones siguientes describen sus cortes originales. El código de fases 8 a 11 se incluye en la entrega 0.5.0; los pendientes visuales se conservan.
+
 **Código compartido en desarrollo — 8 de octubre de 2026.** Por instrucción expresa del usuario, el conjunto validado de fases 8 a 11 se sube a [development/fase-11-mapa-zonas](https://github.com/Spidey123134/citizensecurity/tree/development/fase-11-mapa-zonas), manteniendo Unreleased. Main y Release 0.4.0a se conservan; la propuesta queda en borrador para revisar, sin integración automática. El compañero puede obtener esa rama preservando sus cambios propios; los contratos de [acoplamiento](ACOPLAR_INTERFAZ.md) están listos para su futura pantalla. Los siguientes bloques registran la validación previa a la subida y no conceden autorización para futuros cambios externos.
 
 El trabajo actual es [fase 11: incidentes por zona y marcadores](FASE_11.md), **Unreleased y local, iniciada el 7 y cerrada técnicamente el 8 de octubre de 2026**. Nuestra parte conecta SQLite → modelo → binding → host → MapLibre y comprueba los marcadores; el compañero conserva la pantalla, diseño de pines/controles, navegación y login. No existe aún esa pantalla en el repositorio, y su integración será el siguiente alcance por acordar. Guardado real y consulta productivos siguen sin acceso visible; no se crea ni conecta una pantalla por iniciativa propia.
