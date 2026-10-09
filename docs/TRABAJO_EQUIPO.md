@@ -1,5 +1,13 @@
 # Trabajo del equipo
 
+## Trabajo compartido 0.5.2
+
+La Release oficial 0.5.2 incorpora [fase 14](FASE_14.md). En main, Desarrollador → Nuevo reporte · borrador → Revisar borrador muestra el resumen completo y permite corregir; conserva el login del compañero. Para actualizar conserva tus cambios, `git fetch origin`, `git switch main`, `git pull --ff-only origin main`.
+
+Para el siguiente acoplamiento de guardado usa `IdempotentReportRepository.createOnce` con el mismo UUID y contenido ante un resultado incierto. No generar otra identidad después de un error/cancelación. `Saved` bloquea otra escritura hasta iniciar otro reporte expresamente. Falta conservar la identidad ante muerte del proceso antes de habilitar el acceso real. Ese acceso y la consulta siguen ocultos: la autorización específica está pendiente. 529 casos aprobados; avance 11/28, 39.3%.
+
+## Antecedentes
+
 ## Entrega oficial 0.5.1 — formulario y mapa visibles
 
 **9 de octubre de 2026 · código Android 21.** El usuario indicó «desde ahora puro released». Esta entrega incorpora las fases 12 y 13 a las variantes compartidas: Desarrollador → **Nuevo reporte · borrador** permite llenar el reporte, elegir un punto en MapLibre/OpenFreeMap, conservar el texto al volver y revisar los campos. El mapa muestra calles, nombres y pin. Los controles distinguen permiso denegado/aproximado/preciso, GPS desactivado y reintento, y funcionan al girar la pantalla. Publicación: [Release v0.5.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.1).

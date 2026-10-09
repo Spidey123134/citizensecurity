@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.2] — 2026-10-09
+
+- Añadido: revisión completa del borrador con fecha/zona, texto íntegro, referencia y coordenadas; corregir, volver y recrear sin perder el formulario.
+- Corregido: salir con solo tipo/prioridad elegidos o entrada rechazada también pide confirmar.
+- Corregido: reintentos técnicos después de confirmar SQLite y perder la respuesta recuperan el mismo folio mediante identidad estable. Una identidad usada con otros datos se rechaza; las solicitudes nuevas siguen siendo reportes distintos.
+- Corregido: el modelo conserva el folio después de guardar y requiere iniciar otro reporte expresamente. Un intento incierto no permite cambiar su contenido al reintentar.
+- Validación: 529 casos distintos aprobados, 21 definiciones nuevas; debug/release compilan, lint sin errores. Detalle y límites en [Fase 14](docs/FASE_14.md).
+- Estado: Release oficial, código Android 22. Guardado/consulta reales siguen ocultos hasta autorización específica; 11/28 hitos = 39.3%. Falta retener identidad ante muerte de proceso antes de activar el guardado y aceptar GPS físico en la pantalla.
+
+## Antecedentes
+
 ## Entrega oficial 0.5.1 — formulario y mapa visibles
 
 **9 de octubre de 2026 · código Android 21.** El usuario indicó «desde ahora puro released». Esta entrega incorpora las fases 12 y 13 a las variantes compartidas: Desarrollador → **Nuevo reporte · borrador** permite llenar el reporte, elegir un punto en MapLibre/OpenFreeMap, conservar el texto al volver y revisar los campos. El mapa muestra calles, nombres y pin. Los controles distinguen permiso denegado/aproximado/preciso, GPS desactivado y reintento, y funcionan al girar la pantalla. Publicación: [Release v0.5.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.1).

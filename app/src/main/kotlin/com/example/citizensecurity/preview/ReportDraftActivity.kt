@@ -130,6 +130,11 @@ class ReportDraftActivity : ComponentActivity() {
         if (savedInstanceState == null && draftModel.state.value.occurredAt == null) {
             draftModel.setOccurredAt(Instant.now().minusSeconds(30))
         }
+        if (savedInstanceState?.getBoolean(REVIEW_VISIBLE) == true && selection == null) {
+            val restored = draftModel.review(Instant.now())
+            reviewResult = restored.takeIf { it is ReportDraftReview.Valid }
+            reviewErrors = (restored as? ReportDraftReview.Invalid)?.errors ?: emptyMap()
+        }
         mapInitialized = runCatching { MapsConfiguration.initialize(this) }.isSuccess
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() = goBack()
@@ -138,6 +143,10 @@ class ReportDraftActivity : ComponentActivity() {
     }
 
     private fun goBack() {
+        if (reviewResult is ReportDraftReview.Valid) {
+            reviewResult = null
+            return
+        }
         val request = selection
         if (request != null) {
             if (bridge.cancelSelection(request.token)) {
@@ -146,7 +155,8 @@ class ReportDraftActivity : ComponentActivity() {
             }
         } else {
             val state = draftModel.state.value
-            if (state.description.isNotBlank() || state.location.reference.isNotBlank() || state.location.latitude != null) {
+            if (state.type != null || state.priority != null || state.inputErrors.isNotEmpty() ||
+                state.description.isNotBlank() || state.location.reference.isNotBlank() || state.location.latitude != null) {
                 exitQuestion = true
             } else finish()
         }
@@ -160,12 +170,19 @@ class ReportDraftActivity : ComponentActivity() {
         Scaffold(
             modifier = Modifier.fillMaxSize().imePadding(),
             topBar = { TopAppBar(
-                title = { Text(if (selection == null) "Nuevo reporte" else "Lugar del incidente") },
+                title = { Text(when {
+                    selection != null -> "Lugar del incidente"
+                    reviewResult is ReportDraftReview.Valid -> "Revisar reporte"
+                    else -> "Nuevo reporte"
+                }) },
                 navigationIcon = { TextButton(onClick = ::goBack) { Text("Volver") } },
             ) },
         ) { padding ->
             val request = selection
-            if (request == null) screens.SaveableStateProvider("report_form") {
+            val review = reviewResult as? ReportDraftReview.Valid
+            if (review != null) {
+                ReportReviewContent(review.draft, Modifier.padding(padding), onEdit = { reviewResult = null })
+            } else if (request == null) screens.SaveableStateProvider("report_form") {
                 Form(draft, Modifier.padding(padding))
             }
             else MapSelection(request, Modifier.padding(padding))
@@ -185,11 +202,6 @@ class ReportDraftActivity : ComponentActivity() {
             text = { Text("Este borrador todavía no se guarda. Si sales, perderás sus cambios.") },
             confirmButton = { TextButton(onClick = { exitQuestion = false; finish() }) { Text("Salir") } },
             dismissButton = { TextButton(onClick = { exitQuestion = false }) { Text("Seguir editando") } },
-        )
-        if (reviewResult is ReportDraftReview.Valid) AlertDialog(
-            onDismissRequest = { reviewResult = null }, title = { Text("Borrador válido") },
-            text = { Text("Los campos están completos. No se guardó ni se envió ningún reporte; esta vista prepara el borrador para tu revisión.") },
-            confirmButton = { TextButton(onClick = { reviewResult = null }) { Text("Continuar editando") } },
         )
     }
 
@@ -496,6 +508,7 @@ class ReportDraftActivity : ComponentActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(REVIEW_VISIBLE, reviewResult is ReportDraftReview.Valid)
         mapView?.let { view -> outState.putBundle(MAP_STATE, Bundle().also(view::onSaveInstanceState)) }
         super.onSaveInstanceState(outState)
     }
@@ -513,6 +526,7 @@ class ReportDraftActivity : ComponentActivity() {
     }
 
     private companion object {
+        const val REVIEW_VISIBLE = "report_review_visible"
         const val MAP_STATE = "draft_preview_map_state"
         const val PIN_SOURCE = "draft-preview-point"
         const val PIN_LAYER = "draft-preview-point-layer"

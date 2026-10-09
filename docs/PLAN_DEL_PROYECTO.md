@@ -1,5 +1,11 @@
 # Plan del proyecto
 
+## Entrega 0.5.2 — fase 14
+
+Se trabaja **4.2 Reportes**: revisión completa del formulario y corrección de duplicados al reintentar después de una respuesta perdida de SQLite. Mantiene los controles de **4.3 Geolocalización** y el radio de 5 km. La revisión visible no es autorización de cercanía ni guardado; guardado y consulta reales siguen ocultos hasta la instrucción específica pendiente. [Fase 14](FASE_14.md) conserva los criterios y registra 529 casos aprobados. **11/28 = 39.3%**; no se acreditan fotos, identidad de usuario, administración o avisos por esta entrega.
+
+## Antecedentes
+
 ## Entrega oficial 0.5.1 — formulario y mapa visibles
 
 **9 de octubre de 2026 · código Android 21.** El usuario indicó «desde ahora puro released». Esta entrega incorpora las fases 12 y 13 a las variantes compartidas: Desarrollador → **Nuevo reporte · borrador** permite llenar el reporte, elegir un punto en MapLibre/OpenFreeMap, conservar el texto al volver y revisar los campos. El mapa muestra calles, nombres y pin. Los controles distinguen permiso denegado/aproximado/preciso, GPS desactivado y reintento, y funcionan al girar la pantalla. Publicación: [Release v0.5.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.1).

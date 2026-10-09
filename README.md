@@ -1,5 +1,15 @@
 # CITIZENSECURITY
 
+## Versión oficial 0.5.2 — revisión del reporte
+
+En **Desarrollador → Nuevo reporte · borrador → Revisar borrador** puedes revisar todos los campos, corregirlos y volver sin perder lo escrito. La fecha muestra su zona horaria, y una referencia sin coordenadas se identifica claramente. La revisión también se conserva al recrear la pantalla. [Release y APK 0.5.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.2).
+
+La base técnica de guardado conserva el mismo folio al reintentar una solicitud cuya respuesta se perdió, incluso después de confirmar SQLite. Esta pantalla **todavía no guarda ni envía reportes**; la activación del guardado y consulta reales sigue esperando la instrucción específica del usuario. [Fase 14](docs/FASE_14.md) explica la corrección, 529 pruebas aprobadas y pendientes. Avance: **11/28 = 39.3%**; no se cuenta publicar o mejorar revisión como completar el guardado.
+
+Para actualizar, conserva tus cambios y ejecuta `git fetch origin`, `git switch main`, `git pull --ff-only origin main`.
+
+## Antecedentes
+
 ## Entrega oficial 0.5.1 — formulario y mapa visibles
 
 **9 de octubre de 2026 · código Android 21.** El usuario indicó «desde ahora puro released». Esta entrega incorpora las fases 12 y 13 a las variantes compartidas: Desarrollador → **Nuevo reporte · borrador** permite llenar el reporte, elegir un punto en MapLibre/OpenFreeMap, conservar el texto al volver y revisar los campos. El mapa muestra calles, nombres y pin. Los controles distinguen permiso denegado/aproximado/preciso, GPS desactivado y reintento, y funcionan al girar la pantalla. Publicación: [Release v0.5.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.1).

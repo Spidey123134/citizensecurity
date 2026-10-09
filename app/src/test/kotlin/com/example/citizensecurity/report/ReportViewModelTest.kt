@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.InvalidReportException
+import com.example.citizensecurity.domain.IdempotentReportRepository
 import com.example.citizensecurity.domain.NewReport
 import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.Report
@@ -244,6 +245,73 @@ class ReportViewModelTest {
 
     private fun newModel(repository: ReportRepository): ReportViewModel =
         ViewModelProvider(newStore(), ReportViewModel.factory(repository))[ReportViewModel::class.java]
+
+    @Test fun successfulSaveRetainsTheFolioUntilAnExplicitNewReport() = runTest(mainDispatcher) {
+        val repository = FakeRepository { savedReport(it) }
+        val model = newModel(repository)
+        model.save(draft())
+        runCurrent()
+        model.save(draft())
+        model.save(draft().copy(description = "Otro incidente frente a la entrada del mercado."))
+        runCurrent()
+        assertEquals(1, repository.requests.size)
+        assertEquals(ReportSaveState.Saved(savedReport(draft())), model.state.value)
+        assertTrue(model.startNewReport())
+        model.save(draft())
+        runCurrent()
+        assertEquals(2, repository.requests.size)
+    }
+
+    @Test fun cancellingAfterACommitRetriesWithTheSameIdentityAndOneFolio() = runTest(mainDispatcher) {
+        val identities = mutableListOf<String>()
+        var committed: Report? = null
+        val repository = object : IdempotentReportRepository {
+            override suspend fun createOnce(requestId: String, draft: NewReport): Report {
+                identities += requestId
+                if (committed == null) {
+                    committed = savedReport(draft).copy(id = requestId)
+                    throw CancellationException("Se confirmó la escritura antes de perder el resultado.")
+                }
+                return committed!!
+            }
+            override suspend fun create(draft: NewReport): Report = error("Debe usarse la identidad estable")
+            override suspend fun findById(id: String): Report? = error("No se consulta automáticamente")
+            override suspend fun list(): List<Report> = error("No se consulta automáticamente")
+        }
+        val model = newModel(repository)
+        model.save(draft())
+        runCurrent()
+        assertEquals(ReportSaveState.Idle, model.state.value)
+        assertTrue(!model.startNewReport())
+        model.save(draft())
+        runCurrent()
+        assertEquals(identities[0], identities[1])
+        assertEquals(ReportSaveState.Saved(committed!!), model.state.value)
+    }
+
+    @Test fun anUncertainAttemptCannotBeRetriedWithDifferentData() = runTest(mainDispatcher) {
+        var attempts = 0
+        val repository = object : IdempotentReportRepository {
+            override suspend fun createOnce(requestId: String, draft: NewReport): Report {
+                if (++attempts == 1) throw IOException("Resultado desconocido")
+                return savedReport(draft).copy(id = requestId)
+            }
+            override suspend fun create(draft: NewReport): Report = error("Debe usarse la identidad estable")
+            override suspend fun findById(id: String): Report? = error("Sin consulta automática")
+            override suspend fun list(): List<Report> = error("Sin consulta automática")
+        }
+        val model = newModel(repository)
+        model.save(draft())
+        runCurrent()
+        model.save(draft().copy(description = "Otro incidente frente a la entrada del mercado."))
+        runCurrent()
+        assertEquals(1, attempts)
+        assertTrue(model.state.value is ReportSaveState.Error)
+        model.save(draft())
+        runCurrent()
+        assertEquals(2, attempts)
+        assertTrue(model.state.value is ReportSaveState.Saved)
+    }
 
     private fun newStore() = ViewModelStore().also { stores.add(it) }
 

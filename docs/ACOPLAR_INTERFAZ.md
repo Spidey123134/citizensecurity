@@ -1,5 +1,15 @@
 # Acoplar la interfaz al reporte
 
+## Revisión e identidad — 0.5.2
+
+`ReportReviewContent` recibe la instantánea válida del borrador, muestra los campos y devuelve al formulario mediante `onEdit`. No abre SQLite ni GPS. La revisión se vuelve a validar al recrear Activity; no sirve como credencial de cercanía. La referencia sin coordenadas sigue siendo suficiente para revisar campos, no para pasar el guard de inserción.
+
+La escritura futura debe usar `IdempotentReportRepository.createOnce(requestId, draft)`. Mantener UUID y contenido idénticos mientras el resultado sea incierto; una respuesta perdida tras commit se recupera con esa misma identidad, sin insertar otra fila. `ReportViewModel` mantiene la identidad durante su vida y conserva un éxito hasta `startNewReport`. **Retener identidad/contenido duraderamente ante muerte de proceso queda pendiente antes de activar la pantalla de guardado.** No presentar una nueva identidad como un reintento.
+
+La consulta futura debe llamarse «Reportes en este teléfono»: el acceso académico no identifica al autor. Guardado/consulta reales siguen ocultos hasta la instrucción específica pendiente. [Fase 14](FASE_14.md) define alcance y pruebas.
+
+## Antecedentes
+
 ## Entrega oficial 0.5.1 — formulario y mapa visibles
 
 **9 de octubre de 2026 · código Android 21.** El usuario indicó «desde ahora puro released». Esta entrega incorpora las fases 12 y 13 a las variantes compartidas: Desarrollador → **Nuevo reporte · borrador** permite llenar el reporte, elegir un punto en MapLibre/OpenFreeMap, conservar el texto al volver y revisar los campos. El mapa muestra calles, nombres y pin. Los controles distinguen permiso denegado/aproximado/preciso, GPS desactivado y reintento, y funcionan al girar la pantalla. Publicación: [Release v0.5.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.1).
