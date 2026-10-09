@@ -1,29 +1,24 @@
 package com.example.citizensecurity.maps
 
-import com.google.android.gms.common.ConnectionResult
 import kotlinx.coroutines.CancellationException
 
 sealed interface MapsReadiness {
     data object Ready : MapsReadiness
-    data object MissingApiKey : MapsReadiness
-    data class ServicesUnavailable(val errorCode: Int) : MapsReadiness
+    data object RendererUnavailable : MapsReadiness
     data object VerificationFailed : MapsReadiness
 }
 
-/** Antes de crear la vista: presencia de clave y servicios locales; no valida Google Cloud. */
+/** Inicialización local del SDK; Ready no acredita red, estilo cargado ni mapa renderizado. */
 class MapsReadinessChecker(
-    private val hasConfiguredKey: () -> Boolean,
-    private val googleServicesStatus: () -> Int,
+    private val initializeMapSdk: () -> Unit,
 ) {
     fun check(): MapsReadiness = try {
-        if (!hasConfiguredKey()) MapsReadiness.MissingApiKey
-        else {
-            val status = googleServicesStatus()
-            if (status == ConnectionResult.SUCCESS) MapsReadiness.Ready
-            else MapsReadiness.ServicesUnavailable(status)
-        }
+        initializeMapSdk()
+        MapsReadiness.Ready
     } catch (cancelled: CancellationException) {
         throw cancelled
+    } catch (_: LinkageError) {
+        MapsReadiness.RendererUnavailable
     } catch (_: Exception) {
         MapsReadiness.VerificationFailed
     }

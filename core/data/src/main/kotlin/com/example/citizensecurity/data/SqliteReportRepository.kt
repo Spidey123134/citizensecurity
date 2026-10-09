@@ -9,6 +9,10 @@ import com.example.citizensecurity.domain.NewReport
 import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.Report
 import com.example.citizensecurity.domain.ReportLocation
+import com.example.citizensecurity.domain.ReportMapMarker
+import com.example.citizensecurity.domain.ReportMapPage
+import com.example.citizensecurity.domain.ReportMapQuery
+import com.example.citizensecurity.domain.ReportMapRepository
 import com.example.citizensecurity.domain.ReportRepository
 import com.example.citizensecurity.domain.ReportStatus
 import com.example.citizensecurity.domain.ReportValidator
@@ -38,7 +42,7 @@ class SqliteReportRepository(
     private val clock: Clock = Clock.systemUTC(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val createGuard: (NewReport) -> Unit = {},
-) : ReportRepository, Closeable {
+) : ReportRepository, ReportMapRepository, Closeable {
 
     private val lock = Any()
     private val validator = ReportValidator()
@@ -130,6 +134,59 @@ class SqliteReportRepository(
         }
     }
 
+    override suspend fun queryMarkers(query: ReportMapQuery): ReportMapPage = withOpenRepository {
+        val region = query.region
+        val arguments = mutableListOf(region.south.toString(), region.north.toString())
+        val longitudeRange = if (region.west <= region.east) {
+            "longitude BETWEEN ? AND ?"
+        } else {
+            "longitude >= ? OR longitude <= ?"
+        }
+        arguments += region.west.toString()
+        arguments += region.east.toString()
+        val longitudeSelection = if (region.includesAntimeridian) {
+            "($longitudeRange OR longitude IN (-180.0, 180.0))"
+        } else {
+            "($longitudeRange)"
+        }
+        val selections = mutableListOf(
+            "latitude IS NOT NULL",
+            "longitude IS NOT NULL",
+            "latitude BETWEEN ? AND ?",
+            longitudeSelection,
+        )
+        if (query.types.isNotEmpty()) {
+            selections += "incident_type IN (${query.types.joinToString { "?" }})"
+            arguments += query.types.map { it.name }.sorted()
+        }
+        if (query.statuses.isNotEmpty()) {
+            selections += "status IN (${query.statuses.joinToString { "?" }})"
+            arguments += query.statuses.map { it.name }.sorted()
+        }
+        ensureActive()
+        val database = helper.readableDatabase
+        ensureActive()
+        database.query(
+            TABLE,
+            MAP_PROJECTION,
+            selections.joinToString(" AND "),
+            arguments.toTypedArray(),
+            null,
+            null,
+            "created_at_seconds DESC, created_at_nanos DESC, id DESC",
+            (query.limit + 1).toString(),
+        ).use { cursor ->
+            val markers = buildList {
+                while (cursor.moveToNext()) {
+                    ensureActive()
+                    add(cursor.toMapMarker())
+                }
+            }
+            ensureActive()
+            ReportMapPage(markers.take(query.limit), hasMore = markers.size > query.limit)
+        }
+    }
+
     /** Cierre idempotente: espera cualquier operación activa y libera la conexión. */
     override fun close() {
         synchronized(lock) {
@@ -179,6 +236,15 @@ class SqliteReportRepository(
         status = ReportStatus.valueOf(getString(getColumnIndexOrThrow("status"))),
     )
 
+    private fun Cursor.toMapMarker() = ReportMapMarker(
+        id = getString(getColumnIndexOrThrow("id")),
+        type = IncidentType.valueOf(getString(getColumnIndexOrThrow("incident_type"))),
+        priority = Priority.valueOf(getString(getColumnIndexOrThrow("priority"))),
+        status = ReportStatus.valueOf(getString(getColumnIndexOrThrow("status"))),
+        latitude = getDouble(getColumnIndexOrThrow("latitude")),
+        longitude = getDouble(getColumnIndexOrThrow("longitude")),
+    )
+
     private fun Cursor.getInstant(prefix: String): Instant = Instant.ofEpochSecond(
         getLong(getColumnIndexOrThrow("${prefix}_seconds")),
         getLong(getColumnIndexOrThrow("${prefix}_nanos")),
@@ -201,6 +267,9 @@ class SqliteReportRepository(
             "id", "incident_type", "priority", "description", "occurred_at_seconds",
             "occurred_at_nanos", "location_reference", "latitude", "longitude",
             "created_at_seconds", "created_at_nanos", "status",
+        )
+        private val MAP_PROJECTION = arrayOf(
+            "id", "incident_type", "priority", "status", "latitude", "longitude",
         )
     }
 }

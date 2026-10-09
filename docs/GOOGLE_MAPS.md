@@ -1,4 +1,10 @@
-# Google Maps: integración y configuración pendiente
+# Google Maps: antecedente de integración
+
+**Documento histórico.** En fase 10 el usuario autorizó migrar localmente a **MapLibre Native + OpenFreeMap**, Unreleased. El SDK actual no lee `MAPS_API_KEY` ni `secrets.properties` y no contiene el metadato de Google. Para la integración vigente usa [Mapa con MapLibre](MAPA_MAPLIBRE.md) y [fase 10](FASE_10.md). Estos pasos de Google se conservan para entender las versiones anteriores; no son requisitos actuales.
+
+## Estado anterior a la migración
+
+El trabajo activo posterior a la entrega oficial es la [fase 9 — consulta de incidentes por zona](FASE_9.md), **local y Unreleased**. Prepara datos mínimos de SQLite para marcadores con filtros, límites y carga explícita; no renderiza el mapa. Fase 8 conserva su cierre técnico propio. El usuario confirmó que todavía no configurará la clave y pidió los pasos: la [guía para conseguir y configurar la clave](CONFIGURAR_CLAVE_MAPS.md) incluye consola, facturación, restricciones de paquete/SHA-1 y archivo local. Se conserva Google Maps; no se crea una cuenta Cloud ni se cambia de proveedor. La interfaz y el login siguen a cargo del compañero, con accesos reales ocultos.
 
 Versión oficial **0.4.0a / código Android 19**, del **6 de octubre de 2026**, con validación completada. El usuario pidió revisar GitHub, incorporar el trabajo del compañero y subir/publicar esta actualización como Release; su estado en GitHub se consulta en [Release v0.4.0a](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0a). Esta autorización cubre esta entrega, sin autorizar automáticamente siguientes publicaciones.
 

@@ -15,12 +15,6 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.NoTitleBar">
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
-        <!-- Compatibilidad del SDK 20 con dispositivos que conserven el renderizador anterior. -->
-        <uses-library android:name="org.apache.http.legacy" android:required="false" />
-
         <!-- SplashActivity se ejecuta primero -->
         <activity
             android:name=".SplashActivity"

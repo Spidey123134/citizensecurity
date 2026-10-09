@@ -1,17 +1,14 @@
 package com.example.citizensecurity.maps
 
 import android.content.Context
-import android.content.pm.PackageManager
+import org.maplibre.android.MapLibre
 
-/** Comprueba presencia local; no verifica autorización, facturación ni conectividad de Google. */
+/** MapLibre y estilo público de OpenFreeMap; no usa clave, cuenta ni Google Play Services. */
 object MapsConfiguration {
-    private const val API_KEY_METADATA = "com.google.android.geo.API_KEY"
+    const val STYLE_URL = "https://tiles.openfreemap.org/styles/liberty"
 
-    @Suppress("DEPRECATION")
-    fun isConfigured(context: Context): Boolean {
-        val application = context.packageManager.getApplicationInfo(
-            context.packageName, PackageManager.GET_META_DATA,
-        )
-        return !application.metaData?.getString(API_KEY_METADATA).isNullOrBlank()
+    /** Invocar antes de crear MapView, en el hilo principal; no inicia GPS ni carga una vista. */
+    fun initialize(context: Context) {
+        MapLibre.getInstance(context.applicationContext)
     }
 }

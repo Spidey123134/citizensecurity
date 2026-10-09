@@ -1,6 +1,105 @@
 # Validación y comprobaciones del proyecto
 
-La comprobación actual corresponde a **0.4.0a: puente de ubicación y borrador**, al final del documento. Los cortes 0.3.10 y 0.3.11 conservan sus resultados históricos propios. La validación oficial 0.4.0a quedó completada; la [Release v0.4.0a](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0a) es la referencia de publicación y APK.
+## Preparación oficial 0.5.0 — 9 de octubre de 2026
+
+Autorizada integración y publicación de 0.5.0/código Android 20. Este corte cambia metadatos y documentación, sin modificar las funciones o la interfaz. Compilación :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease: BUILD SUCCESSFUL en 10 s; 168 tareas, 30 ejecutadas y 138 reutilizadas. Lint: cero errores y 19 advertencias anteriores en cada variante. No se instalan APK sobre la app del usuario ni se sustituyen los archivos anteriores.
+
+Los 325 casos y 57 definiciones nuevas del cierre de fase 11 son evidencia previa, no pruebas ejecutadas de nuevo por este cambio de versión. GPS físico validado por separado. La pantalla productiva del mapa y aceptación del flujo siguen pendientes.
+
+| Artefacto archivado | Tamaño | SHA-256 |
+| --- | --- | --- |
+| citizensecurity-0.5.0-academico.apk | 54423081 | `c3f62aa5fc8b030e11bae6b1518c5171538a046d8dd4e6da1b24ab956a21317b` |
+| citizensecurity-0.5.0-release-unsigned.apk | 50606415 | `4455ecad7a64f5769e75a23f3fdd8a4581d3e5b86dee8bc6fd12e4804fb7e6a7` |
+
+El APK académico debug es el instalable adjunto; el release sin firma se conserva solo como evidencia local.
+
+## Registro de validaciones anteriores
+
+La comprobación activa es **[fase 11 — Unreleased](FASE_11.md)**: incidentes por zona y marcadores, iniciada el **7** y cerrada técnicamente el **8 de octubre de 2026**. **325 casos distintos aprobados, 57 definiciones nuevas**, debug/release, firma debug v2 y lint sin errores. Se comprobó el mapa nativo con dos reportes SQLite ficticios y GPS físico en el teléfono del usuario por separado. La oficial conserva 0.4.0a/código19; interfaz productiva y aceptación pendientes.
+
+## Cierre de fase 11 — 7 y 8 de octubre de 2026
+
+| Grupo | Casos aprobados | Ejecución del corte |
+| --- | ---: | --- |
+| JVM app | 273 | Ejecutadas en el pase final |
+| Android flow | 34 | Ejecutadas en el primer pase; no repetidas sin cambios |
+| JVM monitor del mapa | 8 | Ejecutadas en el primer pase; UP-TO-DATE después |
+| Android mapa | 10 | Ejecutadas en el pase final: cuatro anteriores y seis nuevas |
+| **Total distinto** | **325** | Cero fallos, errores u omisiones en XML finales; repeticiones no sumadas |
+
+**57 definiciones nuevas:** 31 JVM del coordinador, 20 JVM del host y seis Android de SQLite→modelo→binding→GeoJSON/capa nativa. Las suites anteriores de dominio/datos/SQLite conservan sus recibos y no se suman como ejecuciones nuevas. La observación GPS física es manual, independiente de 325.
+
+Con JDK 27 y `ANDROID_SERIAL=emulator-5554`, el primer pase incluyó `:verification:location:connectedFlowDebugAndroidTest` y las mismas tareas de comprobación siguientes. El teléfono físico quedó fuera de todas las suites automáticas. Tras resolver dos aserciones de precisión, el pase final fue:
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:lintRelease :app:assembleRelease :verification:maps:testDebugUnitTest :verification:maps:connectedDebugAndroidTest :verification:maps:lintDebug :verification:location:lintFlowDebug :verification:location:assemblePhysicalDebug :verification:location:lintPhysicalDebug --console=plain
+```
+
+**BUILD SUCCESSFUL in 1m 1s**: 327 tareas, 45 ejecutadas y 282 reutilizadas. El primer pase falló únicamente en una JVM de redondeo GeoJSON y una nativa de geometría de tesela: serializar a siete decimales no conserva los bits y `queryRenderedFeatures` devuelve coordenadas reconstruidas de puntos enteros. Las pruebas exigen valores exactos antes de serializar, redondeo concreto y tolerancias derivadas del SDK; la nativa admite 1.4×10⁻⁶ grados en zoom15 (<0.16 m). Se conservaron coordenadas persistidas, fuente GPS y todas las reglas de 5 km. [Fase 11](FASE_11.md) enlaza el código primario que justifica la precisión. No se cuentan intentos fallidos o repetidos como casos adicionales.
+
+Un ajuste posterior exclusivo de mensajes plurales del laboratorio pasó `:verification:maps:assembleDebug :verification:maps:lintDebug` (**BUILD SUCCESSFUL in 6s**); no se repitió la instrumentación por un cambio de texto sin alterar la lógica. Firma debug v2 verificada. Lint cero errores: app19 advertencias anteriores en debug/release, flow2, physical2, mapas8 (seis diagnósticos LogNotTimber y dos de icono/extracción). No se cambió la interfaz productiva para silenciar avisos. La primera compilación physical corrigió el conflicto de etiqueta en su manifiesto de variante mediante `tools:replace`, sin tocar el manifiesto del producto.
+
+La captura y snapshot nativos muestran **dos círculos** y nombres de **Calle Tacuba, Calle Moneda y Calle Venustiano Carranza**, con atribución visible. `queryRenderedFeatures` acredita dos folios iguales a los leídos de SQLite y proyectados en esta región: **171 objetos de calles, 23 etiquetas y 49 edificios**, una consulta terminada. Región/cámara fijas CDMX, sin GPS. Los seis casos comprueban gesto explícito, nueva zona sin IDs anteriores, filtros/límite/`hasMore`/vacío, estilo y recursos ajenos, cancelación de entrega pendiente y recreación/cierre. La pausa controlada ocurre después de completar SQLite y antes de entregar: no afirma interrumpir el motor SQLite. La aceptación visual de la pantalla productiva sigue pendiente.
+
+La prueba manual en **Motorola Edge 50 Fusion / API36** agotó primero 15 s. Cerca de una ventana obtuvo GPS real: **6.668 m de precisión estimada, 46 ms de edad al evaluar y sin marca de simulación**; punto cercano permitido, otro a ~11 km rechazado por radio. No se guardó ningún reporte ni coordenada. El recibo `fase11-gps-fisico.json` contiene solo métricas, decisiones y hash del APK técnico inicial. Después se compiló/pasó lint un ajuste de identificación PENDING/CANCELLED para que un resumen anterior no acredite otra captura; la prueba física corresponde al helper inicial, ambos con 15 s y adaptadores/reglas idénticos. El paquete separado sigue instalado en el teléfono; no es actualización del producto.
+
+Recibo ignorado `.gradle/validacion/cierre-fase11.json`: **18 APK anteriores preservados por hash**, HEAD/índice y **63 archivos de base** intactos, incluidos recursos/pantallas/configuración productiva y dominio/datos. Se permiten únicamente cambios de configuración de los dos laboratorios. Producto del AVD conservado0.3.1/código8 y teléfono0.4.0/código7, con APK y fechas intactos. Los fixtures del laboratorio no están en el DEX productivo. Los artefactos locales fase11 son separados, metadato0.4.0a/código19:
+
+| Artefacto técnico local | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Debug firmado | 73.521.855 | `a147e67056e0bf50415c3659d1b7b074f8095cd5d83c65700b9eae99b2e39ba0` |
+| Release sin firma | 50.606.419 | `4a4c07db3af5a399968e18d6dc87ade33452f9ac2c95b679e0963b93ad23463d` |
+
+Se acreditan solo dos hitos existentes: **4.5 mapa por zonas/marcadores, 3/4** y **4.3 captura física, 2/4**. **10/28 = 35.7%**, pesos intactos. Faltan pantalla productiva, flujo GPS y conjunto de estados/permisos integrados, aceptación, API26 y demás funciones del plan. Guardado real/consulta ocultos. Todo local Unreleased, sin Git, publicación, Cloud, banco, borrado del usuario ni apagado.
+
+## Antecedente: cierre de fase 10
+La comprobación activa es **[fase 10 — Unreleased](FASE_10.md): MapLibre Native + OpenFreeMap**, cerrada técnicamente el **7 de octubre de 2026** con **268 casos distintos aprobados**, compilación debug/release, firma debug v2 y lint sin errores. Se usa OpenGL ES 13.6.1 y se comprobó el mapa real con nombres legibles en un APK técnico aislado. [Mapa con MapLibre](MAPA_MAPLIBRE.md) es la guía vigente. La interfaz productiva, GPS físico y aceptación completa siguen pendientes; la Release oficial continúa siendo 0.4.0a.
+
+## Cierre de fase 10 — 6 y 7 de octubre de 2026
+
+| Comprobación | Casos aprobados |
+| --- | ---: |
+| JVM de app: adaptadores, permisos, selección, borrador y consulta | 222 |
+| Flujo Android de ubicación y borrador | 34 |
+| JVM del monitor de carga del mapa | 8 |
+| MapLibre nativo: mapa real, gestos, recreación y fallos/cierre | 4 |
+| **Casos distintos del corte** | **268** |
+
+Cero fallos, errores u omisiones en los resultados finales. Son **25 definiciones añadidas**: 13 de adaptadores, ocho del monitor y cuatro nativas. Siete comprobaciones de inicialización reemplazan nueve requisitos obsoletos de Google; esa sustitución no se cuenta como nueve pruebas nuevas. Las repeticiones de las mismas suites para reparar el laboratorio o comparar renderizadores tampoco aumentan el total. Dominio y datos conservan la evidencia de fase 9; no se volvieron a ejecutar ni se suman a las 268.
+
+El pase de OpenGL ejecutó app JVM, flujo Android y monitor, y compiló debug/release. La prueba nativa detectó que el selector del laboratorio buscaba solo edificios planos: Liberty utiliza `building-3d` desde zoom 14. Se corrigió incluyendo `FillExtrusionLayer`, sin relajar las comprobaciones de objetos reales. Los ocho casos del monitor y cuatro nativos aprobaron después; se añadió espera de `idle` y snapshot del SDK para verificar la captura, manteniendo el límite de carga de 30 segundos.
+
+La revisión visual detectó texto invisible pese a los nombres presentes en las teselas. Coincide con el [fallo de emuladores de MapLibre #3648](https://github.com/maplibre/maplibre-native/issues/3648) y el [arreglo propuesto #4625 para SwiftShader](https://github.com/maplibre/maplibre-native/pull/4625), todavía sin incorporarlo aquí. Repetir las **mismas cuatro pruebas nativas** con `-gpu host -no-snapshot` permitió comprobar nombres legibles; no se modificó el estilo, los datos ni el SDK para aparentar etiquetas. La comparación utilizó OpenGL traducido a la GPU NVIDIA RTX 3070. No se editó la configuración del AVD ni se incluyó un parche de upstream.
+
+El pase final del mapa terminó **BUILD SUCCESSFUL en 38 s**, 88 tareas: una ejecutada y 87 `UP-TO-DATE`. `connectedDebugAndroidTest` se ejecutó realmente; las tareas reutilizadas de preparación del APK no equivalen a pruebas nativas reutilizadas.
+
+Comandos registrados, con `JAVA_HOME` apuntando a Temurin 27+35:
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:lintRelease :app:assembleRelease :verification:location:connectedFlowDebugAndroidTest :verification:location:lintFlowDebug :verification:maps:testDebugUnitTest :verification:maps:connectedDebugAndroidTest :verification:maps:lintDebug --console=plain
+.\gradlew.bat :verification:maps:testDebugUnitTest :verification:maps:connectedDebugAndroidTest :verification:maps:lintDebug --console=plain
+# Comparación final después de iniciar el mismo AVD con GPU host, sin editarlo:
+.\gradlew.bat :verification:maps:connectedDebugAndroidTest --console=plain
+```
+
+Lint: cero errores; app conserva **19 advertencias por variante**, flujo técnico **dos** y laboratorio del mapa **ocho** (seis por diagnóstico `LogNotTimber`, dos por icono/reglas de extracción del APK técnico). El diagnóstico no contiene GPS del teléfono, reportes ni secretos. La dependencia final es `org.maplibre.gl:android-sdk-opengl:13.6.1`; el runtime de app no incluye Google Play Services Maps, metadato de clave o lectura de `MAPS_API_KEY`.
+
+La captura `.gradle/validacion/fase10-mapa-real.png`, su snapshot nativo y el JSON se exportaron antes de retirar el paquete técnico. La prueba emplea una cámara fija de Ciudad de México, **sin GPS ni datos personales**. Se observaron estilo cargado, mapa cargado, fotograma completo, estado idle y objetos reales de calles, etiquetas y edificios; la revisión de píxeles confirmó Calle Tacuba, Calle Moneda y Calle Venustiano Carranza. Un toque entrega coordenadas a la sesión original, pero confirmar sin evidencia GPS sigue bloqueado. Recrear conserva la cámara y retira listeners anteriores; un estilo inexistente comunica fallo nativo y destruir la vista cancela la espera. El fallo de estilo no se presenta como cobertura de todos los casos sin conexión.
+
+Se acredita **solo SDK configurado**, dentro de 4.5: **2/4**; total **8/28 = 28.6%**. El laboratorio no acredita pantalla productiva, marcadores de incidentes por zona, GPS físico ni aceptación del flujo visible. La regla de 5 km y accesos ocultos a guardado real/consulta se conservan.
+
+Recibo local ignorado: `.gradle/validacion/cierre-fase10.json`. Se comprobaron **16 APK anteriores**, HEAD e índice, **19 archivos de base fuera de los cinco cambios autorizados de configuración** y la app instalada **0.3.1/código 8**, con su hash y tiempos de instalación. Los fixtures y la Activity técnica están ausentes del DEX productivo. Se retiraron los paquetes técnicos; no se instaló el APK productivo nuevo.
+
+| Artefacto técnico local | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `citizensecurity-fase10-debug.apk` | 73.521.855 | `481be9febd8ffb2f3a33b7367ff6ecff095b60ccbbbaa4d49ba6b2dc65063393` |
+| `citizensecurity-fase10-release-unsigned.apk` | 50.606.419 | `81a5eab8bf5dd673ace7dae2bd7968d9aa95ecd46cf9a42a4d1403bc3fdcacf7` |
+
+La firma debug v2 es válida. Son APK universales con el SDK nativo, locales y Unreleased; conservan metadato **0.4.0a/código 19**, sin reemplazar la Release o sus archivos. No hubo commit, subida, integración, etiqueta, publicación, acción Cloud/bancaria ni apagado.
+
+## Antecedentes y herramientas
+
+La comprobación actual corresponde a **fase 9 — Unreleased: consulta de incidentes por zona**, completada con **457 pruebas distintas ejecutadas y aprobadas, 43 definiciones nuevas**, compilación debug/release, firma debug v2 y lint sin errores, con resultados separados al final. Fase 8 conserva su cierre de 226 ejecuciones y 27 definiciones nuevas; los cortes 0.3.10, 0.3.11 y 0.4.0a también conservan sus resultados históricos propios. La [Release v0.4.0a](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0a) sigue siendo la referencia publicada y de APK. La petición de avanzar autoriza este trabajo local, sin otra publicación. La aceptación visual, clave Maps y GPS físico siguen pendientes.
 
 Verificación local realizada el 2 de octubre de 2026, hora de México. Esta revisión cubre el contrato de validación y el guardado local; el diseño de pantallas corresponde al compañero.
 
@@ -715,3 +814,88 @@ Lint sin errores: datos cero incidencias; app debug/release **19 advertencias vi
 APK académico debug firmado, versión0.4.0a/código19: **12.747.894 bytes**, SHA-256 `2bfc260619b6be4921dd4dfaf6ddccd26fbab7f65b234db5fa3246acb391c1f8`, firma v2 verificada. Release sin firma compilada: **9.096.364 bytes**, SHA-256 `91b3feb22b544b48f03aec83a3ba257befb52a9e79e21f626864497213d908f7`; no es el APK instalable adjunto. El paquete productivo instalado0.3.1/código8 conserva hash, fechas y versión; no se instala :app. Los paquetes del laboratorio se retiraron al terminar; fixtures ausentes de ambos DEX productivos. APK037/038/039/0310/0311 preservados por hash.
 
 La publicación oficial fue autorizada por instrucción humana precisa. [Release v0.4.0a](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0a) es la referencia para APK debug académico, suma SHA-256 y cambios; no se borran o reescriben versiones anteriores. La aceptación del flujo visual, Google Cloud, GPS físico y guardado real permanecen pendientes.
+
+
+## Fase 8 — coordinación del borrador y ubicación — Unreleased
+
+Comprobación realizada el **6 de octubre de 2026** en el corte interrumpido. Al reanudar se completó el registro de resultados y documentación; código y pruebas ya estaban terminados. La fase queda **local y Unreleased**, con aceptación funcional pendiente. No se creó otra versión, commit, subida, integración, etiqueta o Release.
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:lintRelease :app:assembleRelease :verification:location:connectedFlowDebugAndroidTest :verification:location:lintFlowDebug --console=plain
+```
+
+**BUILD SUCCESSFUL en 1 min 19 s**, 250 tareas: 46 ejecutadas y 204 `UP-TO-DATE`. Se comprobaron los XML y la selección explícita de `LocationFlowAndroidSuite`; **226 casos distintos ejecutados y aprobados**, cero fallos, errores u omisiones. No se suman tareas Gradle como casos de prueba.
+
+| Suite ejecutada en este corte | Resultado |
+| --- | --- |
+| JVM app | 192 aprobadas, incluidas 21 nuevas de `ReportLocationFlowBindingTest` |
+| Android flujo, API 37 | 34 aprobadas: 19 de flujo anterior, dos de fuente GPS, cinco del puente, dos del borrador y seis nuevas de `ReportLocationFlowNativeTest` |
+| Definiciones nuevas | 27: 21 JVM y seis Android |
+
+Las suites de dominio/datos y las tres variantes separadas del diálogo de permisos **no se ejecutaron de nuevo**; mantienen sus antecedentes, sin presentarlos como ejecuciones o resultados reutilizados de este pase. Los permisos nativos concedidos al laboratorio y la recreación de Activity sí intervienen en la suite de flujo actual. No se instala `:app` ni se llama a sus pruebas instrumentadas.
+
+Los casos nuevos comprueban token antes de confirmar/cancelar/seleccionar/renovar/pedir permiso, cargas asíncronas fuera de orden incluso con el mismo token, cierre/clicks de vistas sustituidas, cancelación al cerrar un mapa después de reset, listener que falla al instalarse o retirarse, campos editados durante el mapa, Francia desde México bloqueada, callbacks GPS tardíos y recuperación de la apertura retenida sin GPS automático. La regla de 5 km y su evidencia independiente se conserva; los resultados `Confirmed` proceden del flujo vigente. El guardado real y consulta siguen ocultos.
+
+Lint debug/release de app **sin errores, 19 advertencias visuales anteriores** por variante; laboratorio flow **sin errores, dos advertencias anteriores** (`DataExtractionRules`, `MissingApplicationIcon`). Compilación debug/release aprobada y firma debug v2 comprobada con `apksigner`. Las advertencias de herramientas Java/Gradle mantienen sus límites anteriores; no se ocultan con suppressions ni una línea base.
+
+Los artefactos técnicos quedan ignorados y separados de la Release oficial, con metadatos todavía **0.4.0a / código 19**; ese identificador no significa que sean el APK publicado:
+
+| Artefacto local de fase 8 | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `.gradle/validacion/citizensecurity-fase8-debug.apk` | 12.780.532 | `ba2560383b5b9e4fcc09dfc83945dd177f131b54e5b2900f5dcf020ec8ba9385` |
+| `.gradle/validacion/citizensecurity-fase8-release-unsigned.apk` | 9.096.364 | `c1f265135d4e4738b0adfde400387225465c5a45b10e82fb00e59baef424fa16` |
+
+El recibo ignorado `.gradle/validacion/cierre-fase8.json` confirma: APK instalados del producto **0.3.1/código 8**, hash y fechas sin cambios; doce APK archivados de 0.3.7/0.3.8/0.3.9/0.3.10/0.3.11/0.4.0a con sus hashes originales; 48 archivos visuales, de dominio/datos y Gradle intactos; **HEAD `9e73fac` e índice conservados**. Los fixtures no aparecen en los DEX del producto y no quedan paquetes técnicos instalados tras el laboratorio. No se modifica lo publicado ni sus archivos locales archivados.
+
+Para aceptar el flujo completo faltan controles del compañero conectados, clave Maps habilitada, mapa renderizado, GPS físico y revisión del usuario. Las fuentes y clicks controlados no prueban estas condiciones; recrear Activity o restaurar campos no acredita rotación física ni muerte real de proceso. **7/28 hitos = 25%**, sin atribuir un nuevo requisito completo al refuerzo del contrato. [Fase 8](FASE_8.md) y [Acoplar interfaz](ACOPLAR_INTERFAZ.md) explican el siguiente trabajo compartido.
+
+## Fase 9 — incidentes por zona — Unreleased — 6 de octubre de 2026
+
+Se comprobó la lectura geográfica local y su carga cancelable; la aceptación visual permanece pendiente. No se asigna otra versión ni se publica este incremento. El pase central terminó en **BUILD SUCCESSFUL in 2m 9s**:
+
+```powershell
+.\gradlew.bat :core:domain:test :core:data:testDebugUnitTest :core:data:connectedDebugAndroidTest :core:data:lintDebug :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:lintRelease :app:assembleRelease :verification:location:connectedFlowDebugAndroidTest :verification:location:lintFlowDebug --console=plain
+```
+
+Una revisión de `ReportMapViewModel` detectó que un observador inmediato de `Loading` podía limpiar o sustituir la consulta antes de que se asignara su tarea. Se corrigió reservando el `Job` con inicio `LAZY` y su manejador de finalización antes de emitir el estado. Solo se inicia si conserva su identidad. Dos regresiones comprueban que limpiar no inicia la lectura retirada y que sustituir A por B conserva la cancelación de B. Tras esta corrección se repitieron las JVM de app, compilación y lint afectados, con **BUILD SUCCESSFUL in 16s**:
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:lintRelease :app:assembleRelease :verification:location:lintFlowDebug --console=plain
+```
+
+| Grupo | Casos distintos ejecutados y aprobados | Definiciones nuevas de fase 9 |
+| --- | ---: | ---: |
+| Dominio JVM | 96 | 10 en `ReportMapQueryTest` |
+| Datos JVM | 38 | 0 |
+| SQLite nativo Android API 37 | 78 | 14 en `SqliteReportMapQueryTest` |
+| App JVM, última ejecución | 211 | 19 en `ReportMapViewModelTest` |
+| Laboratorio Android flow API 37 | 34 | 0 |
+| **Total distinto** | **457** | **43** |
+
+Todos los XML registran **0 fallos, 0 errores y 0 omitidas**. Estos cinco grupos se ejecutaron en este corte, sin reutilizar resultados como `UP-TO-DATE`. El primer pase tenía 209 JVM de app; el segundo añadió las dos regresiones y aprobó 211. Las repeticiones se cuentan una vez en el total distinto de 457. No se repitieron las tres variantes separadas del diálogo de permisos ni se ejecutó `:app:connectedAndroidTest`.
+
+Las pruebas comprueban bordes inclusivos, intervalos que cruzan el antimeridiano, equivalencia de ±180, filtros aplicados antes del límite, orden por fecha/nanosegundos/folio, señales `hasMore`, exclusión de reportes sin coordenadas, lectura tras reabrir SQLite y salida máxima de 500 entre 501 coincidencias. El contrato conserva filtros y listas inmutables. El modelo no consulta al crearse, rechaza respuestas tardías, conserva la consulta original de resultados anteriores y permite reintentar sin tratar la cancelación como un error. Los estados alternativos en pruebas usan bases aisladas; no se añadió una operación administrativa al producto.
+
+| Comprobación | Resultado |
+| --- | --- |
+| Compilación producto debug/release | Aprobada; release sigue sin firma de distribución |
+| Firma debug | v2 verificada con `apksigner` |
+| Lint datos debug | 0 errores, 0 advertencias |
+| Lint app debug/release | 0 errores; 19 advertencias anteriores en cada variante |
+| Lint laboratorio flow | 0 errores; 2 advertencias técnicas anteriores |
+| Fuentes visuales, actividades del compañero y Gradle | Hashes conservados |
+| Producto instalado en el AVD | 0.3.1/código 8; hash y fechas conservados |
+| HEAD e índice Git | Conservados en `9e73fac`; sin acciones de publicación |
+| Catorce APK anteriores, incluidos fase 8 y 0.4.0a | Hashes conservados |
+| Fixtures en DEX productivo / paquetes de laboratorio restantes | Ausentes |
+
+Artefactos técnicos **locales y separados**, con metadato aún **0.4.0a/código 19**; no son el APK publicado de esa Release:
+
+| Archivo ignorado | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `.gradle/validacion/citizensecurity-fase9-debug.apk` | 12.780.532 | `259dd109f508f53e2ad31b02abd07f88240bc2bf8658eeaad62b46e9ae4e79c0` |
+| `.gradle/validacion/citizensecurity-fase9-release-unsigned.apk` | 9.112.748 | `3a0864bf803674cc5fcaa9457842a8d70b822e3ed3082ef849e016fbce1de1e8` |
+
+El recibo ignorado `.gradle/validacion/cierre-fase9.json` comprueba XML, tareas ejecutadas, firma, lint, hashes y conservación del entorno. Logs ignorados: `fase9-pruebas.log`, `fase9-reentrada.log` y `fase9-firma.log`. La app productiva no se instaló para estas pruebas.
+
+El resultado es una consulta **local**, no un mapa de incidentes compartido entre usuarios ni un sistema de seguimiento administrativo. Faltan clave habilitada, mapa renderizado con marcadores, conexión de controles y GPS físico. No se comprobó carga Cloud ni se creó facturación. La [guía de la clave](CONFIGURAR_CLAVE_MAPS.md) explica ese paso manual. **7/28 = 25%** conserva los criterios de aceptación del PDF; el backend solo prepara el hito visual. Guardado real y consulta permanecen ocultos, sin cambios de interfaz/login. No hubo commit, subida, integración, etiqueta, Release nueva ni apagado.

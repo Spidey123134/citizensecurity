@@ -16,6 +16,8 @@ import com.example.citizensecurity.maps.IncidentLocationViewModel
 import com.example.citizensecurity.maps.IncidentLocationFlowBinding
 import com.example.citizensecurity.maps.LocationPermissionViewModel
 import com.example.citizensecurity.maps.PreciseLocationPermissionBinding
+import com.example.citizensecurity.report.ReportDraftViewModel
+import com.example.citizensecurity.report.ReportLocationFlowBinding
 
 /** Dueño Android técnico, sin mapa, controles, login, guardado o captura automática. */
 class LocationFlowHarnessActivity : ComponentActivity() {
@@ -46,7 +48,15 @@ class LocationFlowHarnessActivity : ComponentActivity() {
         ).get(IncidentLocationViewModel::class.java)
     }
 
+    val draftModel: ReportDraftViewModel by lazy {
+        ViewModelProvider(this, ReportDraftViewModel.factory())
+            .get(ReportDraftViewModel::class.java)
+    }
+
     lateinit var flowBinding: IncidentLocationFlowBinding
+        private set
+
+    lateinit var reportLocationBinding: ReportLocationFlowBinding
         private set
 
     val permissionBinding: PreciseLocationPermissionBinding
@@ -56,6 +66,7 @@ class LocationFlowHarnessActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // Registro incondicional en el mismo orden y antes de STARTED.
         flowBinding = IncidentLocationFlowBinding.forActivity(this, permissionModel, locationModel)
+        reportLocationBinding = ReportLocationFlowBinding(this, flowBinding, draftModel)
         setContentView(FrameLayout(this))
     }
 

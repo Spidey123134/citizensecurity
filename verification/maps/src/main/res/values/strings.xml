@@ -1,0 +1,29 @@
+<resources>
+    <string name="zones_title">Mapa de incidentes por zona · laboratorio</string>
+    <string name="zones_query">Consultar zona</string>
+    <string name="zones_idle">Consulta detenida. Pulsa Consultar zona para empezar.</string>
+    <string name="zones_loading">Consultando los incidentes de esta zona…</string>
+    <plurals name="zones_ready">
+        <item quantity="one">%1$d incidente local en esta zona.</item>
+        <item quantity="other">%1$d incidentes locales en esta zona.</item>
+    </plurals>
+    <plurals name="zones_truncated">
+        <item quantity="one">%1$d incidente local visible; hay más resultados.</item>
+        <item quantity="other">%1$d incidentes locales visibles; hay más resultados.</item>
+    </plurals>
+    <string name="zones_failed">No se pudo consultar o dibujar esta zona.</string>
+    <string name="zones_viewport_unavailable">El mapa todavía no tiene una zona utilizable.</string>
+    <string name="zones_closed">Consulta y conexión de la vista cerradas.</string>
+    <string name="zones_no_gps">Vista técnica fija. Usa solo datos ficticios de SQLite en memoria; no obtiene GPS.</string>
+    <string name="zones_map_description">Mapa nativo de incidentes ficticios por zona</string>
+    <string name="lab_title">Laboratorio MapLibre Native · OpenFreeMap</string>
+    <string name="lab_loading">Cargando estilo y mapa real…</string>
+    <string name="lab_ready">Mapa real cargado: calles, etiquetas y edificios.</string>
+    <string name="lab_failed_sdk">El SDK no pudo cargar el mapa. Comprueba la conexión.</string>
+    <string name="lab_failed_timeout">Se agotó el plazo de carga. Comprueba la conexión y vuelve a abrir el laboratorio.</string>
+    <string name="lab_failed_layers">El estilo no contiene las capas esperadas.</string>
+    <string name="lab_closed">Vista de mapa cerrada.</string>
+    <string name="lab_no_gps">Vista técnica fija de Ciudad de México. No obtiene GPS ni guarda reportes.</string>
+    <string name="lab_map_description">Mapa MapLibre Native de verificación</string>
+    <string name="lab_attribution"><![CDATA[<a href="https://openfreemap.org/">© OpenFreeMap</a> · <a href="https://openmaptiles.org/">© OpenMapTiles</a> · <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>]]></string>
+</resources>
