@@ -57,6 +57,58 @@ class ReportDraftUiTest {
         }
     }
 
+    private fun completeReferenceDraft() {
+        ui.onNodeWithTag("type_RISK").performScrollTo().performClick()
+        ui.onNodeWithTag("priority_MEDIUM").performScrollTo().performClick()
+        ui.onNodeWithTag("draft_description").performScrollTo().performTextInput("Una luminaria dejó de funcionar frente al parque.")
+        ui.onNodeWithTag("draft_reference").performScrollTo().performTextInput("Frente al parque, entrada norte")
+        ui.onNodeWithTag("review_draft").performScrollTo().performClick()
+    }
+
+    @Test fun reviewDisplaysEnteredFieldsWithoutSavingOrCapturingGps() {
+        completeReferenceDraft()
+        ui.onNodeWithTag("review_type").performScrollTo().assertTextContains("Riesgo", substring = true)
+        ui.onNodeWithTag("review_priority").performScrollTo().assertTextContains("Media", substring = true)
+        ui.onNodeWithTag("review_description").performScrollTo().assertTextContains("Una luminaria dejó de funcionar frente al parque.", substring = true)
+        ui.onNodeWithTag("review_occurred_at").performScrollTo().assertExists()
+        ui.onNodeWithTag("review_reference").performScrollTo().assertTextContains("Frente al parque, entrada norte", substring = true)
+        capture("release052-revision.png")
+        ui.runOnIdle {
+            assertNull(ui.activity.draftModel.state.value.location.latitude)
+            assertFalse(ui.activity.locationModel.state.value is IncidentLocationState.Capturing)
+            assertDatabaseUnchanged()
+        }
+    }
+
+    @Test fun reviewCanBeCorrectedAndShowsTheUpdatedSnapshot() {
+        completeReferenceDraft()
+        ui.onNodeWithTag("edit_review").performScrollTo().performClick()
+        ui.onNodeWithTag("draft_description").performScrollTo().assertTextContains("Una luminaria dejó de funcionar frente al parque.")
+        ui.onNodeWithTag("draft_description").performTextReplacement("Un cable caído impide pasar por la entrada norte.")
+        ui.onNodeWithTag("review_draft").performScrollTo().performClick()
+        ui.onNodeWithTag("review_description").performScrollTo().assertTextContains("Un cable caído impide pasar por la entrada norte.", substring = true)
+        ui.runOnIdle { assertDatabaseUnchanged() }
+    }
+
+    @Test fun reviewSurvivesRecreationAndBackReturnsToTheDraft() {
+        completeReferenceDraft()
+        ui.activityRule.scenario.recreate()
+        ui.onNodeWithTag("review_description").performScrollTo().assertTextContains("Una luminaria dejó de funcionar frente al parque.", substring = true)
+        ui.onNodeWithText("Volver").performClick()
+        ui.onNodeWithTag("draft_description").performScrollTo().assertTextContains("Una luminaria dejó de funcionar frente al parque.")
+        ui.onNodeWithText("¿Salir del borrador?").assertDoesNotExist()
+        ui.runOnIdle { assertDatabaseUnchanged() }
+    }
+
+    @Test fun selectingOnlyATypeAlsoRequiresConfirmationBeforeExit() {
+        ui.onNodeWithTag("type_RISK").performScrollTo().performClick()
+        ui.onNodeWithText("Volver").performClick()
+        ui.onNodeWithText("¿Salir del borrador?").assertExists()
+        ui.onNodeWithText("Seguir editando").performClick()
+        ui.onNodeWithTag("type_RISK").performScrollTo().assertIsSelected()
+        ui.runOnIdle { assertDatabaseUnchanged() }
+    }
+
     @Test fun formEditsSurviveActivityRecreationWithoutGps() {
         ui.onNodeWithTag("type_RISK").performScrollTo().performClick()
         ui.onNodeWithTag("priority_MEDIUM").performScrollTo().performClick()

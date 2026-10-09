@@ -1,5 +1,11 @@
 # Avance del plan del proyecto
 
+## 0.5.2 — fase 14 — avance comprobado
+
+**11/28 = 39.3%**, sin redefinir hitos o pesos. El punto 4.2 recibe revisión completa y una corrección técnica contra duplicados, pero todavía no completa el hito de formulario con guardado real autorizado. La pregunta para activar guardado/consulta sigue pendiente. Se comprobaron 529 casos distintos; [Fase 14](FASE_14.md) detalla construcción y límites. Para acreditar el siguiente hito falta guardar desde el formulario con autorización expresa, identidad durable y GPS válido. El flujo físico de esta pantalla tampoco se declara completo por pruebas con emulador.
+
+## Antecedentes
+
 ## Entrega oficial 0.5.1 — formulario y mapa visibles
 
 **9 de octubre de 2026 · código Android 21.** El usuario indicó «desde ahora puro released». Esta entrega incorpora las fases 12 y 13 a las variantes compartidas: Desarrollador → **Nuevo reporte · borrador** permite llenar el reporte, elegir un punto en MapLibre/OpenFreeMap, conservar el texto al volver y revisar los campos. El mapa muestra calles, nombres y pin. Los controles distinguen permiso denegado/aproximado/preciso, GPS desactivado y reintento, y funcionan al girar la pantalla. Publicación: [Release v0.5.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.1).

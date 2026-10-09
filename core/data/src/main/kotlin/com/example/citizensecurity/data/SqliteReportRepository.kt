@@ -3,6 +3,8 @@ package com.example.citizensecurity.data
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
+import com.example.citizensecurity.domain.IdempotentReportRepository
 import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.InvalidReportException
 import com.example.citizensecurity.domain.NewReport
@@ -13,7 +15,7 @@ import com.example.citizensecurity.domain.ReportMapMarker
 import com.example.citizensecurity.domain.ReportMapPage
 import com.example.citizensecurity.domain.ReportMapQuery
 import com.example.citizensecurity.domain.ReportMapRepository
-import com.example.citizensecurity.domain.ReportRepository
+import com.example.citizensecurity.domain.ReportRequestConflictException
 import com.example.citizensecurity.domain.ReportStatus
 import com.example.citizensecurity.domain.ReportValidator
 import java.io.Closeable
@@ -42,11 +44,13 @@ class SqliteReportRepository(
     private val clock: Clock = Clock.systemUTC(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val createGuard: (NewReport) -> Unit = {},
-) : ReportRepository, ReportMapRepository, Closeable {
+) : IdempotentReportRepository, ReportMapRepository, Closeable {
 
     private val lock = Any()
     private val validator = ReportValidator()
     private val helper: ReportDatabase
+    private val databaseFile: java.io.File?
+    private var databaseWasOpened = false
     private var closed = false
 
     init {
@@ -57,10 +61,16 @@ class SqliteReportRepository(
                     '/' !in databaseName && '\\' !in databaseName
                 ),
         ) { "El nombre de la base debe ser un archivo .db sin una ruta." }
+        databaseFile = databaseName?.let { context.applicationContext.getDatabasePath(it) }
         helper = ReportDatabase(context.applicationContext, databaseName)
     }
 
-    override suspend fun create(draft: NewReport): Report = withOpenRepository {
+    override suspend fun create(draft: NewReport): Report = createOnce(UUID.randomUUID().toString(), draft)
+
+    override suspend fun createOnce(requestId: String, draft: NewReport): Report = withOpenRepository {
+        require(runCatching { UUID.fromString(requestId).toString() == requestId }.getOrDefault(false)) {
+            "La solicitud necesita un UUID completo y canónico."
+        }
         val normalized = draft.copy(
             description = draft.description.trim(),
             location = draft.location.copy(
@@ -69,12 +79,20 @@ class SqliteReportRepository(
                 longitude = draft.location.longitude.canonicalizeZero(),
             ),
         )
+        // Recuperar un resultado anterior es lectura: no requiere otra captura GPS. Una base
+        // todavía inexistente no se abre aquí; se conserva el rechazo del primer guard sin archivo.
+        if (databaseWasOpened || databaseFile?.exists() == true) {
+            findStoredReport(databaseForRead(), requestId)?.let { existing ->
+                ensureActive()
+                return@withOpenRepository resolveExisting(existing, normalized)
+            }
+        }
         val createdAt = clock.instant()
         val errors = validator.validate(normalized, createdAt)
         if (!errors.isValid) throw InvalidReportException(errors)
 
         val report = Report(
-            id = UUID.randomUUID().toString(),
+            id = requestId,
             type = normalized.type,
             priority = normalized.priority,
             description = normalized.description,
@@ -86,12 +104,18 @@ class SqliteReportRepository(
         ensureActive()
         createGuard(normalized)
         ensureActive()
-        val database = helper.writableDatabase
+        val database = databaseForWrite()
         ensureActive()
         createGuard(normalized)
         ensureActive()
         database.beginTransaction()
         try {
+            // Otra instancia pudo insertar entre la primera lectura y adquirir la transacción.
+            // El bloqueo SQLite y la clave primaria hacen única la escritura también en ese caso.
+            findStoredReport(database, requestId)?.let { existing ->
+                ensureActive()
+                return@withOpenRepository resolveExisting(existing, normalized)
+            }
             database.insertOrThrow(TABLE, null, report.toValues())
             ensureActive()
             createGuard(normalized)
@@ -104,7 +128,11 @@ class SqliteReportRepository(
     }
 
     override suspend fun findById(id: String): Report? = withOpenRepository {
-        helper.readableDatabase.query(
+        findStoredReport(databaseForRead(), id)
+    }
+
+    private fun findStoredReport(database: SQLiteDatabase, id: String): Report? =
+        database.query(
             TABLE,
             PROJECTION,
             "id = ?",
@@ -116,10 +144,17 @@ class SqliteReportRepository(
         ).use { cursor ->
             if (cursor.moveToFirst()) cursor.toReport() else null
         }
+
+    private fun resolveExisting(existing: Report, draft: NewReport): Report {
+        if (existing.type != draft.type || existing.priority != draft.priority ||
+            existing.description != draft.description || existing.occurredAt != draft.occurredAt ||
+            existing.location != draft.location
+        ) throw ReportRequestConflictException(existing.id)
+        return existing
     }
 
     override suspend fun list(): List<Report> = withOpenRepository {
-        helper.readableDatabase.query(
+        databaseForRead().query(
             TABLE,
             PROJECTION,
             null,
@@ -164,7 +199,7 @@ class SqliteReportRepository(
             arguments += query.statuses.map { it.name }.sorted()
         }
         ensureActive()
-        val database = helper.readableDatabase
+        val database = databaseForRead()
         ensureActive()
         database.query(
             TABLE,
@@ -205,6 +240,11 @@ class SqliteReportRepository(
             action()
         }
     }
+
+    /** Solo se llaman bajo [lock], después de comprobar que el repositorio continúa abierto. */
+    private fun databaseForRead(): SQLiteDatabase = helper.readableDatabase.also { databaseWasOpened = true }
+
+    private fun databaseForWrite(): SQLiteDatabase = helper.writableDatabase.also { databaseWasOpened = true }
 
     private fun Report.toValues() = ContentValues().apply {
         put("id", id)

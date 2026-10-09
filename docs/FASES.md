@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Fase 14 — oficial 0.5.2
+
+[Fase 14](FASE_14.md) completa la revisión visible del reporte y corrige reintentos de SQLite que podían duplicar un folio. Son 529 casos distintos aprobados, 21 definiciones nuevas y APK académico con código 22. Los puntos trabajados son 4.2 y su relación con ubicación 4.3; guardado y consulta reales siguen pendientes de autorización específica. **11/28 = 39.3%**, mismos hitos y pesos. La preferencia vigente es entregar los avances validados como Releases oficiales, conservando sus versiones previas.
+
+## Antecedentes
+
 ## Entrega oficial 0.5.1 — formulario y mapa visibles
 
 **9 de octubre de 2026 · código Android 21.** El usuario indicó «desde ahora puro released». Esta entrega incorpora las fases 12 y 13 a las variantes compartidas: Desarrollador → **Nuevo reporte · borrador** permite llenar el reporte, elegir un punto en MapLibre/OpenFreeMap, conservar el texto al volver y revisar los campos. El mapa muestra calles, nombres y pin. Los controles distinguen permiso denegado/aproximado/preciso, GPS desactivado y reintento, y funcionan al girar la pantalla. Publicación: [Release v0.5.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.1).

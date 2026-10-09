@@ -1,5 +1,13 @@
 # Trabajo del equipo
 
+## Entrega oficial 0.5.2 — fase 14
+
+El usuario pidió trabajar la siguiente fase con resultados útiles, manteniendo la preferencia de Releases oficiales. [Fase 14](docs/FASE_14.md) añade revisión completa del borrador y corrige duplicados por respuesta de guardado perdida. Código Android 22. Entrada: Desarrollador → Nuevo reporte · borrador → Revisar borrador. [Release v0.5.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.2).
+
+Guardado/consulta reales continúan ocultos: la pregunta de activación específica está pendiente, conforme a la instrucción anterior del usuario. La publicación no los activa. Conservar login, roles, datos e historia; no borrar ni apagar. El VM guarda la identidad de solicitud durante su vida; antes de activar escritura falta retenerla duraderamente ante muerte de proceso y probar el flujo físico. 529 casos aprobados, 21 definiciones nuevas; detalle y límites en FASE_14. Avance 11/28 = 39.3%, sin sumar hitos por revisión visual o publicación.
+
+## Antecedentes
+
 ## Entrega oficial 0.5.1 — formulario y mapa visibles
 
 **9 de octubre de 2026 · código Android 21.** El usuario indicó «desde ahora puro released». Esta entrega incorpora las fases 12 y 13 a las variantes compartidas: Desarrollador → **Nuevo reporte · borrador** permite llenar el reporte, elegir un punto en MapLibre/OpenFreeMap, conservar el texto al volver y revisar los campos. El mapa muestra calles, nombres y pin. Los controles distinguen permiso denegado/aproximado/preciso, GPS desactivado y reintento, y funcionan al girar la pantalla. Publicación: [Release v0.5.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.1).

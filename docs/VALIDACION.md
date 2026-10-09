@@ -1,5 +1,17 @@
 # Validación y comprobaciones del proyecto
 
+## 0.5.2 — fase 14 — 2026-10-09
+
+**529 casos distintos aprobados:** 294 JVM app, 96 JVM dominio, 38 JVM datos, 86 SQLite/fuente Android y 15 Android formulario/controles. Nuevas definiciones: **21** (6 formato, 3 guardado, 4 revisión UI, 8 SQLite idempotente). Dominio se ejecutó en el primer pase del contrato vigente; las suites afectadas se repitieron después de corregir el acceso a rutas previo a la validación del nombre. No se suman repeticiones. [Fase 14](FASE_14.md) explica límites y reproducción.
+
+La suite SQLite completa encontró inicialmente una regresión en el rechazo de nombres inválidos. La corrección movió `getDatabasePath` después de la validación; el segundo pase aprobó 86/86. Se comprobó cancelación real entre commit/retorno, recuperación sin nueva escritura, conflicto de contenido, concurrencia entre instancias, reapertura y rechazo GPS antes de crear archivos. Las bases nativas están aisladas, no son datos del producto.
+
+Los 11 casos del formulario incluyen cuatro nuevos de revisión, corrección, recreación/volver y salida con tipo seleccionado. Comprobaron hashes de archivos de base sin cambios. Los cuatro casos restantes se ejecutaron por separado con permisos reales denegado/aproximado/preciso y ubicación desactivada preparados en Android. No se fabricó GPS ni se conectó teléfono. Solo se instaló en la instancia AVD read-only propiedad de esta validación.
+
+Debug/release y APK de pruebas compilan. Lint: cero errores, 19 advertencias anteriores por variante de app y cero en datos. Firma debug v2 e integridad del APK académico comprobadas para publicar. Guardado real/consulta siguen ocultos; aceptación física y retención durable de identidad de escritura pendientes. Los resultados y capturas están en `.gradle/validacion/release052-*`, separados de las entregas previas.
+
+## Antecedentes
+
 ## Entrega oficial 0.5.1 — formulario y mapa visibles
 
 **9 de octubre de 2026 · código Android 21.** El usuario indicó «desde ahora puro released». Esta entrega incorpora las fases 12 y 13 a las variantes compartidas: Desarrollador → **Nuevo reporte · borrador** permite llenar el reporte, elegir un punto en MapLibre/OpenFreeMap, conservar el texto al volver y revisar los campos. El mapa muestra calles, nombres y pin. Los controles distinguen permiso denegado/aproximado/preciso, GPS desactivado y reintento, y funcionan al girar la pantalla. Publicación: [Release v0.5.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.1).
