@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="preview_interface_enabled">true</bool>
+    <string name="preview_interface_entry">Nuevo reporte · borrador</string>
+</resources>

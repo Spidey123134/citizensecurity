@@ -23,6 +23,16 @@
             android:textStyle="bold"
             android:textColor="#2ECC71" />
 
+        <Button
+            android:id="@+id/tools_preview_interface"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#007F78"
+            android:textColor="#FFFFFF"
+            android:visibility="gone"
+            android:text="@string/preview_interface_entry" />
+
         <!-- SECCIÓN 1: Detalles del reporte -->
         <LinearLayout
             android:layout_width="match_parent"

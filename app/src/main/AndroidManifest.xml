@@ -25,6 +25,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".preview.ReportDraftActivity" android:exported="false" />
+
         <!-- MainActivity (Login) -->
         <activity
             android:name=".MainActivity"

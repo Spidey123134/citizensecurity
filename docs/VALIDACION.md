@@ -1,5 +1,41 @@
 # Validación y comprobaciones del proyecto
 
+## Entrega oficial 0.5.1 — formulario y mapa visibles
+
+**9 de octubre de 2026 · código Android 21.** El usuario indicó «desde ahora puro released». Esta entrega incorpora las fases 12 y 13 a las variantes compartidas: Desarrollador → **Nuevo reporte · borrador** permite llenar el reporte, elegir un punto en MapLibre/OpenFreeMap, conservar el texto al volver y revisar los campos. El mapa muestra calles, nombres y pin. Los controles distinguen permiso denegado/aproximado/preciso, GPS desactivado y reintento, y funcionan al girar la pantalla. Publicación: [Release v0.5.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.1).
+
+La confirmación mantiene GPS preciso, reciente, no simulado y radio de 5 km. El formulario **todavía no guarda ni envía reportes ni avisa a emergencias**; guardado y consulta reales siguen ocultos por la instrucción específica anterior. El login y el ejemplo ficticio del compañero se conservan. Se comprobaron **296 casos: 285 JVM y 11 nativos**, con cuatro nuevos casos de permisos/ubicación desactivada contra Android real, sin inyectar estados de permiso en el modelo ni ubicaciones falsas. Debug/release compilan, firma debug válida y lint sin errores, con 19 advertencias anteriores por variante.
+
+**Avance: 11/28 = 39.3%.** Se acredita el hito existente de **4.3 permisos y estados GPS (3/4)** por las comprobaciones de los controles, respaldadas por las pruebas previas de fuente/estados. GPS físico y confirmación completa dentro de esta pantalla siguen pendientes: no se completa 4.3.4. Publicar una versión no suma otro hito. [Entrega 0.5.1](ENTREGA_0_5_1.md) explica los puntos y los pendientes; los cortes Unreleased anteriores permanecen como historia y su código de interfaz se incluye en esta entrega.
+
+## Antecedentes conservados
+
+## Fase 13 — permisos y recuperación del GPS — Unreleased
+
+**Avance local del 9 de octubre de 2026**, autorizado por el usuario al pedir el siguiente paso. La vista de reporte ahora explica permiso aproximado, denegación, cancelación y fallos al comprobar o abrir el permiso. Un GPS sin respuesta indica cómo reintentar conservando el punto; ubicación desactivada pide volver a buscar por gesto. Los controles del mapa se pueden desplazar en orientación horizontal y usan el tamaño real de la ventana.
+
+Se mantienen radio 5 km, GPS preciso/reciente/no simulado y confirmación validada; no hay GPS automático ni apertura automática de Ajustes. Debug se identifica como **0.5.0-fase13 / código 20**. La interfaz nueva sigue excluida de release, el login se conserva y guardado/consulta reales permanecen ocultos. **Sin commit, subida ni publicación; main y Release 0.5.0 intactos.** [Fase 13](FASE_13.md) registra comprobación y pendientes. Avance acreditado **10/28 = 35.7%**; la aceptación con GPS físico de esta pantalla sigue pendiente.
+
+### Cierre de fase 13
+
+**292 casos ejecutados y aprobados:** 285 JVM de app (12 nuevos) y siete nativos de interfaz (uno nuevo de orientación horizontal; seis de fase 12 repetidos). **13 definiciones nuevas**, sin sumar repeticiones como casos adicionales. Los mensajes representan estados controlados en JVM; el laboratorio no acredita elección aproximada/denegada del diálogo real ni GPS físico de esta pantalla. En Android API 37 se comprobó mapa con calles, nombres y pin, conservación/cancelación/recreación y acceso a los controles en horizontal. Los hashes de las bases existentes permanecen iguales antes y después de cada caso.
+
+Debug, release y APK de instrumentación compilan. Lint final: cero errores y 19 advertencias anteriores por variante; se sustituyó Configuration.screenHeightDp por LocalWindowInfo para adaptar los controles a la ventana real. Firma debug v2 válida, nombre 0.5.0-fase13/código 20. Activity nueva solo en debug y pruebas fuera del producto. APK oficial 0.5.0 preservado por SHA-256; APK de fase 12 también conservado. Capturas fase13-mapa.png y fase13-formulario.png revisadas, sin lecturas GPS del usuario. No se instaló en el teléfono, no hubo publicación y la aceptación física permanece pendiente. Recibo ignorado: .gradle/validacion/cierre-fase13.json; [fase 13](FASE_13.md).
+
+## Antecedente: fase 12
+
+## Fase 12 — interfaz de nuevo reporte — Unreleased
+
+**Trabajo local del 9 de octubre de 2026.** El usuario autorizó empezar la interfaz y reutilizar el primer borrador. Se recuperan su estilo azul/verde y la organización del formulario, conectados a los modelos actuales. Login y entrada del compañero se conservan. En debug, Desarrollador → Nuevo reporte · vista previa abre campos de incidente, revisión y selección de punto en MapLibre/OpenFreeMap con calles. No envía avisos ni guarda reportes reales; la consulta real permanece oculta.
+
+La confirmación mantiene permiso preciso, GPS reciente y válido, rechazo de ubicación simulada y radio de 5 km. Abrir el mapa o volver no inicia GPS. El APK local se identifica como **0.5.0-fase12 / código 20**; la variante release excluye la nueva Activity y oculta su botón. **Main, tag y Release oficial 0.5.0 no cambian**. Esta instrucción autoriza este desarrollo local, no commit, subida, integración o nueva publicación. [Fase 12](FASE_12.md) detalla pruebas y pendientes. El avance acreditado sigue **10/28 = 35.7%** hasta aceptar el flujo visual con GPS físico.
+
+### Cierre de fase 12
+
+273 casos JVM de app ejecutados y aprobados en el primer pase y seis casos nuevos de interfaz aprobados en API 37: **279 casos de este corte**, sin sumar repeticiones ni las 52 pruebas históricas de otros laboratorios no ejecutadas aquí. Las seis nuevas comprueban revisión, retención de campos y texto rechazado, ida/vuelta/recreación del mapa, propuesta por toque y bloqueo sin GPS; los hashes de las bases previas quedan iguales. Capturas reales con calles, nombres y pin revisadas. Debug/release/APK de pruebas compilan; firma debug v2 válida. Lint final: cero errores y 19 advertencias anteriores por variante. Ruta manual desde Splash, Desarrollador y botón de vista previa aprobada. La Activity nueva solo existe en debug, las pruebas quedan fuera del producto y el APK oficial 0.5.0 conserva su hash. Se usa una instancia AVD read-only; no se instala en el teléfono. GPS físico y aceptación de esta pantalla pendientes. [Fase 12](FASE_12.md) explica ajustes y conserva fallos iniciales sin presentarlos como aprobados. Recibo local ignorado: .gradle/validacion/cierre-fase12.json.
+
+## Antecedentes conservados
+
 ## Preparación oficial 0.5.0 — 9 de octubre de 2026
 
 Autorizada integración y publicación de 0.5.0/código Android 20. Este corte cambia metadatos y documentación, sin modificar las funciones o la interfaz. Compilación :app:assembleDebug :app:assembleRelease :app:lintDebug :app:lintRelease: BUILD SUCCESSFUL en 10 s; 168 tareas, 30 ejecutadas y 138 reutilizadas. Lint: cero errores y 19 advertencias anteriores en cada variante. No se instalan APK sobre la app del usuario ni se sustituyen los archivos anteriores.
