@@ -1,5 +1,13 @@
 # Trabajo del equipo
 
+## Trabajo compartido 0.5.3 — funciones locales accesibles
+
+El usuario autorizó retirar la ocultación del guardado y consulta existentes. En main, Desarrollador abre el formulario con guardado, lista/detalle por folio y mapa por zona. Se conserva la entrada y el login del compañero. Para actualizar conserva tus cambios propios y usa `git fetch origin`, `git switch main`, `git pull --ff-only origin main`.
+
+El formulario usa ReportSubmissionViewModel con ReportSubmissionStore privado y createOnce. Mantén UUID y contenido ante resultado incierto; recuperar solo lee. No sustituir esta coordinación por create con UUID nuevo al reintentar. El estado Invalid entrega el borrador conservado para corregir, sin fabricar evidencia GPS. La consulta se llama «Reportes en este teléfono» porque el acceso académico no identifica autores. Consulta y mapa no editan estados. [Fase 15](FASE_15.md) contiene el recorrido de prueba y la validación.
+
+## Antecedentes históricos
+
 ## Trabajo compartido 0.5.2
 
 La Release oficial 0.5.2 incorpora [fase 14](FASE_14.md). En main, Desarrollador → Nuevo reporte · borrador → Revisar borrador muestra el resumen completo y permite corregir; conserva el login del compañero. Para actualizar conserva tus cambios, `git fetch origin`, `git switch main`, `git pull --ff-only origin main`.

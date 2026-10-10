@@ -1,5 +1,15 @@
 # Trabajo del equipo
 
+## Entrega 0.5.3 — fase 15, funciones locales visibles
+
+La instrucción vigente del usuario es «tu chambea lo más que puedas, pero ya no mantengas nada oculto». Autoriza activar y acoplar el guardado y la consulta reales construidos. Sustituye la restricción de visibilidad registrada en los antecedentes. Continúa su preferencia «desde ahora puro released»: entregar avances validados como Releases oficiales, conservando datos, versiones e historia. Mantener el login/splash del compañero; el acceso académico no identifica usuarios ni confiere roles reales.
+
+Código Android 23. Desarrollador ofrece Nuevo reporte · guardado local, Reportes en este teléfono y Mapa de reportes por zona. El guardado usa ReportSubmissionViewModel, ReportSubmissionStore privado/AtomicFile y createOnce con UUID durable; recuperar solo lee, reintentar requiere gesto. Un resultado incierto nunca habilita otra identidad. Ante rechazo confirmado se conservan los campos para corregir. Consulta solo lectura; mapa nativo con calles y pines reales de SQLite por zona. El guard mantiene permiso preciso, GPS reciente/no simulado, precisión ≤100 m y distancia+precisión ≤5 km al insertar. Las coordenadas recuperadas no son evidencia de GPS.
+
+[FASE_15](docs/FASE_15.md) registra alcance, validación y límites. Las fixtures se limitan a androidTest y nunca al APK productivo; las pruebas con fuente controlada no acreditan GPS físico del recorrido final. Fotos, autenticación real, administración y notificaciones continúan pendientes de implementación, no ocultas. Las reglas anteriores contradictorias son historia del corte correspondiente.
+
+## Antecedentes históricos
+
 ## Entrega oficial 0.5.2 — fase 14
 
 El usuario pidió trabajar la siguiente fase con resultados útiles, manteniendo la preferencia de Releases oficiales. [Fase 14](docs/FASE_14.md) añade revisión completa del borrador y corrige duplicados por respuesta de guardado perdida. Código Android 22. Entrada: Desarrollador → Nuevo reporte · borrador → Revisar borrador. [Release v0.5.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.2).

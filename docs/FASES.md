@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Fase 15 — 0.5.3, recorrido local completo
+
+[FASE_15](FASE_15.md) integra formulario → punto validado → guardado → folio → consulta → mapa por zona. Retira la ocultación del guardado y consulta por autorización explícita. Incluye identidad durable ante interrupción y corrección sin pérdida de campos tras rechazo del GPS. Código Android 23; entrega oficial con APK académico. La validación nativa usa SQLite y MapLibre reales con una fuente de teléfono controlada solo en pruebas; no acredita GPS físico del flujo final.
+
+## Antecedentes históricos
+
 ## Fase 14 — oficial 0.5.2
 
 [Fase 14](FASE_14.md) completa la revisión visible del reporte y corrige reintentos de SQLite que podían duplicar un folio. Son 529 casos distintos aprobados, 21 definiciones nuevas y APK académico con código 22. Los puntos trabajados son 4.2 y su relación con ubicación 4.3; guardado y consulta reales siguen pendientes de autorización específica. **11/28 = 39.3%**, mismos hitos y pesos. La preferencia vigente es entregar los avances validados como Releases oficiales, conservando sus versiones previas.

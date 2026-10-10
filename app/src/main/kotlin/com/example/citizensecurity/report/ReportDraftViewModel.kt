@@ -151,6 +151,32 @@ class ReportDraftViewModel(
         return true
     }
 
+    /**
+     * Recupera los campos de un intento rechazado para corregirlos sin perder lo escrito.
+     * Las coordenadas son datos del borrador; no acreditan cercanía actual ni autorizan GPS
+     * o guardado. Retira la apertura previa para ignorar sus callbacks y conserva únicamente
+     * las mismas primitivas de SavedStateHandle; no pide permiso ni ubicación.
+     */
+    fun restoreForCorrection(draft: NewReport): Boolean {
+        if (closed ||
+            draft.description.length > MAX_DESCRIPTION_CHARACTERS * 2 ||
+            draft.description.codePointCount(0, draft.description.length) > MAX_DESCRIPTION_CHARACTERS ||
+            draft.location.reference.length > MAX_REFERENCE_CHARACTERS * 2 ||
+            draft.location.reference.codePointCount(0, draft.location.reference.length) > MAX_REFERENCE_CHARACTERS ||
+            !validCoordinates(draft.location.latitude, draft.location.longitude)
+        ) return false
+        selection = null
+        problems.clear()
+        publish(ReportDraftState(
+            type = draft.type,
+            priority = draft.priority,
+            description = draft.description,
+            occurredAt = draft.occurredAt,
+            location = draft.location.copy(),
+        ))
+        return true
+    }
+
     fun review(now: Instant): ReportDraftReview {
         val current = state.value
         val errors = problems.mapValues { it.value.message }.toMutableMap()
