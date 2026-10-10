@@ -1,5 +1,11 @@
 # Validación y comprobaciones del proyecto
 
+## Validación 0.5.3 — fase 15
+
+[FASE_15](FASE_15.md) registra la ejecución de JVM, SQLite/AtomicFile Android, formulario/guardado/consulta y mapa nativo. Las suites nuevas usan bases y diarios aislados; los permisos se comprueban contra Android. Solo el origen de la lectura del teléfono es controlado en las pruebas de integración nuevas, sin incorporarlo a los APK. No se declara una lectura GPS física nueva ni aceptación del usuario por aprobar instrumentación. El emulador es una copia read-only sin alterar datos del AVD original.
+
+## Antecedentes históricos
+
 ## 0.5.2 — fase 14 — 2026-10-09
 
 **529 casos distintos aprobados:** 294 JVM app, 96 JVM dominio, 38 JVM datos, 86 SQLite/fuente Android y 15 Android formulario/controles. Nuevas definiciones: **21** (6 formato, 3 guardado, 4 revisión UI, 8 SQLite idempotente). Dominio se ejecutó en el primer pase del contrato vigente; las suites afectadas se repitieron después de corregir el acceso a rutas previo a la validación del nombre. No se suman repeticiones. [Fase 14](FASE_14.md) explica límites y reproducción.

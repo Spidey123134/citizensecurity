@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <bool name="preview_interface_enabled">true</bool>
-    <string name="preview_interface_entry">Nuevo reporte · borrador</string>
+    <string name="preview_interface_entry">Nuevo reporte · guardado local</string>
+    <string name="local_reports_entry">Reportes en este teléfono</string>
+    <string name="reports_map_entry">Mapa de reportes por zona</string>
 </resources>

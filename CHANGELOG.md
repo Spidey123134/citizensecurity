@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.3] — 2026-10-09
+
+- Activado por autorización: formulario con guardado SQLite real, recibo/folio, lista, búsqueda, filtros y detalle; mapa por zona con calles/pines locales y navegación al mismo detalle. Todo accesible desde Desarrollador en debug y release.
+- Añadido: diario privado AtomicFile con UUID y contenido antes de insertar; recuperación de resultado y reintento conservan identidad ante interrupción, sin GPS/guardado automático.
+- Corregido: rechazo del GPS tras recuperar un intento conserva todos los campos; girar después de corregirlos no sobrescribe cambios. Cancelación de GPS de revisión ignora respuestas antiguas.
+- Corregido: el panel del mapa conserva su altura al mostrar carga/resultados/límite; no cambia la zona visible por su propia respuesta ni descarta una consulta correcta.
+- Conservado: guard preciso/reciente/no simulado y radio 5 km al confirmar y guardar; login del compañero, esquema SQLite, datos e historia. Consulta es local y no identifica autores ni edita estados.
+- Validación: 594 casos distintos aprobados, 65 definiciones nuevas. Debug/release/androidTest compilan; lint sin errores. Pruebas de integración usan fuente de teléfono controlada solo en androidTest y no acreditan GPS físico del recorrido final.
+- Estado: Release oficial, código Android 23; 13/28 hitos = 46.4%. Fotografías, cuentas, administración y avisos siguen pendientes de implementación. [Fase 15](docs/FASE_15.md) detalla evidencia y límites.
+
 ## [0.5.2] — 2026-10-09
 
 - Añadido: revisión completa del borrador con fecha/zona, texto íntegro, referencia y coordenadas; corregir, volver y recrear sin perder el formulario.

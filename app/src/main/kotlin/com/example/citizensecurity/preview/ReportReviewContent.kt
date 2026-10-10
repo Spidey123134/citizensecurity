@@ -35,6 +35,7 @@ internal fun ReportReviewContent(
     modifier: Modifier = Modifier,
     onEdit: () -> Unit,
     actions: @Composable () -> Unit = {},
+    canEdit: Boolean = true,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val timeZone = ZoneId.systemDefault()
@@ -49,7 +50,7 @@ internal fun ReportReviewContent(
         Text("Revisa tu borrador", style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.semantics { heading() })
         Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
-            Text("Comprueba los datos antes de continuar. Este borrador todavía no se guarda ni se envía; no avisa a emergencias.",
+            Text("Comprueba los datos antes de guardar. El reporte se conserva solo en este teléfono; no se envía a autoridades ni avisa a emergencias.",
                 modifier = Modifier.padding(16.dp))
         }
         ReviewField("Tipo de incidente", types[review.type.ordinal], "review_type")
@@ -70,7 +71,7 @@ internal fun ReportReviewContent(
                 style = MaterialTheme.typography.bodyMedium, modifier = Modifier.testTag("review_no_coordinates"))
         }
         HorizontalDivider()
-        Button(onClick = onEdit,
+        Button(onClick = onEdit, enabled = canEdit,
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("edit_review")) {
             Text("Corregir datos")
         }

@@ -1,5 +1,15 @@
 # Acoplar la interfaz al reporte
 
+## Acoplamiento visible 0.5.3
+
+ReportDraftActivity coordina revisión, GPS por gesto, guardado y recibo. ReportSubmissionViewModel guarda un UUID y NewReport en ReportSubmissionJournal antes de createOnce. La implementación ReportSubmissionStore usa AtomicFile privado. Recuperar al abrir busca el folio existente sin guardar ni iniciar GPS. Pending conserva el contenido; Error exige recuperar; Saved conserva el recibo hasta Iniciar otro reporte. Invalid incluye el borrador para restaurar campos mediante restoreForCorrection, renovar el estado visual y corregir sin perder texto. Restaurar coordenadas no autoriza cercanía: NearbySqliteReportGuard vuelve a comprobar la evidencia del teléfono al insertar.
+
+ReportsActivity/ReportsScreen leen lista y detalle por folio con ReportListViewModel y ReportQueryViewModel. ReportsMapActivity enlaza ReportMapSceneBinding y el host MapLibre real: consultar por gesto, filtros/límite, pines SQLite y abrir detalle desde marcador. El extra report_folio solo centra un reporte leído; no acepta coordenadas de entrada como GPS. Cambiar filtros o pausar retira consultas/marcadores; regresar exige nueva consulta de zona.
+
+CitizenSecurityApplication comparte SQLite y las fuentes reales, sin fixtures o parámetros secretos de prueba. El runner y la Application de pruebas existen únicamente en androidTest. [Fase 15](FASE_15.md) registra la comprobación. Guardado, consulta y mapa están visibles en debug y release conforme a la autorización actual.
+
+## Antecedentes históricos
+
 ## Revisión e identidad — 0.5.2
 
 `ReportReviewContent` recibe la instantánea válida del borrador, muestra los campos y devuelve al formulario mediante `onEdit`. No abre SQLite ni GPS. La revisión se vuelve a validar al recrear Activity; no sirve como credencial de cercanía. La referencia sin coordenadas sigue siendo suficiente para revisar campos, no para pasar el guard de inserción.

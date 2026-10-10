@@ -3,6 +3,9 @@ package com.example.citizensecurity.preview
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.content.Intent
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.graphics.RectF
 import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
@@ -38,6 +41,9 @@ import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.LocationProposal
 import com.example.citizensecurity.domain.NearbyLocationConfirmation
 import com.example.citizensecurity.domain.Priority
+import com.example.citizensecurity.domain.NewReport
+import com.example.citizensecurity.domain.Report
+import com.example.citizensecurity.data.PhoneLocationRefreshResult
 import com.example.citizensecurity.maps.*
 import com.example.citizensecurity.report.*
 import java.time.Instant
@@ -45,7 +51,9 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
@@ -60,7 +68,7 @@ import org.maplibre.geojson.Feature
 import org.maplibre.geojson.FeatureCollection
 import org.maplibre.geojson.Point
 
-/** Formulario de borrador. Usa los modelos productivos; no abre ni escribe una base de reportes. */
+/** Formulario y guardado local por gesto, con diario durable y comprobación de cercanía SQLite. */
 class ReportDraftActivity : ComponentActivity() {
     internal lateinit var draftModel: ReportDraftViewModel
         private set
@@ -69,6 +77,13 @@ class ReportDraftActivity : ComponentActivity() {
     private lateinit var permissionModel: LocationPermissionViewModel
     private lateinit var flow: IncidentLocationFlowBinding
     private lateinit var bridge: ReportLocationFlowBinding
+    private lateinit var dependencies: CitizenSecurityApplication
+    internal lateinit var submissionModel: ReportSubmissionViewModel
+        private set
+    private var reviewGpsJob: Job? = null
+    private var reviewGpsGeneration = 0L
+    private var reviewGpsRunning by mutableStateOf(false)
+    private var reviewGpsMessage by mutableStateOf<String?>(null)
     private var selection by mutableStateOf<ReportLocationSelectionRequest?>(null)
     private var mapReady by mutableStateOf(false)
     private var mapMessage by mutableStateOf("Cargando calles…")
@@ -118,7 +133,10 @@ class ReportDraftActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         draftModel = ViewModelProvider(this, ReportDraftViewModel.factory())[ReportDraftViewModel::class.java]
-        val dependencies = application as CitizenSecurityApplication
+        dependencies = application as CitizenSecurityApplication
+        submissionModel = ViewModelProvider(this, ReportSubmissionViewModel.factory(
+            dependencies.reportRepository, dependencies.reportSubmissionJournal,
+        ))[ReportSubmissionViewModel::class.java]
         locationModel = ViewModelProvider(this, dependencies.incidentLocationViewModelFactory(draftModel.state.value.location))[
             IncidentLocationViewModel::class.java,
         ]
@@ -143,6 +161,13 @@ class ReportDraftActivity : ComponentActivity() {
     }
 
     private fun goBack() {
+        when (submissionModel.state.value) {
+            is ReportSubmissionState.Saving, ReportSubmissionState.Restoring -> return
+            is ReportSubmissionState.Saved -> { finish(); return }
+            is ReportSubmissionState.Pending -> { finish(); return }
+            is ReportSubmissionState.Error -> if ((submissionModel.state.value as ReportSubmissionState.Error).request != null) { finish(); return }
+            else -> Unit
+        }
         if (reviewResult is ReportDraftReview.Valid) {
             reviewResult = null
             return
@@ -166,11 +191,37 @@ class ReportDraftActivity : ComponentActivity() {
     @Composable
     private fun Content() {
         val draft by draftModel.state.collectAsStateWithLifecycle()
+        val submission by submissionModel.state.collectAsStateWithLifecycle()
         val screens = rememberSaveableStateHolder()
+        var formRevision by rememberSaveable { mutableIntStateOf(0) }
+        var resetAfterSaved by rememberSaveable { mutableStateOf(false) }
+        LaunchedEffect(submission) {
+            val invalid = submission as? ReportSubmissionState.Invalid
+            invalid?.draft?.let { recovered ->
+                if (draftModel.restoreForCorrection(recovered)) {
+                    submissionModel.acknowledgeCorrectionDraft()
+                    screens.removeState("report_form_$formRevision")
+                    formRevision++
+                    reviewResult = null
+                    reviewErrors = emptyMap()
+                }
+            }
+            if (submission == ReportSubmissionState.Idle && resetAfterSaved) {
+                resetAfterSaved = false
+                screens.removeState("report_form_$formRevision")
+                formRevision++
+                draftModel.reset()
+                draftModel.setOccurredAt(Instant.now().minusSeconds(30))
+                reviewResult = null
+                reviewErrors = emptyMap()
+                reviewGpsMessage = null
+            }
+        }
         Scaffold(
             modifier = Modifier.fillMaxSize().imePadding(),
             topBar = { TopAppBar(
                 title = { Text(when {
+                    submission is ReportSubmissionState.Saved -> "Reporte guardado"
                     selection != null -> "Lugar del incidente"
                     reviewResult is ReportDraftReview.Valid -> "Revisar reporte"
                     else -> "Nuevo reporte"
@@ -180,9 +231,38 @@ class ReportDraftActivity : ComponentActivity() {
         ) { padding ->
             val request = selection
             val review = reviewResult as? ReportDraftReview.Valid
-            if (review != null) {
-                ReportReviewContent(review.draft, Modifier.padding(padding), onEdit = { reviewResult = null })
-            } else if (request == null) screens.SaveableStateProvider("report_form") {
+            val pending = when (val current = submission) {
+                is ReportSubmissionState.Pending -> current.request
+                is ReportSubmissionState.Saving -> current.request
+                is ReportSubmissionState.Error -> current.request
+                else -> null
+            }
+            if (submission == ReportSubmissionState.Restoring) {
+                Column(Modifier.padding(padding).padding(24.dp)) {
+                    CircularProgressIndicator()
+                    Text("Recuperando el último intento…")
+                }
+            } else if (submission is ReportSubmissionState.Saved) {
+                val saved = (submission as ReportSubmissionState.Saved).report
+                SavedReceipt(saved, Modifier.padding(padding)) {
+                    if (submissionModel.startNewReport()) resetAfterSaved = true
+                }
+            } else if (submission is ReportSubmissionState.Error && pending == null) {
+                Column(Modifier.padding(padding).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Text("No se pudo comprobar el último intento")
+                    FieldError((submission as ReportSubmissionState.Error).message)
+                    Button(onClick = { submissionModel.recover() }, modifier = Modifier.testTag("recover_submission")) {
+                        Text("Recuperar resultado")
+                    }
+                    Text("Comprueba el resultado antes de iniciar otro reporte para evitar duplicados.")
+                }
+            } else if (pending != null) {
+                ReportReviewContent(pending.draft, Modifier.padding(padding), onEdit = {}, canEdit = false,
+                    actions = { SubmissionActions(pending.draft, submission) })
+            } else if (review != null) {
+                ReportReviewContent(review.draft, Modifier.padding(padding), onEdit = { reviewResult = null },
+                    actions = { SubmissionActions(review.draft, submission) })
+            } else if (request == null) screens.SaveableStateProvider("report_form_$formRevision") {
                 Form(draft, Modifier.padding(padding))
             }
             else MapSelection(request, Modifier.padding(padding))
@@ -190,10 +270,12 @@ class ReportDraftActivity : ComponentActivity() {
         if (permissionExplanation) AlertDialog(
             onDismissRequest = { permissionExplanation = false },
             title = { Text("Ubicación precisa") },
-            text = { Text("La ubicación del teléfono permite comprobar que el punto está a un máximo de 5 km. Solo se obtiene cuando pulses Buscar mi ubicación.") },
+            text = { Text("La ubicación del teléfono permite comprobar que el punto está a un máximo de 5 km. Solo se obtiene cuando pulses Buscar mi ubicación o Actualizar mi ubicación.") },
             confirmButton = { TextButton(onClick = {
                 permissionExplanation = false
-                selection?.let { bridge.requestPermission(it.token, explanationAccepted = true) }
+                val pendingSelection = selection
+                if (pendingSelection != null) bridge.requestPermission(pendingSelection.token, explanationAccepted = true)
+                else flow.requestPermission(explanationAccepted = true)
             }) { Text("Continuar") } },
             dismissButton = { TextButton(onClick = { permissionExplanation = false }) { Text("Ahora no") } },
         )
@@ -217,7 +299,15 @@ class ReportDraftActivity : ComponentActivity() {
         Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
-                Text("Prepara un borrador. Todavía no se guarda ni envía; no avisa a emergencias.", Modifier.padding(16.dp))
+                Text("Revisa los datos y guarda el reporte en este teléfono. No se envía a autoridades ni avisa a emergencias.", Modifier.padding(16.dp))
+            }
+            when (val current = submissionModel.state.collectAsStateWithLifecycle().value) {
+                is ReportSubmissionState.Invalid -> current.errors.values.forEach { FieldError(it) }
+                is ReportSubmissionState.Error -> {
+                    FieldError(current.message)
+                    OutlinedButton(onClick = { submissionModel.recover() }) { Text("Recuperar último intento") }
+                }
+                else -> Unit
             }
             Text("1. ¿Qué ocurrió?", style = MaterialTheme.typography.titleLarge)
             IncidentType.entries.chunked(2).forEach { row ->
@@ -283,7 +373,98 @@ class ReportDraftActivity : ComponentActivity() {
                 reviewErrors = (result as? ReportDraftReview.Invalid)?.errors ?: emptyMap()
             }, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("review_draft")) { Text("Revisar borrador") }
             errors[ReportDraftField.SNAPSHOT]?.let { FieldError(it) }
-            Text("Las fotos y el guardado se conectarán después de revisar este flujo.", style = MaterialTheme.typography.bodySmall)
+            Text("Las fotografías todavía no están implementadas.", style = MaterialTheme.typography.bodySmall)
+        }
+    }
+
+    @Composable
+    private fun SubmissionActions(draft: NewReport, state: ReportSubmissionState) {
+        val permissions by permissionModel.state.collectAsStateWithLifecycle()
+        val busy = state is ReportSubmissionState.Saving || reviewGpsRunning
+        Text(permissionGuidance(permissions), Modifier.testTag("save_permission_guidance"))
+        reviewGpsMessage?.let { Text(it, Modifier.testTag("save_gps_message")) }
+        when (state) {
+            is ReportSubmissionState.Invalid -> state.errors.values.forEach { FieldError(it) }
+            is ReportSubmissionState.Error -> {
+                FieldError(state.message)
+                OutlinedButton(onClick = { submissionModel.recover() }, enabled = !busy,
+                    modifier = Modifier.fillMaxWidth().testTag("recover_submission")) { Text("Recuperar resultado del intento") }
+            }
+            is ReportSubmissionState.Pending -> Text("Hay un intento pendiente. Reintentar conserva sus datos y el mismo folio.")
+            else -> Unit
+        }
+        if (busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+        Button(onClick = ::refreshReviewGps, enabled = !busy && !permissions.requestInFlight,
+            modifier = Modifier.fillMaxWidth().testTag("refresh_save_gps")) {
+            Text(if (permissions.access == LocationPermissionAccess.Precise) "Actualizar mi ubicación" else "Permitir ubicación precisa")
+        }
+        if (state is ReportSubmissionState.Pending) {
+            OutlinedButton(onClick = { submissionModel.recover() }, enabled = !busy,
+                modifier = Modifier.fillMaxWidth().testTag("recover_submission")) { Text("Comprobar si ya se guardó") }
+            Button(onClick = { submissionModel.retryPending() }, enabled = !busy,
+                modifier = Modifier.fillMaxWidth().testTag("retry_submission")) { Text("Reintentar guardado con el mismo folio") }
+        } else if (state !is ReportSubmissionState.Error) {
+            Button(onClick = { submissionModel.save(draft) },
+                enabled = !busy && draft.location.latitude != null && draft.location.longitude != null,
+                modifier = Modifier.fillMaxWidth().testTag("save_report")) { Text("Guardar reporte en este teléfono") }
+        }
+        if (draft.location.latitude == null) FieldError("Selecciona y confirma el punto en el mapa antes de guardar.")
+    }
+
+    private fun refreshReviewGps() {
+        if (reviewGpsRunning || !lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) return
+        if (permissionModel.state.value.access != LocationPermissionAccess.Precise) {
+            if (flow.requestPermission() == LocationPermissionAction.ExplanationRequired) permissionExplanation = true
+            return
+        }
+        reviewGpsRunning = true
+        val generation = ++reviewGpsGeneration
+        val job = lifecycleScope.launch(start = CoroutineStart.LAZY) {
+            try {
+                val result = dependencies.refreshReportPhoneLocation()
+                ensureActive()
+                if (reviewGpsGeneration != generation) return@launch
+                reviewGpsMessage = when (result) {
+                    is PhoneLocationRefreshResult.Ready -> "Ubicación actualizada. Guardar vuelve a comprobar la cercanía de 5 km."
+                    is PhoneLocationRefreshResult.Rejected -> result.rejection.message
+                    PhoneLocationRefreshResult.LocationDisabled -> "Activa la ubicación del teléfono y vuelve a pulsar Actualizar mi ubicación."
+                    PhoneLocationRefreshResult.PermissionRequired -> "Autoriza ubicación precisa y vuelve a actualizarla."
+                    PhoneLocationRefreshResult.TimedOut -> "El GPS no respondió. Acércate a una ventana o un espacio abierto y reintenta."
+                    else -> "No se pudo obtener la ubicación. Reintenta sin cambiar el reporte."
+                }
+            } finally {
+                if (reviewGpsGeneration == generation) {
+                    reviewGpsRunning = false
+                    reviewGpsJob = null
+                }
+            }
+        }
+        reviewGpsJob = job
+        job.start()
+    }
+
+    @Composable
+    private fun SavedReceipt(report: Report, modifier: Modifier, onNew: () -> Unit) {
+        Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text("Guardado en este teléfono", style = MaterialTheme.typography.headlineSmall)
+            Text("No se envió a autoridades ni se generó una solicitud de emergencia.")
+            Text("Folio", style = MaterialTheme.typography.labelLarge)
+            Text(report.id, Modifier.testTag("saved_folio"))
+            Text(report.description)
+            Text(report.location.reference)
+            Button(onClick = {
+                getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText("Folio del reporte", report.id))
+            }, modifier = Modifier.fillMaxWidth().testTag("copy_saved_folio")) { Text("Copiar folio") }
+            Button(onClick = {
+                startActivity(Intent(this@ReportDraftActivity, com.example.citizensecurity.reports.ReportsActivity::class.java)
+                    .putExtra("report_folio", report.id))
+            }, modifier = Modifier.fillMaxWidth().testTag("open_saved_report")) { Text("Ver reporte guardado") }
+            OutlinedButton(onClick = {
+                startActivity(Intent(this@ReportDraftActivity, com.example.citizensecurity.reports.ReportsMapActivity::class.java)
+                    .putExtra("report_folio", report.id))
+            }, modifier = Modifier.fillMaxWidth()) { Text("Ver en el mapa") }
+            OutlinedButton(onClick = onNew, modifier = Modifier.fillMaxWidth().testTag("new_report")) { Text("Iniciar otro reporte") }
         }
     }
 
@@ -514,10 +695,19 @@ class ReportDraftActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        reviewGpsJob?.cancel()
         closeMap()
         if (::bridge.isInitialized) bridge.close()
         if (::flow.isInitialized) flow.close()
         super.onDestroy()
+    }
+
+    override fun onStop() {
+        ++reviewGpsGeneration
+        reviewGpsJob?.cancel()
+        reviewGpsJob = null
+        reviewGpsRunning = false
+        super.onStop()
     }
 
     override fun onLowMemory() {

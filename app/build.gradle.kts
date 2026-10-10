@@ -13,9 +13,9 @@ android {
         applicationId = "com.example.citizensecurity"
         minSdk = 26
         targetSdk = 37
-        versionCode = 22
-        versionName = "0.5.2"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        versionCode = 23
+        versionName = "0.5.3"
+        testInstrumentationRunner = "com.example.citizensecurity.testing.ReportTestRunner"
     }
     buildFeatures { compose = true }
     compileOptions {

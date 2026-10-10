@@ -30,8 +30,26 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="#007F78"
             android:textColor="#FFFFFF"
-            android:visibility="gone"
+            android:visibility="visible"
             android:text="@string/preview_interface_entry" />
+
+        <Button
+            android:id="@+id/tools_reports"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="#007F78"
+            android:textColor="#FFFFFF"
+            android:text="@string/local_reports_entry" />
+
+        <Button
+            android:id="@+id/tools_reports_map"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#007F78"
+            android:textColor="#FFFFFF"
+            android:text="@string/reports_map_entry" />
 
         <!-- SECCIÓN 1: Detalles del reporte -->
         <LinearLayout

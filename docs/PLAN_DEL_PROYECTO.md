@@ -1,5 +1,13 @@
 # Plan del proyecto
 
+## Fase 15 — 0.5.3
+
+Se conectan **4.2 Reportes** (formulario con guardado local autorizado y folio durable), **4.4 Consulta** (lista, detalle, búsqueda y filtros visibles) y **4.5 Mapas** (zona, marcadores SQLite y navegación al detalle). **4.3 Geolocalización** mantiene permiso preciso y radio de 5 km al confirmar y guardar; la aceptación física del recorrido final sigue pendiente y tiene su hito separado.
+
+La orden actual retira la ocultación de las funciones construidas y mantiene entregas oficiales. Fotografías, cuentas/aislamiento por usuario, seguimiento administrativo y notificaciones aún requieren implementación. La consulta local no acredita reportes propios por usuario ni cambia estados. [Fase 15](FASE_15.md) explica evidencia y avance; se conservan los 28 hitos y pesos de AVANCE.md.
+
+## Antecedentes históricos
+
 ## Entrega 0.5.2 — fase 14
 
 Se trabaja **4.2 Reportes**: revisión completa del formulario y corrección de duplicados al reintentar después de una respuesta perdida de SQLite. Mantiene los controles de **4.3 Geolocalización** y el radio de 5 km. La revisión visible no es autorización de cercanía ni guardado; guardado y consulta reales siguen ocultos hasta la instrucción específica pendiente. [Fase 14](FASE_14.md) conserva los criterios y registra 529 casos aprobados. **11/28 = 39.3%**; no se acreditan fotos, identidad de usuario, administración o avisos por esta entrega.

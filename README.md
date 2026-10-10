@@ -1,5 +1,15 @@
 # CITIZENSECURITY
 
+## Versión 0.5.3 — reporte, folio, consulta y mapa
+
+[Release oficial v0.5.3](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.3) · código Android 23. En **Desarrollador** están disponibles **Nuevo reporte · guardado local**, **Reportes en este teléfono** y **Mapa de reportes por zona**. Llena el reporte, confirma un punto cercano con GPS preciso y guarda; recibe un folio para abrir el detalle, copiarlo o ubicar el reporte en el mapa. Consulta y filtros leen los datos guardados en este teléfono.
+
+El diario privado conserva el mismo intento antes de insertar y recupera su resultado después de una interrupción. El guardado vuelve a comprobar el radio de 5 km. Los reportes son locales: no se envían a autoridades ni generan avisos de emergencia. No hay cuentas reales, fotografías o administración implementadas. [Fase 15](docs/FASE_15.md) detalla pruebas y avance por los puntos del PDF.
+
+Para actualizar conservando tus cambios: `git fetch origin`, `git switch main`, `git pull --ff-only origin main`. También puedes instalar el APK académico de la Release sobre la versión anterior, con la misma firma y sin desinstalar.
+
+## Antecedentes históricos
+
 ## Versión oficial 0.5.2 — revisión del reporte
 
 En **Desarrollador → Nuevo reporte · borrador → Revisar borrador** puedes revisar todos los campos, corregirlos y volver sin perder lo escrito. La fecha muestra su zona horaria, y una referencia sin coordenadas se identifica claramente. La revisión también se conserva al recrear la pantalla. [Release y APK 0.5.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.2).
