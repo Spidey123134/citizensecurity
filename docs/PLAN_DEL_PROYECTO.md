@@ -1,5 +1,17 @@
 # Plan del proyecto
 
+## Fase 19 — 0.5.6, inicio funcional
+
+La pantalla verde de Desarrollador ofrece tres rutas hacia funciones reales: **Nuevo reporte**, **Reportes en este teléfono** y **Mapa de reportes por zona**. El inicio lee los diarios privados para informar si hay una copia de borrador o un intento por comprobar; un intento pendiente puede haberse guardado y debe comprobarse en la pantalla del reporte. Los errores de lectura se muestran independientemente. Entrar o regresar al inicio no solicita GPS ni crea o modifica datos.
+
+Se retiran los controles visuales del ejemplo ficticio y las pruebas manuales de coordenadas, conservando su código e historia. Login, loading, acceso académico, datos previos y las funciones reales permanecen. Esta fase mejora el recorrido de **4.2 Reportes**, **4.4 Consulta** y **4.5 Mapas** sin agregar criterios.
+
+**15/28 = 53.6%**, mismos hitos y pesos. **4.3 Geolocalización pasa a 4/4** porque el usuario confirmó manualmente el **11 de octubre de 2026** que el teléfono localizó el punto, lo aceptó dentro del radio y lo mostró en el mapa. La versión de la APK no fue especificada; no hay logs, nuevas medidas de precisión, coordenadas registradas ni un guardado físico nuevo atribuibles a esa confirmación. Guardar y abrir un folio físico sigue siendo una comprobación transversal opcional de 4.2/4.4, sin ampliar el criterio original de ubicación.
+
+Las partes pendientes del plan son cuentas reales/aislamiento de autores, seguimiento administrativo y notificaciones. Sus alcances y roles deben coordinarse con el equipo. [Fase 19](FASE_19.md) · [Avance y criterios](AVANCE.md) · [Probar la APK](PROBAR_0_5_6.md). Los cortes siguientes conservan sus cifras y restricciones históricas.
+
+## Antecedentes históricos del corte anterior
+
 ## Fase 18 — 0.5.5
 
 Revisar posibles reportes repetidos refuerza **4.2 Reportes** y **4.4 Consulta**: una lectura local permite revisar folios cercanos del mismo tipo antes de confirmar otro incidente. Usa el acuerdo de 200 m y ±2 h; es una advertencia, sin clasificar veracidad ni atribuir autores.

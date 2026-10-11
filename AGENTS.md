@@ -1,5 +1,15 @@
 # Trabajo del equipo
 
+## Entrega 0.5.6 — fase 19, inicio funcional
+
+El usuario pidió que la pantalla verde use exclusivamente funciones reales del PDF/roadmap y confirmó que en su prueba física eligió el punto, obtuvo ubicación válida y fue aceptado dentro del radio. La autorización vigente de Releases oficiales permite integrar/publicar esta entrega validada. Conservar datos, historia, login/loading y acceso académico del compañero; no implementar cuentas ni roles por iniciativa.
+
+ReleasedToolsActivity conserva su nombre e IDs de navegación para acoplar los accesos existentes; su UI es ahora Inicio con rutas a ReportDraftActivity, ReportsActivity y ReportsMapActivity. Retirar los controles ficticios del menú conserva el código de ejemplo y sus pruebas históricas. ReportHomeViewModel solo lee ReportSubmissionJournal y ReportDraftCheckpointJournal, con errores independientes y generaciones para descartar respuestas anteriores. Un intento puede haberse guardado: no afirmar que falta insertarlo. Los indicadores no autorizan GPS, restauración, escrituras ni otra identidad; el formulario relee y comprueba sus datos.
+
+Avance vigente: **15/28 = 53.6%, GPS 4/4** por aceptación manual reportada el 11 de octubre de 2026. El criterio original 4.3 exige el recorrido de ubicación, no un folio físico. No se recibió versión exacta de APK, logs, precisión ni coordenadas de esa prueba; no contarla como test automatizado ni afirmar guardado físico nuevo. Conservar comprobación GPS de 5 km, precisión/antigüedad/no-simulación, fotos, CAS y createOnce. [Fase 19](docs/FASE_19.md) registra límites y comprobación; los cortes siguientes son históricos.
+
+## Antecedentes históricos del corte anterior
+
 ## Entrega 0.5.5 — fase 18 visible
 
 La instrucción vigente pide continuar la siguiente fase y conserva «desde ahora puro released» y «ya no mantengas nada oculto». Autoriza código, pruebas, documentación, integración y publicación del avance validado. El usuario confirmó avisar por mismo tipo a 200 metros y hasta 2 horas antes/después del incidente. Conservar login/splash, datos e historia; no implementar cuentas ni roles por iniciativa.

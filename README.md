@@ -1,5 +1,17 @@
 # CITIZENSECURITY
 
+## Versión 0.5.6 — inicio funcional
+
+[Release y APK 0.5.6](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.6) · código Android 26. La pantalla verde que abre **Desarrollador** ahora es **Inicio**, con **Reportar**, **Reportes guardados** y **Mapa de reportes**. Cada acceso abre el recorrido real; ya no contiene formulario ficticio, ejemplos de coordenadas ni guardado de demostración.
+
+El inicio indica si tienes un borrador guardado o un intento cuyo resultado debe comprobarse. Abrirlo solo consulta esa información: no guarda, restaura campos ni solicita GPS. Los errores se explican y permiten reintentar sin borrar el contenido. Fotos, folios, radio de 5 km y aviso de posibles repetidos siguen disponibles.
+
+[Pasos para probar](docs/PROBAR_0_5_6.md) · [Fase 19](docs/FASE_19.md). **Avance del PDF: 15/28 = 53.6%**. Se acredita el recorrido físico de ubicación por la confirmación manual del usuario del 11 de octubre de 2026; no se atribuye guardado físico nuevo ni evidencia técnica no proporcionada. Cuentas reales, seguimiento administrativo y notificaciones siguen pendientes. Los reportes permanecen en el teléfono, sin envío a autoridades.
+
+Instala encima de la APK anterior, sin desinstalar ni borrar datos. Para actualizar el código conserva tus cambios y ejecuta `git fetch origin`, `git switch main`, `git pull --ff-only origin main`. El acceso académico y login/loading del compañero se conservan.
+
+## Antecedentes históricos del corte anterior
+
 ## Versión 0.5.5 — revisar posibles reportes repetidos
 
 [Release y APK 0.5.5](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.5) · código Android 25. **Desarrollador → Nuevo reporte · guardado local → Revisar borrador → Guardar reporte** revisa si este teléfono conserva incidentes del mismo tipo a 200 metros y hasta 2 horas antes o después de la hora indicada.

@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.6] — 2026-10-11
+
+- Fase 19: la pantalla verde pasa a Inicio con tres accesos reales: Reportar, Reportes guardados y Mapa de reportes. Se retiran los controles ficticios de esa pantalla, conservando su código histórico y pruebas.
+- Indicadores reales del borrador y del intento por comprobar; fallos independientes con reintento. Abrir/regresar solo lee y no restaura, guarda, solicita GPS ni elimina contenido.
+- Corregido el desplazamiento con letra grande y orientación horizontal: los botones quedan dentro del área visible, por encima de las barras del sistema.
+- Continuidad: conserva navegación, diario/UUID, fotografías, aviso de repetidos, radio de 5 km, datos y login/loading del compañero. Botones adaptables a fuente grande y orientación horizontal.
+- Documentación corregida: GPS 4/4 por la prueba manual de punto/ubicación/radio confirmada por el usuario; guardado/folio físico es una comprobación adicional distinta. Avance **15/28 = 53.6%**, sin cambiar pesos ni sumar hitos por el menú.
+
+[Probar APK](docs/PROBAR_0_5_6.md) · [Fase 19](docs/FASE_19.md) · [Validación](docs/VALIDACION.md). Código Android 26, entrega oficial.
+
+## Antecedentes históricos del corte anterior
+
 ## [0.5.5] — fase 18 · Release oficial
 
 ### Añadido

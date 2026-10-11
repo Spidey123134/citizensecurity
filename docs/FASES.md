@@ -1,5 +1,19 @@
 # Fases de CITIZENSECURITY
 
+## Fase 19 — 0.5.6, inicio funcional
+
+[Fase 19](FASE_19.md) sustituye la interfaz ficticia de la pantalla verde de Desarrollador por tres entradas útiles: **Nuevo reporte**, **Reportes en este teléfono** y **Mapa de reportes por zona**. Muestra información leída de los diarios privados sobre la copia del borrador o un intento por comprobar, con errores independientes y actualización al regresar. No obtiene GPS ni crea reportes desde el inicio; conserva login, loading, datos y código histórico de las demostraciones. Todas las funciones reales terminadas siguen accesibles.
+
+Código Android **26**, entrega **0.5.6**. [Prueba en Android](PROBAR_0_5_6.md) documenta instalación y recorrido; [Validación](VALIDACION.md) registra las comprobaciones técnicas.
+
+El avance es **15/28 = 53.6%** con los mismos criterios del PDF. **4.3 Geolocalización queda en 4/4** por la aceptación manual que el usuario informó el **11 de octubre de 2026**: el teléfono localizó el punto, lo aceptó dentro del radio y mostró el pin. No especificó versión APK; no se atribuyen logs, precisión medida, coordenadas guardadas ni un guardado físico nuevo. Comprobar guardado/folio en ese teléfono sería una aceptación transversal adicional de 4.2/4.4, sin redefinir el hito GPS. Cuentas, aislamiento por autor, administración, seguimiento y notificaciones continúan pendientes. El cambio del inicio no inventa otro hito.
+
+## Antecedente 0.5.5 — fase 18
+
+[Fase 18](FASE_18.md) añadió el aviso local de posibles reportes repetidos del mismo tipo a **200 m y ±2 h**, con revisión del folio anterior y decisión explícita. Entrega oficial **0.5.5 / código Android 25**, construcción **14/28 = 50%** en aquel corte. [Probar 0.5.5](PROBAR_0_5_5.md). Esa ampliación no completó un hito adicional; la confirmación manual del GPS se recibió después.
+
+## Antecedentes históricos del corte anterior
+
 ## Fases 16 y 17 — 0.5.4
 
 [Fotografías](FASE_16.md): selector real de Android, copia privada validada y vista previa en formulario, revisión y detalle; migración SQLite que conserva reportes sin foto. Completa fotografías en 4.2. [Recuperación del borrador](FASE_17.md): guardar por gesto desde revisión, recuperar con confirmación y conservar el folio al convertir la copia en reporte. Mejora el mismo requisito, sin sumar otro hito.
