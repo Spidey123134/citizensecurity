@@ -13,8 +13,8 @@ android {
         applicationId = "com.example.citizensecurity"
         minSdk = 26
         targetSdk = 37
-        versionCode = 24
-        versionName = "0.5.4"
+        versionCode = 25
+        versionName = "0.5.5"
         testInstrumentationRunner = "com.example.citizensecurity.testing.ReportTestRunner"
     }
     buildFeatures { compose = true }

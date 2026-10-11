@@ -1,5 +1,13 @@
 # Mejoras para revisar más adelante
 
+## Estado actual de propuestas — 0.5.5
+
+La fase 18 incorpora la advertencia de posibles repetidos con rango acordado por el usuario: mismo tipo, 200 m y ±2 h de la fecha del incidente. Es lectura local orientativa y permite guardar un incidente distinto. Fotos y recuperación explícita del borrador ya se incorporaron en 0.5.4. [Fase 18](FASE_18.md) detalla límites.
+
+Siguen pendientes cuentas/identidad real, administración y notificaciones. El texto siguiente conserva la propuesta del 3 de octubre; sus versiones, ocultación y restricciones describen ese momento y no sustituyen el alcance vigente de AGENTS.md.
+
+## Antecedentes del corte anterior
+
 Propuesta local del **3 de octubre de 2026**, solicitada para pensar cómo hacer más útil CITIZENSECURITY en una versión posterior. Las prioridades ordenan la conversación; no fijan fechas, números de versión ni una publicación. Este documento no activa funciones ni aumenta el porcentaje de [Avance](AVANCE.md).
 
 El paso técnico siguiente, **0.3.4 Unreleased**, continúa la **fase 6**: obtener y renovar evidencia de ubicación del teléfono para la regla de 5 km. Su fuente Android es un avance acotado; el flujo visual de permisos, mapa y login se coordina con el compañero. Las propuestas siguientes se revisarán una por una después de comprobar ese paso.

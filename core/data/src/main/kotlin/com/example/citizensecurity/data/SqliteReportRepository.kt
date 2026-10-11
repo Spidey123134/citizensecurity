@@ -19,6 +19,10 @@ import com.example.citizensecurity.domain.ReportMapRepository
 import com.example.citizensecurity.domain.ReportRequestConflictException
 import com.example.citizensecurity.domain.ReportStatus
 import com.example.citizensecurity.domain.ReportValidator
+import com.example.citizensecurity.domain.SimilarReportMatch
+import com.example.citizensecurity.domain.SimilarReportPage
+import com.example.citizensecurity.domain.SimilarReportQuery
+import com.example.citizensecurity.domain.SimilarReportRepository
 import java.io.Closeable
 import java.time.Clock
 import java.time.Instant
@@ -45,7 +49,7 @@ class SqliteReportRepository(
     private val clock: Clock = Clock.systemUTC(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val createGuard: (NewReport) -> Unit = {},
-) : IdempotentReportRepository, ReportMapRepository, Closeable {
+) : IdempotentReportRepository, ReportMapRepository, SimilarReportRepository, Closeable {
 
     private val lock = Any()
     private val validator = ReportValidator()
@@ -221,6 +225,58 @@ class SqliteReportRepository(
             }
             ensureActive()
             ReportMapPage(markers.take(query.limit), hasMore = markers.size > query.limit)
+        }
+    }
+
+    override suspend fun findSimilar(query: SimilarReportQuery): SimilarReportPage = withOpenRepository {
+        val region = query.region
+        val longitudeRange = if (region.crossesAntimeridian) "longitude >= ? OR longitude <= ?" else "longitude BETWEEN ? AND ?"
+        val longitudeSelection = if (region.includesAntimeridian) "($longitudeRange OR longitude IN (-180.0, 180.0))" else "($longitudeRange)"
+        val selections = mutableListOf(
+            "incident_type = ?",
+            "typeof(latitude) IN ('real', 'integer')",
+            "typeof(longitude) IN ('real', 'integer')",
+            "latitude BETWEEN ? AND ?",
+            longitudeSelection,
+            "(occurred_at_seconds > ? OR (occurred_at_seconds = ? AND occurred_at_nanos >= ?))",
+            "(occurred_at_seconds < ? OR (occurred_at_seconds = ? AND occurred_at_nanos <= ?))",
+        )
+        val arguments = mutableListOf(
+            query.type.name, region.south.toString(), region.north.toString(), region.west.toString(), region.east.toString(),
+            query.earliest.epochSecond.toString(), query.earliest.epochSecond.toString(), query.earliest.nano.toString(),
+            query.latest.epochSecond.toString(), query.latest.epochSecond.toString(), query.latest.nano.toString(),
+        )
+        query.excludedId?.let { excludedId ->
+            selections += "id <> ?"
+            arguments += excludedId
+        }
+        ensureActive()
+        val database = databaseForRead()
+        ensureActive()
+        database.query(
+            TABLE, PROJECTION, selections.joinToString(" AND "), arguments.toTypedArray(), null, null,
+            "occurred_at_seconds DESC, occurred_at_nanos DESC, id DESC", (SimilarReportQuery.MAX_CANDIDATES + 1).toString(),
+        ).use { cursor ->
+            val matches = mutableListOf<SimilarReportMatch>()
+            var candidates = 0
+            var truncatedCandidates = false
+            while (cursor.moveToNext()) {
+                ensureActive()
+                if (candidates == SimilarReportQuery.MAX_CANDIDATES) {
+                    truncatedCandidates = true
+                    break
+                }
+                candidates++
+                val distance = query.distanceTo(cursor.getOptionalDouble("latitude"), cursor.getOptionalDouble("longitude"))
+                if (distance != null && query.includesDistance(distance)) {
+                    // Fallar ante metadatos dañados evita ocultar un error como una búsqueda vacía.
+                    matches += SimilarReportMatch(cursor.toReport(), distance)
+                }
+            }
+            ensureActive()
+            val ordered = matches.sortedWith(compareBy<SimilarReportMatch> { it.distanceMeters }
+                .thenByDescending { it.report.occurredAt }.thenByDescending { it.report.id })
+            SimilarReportPage(ordered.take(SimilarReportQuery.MAX_MATCHES), truncatedCandidates || ordered.size > SimilarReportQuery.MAX_MATCHES)
         }
     }
 

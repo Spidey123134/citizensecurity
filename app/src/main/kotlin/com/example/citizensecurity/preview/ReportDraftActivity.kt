@@ -87,6 +87,8 @@ class ReportDraftActivity : ComponentActivity() {
         private set
     internal lateinit var checkpointModel: ReportDraftCheckpointViewModel
         private set
+    internal lateinit var similarityModel: ReportSimilarityViewModel
+        private set
     private var restoreCheckpointQuestion by mutableStateOf(false)
     private var photoPickerMessage by mutableStateOf<String?>(null)
     private val photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -164,6 +166,9 @@ class ReportDraftActivity : ComponentActivity() {
         submissionModel = ViewModelProvider(this, ReportSubmissionViewModel.factory(
             dependencies.reportRepository, dependencies.reportSubmissionJournal,
         ))[ReportSubmissionViewModel::class.java]
+        similarityModel = ViewModelProvider(this, ReportSimilarityViewModel.factory(
+            dependencies.similarReportRepository,
+        ))[ReportSimilarityViewModel::class.java]
         locationModel = ViewModelProvider(this, dependencies.incidentLocationViewModelFactory(draftModel.state.value.location))[
             IncidentLocationViewModel::class.java,
         ]
@@ -179,6 +184,7 @@ class ReportDraftActivity : ComponentActivity() {
             val restored = draftModel.review(Instant.now())
             reviewResult = restored.takeIf { it is ReportDraftReview.Valid }
             reviewErrors = (restored as? ReportDraftReview.Invalid)?.errors ?: emptyMap()
+            if (restored !is ReportDraftReview.Valid) similarityModel.clear()
         }
         mapInitialized = runCatching { MapsConfiguration.initialize(this) }.isSuccess
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
@@ -197,6 +203,7 @@ class ReportDraftActivity : ComponentActivity() {
             else -> Unit
         }
         if (reviewResult is ReportDraftReview.Valid) {
+            similarityModel.clear()
             reviewResult = null
             return
         }
@@ -234,6 +241,7 @@ class ReportDraftActivity : ComponentActivity() {
                 photoPickerMessage = null
                 screens.removeState("report_form_$formRevision")
                 formRevision++
+                similarityModel.clear()
                 reviewResult = null
                 reviewErrors = emptyMap()
             }
@@ -252,6 +260,7 @@ class ReportDraftActivity : ComponentActivity() {
                     submissionModel.acknowledgeCorrectionDraft()
                     screens.removeState("report_form_$formRevision")
                     formRevision++
+                    similarityModel.clear()
                     reviewResult = null
                     reviewErrors = emptyMap()
                 }
@@ -261,6 +270,7 @@ class ReportDraftActivity : ComponentActivity() {
                 screens.removeState("report_form_$formRevision")
                 formRevision++
                 draftModel.reset()
+                similarityModel.clear()
                 photoImportModel.clearStatus()
                 photoPickerMessage = null
                 draftModel.setOccurredAt(Instant.now().minusSeconds(30))
@@ -312,7 +322,10 @@ class ReportDraftActivity : ComponentActivity() {
                 ReportReviewContent(pending.draft, Modifier.padding(padding), onEdit = {}, canEdit = false,
                     actions = { SubmissionActions(pending.draft, submission) })
             } else if (review != null) {
-                ReportReviewContent(review.draft, Modifier.padding(padding), onEdit = { reviewResult = null },
+                ReportReviewContent(review.draft, Modifier.padding(padding), onEdit = {
+                    similarityModel.clear()
+                    reviewResult = null
+                },
                     actions = { SubmissionActions(review.draft, submission) })
             } else if (request == null) screens.SaveableStateProvider("report_form_$formRevision") {
                 Form(draft, Modifier.padding(padding))
@@ -520,7 +533,29 @@ class ReportDraftActivity : ComponentActivity() {
     private fun SubmissionActions(draft: NewReport, state: ReportSubmissionState) {
         val permissions by permissionModel.state.collectAsStateWithLifecycle()
         val checkpoint by checkpointModel.state.collectAsStateWithLifecycle()
-        val busy = state is ReportSubmissionState.Saving || reviewGpsRunning || checkpoint.busy
+        val similarity by similarityModel.state.collectAsStateWithLifecycle()
+        val lifecycleState by lifecycle.currentStateFlow.collectAsState()
+        val key = ReportSimilarityKey(draft, checkpointModel.preferredRequestId(draft))
+        val fresh = state == ReportSubmissionState.Idle || state is ReportSubmissionState.Invalid
+        val similarityKey = when (val current = similarity) {
+            is ReportSimilarityState.Checking -> current.key
+            is ReportSimilarityState.Ready -> current.key
+            is ReportSimilarityState.Failed -> current.key
+            else -> null
+        }
+        LaunchedEffect(key, fresh, similarityKey) {
+            if (!fresh || (similarityKey != null && similarityKey != key)) similarityModel.clear()
+        }
+        LaunchedEffect(similarity, key, lifecycleState, state, checkpoint, reviewGpsRunning) {
+            val ready = similarity as? ReportSimilarityState.Ready
+            // Esta lectura completa el gesto de Guardar. Una advertencia exige otro gesto;
+            // jamás se consume autorización mientras la pantalla está fuera de RESUMED.
+            if (fresh && ready?.key == key && ready.page.matches.isEmpty() && !ready.page.searchIncomplete) {
+                submitAfterSimilarity(draft, explicitOverride = false)
+            }
+        }
+        val busy = state is ReportSubmissionState.Saving || reviewGpsRunning || checkpoint.busy ||
+            similarity is ReportSimilarityState.Checking
         if (state == ReportSubmissionState.Idle || state is ReportSubmissionState.Invalid) {
             OutlinedButton(onClick = { checkpointModel.save(draft) }, enabled = checkpoint.loaded && !checkpoint.failure && !busy,
                 modifier = Modifier.fillMaxWidth().testTag("save_checkpoint")) { Text("Guardar borrador para continuar después") }
@@ -540,6 +575,7 @@ class ReportDraftActivity : ComponentActivity() {
             else -> Unit
         }
         if (busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+        if (similarity is ReportSimilarityState.Checking) Text("Revisando reportes parecidos en este teléfono…", Modifier.testTag("similar_checking"))
         Button(onClick = ::refreshReviewGps, enabled = !busy && !permissions.requestInFlight,
             modifier = Modifier.fillMaxWidth().testTag("refresh_save_gps")) {
             Text(if (permissions.access == LocationPermissionAccess.Precise) "Actualizar mi ubicación" else "Permitir ubicación precisa")
@@ -551,12 +587,37 @@ class ReportDraftActivity : ComponentActivity() {
                 modifier = Modifier.fillMaxWidth().testTag("retry_submission")) { Text("Reintentar guardado con el mismo folio") }
         } else if (state !is ReportSubmissionState.Error) {
             Button(onClick = {
-                if (canSubmitReport()) submissionModel.save(draft, checkpointModel.preferredRequestId(draft))
+                if (fresh && !reviewGpsRunning && canSubmitReport() &&
+                    lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
+                    similarityModel.state.value !is ReportSimilarityState.Checking) {
+                    similarityModel.check(draft, checkpointModel.preferredRequestId(draft))
+                }
             },
                 enabled = !busy && canSubmitReport() && draft.location.latitude != null && draft.location.longitude != null,
                 modifier = Modifier.fillMaxWidth().testTag("save_report")) { Text("Guardar reporte en este teléfono") }
         }
+        if (fresh && similarityKey == key) SimilarReportWarning(
+            state = similarity,
+            canContinue = !busy && canSubmitReport() && lifecycleState.isAtLeast(Lifecycle.State.RESUMED),
+            onContinue = { submitAfterSimilarity(draft, explicitOverride = true) },
+            onDismiss = { similarityModel.clear() },
+            onOpenReport = { folio -> startActivity(
+                Intent(this@ReportDraftActivity, com.example.citizensecurity.reports.ReportsActivity::class.java)
+                    .putExtra("report_folio", folio),
+            ) },
+        )
         if (draft.location.latitude == null) FieldError("Selecciona y confirma el punto en el mapa antes de guardar.")
+    }
+
+    private fun submitAfterSimilarity(draft: NewReport, explicitOverride: Boolean) {
+        if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) || reviewGpsRunning || !canSubmitReport()) return
+        val submission = submissionModel.state.value
+        if (submission != ReportSubmissionState.Idle && submission !is ReportSubmissionState.Invalid) return
+        if ((reviewResult as? ReportDraftReview.Valid)?.draft != draft) return
+        val requestId = checkpointModel.preferredRequestId(draft)
+        if (similarityModel.consumeAuthorization(draft, requestId, explicitOverride)) {
+            submissionModel.save(draft, requestId)
+        }
     }
 
     private fun refreshReviewGps() {
@@ -873,6 +934,7 @@ class ReportDraftActivity : ComponentActivity() {
     }
 
     override fun onStop() {
+        if (!isChangingConfigurations && ::similarityModel.isInitialized) similarityModel.pauseAutomaticSave()
         ++reviewGpsGeneration
         reviewGpsJob?.cancel()
         reviewGpsJob = null

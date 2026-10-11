@@ -1,5 +1,15 @@
 # Trabajo del equipo
 
+## Trabajo compartido 0.5.5 — fase 18
+
+La revisión previa al guardado avisa de incidentes locales del mismo tipo a 200 m y ±2 h de la fecha del incidente, rango confirmado por el usuario. El compañero conserva su login/splash. [Probar APK](PROBAR_0_5_5.md) · [Contrato de la fase](FASE_18.md).
+
+ReportSimilarityViewModel conserva un snapshot completo y el UUID preferido del checkpoint; cancelar/corregir invalida callbacks. Solo una consulta completa vacía puede terminar el gesto de Guardar, en RESUMED. Coincidencias, truncamiento o fallo piden otra decisión. Un intento durable pendiente se recupera con el UUID original, sin esta consulta. Mantén guard GPS/foto y control CAS; consultar no acredita ubicación.
+
+Para trabajar desde main conserva tus cambios y ejecuta `git fetch origin`, `git switch main`, `git pull --ff-only origin main`. Los estados y límites anteriores pertenecen a sus cortes históricos.
+
+## Antecedentes del corte anterior
+
 ## Trabajo compartido 0.5.4 — fotografías y copia del borrador
 
 **Desarrollador → Nuevo reporte · guardado local** ofrece foto opcional y copia del borrador desde revisión. Todo lo construido está visible; se mantienen login, splash y acceso académico del compañero. Para trabajar desde main conserva tus cambios propios y ejecuta `git fetch origin`, `git switch main`, `git pull --ff-only origin main`. [Instalar y probar la APK](PROBAR_0_5_4.md).

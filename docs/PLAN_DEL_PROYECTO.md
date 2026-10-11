@@ -1,5 +1,13 @@
 # Plan del proyecto
 
+## Fase 18 — 0.5.5
+
+Revisar posibles reportes repetidos refuerza **4.2 Reportes** y **4.4 Consulta**: una lectura local permite revisar folios cercanos del mismo tipo antes de confirmar otro incidente. Usa el acuerdo de 200 m y ±2 h; es una advertencia, sin clasificar veracidad ni atribuir autores.
+
+**14/28 = 50%** con los mismos hitos y pesos. Esta ampliación no completa cuentas/aislamiento, seguimiento administrativo, notificaciones ni aceptación física final de GPS. [Fase 18](FASE_18.md) y [Avance](AVANCE.md) registran alcance y pendientes.
+
+## Antecedentes del corte anterior
+
 ## Fases 16 y 17 — 0.5.4
 
 **4.2 Reportes** incorpora fotografía opcional en el formulario, revisión y folio, con copia privada y migración de datos. La recuperación explícita de una copia completa del borrador mejora el mismo recorrido y su relación con **4.3 Geolocalización**: recuperar coordenadas no sustituye un GPS reciente y válido para guardar.
