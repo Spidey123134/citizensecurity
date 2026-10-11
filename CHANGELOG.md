@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.5.5] — fase 18 · Release oficial
+
+### Añadido
+- Aviso previo al guardado de posibles reportes repetidos: mismo tipo, 200 m y hasta 2 h antes/después de la fecha del incidente, solo en este teléfono.
+- Folios consultables desde el aviso, regreso con borrador íntegro y decisión explícita para un incidente distinto.
+- Explicación de búsqueda fallida o limitada, incluyendo páginas vacías incompletas.
+
+### Protección y continuidad
+- Consulta limitada a 200 candidatos y cinco coincidencias, con distancia real calculada, antimeridiano/polos y nanosegundos; excluye el folio de la copia coincidente.
+- Resultados vinculados a todos los campos y UUID; cancelar, corregir o salir durante la lectura impide usar una respuesta antigua para guardar.
+- Mantiene identidad durable, reintentos pendientes, comprobación GPS de 5 km, fotos, migración y copia del borrador. Sin cambios al esquema SQLite, login/splash o roles.
+
+[Pasos de prueba](docs/PROBAR_0_5_5.md) · [Fase 18](docs/FASE_18.md) · [Validación](docs/VALIDACION.md). Avance del PDF: 14/28 = 50%.
+
+## Antecedentes del corte anterior
+
 ## [0.5.4] — 2026-10-10
 
 - Fase 16: fotografía opcional mediante el selector del sistema, copia privada, vista previa en formulario/revisión y fotografía en el detalle del folio. Cancelar una sustitución conserva la foto anterior.

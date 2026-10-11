@@ -1,5 +1,30 @@
 # Validación y comprobaciones del proyecto
 
+## Cierre 0.5.5 — fase 18
+
+**831 casos distintos aprobados; 79 definiciones nuevas respecto a 0.5.4.** Cero fallos, errores o omitidos en el cierre. Repeticiones de un caso no suman al total.
+
+| Ejecución | Casos aprobados |
+| --- | ---: |
+| Dominio JVM | 126 |
+| Datos JVM | 38 |
+| App JVM | 445 |
+| Datos nativos Android | 185 |
+| App nativa Android | 37 |
+| **Total** | **831** |
+
+Las 37 nativas de app comprenden 33 de formulario/mapa/guardado/fotos/aviso y cuatro estados de permisos ejecutados por separado con configuración real de Android. Los 79 nuevos casos son 17 de dominio, 21 de SQLite, 34 del modelo y siete del recorrido visible. Debug, release y APK de pruebas compilan. Lint: cero errores; 23 advertencias por variante de app (22 anteriores y una llamada vacía a super.onCleared), cero en datos. No se presentan advertencias como fallos funcionales.
+
+Se comprobó el aviso, folio real, rotación/regreso, cancelación/corrección, lectura fallida/incompleta, respuesta después de STOP y exclusión del folio propio. Confirmar otro incidente con GPS vencido mantiene el rechazo; actualizar por gesto permite guardar conservando la fila anterior. Regresiones de fotografías/selector real, copia del borrador, diario, SQLite y mapa pasaron.
+
+La primera ejecución del caso de folio propio detectó que la preparación del test intentaba crear una copia ya marcada mediante write; el contrato exige write seguido de markSubmitted. Se corrigió exclusivamente esa preparación y se repitió el cierre nativo completo. No se cambió el contrato de producción para aceptar la fixture incorrecta.
+
+API 37 en un clon de emulador de solo lectura, sin modificar el AVD original ni instalar en un teléfono ajeno. SQLite/AtomicFile/selector/mapa son reales; la fuente GPS de integración es controlada exclusivamente en androidTest y no acredita GPS físico final. Se comprobaron firma v2, certificado académico conservado, versión 0.5.5/código 25 y exclusión de fixtures del DEX productivo. APK anterior 0.5.4 conservada.
+
+Evidencia local ignorada: `.gradle/validacion/release055-{build,final-build,data-native,ui-final}.log`, cuatro logs `release055-permission-*.log`, `release055-test-proof.json`, `release055-artifact.json` y `release055-similares.png`. El cierre no declara ausencia universal de defectos ni aceptación productiva; [Fase 18](FASE_18.md) y [Avance](AVANCE.md) conservan los límites y 14/28 = 50%.
+
+## Antecedentes del corte anterior
+
 ## Validación 0.5.4 — fases 16 y 17 · 2026-10-10
 
 **752 casos distintos ejecutados y aprobados; 158 definiciones nuevas**, sin fallos, errores u omisiones en el cierre. Las repeticiones tras correcciones y para capturas no aumentan el total.

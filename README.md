@@ -1,5 +1,17 @@
 # CITIZENSECURITY
 
+## Versión 0.5.5 — revisar posibles reportes repetidos
+
+[Release y APK 0.5.5](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.5) · código Android 25. **Desarrollador → Nuevo reporte · guardado local → Revisar borrador → Guardar reporte** revisa si este teléfono conserva incidentes del mismo tipo a 200 metros y hasta 2 horas antes o después de la hora indicada.
+
+El aviso permite abrir el folio anterior, volver conservando el borrador o elegir **Es otro incidente, guardar**. Una consulta fallida o incompleta se explica y necesita tu decisión; no se interpreta como ausencia de incidentes. Cada guardado mantiene la comprobación del GPS a 5 km. Fotos y recuperación del borrador siguen disponibles.
+
+[Probar la APK](docs/PROBAR_0_5_5.md) · [Fase 18](docs/FASE_18.md). **Avance: 14/28 = 50%** con los mismos criterios del PDF; esta mejora refuerza reportes y consulta sin inventar otro hito. Los reportes siguen locales, sin cuentas reales ni envío a autoridades. La aceptación física final del GPS continúa pendiente.
+
+Instala encima de la versión anterior, sin desinstalar ni borrar datos. Para actualizar el código conserva tus cambios: `git fetch origin`, `git switch main`, `git pull --ff-only origin main`.
+
+## Antecedentes del corte anterior
+
 ## Versión 0.5.4 — fotografías y borrador recuperable
 
 [Release y APK 0.5.4](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.4) · código Android 24. **Desarrollador → Nuevo reporte · guardado local** permite adjuntar una fotografía opcional, verla en la revisión y abrirla junto al folio guardado. La app conserva una copia privada que sigue disponible aunque desaparezca la foto de la galería.

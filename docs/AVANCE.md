@@ -1,5 +1,23 @@
 # Avance del plan del proyecto
 
+## Avance 0.5.5 — fase 18
+
+**14/28 = 50%** de construcción por los criterios del PDF. El aviso de posibles repetidos mejora 4.2 y 4.4, pero no agrega un criterio ni representa autenticación o revisión administrativa.
+
+| Punto del PDF | Hitos construidos |
+| --- | --- |
+| 4.1 Usuarios | 1/4 |
+| 4.2 Reportes | 4/4 |
+| 4.3 Geolocalización | 3/4 |
+| 4.4 Consulta | 2/4 |
+| 4.5 Mapas | 4/4 |
+| 4.6 Administración | 0/4 |
+| 4.7 Notificaciones | 0/4 |
+
+La mitad pendiente requiere cuentas reales/aislamiento de autores, aceptación física del recorrido final con GPS, seguimiento administrativo y notificaciones reales. Las pruebas con fuente controlada no acreditan GPS físico. [Fase 18](FASE_18.md) · [Validación](VALIDACION.md).
+
+## Antecedentes del corte anterior
+
 ## Avance 0.5.4 — fases 16 y 17
 
 **14/28 = 50%** de construcción con los mismos criterios y pesos del PDF. Fotografías completa el cuarto hito de **4.2 Reportes (4/4)**: selección, copia privada, revisión/detalle, guardado real y migración. La recuperación del borrador fortalece ese recorrido y no inventa un hito adicional.

@@ -23,6 +23,7 @@ import com.example.citizensecurity.data.SqliteReportRepository
 import com.example.citizensecurity.domain.DeviceLocationFix
 import com.example.citizensecurity.domain.IdempotentReportRepository
 import com.example.citizensecurity.domain.ReportMapRepository
+import com.example.citizensecurity.domain.SimilarReportRepository
 import com.example.citizensecurity.domain.ReportSubmissionJournal
 import java.util.UUID
 import org.junit.rules.ExternalResource
@@ -35,6 +36,8 @@ class ReportTestApplication : CitizenSecurityApplication() {
         get() = testFixture?.repository ?: super.reportRepository
     override val reportMapRepository: ReportMapRepository
         get() = testFixture?.repository ?: super.reportMapRepository
+    override val similarReportRepository: SimilarReportRepository
+        get() = testFixture?.let { it.similarLookup ?: it.repository } ?: super.similarReportRepository
     override val reportSubmissionJournal: ReportSubmissionJournal
         get() = testFixture?.journal ?: super.reportSubmissionJournal
     override val reportPhotoStore: ReportPhotoStore
@@ -72,6 +75,7 @@ class ReportTestFixture internal constructor(private val context: Context) {
     val journal = ReportSubmissionStore(context, journalName)
     val photoStore = ReportPhotoStore(context, "photos_ui_$identity")
     val checkpoint = ReportDraftCheckpointStore(context, "draft_ui_$identity.json")
+    var similarLookup: SimilarReportRepository? = null
     @Volatile private var published: DeviceLocationFix? = null
     @Volatile var refreshCalls: Int = 0
         private set

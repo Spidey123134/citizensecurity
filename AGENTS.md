@@ -1,5 +1,17 @@
 # Trabajo del equipo
 
+## Entrega 0.5.5 — fase 18 visible
+
+La instrucción vigente pide continuar la siguiente fase y conserva «desde ahora puro released» y «ya no mantengas nada oculto». Autoriza código, pruebas, documentación, integración y publicación del avance validado. El usuario confirmó avisar por mismo tipo a 200 metros y hasta 2 horas antes/después del incidente. Conservar login/splash, datos e historia; no implementar cuentas ni roles por iniciativa.
+
+SimilarReportQuery/Repository consulta solo SQLite local, sin GPS ni escritura: máximo 200 candidatos y cinco coincidencias, distancia esférica, fecha del incidente con nanosegundos y exclusión del UUID de la copia coincidente. searchIncomplete exige aviso incluso sin coincidencias. No deducir veracidad, autor o ausencia de incidentes de esta consulta.
+
+Guardar inicia una lectura nueva por gesto. ReportSimilarityViewModel vincula el resultado al NewReport completo y UUID; los avisos/fallos requieren confirmación explícita. Solo una búsqueda completa vacía termina el gesto original de Guardar mientras RESUMED. Corregir/volver invalida; salir durante esa consulta la cancela y no guarda al regresar. La rotación conserva el aviso y consultar un folio conserva el borrador. Reintentos de una solicitud pendiente mantienen createOnce/diario y no pasan por esta advertencia.
+
+Mantener el guard de GPS preciso/reciente/no simulado, precisión ≤100 m y radio 5 km, integridad de foto y CAS del checkpoint. No persistir autorización de aviso ni fabricar evidencia GPS. [Fase 18](docs/FASE_18.md) y [Validación](docs/VALIDACION.md) registran límites. Los cortes siguientes son históricos.
+
+## Antecedentes del corte anterior
+
 ## Entrega 0.5.4 — fases 16 y 17 visibles
 
 La instrucción vigente autoriza terminar fotografías, otra fase y entregar la APK en GitHub; mantiene «desde ahora puro released» y «ya no mantengas nada oculto». Permite código, comprobación, documentación, integración a main y publicación de esta entrega validada. Conservar datos, historial y login/splash del compañero. El acceso académico no autentica ni confiere roles reales.
