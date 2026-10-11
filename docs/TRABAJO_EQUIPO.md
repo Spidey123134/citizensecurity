@@ -1,5 +1,14 @@
 # Trabajo del equipo
 
+## Trabajo compartido 0.5.4 — fotografías y copia del borrador
+
+**Desarrollador → Nuevo reporte · guardado local** ofrece foto opcional y copia del borrador desde revisión. Todo lo construido está visible; se mantienen login, splash y acceso académico del compañero. Para trabajar desde main conserva tus cambios propios y ejecuta `git fetch origin`, `git switch main`, `git pull --ff-only origin main`. [Instalar y probar la APK](PROBAR_0_5_4.md).
+
+La fotografía se guarda en filesDir mediante ReportPhotoStore, sin URI externa duradera ni EXIF. SQLite esquema 2 migra reportes viejos sin recrear la base. Mantén createOnce/ReportSubmissionStore y el guard de GPS+integridad; no crear un UUID nuevo ante respuesta incierta.
+
+ReportDraftCheckpointViewModel/Store conserva una copia completa por gesto, relee antes de recuperar y compara revisión/folio al escribir. Reutiliza la identidad si el contenido no cambia y pasa esa identidad a la solicitud de reporte; después vincula el folio confirmado. Leer/recuperar una copia no genera evidencia GPS, guardado automático ni envío. Cuentas reales, identidad de autor y administración requieren otra fase. [Fase 16](FASE_16.md) y [Fase 17](FASE_17.md) detallan contratos.
+
+## Antecedentes del corte anterior
 ## Trabajo compartido 0.5.3 — funciones locales accesibles
 
 El usuario autorizó retirar la ocultación del guardado y consulta existentes. En main, Desarrollador abre el formulario con guardado, lista/detalle por folio y mapa por zona. Se conserva la entrada y el login del compañero. Para actualizar conserva tus cambios propios y usa `git fetch origin`, `git switch main`, `git pull --ff-only origin main`.

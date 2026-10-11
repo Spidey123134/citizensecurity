@@ -11,6 +11,7 @@ import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.Report
 import com.example.citizensecurity.domain.ReportField
 import com.example.citizensecurity.domain.ReportLocation
+import com.example.citizensecurity.domain.ReportPhoto
 import com.example.citizensecurity.domain.ReportSubmissionJournal
 import com.example.citizensecurity.domain.ReportSubmissionRequest
 import com.example.citizensecurity.domain.ValidationErrors
@@ -525,6 +526,187 @@ class ReportSubmissionViewModelTest {
         assertTrue(journal.writes.isEmpty())
     }
 
+    @Test fun photoMetadataSurvivesNormalizationAndDurableSavedReceiptRecovery() = runTest(dispatcher) {
+        val photo = photo()
+        val input = draft().copy(description = "  ${draft().description}  ", photo = photo)
+        val journal = FakeJournal()
+        val repository = FakeRepository()
+        val first = model(repository, journal)
+        runCurrent()
+        first.save(input)
+        runCurrent()
+        assertEquals(photo, repository.calls.single().second.photo)
+        assertEquals(input.description.trim(), repository.calls.single().second.description)
+        val saved = (first.state.value as ReportSubmissionState.Saved).report
+        assertEquals(photo, saved.photo)
+        assertEquals(photo, journal.value!!.draft.photo)
+        stores.last().clear()
+        val restored = model(repository, journal)
+        runCurrent()
+        assertEquals(ReportSubmissionState.Saved(saved), restored.state.value)
+        assertEquals(1, repository.calls.size)
+    }
+
+    @Test fun differentPhotoCannotReplaceThePhotoOfAnUncertainRequest() = runTest(dispatcher) {
+        val pending = request(draft().copy(photo = photo()))
+        val journal = FakeJournal(pending)
+        val repository = FakeRepository()
+        val model = model(repository, journal)
+        runCurrent()
+        model.save(pending.draft.copy(photo = photo(2)))
+        assertEquals(pending, (model.state.value as ReportSubmissionState.Error).request)
+        assertEquals(pending, journal.value)
+        assertTrue(repository.calls.isEmpty())
+        model.retryPending()
+        runCurrent()
+        assertEquals(photo(), repository.calls.single().second.photo)
+        assertEquals(photo(), (model.state.value as ReportSubmissionState.Saved).report.photo)
+    }
+
+    @Test fun rejectedGuardKeepsThePhotographInTheSnapshotReturnedForCorrection() = runTest(dispatcher) {
+        val pending = request(draft().copy(photo = photo()))
+        val journal = FakeJournal(pending)
+        val repository = FakeRepository().apply {
+            onCreate = { _, _ -> throw InvalidReportException(ValidationErrors(mapOf(
+                ReportField.PHOTO to "No se pudo comprobar la fotografía guardada.",
+            ))) }
+        }
+        val model = model(repository, journal)
+        runCurrent()
+        model.retryPending()
+        runCurrent()
+        val invalid = model.state.value as ReportSubmissionState.Invalid
+        assertEquals(photo(), invalid.draft!!.photo)
+        assertTrue(invalid.errors.containsKey(ReportField.PHOTO))
+        assertNull(journal.value)
+        assertEquals(listOf(pending.requestId), journal.clears)
+        assertTrue(repository.rows.isEmpty())
+    }
+
+    @Test fun repositoryReturningAnotherPhotographIsNotAcceptedAsSaved() = runTest(dispatcher) {
+        val input = draft().copy(photo = photo())
+        val journal = FakeJournal()
+        val repository = FakeRepository().apply {
+            onCreate = { id, draft -> report(id, draft).copy(photo = photo(2)) }
+        }
+        val model = model(repository, journal)
+        runCurrent()
+        model.save(input)
+        runCurrent()
+        assertTrue(model.state.value is ReportSubmissionState.Error)
+        assertEquals(photo(), journal.value!!.draft.photo)
+        assertFalse(model.startNewReport())
+    }
+
+    @Test fun aCheckpointHintCreatesTheSameDurableReportIdentityAndPreservesThePhotograph() = runTest(dispatcher) {
+        val journal = FakeJournal()
+        val repository = FakeRepository()
+        val model = model(repository, journal)
+        runCurrent()
+        val input = draft().copy(photo = photo())
+        model.save(input, requestIdHint = requestId)
+        runCurrent()
+        assertEquals(requestId, journal.value!!.requestId)
+        assertEquals(input, journal.value!!.draft)
+        assertEquals(listOf(requestId to input), repository.calls)
+        assertEquals(requestId, (model.state.value as ReportSubmissionState.Saved).report.id)
+        assertEquals(photo(), (model.state.value as ReportSubmissionState.Saved).report.photo)
+    }
+
+    @Test fun aRestoredCheckpointHintFindsItsCommittedReportInsteadOfCreatingAnotherRow() = runTest(dispatcher) {
+        val journal = FakeJournal()
+        val repository = FakeRepository().apply { rows[requestId] = report(requestId, draft()) }
+        val existing = repository.rows[requestId]!!
+        val model = model(repository, journal)
+        runCurrent()
+        model.save(draft(), requestIdHint = requestId)
+        runCurrent()
+        assertEquals(ReportSubmissionState.Saved(existing), model.state.value)
+        assertEquals(setOf(requestId), repository.rows.keys)
+        assertEquals(requestId, journal.value!!.requestId)
+        assertEquals(listOf(requestId to draft()), repository.calls)
+    }
+
+    @Test fun aDifferentHintCannotReplaceTheIdentityOfAnExistingPendingRequest() = runTest(dispatcher) {
+        val pending = request()
+        val journal = FakeJournal(pending)
+        val repository = FakeRepository()
+        val model = model(repository, journal)
+        runCurrent()
+        model.save(pending.draft, requestIdHint = "2e345678-1234-4567-89ab-0123456789ab")
+        val rejected = model.state.value as ReportSubmissionState.Error
+        assertEquals(pending, rejected.request)
+        assertEquals(pending, journal.value)
+        assertTrue(journal.writes.isEmpty())
+        assertTrue(repository.calls.isEmpty())
+        model.save(pending.draft, requestIdHint = pending.requestId)
+        runCurrent()
+        assertEquals(pending.requestId, (model.state.value as ReportSubmissionState.Saved).report.id)
+        assertEquals(listOf(pending.requestId to pending.draft), repository.calls)
+    }
+
+    @Test fun malformedHintsNeverReachTheJournalOrCreateAnIdentity() = runTest(dispatcher) {
+        val journal = FakeJournal()
+        val repository = FakeRepository()
+        val model = model(repository, journal)
+        runCurrent()
+        listOf("", "1-1-1-1-1", requestId.uppercase(), "../../foreign", "$requestId ").forEach { invalid ->
+            model.save(draft(), requestIdHint = invalid)
+            assertTrue(model.state.value is ReportSubmissionState.Error)
+            assertNull((model.state.value as ReportSubmissionState.Error).request)
+        }
+        runCurrent()
+        assertNull(journal.value)
+        assertTrue(journal.writes.isEmpty())
+        assertTrue(repository.calls.isEmpty())
+        model.save(draft(), requestIdHint = requestId)
+        runCurrent()
+        assertEquals(requestId, journal.value!!.requestId)
+        assertEquals(requestId, (model.state.value as ReportSubmissionState.Saved).report.id)
+    }
+
+    @Test fun aLostSaveResponseCannotBeRetriedWithAnotherCheckpointHint() = runTest(dispatcher) {
+        val journal = FakeJournal()
+        val repository = FakeRepository().apply {
+            onCreate = { id, input ->
+                val existing = rows[id]
+                if (existing != null) existing else {
+                    rows[id] = report(id, input)
+                    throw IOException("response lost after insert")
+                }
+            }
+        }
+        val model = model(repository, journal)
+        runCurrent()
+        model.save(draft(), requestIdHint = requestId)
+        runCurrent()
+        val pending = journal.value!!
+        assertEquals(requestId, pending.requestId)
+        model.save(draft(), requestIdHint = "2e345678-1234-4567-89ab-0123456789ab")
+        runCurrent()
+        assertEquals(pending, (model.state.value as ReportSubmissionState.Error).request)
+        assertEquals(1, journal.writes.size)
+        assertEquals(1, repository.calls.size)
+        model.save(draft(), requestIdHint = null)
+        runCurrent()
+        assertEquals(requestId, (model.state.value as ReportSubmissionState.Saved).report.id)
+        assertEquals(setOf(requestId), repository.rows.keys)
+        assertEquals(listOf(requestId, requestId), repository.calls.map { it.first })
+    }
+
+    @Test fun aMatchingHintDoesNotAuthorizeChangingPendingPhotoOrFields() = runTest(dispatcher) {
+        val pending = request(draft().copy(photo = photo()))
+        val journal = FakeJournal(pending)
+        val repository = FakeRepository()
+        val model = model(repository, journal)
+        runCurrent()
+        model.save(pending.draft.copy(photo = photo(2)), requestIdHint = pending.requestId)
+        assertEquals(pending, (model.state.value as ReportSubmissionState.Error).request)
+        assertEquals(pending, journal.value)
+        assertTrue(journal.writes.isEmpty())
+        assertTrue(repository.calls.isEmpty())
+    }
+
     private fun model(repository: FakeRepository, journal: FakeJournal): ReportSubmissionViewModel {
         val store = ViewModelStore().also(stores::add)
         val factory = object : ViewModelProvider.Factory {
@@ -541,7 +723,10 @@ class ReportSubmissionViewModelTest {
     )
     private fun request(draft: NewReport = draft()) = ReportSubmissionRequest(requestId, draft, now)
     private fun report(id: String, draft: NewReport) = Report(
-        id, draft.type, draft.priority, draft.description, draft.occurredAt, draft.location, now,
+        id, draft.type, draft.priority, draft.description, draft.occurredAt, draft.location, now, photo = draft.photo,
+    )
+    private fun photo(number: Int = 1) = ReportPhoto(
+        "1e345678-1234-4567-89ab-0123456789a$number", number.toString().repeat(64), 1234L, 640, 480,
     )
 
     private class FakeJournal(var value: ReportSubmissionRequest? = null) : ReportSubmissionJournal {

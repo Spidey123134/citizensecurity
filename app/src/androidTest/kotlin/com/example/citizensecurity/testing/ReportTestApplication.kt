@@ -12,6 +12,13 @@ import com.example.citizensecurity.CitizenSecurityApplication
 import com.example.citizensecurity.data.NearbySqliteReportGuard
 import com.example.citizensecurity.data.PhoneLocationRefreshResult
 import com.example.citizensecurity.data.ReportSubmissionStore
+import com.example.citizensecurity.data.ReportPhotoStore
+import com.example.citizensecurity.data.ReportDraftCheckpointStore
+import com.example.citizensecurity.domain.ReportDraftCheckpointJournal
+import com.example.citizensecurity.domain.InvalidReportException
+import com.example.citizensecurity.domain.ReportField
+import com.example.citizensecurity.domain.ValidationErrors
+import java.io.IOException
 import com.example.citizensecurity.data.SqliteReportRepository
 import com.example.citizensecurity.domain.DeviceLocationFix
 import com.example.citizensecurity.domain.IdempotentReportRepository
@@ -30,6 +37,10 @@ class ReportTestApplication : CitizenSecurityApplication() {
         get() = testFixture?.repository ?: super.reportMapRepository
     override val reportSubmissionJournal: ReportSubmissionJournal
         get() = testFixture?.journal ?: super.reportSubmissionJournal
+    override val reportPhotoStore: ReportPhotoStore
+        get() = testFixture?.photoStore ?: super.reportPhotoStore
+    override val reportDraftCheckpointJournal: ReportDraftCheckpointJournal
+        get() = testFixture?.checkpoint ?: super.reportDraftCheckpointJournal
 
     override fun currentReportPhoneLocation(): DeviceLocationFix? =
         testFixture?.currentFix() ?: if (testFixture == null) super.currentReportPhoneLocation() else null
@@ -59,12 +70,21 @@ class ReportTestFixture internal constructor(private val context: Context) {
     val databaseName = "reports_ui_$identity.db"
     val journalName = "submission_ui_$identity.json"
     val journal = ReportSubmissionStore(context, journalName)
+    val photoStore = ReportPhotoStore(context, "photos_ui_$identity")
+    val checkpoint = ReportDraftCheckpointStore(context, "draft_ui_$identity.json")
     @Volatile private var published: DeviceLocationFix? = null
     @Volatile var refreshCalls: Int = 0
         private set
 
     private val guard = NearbySqliteReportGuard(::currentFix, SystemClock::elapsedRealtimeNanos)
-    val repository = SqliteReportRepository(context, databaseName, createGuard = guard::check)
+    val repository = SqliteReportRepository(context, databaseName, createGuard = { draft ->
+        guard.check(draft)
+        draft.photo?.let {
+            try { photoStore.check(it) } catch (_: IOException) {
+                throw InvalidReportException(ValidationErrors(mapOf(ReportField.PHOTO to "La fotografía está dañada. Vuelve a elegirla o quítala.")))
+            }
+        }
+    })
 
     fun currentFix(): DeviceLocationFix? {
         if (!preciseAllowed() || !locationEnabled()) {

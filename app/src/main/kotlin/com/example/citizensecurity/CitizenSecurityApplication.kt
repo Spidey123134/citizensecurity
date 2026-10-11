@@ -12,6 +12,13 @@ import com.example.citizensecurity.domain.IdempotentReportRepository
 import com.example.citizensecurity.domain.ReportSubmissionJournal
 import com.example.citizensecurity.domain.DeviceLocationFix
 import com.example.citizensecurity.data.ReportSubmissionStore
+import com.example.citizensecurity.data.ReportPhotoStore
+import com.example.citizensecurity.data.ReportDraftCheckpointStore
+import com.example.citizensecurity.domain.ReportDraftCheckpointJournal
+import com.example.citizensecurity.domain.InvalidReportException
+import com.example.citizensecurity.domain.ReportField
+import com.example.citizensecurity.domain.ValidationErrors
+import java.io.IOException
 import com.example.citizensecurity.data.PhoneLocationRefreshResult
 import com.example.citizensecurity.domain.ReportMapRepository
 import com.example.citizensecurity.domain.ReportLocation
@@ -54,13 +61,26 @@ open class CitizenSecurityApplication : Application() {
     open suspend fun refreshReportPhoneLocation(): PhoneLocationRefreshResult = phoneLocationRefresh.refresh()
     open fun currentReportPhoneLocation(): DeviceLocationFix? = phoneLocationEvidence.currentFix()
     open val reportSubmissionJournal: ReportSubmissionJournal by lazy { ReportSubmissionStore(this) }
+    open val reportPhotoStore: ReportPhotoStore by lazy { ReportPhotoStore(this) }
+    open val reportDraftCheckpointJournal: ReportDraftCheckpointJournal by lazy { ReportDraftCheckpointStore(this) }
 
     private val sharedReportRepository by lazy {
         val guard = NearbySqliteReportGuard(
             deviceLocation = ::currentReportPhoneLocation,
             elapsedRealtimeNanos = SystemClock::elapsedRealtimeNanos,
         )
-        SqliteReportRepository(this, createGuard = guard::check)
+        SqliteReportRepository(this, createGuard = { draft ->
+            guard.check(draft)
+            draft.photo?.let { photo ->
+                try {
+                    reportPhotoStore.check(photo)
+                } catch (_: IOException) {
+                    throw InvalidReportException(ValidationErrors(mapOf(
+                        ReportField.PHOTO to "La fotografía no está disponible o está dañada. Vuelve a elegirla o quítala antes de guardar.",
+                    )))
+                }
+            }
+        })
     }
     open val reportRepository: IdempotentReportRepository get() = sharedReportRepository
     open val reportMapRepository: ReportMapRepository get() = sharedReportRepository

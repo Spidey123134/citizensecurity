@@ -152,6 +152,7 @@ class ReleasedToolsActivity : ComponentActivity() {
             ReportField.OCCURRED_AT -> R.string.tools_date_label
             ReportField.LOCATION_REFERENCE -> R.string.tools_reference_label
             ReportField.LOCATION_COORDINATES -> R.string.tools_coordinates_label
+            ReportField.PHOTO -> R.string.tools_photo_label
         }
         getString(label) + ": " + it.value
     }

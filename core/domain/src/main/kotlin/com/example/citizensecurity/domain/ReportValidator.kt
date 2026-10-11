@@ -8,6 +8,7 @@ enum class ReportField {
     LOCATION_REFERENCE,
     LOCATION_COORDINATES,
     OCCURRED_AT,
+    PHOTO,
 }
 
 /** Los campos permiten que cada interfaz ubique el mensaje junto al dato correspondiente. */

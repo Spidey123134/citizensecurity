@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.content.Intent
 import android.content.ClipData
 import android.content.ClipboardManager
+import androidx.core.net.toUri
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.PickVisualMediaRequest
 import android.graphics.RectF
 import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
@@ -80,6 +83,23 @@ class ReportDraftActivity : ComponentActivity() {
     private lateinit var dependencies: CitizenSecurityApplication
     internal lateinit var submissionModel: ReportSubmissionViewModel
         private set
+    internal lateinit var photoImportModel: ReportPhotoImportViewModel
+        private set
+    internal lateinit var checkpointModel: ReportDraftCheckpointViewModel
+        private set
+    private var restoreCheckpointQuestion by mutableStateOf(false)
+    private var photoPickerMessage by mutableStateOf<String?>(null)
+    private val photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        val token = draftModel.currentPhotoSelection()
+        if (token == null) {
+            if (uri != null) photoPickerMessage = "La selección se interrumpió. Vuelve a elegir la fotografía."
+        } else if (uri == null) {
+            photoImportModel.cancelSelection(token)
+        } else {
+            photoPickerMessage = null
+            photoImportModel.importPhoto(token, uri.toString())
+        }
+    }
     private var reviewGpsJob: Job? = null
     private var reviewGpsGeneration = 0L
     private var reviewGpsRunning by mutableStateOf(false)
@@ -134,6 +154,13 @@ class ReportDraftActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         draftModel = ViewModelProvider(this, ReportDraftViewModel.factory())[ReportDraftViewModel::class.java]
         dependencies = application as CitizenSecurityApplication
+        checkpointModel = ViewModelProvider(this, ReportDraftCheckpointViewModel.factory(
+            dependencies.reportDraftCheckpointJournal,
+        ))[ReportDraftCheckpointViewModel::class.java]
+        val photoStore = dependencies.reportPhotoStore
+        photoImportModel = ViewModelProvider(this, ReportPhotoImportViewModel.factory(draftModel) { source ->
+            photoStore.importPhoto(source.toUri())
+        })[ReportPhotoImportViewModel::class.java]
         submissionModel = ViewModelProvider(this, ReportSubmissionViewModel.factory(
             dependencies.reportRepository, dependencies.reportSubmissionJournal,
         ))[ReportSubmissionViewModel::class.java]
@@ -161,6 +188,7 @@ class ReportDraftActivity : ComponentActivity() {
     }
 
     private fun goBack() {
+        if (checkpointModel.state.value.busy) return
         when (submissionModel.state.value) {
             is ReportSubmissionState.Saving, ReportSubmissionState.Restoring -> return
             is ReportSubmissionState.Saved -> { finish(); return }
@@ -181,7 +209,7 @@ class ReportDraftActivity : ComponentActivity() {
         } else {
             val state = draftModel.state.value
             if (state.type != null || state.priority != null || state.inputErrors.isNotEmpty() ||
-                state.description.isNotBlank() || state.location.reference.isNotBlank() || state.location.latitude != null) {
+                state.description.isNotBlank() || state.location.reference.isNotBlank() || state.location.latitude != null || state.photo != null || state.photoSelectionPending) {
                 exitQuestion = true
             } else finish()
         }
@@ -192,13 +220,35 @@ class ReportDraftActivity : ComponentActivity() {
     private fun Content() {
         val draft by draftModel.state.collectAsStateWithLifecycle()
         val submission by submissionModel.state.collectAsStateWithLifecycle()
+        val checkpoint by checkpointModel.state.collectAsStateWithLifecycle()
         val screens = rememberSaveableStateHolder()
         var formRevision by rememberSaveable { mutableIntStateOf(0) }
         var resetAfterSaved by rememberSaveable { mutableStateOf(false) }
+        LaunchedEffect(checkpoint.restoreReady?.id) {
+            val restored = checkpoint.restoreReady
+            if (restored != null && selection == null &&
+                (submission is ReportSubmissionState.Idle || submission is ReportSubmissionState.Invalid) &&
+                !draftModel.state.value.photoSelectionPending && draftModel.restoreForCorrection(restored.draft)) {
+                checkpointModel.acknowledgeRestore(restored.id)
+                photoImportModel.clearStatus()
+                photoPickerMessage = null
+                screens.removeState("report_form_$formRevision")
+                formRevision++
+                reviewResult = null
+                reviewErrors = emptyMap()
+            }
+        }
+        LaunchedEffect(submission, checkpoint.loaded, checkpoint.busy, checkpoint.checkpoint?.id) {
+            val saved = submission as? ReportSubmissionState.Saved
+            if (saved != null && checkpoint.loaded && !checkpoint.busy && !checkpoint.failure && checkpoint.checkpoint?.submittedFolio == null) {
+                checkpointModel.markSubmittedIfMatching(saved.report)
+            }
+        }
         LaunchedEffect(submission) {
             val invalid = submission as? ReportSubmissionState.Invalid
             invalid?.draft?.let { recovered ->
                 if (draftModel.restoreForCorrection(recovered)) {
+                    photoImportModel.clearStatus()
                     submissionModel.acknowledgeCorrectionDraft()
                     screens.removeState("report_form_$formRevision")
                     formRevision++
@@ -211,6 +261,8 @@ class ReportDraftActivity : ComponentActivity() {
                 screens.removeState("report_form_$formRevision")
                 formRevision++
                 draftModel.reset()
+                photoImportModel.clearStatus()
+                photoPickerMessage = null
                 draftModel.setOccurredAt(Instant.now().minusSeconds(30))
                 reviewResult = null
                 reviewErrors = emptyMap()
@@ -245,7 +297,7 @@ class ReportDraftActivity : ComponentActivity() {
             } else if (submission is ReportSubmissionState.Saved) {
                 val saved = (submission as ReportSubmissionState.Saved).report
                 SavedReceipt(saved, Modifier.padding(padding)) {
-                    if (submissionModel.startNewReport()) resetAfterSaved = true
+                    if (canStartAnotherReport(saved) && submissionModel.startNewReport()) resetAfterSaved = true
                 }
             } else if (submission is ReportSubmissionState.Error && pending == null) {
                 Column(Modifier.padding(padding).padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -281,14 +333,30 @@ class ReportDraftActivity : ComponentActivity() {
         )
         if (exitQuestion) AlertDialog(
             onDismissRequest = { exitQuestion = false }, title = { Text("¿Salir del borrador?") },
-            text = { Text("Este borrador todavía no se guarda. Si sales, perderás sus cambios.") },
+            text = { Text("Al salir perderás los cambios que no hayas guardado como borrador.") },
             confirmButton = { TextButton(onClick = { exitQuestion = false; finish() }) { Text("Salir") } },
             dismissButton = { TextButton(onClick = { exitQuestion = false }) { Text("Seguir editando") } },
+        )
+        if (restoreCheckpointQuestion) AlertDialog(
+            onDismissRequest = { restoreCheckpointQuestion = false },
+            title = { Text("¿Recuperar el borrador guardado?") },
+            text = { Text("Sustituirá los campos que estás editando por la copia guardada en este teléfono. Guardar el reporte volverá a comprobar tu ubicación actual.") },
+            confirmButton = { TextButton(onClick = {
+                restoreCheckpointQuestion = false
+                val current = checkpointModel.state.value
+                val stored = current.checkpoint
+                if (current.loaded && !current.busy && !current.failure && stored != null && stored.submittedFolio == null &&
+                    !draftModel.state.value.photoSelectionPending) {
+                    checkpointModel.requestRestore(stored.id)
+                }
+            }, modifier = Modifier.testTag("confirm_restore_checkpoint")) { Text("Recuperar datos") } },
+            dismissButton = { TextButton(onClick = { restoreCheckpointQuestion = false }) { Text("Cancelar") } },
         )
     }
 
     @Composable
     private fun Form(draft: ReportDraftState, modifier: Modifier) {
+        val photoImport by photoImportModel.state.collectAsStateWithLifecycle()
         val locale = LocalConfiguration.current.locales[0]
         val focus = LocalFocusManager.current
         val keyboard = LocalSoftwareKeyboardController.current
@@ -301,8 +369,11 @@ class ReportDraftActivity : ComponentActivity() {
             Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
                 Text("Revisa los datos y guarda el reporte en este teléfono. No se envía a autoridades ni avisa a emergencias.", Modifier.padding(16.dp))
             }
+            CheckpointStatus(allowRestore = !draft.photoSelectionPending)
             when (val current = submissionModel.state.collectAsStateWithLifecycle().value) {
-                is ReportSubmissionState.Invalid -> current.errors.values.forEach { FieldError(it) }
+                is ReportSubmissionState.Invalid -> current.errors.forEach { (field, message) ->
+                    if (field != com.example.citizensecurity.domain.ReportField.PHOTO || draft.photo != null || errors[ReportDraftField.PHOTO] != null) FieldError(message)
+                }
                 is ReportSubmissionState.Error -> {
                     FieldError(current.message)
                     OutlinedButton(onClick = { submissionModel.recover() }) { Text("Recuperar último intento") }
@@ -340,7 +411,8 @@ class ReportDraftActivity : ComponentActivity() {
             )
             OutlinedButton(onClick = ::pickDate, modifier = Modifier.fillMaxWidth()) {
                 Text("Fecha y hora: " + (draft.occurredAt?.let {
-                    DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", locale).withZone(ZoneId.systemDefault()).format(it)
+                    runCatching { DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", locale).withZone(ZoneId.systemDefault()).format(it) }
+                        .getOrDefault("Fecha no disponible; selecciona otra")
                 } ?: "Seleccionar"))
             }
             FieldError(errors[ReportDraftField.OCCURRED_AT])
@@ -358,7 +430,8 @@ class ReportDraftActivity : ComponentActivity() {
                 savedMapState = null
                 selection = bridge.openSelection()
                 reviewErrors = reviewErrors - ReportDraftField.LOCATION_COORDINATES
-            }, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("open_incident_map")) {
+            }, enabled = !checkpointModel.state.collectAsStateWithLifecycle().value.busy,
+                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("open_incident_map")) {
                 Text(if (draft.location.latitude == null) "Seleccionar punto en el mapa" else "Cambiar punto en el mapa")
             }
             if (draft.location.latitude != null && draft.location.longitude != null) {
@@ -367,20 +440,93 @@ class ReportDraftActivity : ComponentActivity() {
             FieldError(errors[ReportDraftField.LOCATION_COORDINATES])
             Text("Solo se confirma un punto dentro de 5 km de tu ubicación precisa. El GPS debe estar actualizado.", style = MaterialTheme.typography.bodySmall)
             HorizontalDivider()
+            Text("3. Fotografía del incidente", style = MaterialTheme.typography.titleLarge)
+            ReportPhotoContent(draft.photo, tagPrefix = "draft_photo")
+            Text("Elige una imagen relacionada con lo ocurrido. Guardamos una copia en este teléfono sin los metadatos de la cámara; no se envía.",
+                style = MaterialTheme.typography.bodySmall)
+            Text("JPEG, PNG o WebP · hasta 16 MB · una fotografía opcional.", style = MaterialTheme.typography.bodySmall)
+            OutlinedButton(onClick = ::choosePhoto,
+                enabled = !draft.photoSelectionPending && !checkpointModel.state.collectAsStateWithLifecycle().value.busy,
+                modifier = Modifier.fillMaxWidth().testTag("choose_photo")) {
+                Text(if (draft.photo == null) "Elegir fotografía" else "Cambiar fotografía")
+            }
+            if (draft.photo != null || errors[ReportDraftField.PHOTO] != null) TextButton(onClick = {
+                draftModel.removePhoto()
+                photoImportModel.clearStatus()
+                photoPickerMessage = null
+            }, enabled = !draft.photoSelectionPending, modifier = Modifier.testTag("remove_photo")) { Text("Quitar del borrador") }
+            if (draft.photoSelectionPending) {
+                LinearProgressIndicator(Modifier.fillMaxWidth())
+                Text("Preparando fotografía… Espera antes de revisar.", Modifier.testTag("photo_import_busy"))
+            }
+            if (photoImport is ReportPhotoImportState.Error) FieldError((photoImport as ReportPhotoImportState.Error).message)
+            photoPickerMessage?.let { FieldError(it) }
+            FieldError(errors[ReportDraftField.PHOTO])
+            HorizontalDivider()
             Button(onClick = {
                 val result = draftModel.review(Instant.now())
                 reviewResult = result
                 reviewErrors = (result as? ReportDraftReview.Invalid)?.errors ?: emptyMap()
-            }, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("review_draft")) { Text("Revisar borrador") }
+            }, enabled = !draft.photoSelectionPending && !checkpointModel.state.collectAsStateWithLifecycle().value.busy,
+                modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("review_draft")) { Text("Revisar borrador") }
             errors[ReportDraftField.SNAPSHOT]?.let { FieldError(it) }
-            Text("Las fotografías todavía no están implementadas.", style = MaterialTheme.typography.bodySmall)
+        }
+    }
+
+    private fun choosePhoto() {
+        if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) || checkpointModel.state.value.busy) return
+        val token = draftModel.beginPhotoSelection() ?: return
+        photoPickerMessage = null
+        try {
+            photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        } catch (_: Exception) {
+            photoImportModel.cancelSelection(token)
+            photoPickerMessage = "No se pudo abrir el selector de fotografías. Puedes reintentar o continuar sin fotografía."
+        }
+    }
+
+    @Composable
+    private fun CheckpointStatus(allowRestore: Boolean) {
+        val state by checkpointModel.state.collectAsStateWithLifecycle()
+        val stored = state.checkpoint
+        if (state.busy) {
+            LinearProgressIndicator(Modifier.fillMaxWidth())
+            Text("Comprobando la copia del borrador…", Modifier.testTag("checkpoint_busy"))
+        }
+        if (state.failure) {
+            FieldError(state.message ?: "No se pudo comprobar la copia del borrador.")
+            OutlinedButton(onClick = { checkpointModel.reload() }, enabled = !state.busy,
+                modifier = Modifier.testTag("reload_checkpoint")) { Text("Comprobar borrador guardado") }
+        } else if (stored != null) {
+            state.message?.let { Text(it, Modifier.testTag("checkpoint_message")) }
+            val date = runCatching {
+                DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault()).format(stored.savedAt)
+            }.getOrDefault("fecha no disponible")
+            if (stored.submittedFolio == null) {
+                Text("Borrador guardado en este teléfono · $date", Modifier.testTag("checkpoint_status"))
+                if (allowRestore) OutlinedButton(onClick = { restoreCheckpointQuestion = true }, enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth().testTag("restore_checkpoint")) { Text("Recuperar borrador guardado") }
+            } else {
+                Text("La copia guardada ya se convirtió en reporte. Folio: ${stored.submittedFolio}", Modifier.testTag("checkpoint_submitted"))
+                if (allowRestore) OutlinedButton(onClick = {
+                    startActivity(Intent(this@ReportDraftActivity, com.example.citizensecurity.reports.ReportsActivity::class.java)
+                        .putExtra(com.example.citizensecurity.reports.ReportsActivity.EXTRA_FOLIO, stored.submittedFolio))
+                }, enabled = !state.busy, modifier = Modifier.testTag("open_checkpoint_report")) { Text("Abrir ese reporte") }
+            }
         }
     }
 
     @Composable
     private fun SubmissionActions(draft: NewReport, state: ReportSubmissionState) {
         val permissions by permissionModel.state.collectAsStateWithLifecycle()
-        val busy = state is ReportSubmissionState.Saving || reviewGpsRunning
+        val checkpoint by checkpointModel.state.collectAsStateWithLifecycle()
+        val busy = state is ReportSubmissionState.Saving || reviewGpsRunning || checkpoint.busy
+        if (state == ReportSubmissionState.Idle || state is ReportSubmissionState.Invalid) {
+            OutlinedButton(onClick = { checkpointModel.save(draft) }, enabled = checkpoint.loaded && !checkpoint.failure && !busy,
+                modifier = Modifier.fillMaxWidth().testTag("save_checkpoint")) { Text("Guardar borrador para continuar después") }
+            Text("Conserva estos campos y la foto sin crear un reporte. Se recupera desde Nuevo reporte.", style = MaterialTheme.typography.bodySmall)
+            CheckpointStatus(allowRestore = false)
+        }
         Text(permissionGuidance(permissions), Modifier.testTag("save_permission_guidance"))
         reviewGpsMessage?.let { Text(it, Modifier.testTag("save_gps_message")) }
         when (state) {
@@ -404,8 +550,10 @@ class ReportDraftActivity : ComponentActivity() {
             Button(onClick = { submissionModel.retryPending() }, enabled = !busy,
                 modifier = Modifier.fillMaxWidth().testTag("retry_submission")) { Text("Reintentar guardado con el mismo folio") }
         } else if (state !is ReportSubmissionState.Error) {
-            Button(onClick = { submissionModel.save(draft) },
-                enabled = !busy && draft.location.latitude != null && draft.location.longitude != null,
+            Button(onClick = {
+                if (canSubmitReport()) submissionModel.save(draft, checkpointModel.preferredRequestId(draft))
+            },
+                enabled = !busy && canSubmitReport() && draft.location.latitude != null && draft.location.longitude != null,
                 modifier = Modifier.fillMaxWidth().testTag("save_report")) { Text("Guardar reporte en este teléfono") }
         }
         if (draft.location.latitude == null) FieldError("Selecciona y confirma el punto en el mapa antes de guardar.")
@@ -445,10 +593,12 @@ class ReportDraftActivity : ComponentActivity() {
 
     @Composable
     private fun SavedReceipt(report: Report, modifier: Modifier, onNew: () -> Unit) {
+        val checkpoint by checkpointModel.state.collectAsStateWithLifecycle()
         Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text("Guardado en este teléfono", style = MaterialTheme.typography.headlineSmall)
             Text("No se envió a autoridades ni se generó una solicitud de emergencia.")
+            CheckpointStatus(allowRestore = false)
             Text("Folio", style = MaterialTheme.typography.labelLarge)
             Text(report.id, Modifier.testTag("saved_folio"))
             Text(report.description)
@@ -464,8 +614,28 @@ class ReportDraftActivity : ComponentActivity() {
                 startActivity(Intent(this@ReportDraftActivity, com.example.citizensecurity.reports.ReportsMapActivity::class.java)
                     .putExtra("report_folio", report.id))
             }, modifier = Modifier.fillMaxWidth()) { Text("Ver en el mapa") }
-            OutlinedButton(onClick = onNew, modifier = Modifier.fillMaxWidth().testTag("new_report")) { Text("Iniciar otro reporte") }
+            OutlinedButton(onClick = onNew, enabled = !checkpoint.busy && canStartAnotherReport(report),
+                modifier = Modifier.fillMaxWidth().testTag("new_report")) { Text("Iniciar otro reporte") }
+            if (!checkpoint.busy && !canStartAnotherReport(report)) {
+                Text("Comprueba la copia del borrador para vincular este folio antes de iniciar otro reporte.")
+            }
         }
+    }
+
+    private fun canStartAnotherReport(report: Report): Boolean {
+        val state = checkpointModel.state.value
+        if (state.busy || (!state.loaded && !state.failure)) return false
+        fun awaitingMark(copy: com.example.citizensecurity.domain.ReportDraftCheckpoint): Boolean =
+            copy.submittedFolio == null && com.example.citizensecurity.domain.ReportSubmissionRequest(
+                report.id, copy.draft, copy.savedAt,
+            ).matches(report)
+        return listOfNotNull(state.checkpoint, state.uncertainWrite).none(::awaitingMark)
+    }
+
+    private fun canSubmitReport(): Boolean {
+        val state = checkpointModel.state.value
+        return !state.busy && state.uncertainWrite == null &&
+            (state.loaded || (state.failure && state.checkpoint == null))
     }
 
     @Composable

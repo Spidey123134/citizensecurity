@@ -1,5 +1,16 @@
 # Trabajo del equipo
 
+## Entrega 0.5.4 — fases 16 y 17 visibles
+
+La instrucción vigente autoriza terminar fotografías, otra fase y entregar la APK en GitHub; mantiene «desde ahora puro released» y «ya no mantengas nada oculto». Permite código, comprobación, documentación, integración a main y publicación de esta entrega validada. Conservar datos, historial y login/splash del compañero. El acceso académico no autentica ni confiere roles reales.
+
+Código Android 24. ReportPhotoStore importa solo content URI por gesto y genera JPEG privado sin EXIF; no conservar URI, bitmap ni evidencia GPS en el borrador. ReportDatabase esquema 2 añade columnas sin recrear la base histórica. Guard createOnce comprueba integridad de fotografía y evidencia GPS precisa, reciente, no simulada y dentro de 5 km. Un reporte ya confirmado mantiene su folio aunque su archivo de foto falle al mostrarlo.
+
+ReportDraftCheckpointStore conserva una copia completa por gesto explícito desde revisión. Lectura inicial no restaura ni solicita GPS. Restaurar exige confirmación y lectura vigente; CAS compara identidad y folio para impedir sobrescribir una copia ya enviada. Cuerpo normalizado idéntico conserva identidad; reporte coincidente usa ese UUID para createOnce. Ante escritura incierta se exige recarga y no se inicia otro folio; un error de vinculación conserva el recibo y permite comprobarlo. No borrar archivos del usuario ni implementar cuentas/roles por iniciativa.
+
+[FASE_16](docs/FASE_16.md) y [FASE_17](docs/FASE_17.md) describen alcance y límites; [VALIDACION](docs/VALIDACION.md) registra ejecución. Fixtures solo androidTest, excluidas del APK. GPS controlado no acredita aceptación física del flujo final. Los cortes contradictorios siguientes son antecedentes históricos.
+
+## Antecedentes del corte anterior
 ## Entrega 0.5.3 — fase 15, funciones locales visibles
 
 La instrucción vigente del usuario es «tu chambea lo más que puedas, pero ya no mantengas nada oculto». Autoriza activar y acoplar el guardado y la consulta reales construidos. Sustituye la restricción de visibilidad registrada en los antecedentes. Continúa su preferencia «desde ahora puro released»: entregar avances validados como Releases oficiales, conservando datos, versiones e historia. Mantener el login/splash del compañero; el acceso académico no identifica usuarios ni confiere roles reales.

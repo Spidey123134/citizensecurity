@@ -11,6 +11,7 @@ import com.example.citizensecurity.domain.NewReport
 import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.Report
 import com.example.citizensecurity.domain.ReportLocation
+import com.example.citizensecurity.domain.ReportPhoto
 import com.example.citizensecurity.domain.ReportMapMarker
 import com.example.citizensecurity.domain.ReportMapPage
 import com.example.citizensecurity.domain.ReportMapQuery
@@ -100,6 +101,7 @@ class SqliteReportRepository(
             location = normalized.location,
             createdAt = createdAt,
             status = ReportStatus.REPORTED,
+            photo = normalized.photo,
         )
         ensureActive()
         createGuard(normalized)
@@ -148,7 +150,7 @@ class SqliteReportRepository(
     private fun resolveExisting(existing: Report, draft: NewReport): Report {
         if (existing.type != draft.type || existing.priority != draft.priority ||
             existing.description != draft.description || existing.occurredAt != draft.occurredAt ||
-            existing.location != draft.location
+            existing.location != draft.location || existing.photo != draft.photo
         ) throw ReportRequestConflictException(existing.id)
         return existing
     }
@@ -259,6 +261,11 @@ class SqliteReportRepository(
         put("created_at_seconds", createdAt.epochSecond)
         put("created_at_nanos", createdAt.nano)
         put("status", status.name)
+        put("photo_id", photo?.id)
+        put("photo_sha256", photo?.sha256)
+        put("photo_byte_count", photo?.byteCount)
+        put("photo_width", photo?.width)
+        put("photo_height", photo?.height)
     }
 
     private fun Cursor.toReport() = Report(
@@ -274,7 +281,27 @@ class SqliteReportRepository(
         ),
         createdAt = getInstant("created_at"),
         status = ReportStatus.valueOf(getString(getColumnIndexOrThrow("status"))),
+        photo = getPhoto(),
     )
+
+    private fun Cursor.getPhoto(): ReportPhoto? {
+        val columns = arrayOf("photo_id", "photo_sha256", "photo_byte_count", "photo_width", "photo_height")
+        val indices = columns.map(::getColumnIndexOrThrow)
+        if (indices.all(::isNull)) return null
+        check(indices.none(::isNull)) { "La fotografía guardada contiene metadatos incompletos." }
+        check(getType(indices[0]) == Cursor.FIELD_TYPE_STRING && getType(indices[1]) == Cursor.FIELD_TYPE_STRING &&
+            indices.drop(2).all { getType(it) == Cursor.FIELD_TYPE_INTEGER }
+        ) { "La fotografía guardada contiene tipos de metadatos inválidos." }
+        val width = getLong(indices[3])
+        val height = getLong(indices[4])
+        require(width in 1..ReportPhoto.MAX_DIMENSION.toLong() && height in 1..ReportPhoto.MAX_DIMENSION.toLong()) {
+            "La fotografía guardada contiene dimensiones inválidas."
+        }
+        return ReportPhoto(
+            id = getString(indices[0]), sha256 = getString(indices[1]), byteCount = getLong(indices[2]),
+            width = width.toInt(), height = height.toInt(),
+        )
+    }
 
     private fun Cursor.toMapMarker() = ReportMapMarker(
         id = getString(getColumnIndexOrThrow("id")),
@@ -307,6 +334,7 @@ class SqliteReportRepository(
             "id", "incident_type", "priority", "description", "occurred_at_seconds",
             "occurred_at_nanos", "location_reference", "latitude", "longitude",
             "created_at_seconds", "created_at_nanos", "status",
+            "photo_id", "photo_sha256", "photo_byte_count", "photo_width", "photo_height",
         )
         private val MAP_PROJECTION = arrayOf(
             "id", "incident_type", "priority", "status", "latitude", "longitude",

@@ -19,6 +19,7 @@ data class ReportSubmissionRequest(
     fun matches(report: Report): Boolean = report.id == requestId &&
         report.type == draft.type && report.priority == draft.priority &&
         report.description == draft.description.trim() && report.occurredAt == draft.occurredAt &&
+        report.photo == draft.photo &&
         report.location == draft.location.copy(
             reference = draft.location.reference.trim(),
             latitude = draft.location.latitude?.let { if (it == 0.0) 0.0 else it },

@@ -1,5 +1,12 @@
 # Versiones y GitHub Releases
 
+## Entrega oficial 0.5.4 — fotografías y borrador recuperable
+
+[Release v0.5.4](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.4) · código Android 24. El APK académico y SHA-256 están en Assets. Se instala sobre el APK anterior con la misma firma, sin desinstalar ni borrar datos. Main contiene el código para que el equipo continúe desde ahí; la Release identifica el corte probado.
+
+[Fases 16](FASE_16.md) y [17](FASE_17.md) incorporan fotografía opcional con copia privada y recuperación explícita del borrador; el folio durable evita repetir un reporte ya confirmado. [Probar en Android](PROBAR_0_5_4.md). Construcción 14/28 = 50%, mismos hitos; versiones previas conservadas.
+
+## Antecedentes del corte anterior
 ## Entrega oficial 0.5.1 — formulario y mapa visibles
 
 **9 de octubre de 2026 · código Android 21.** El usuario indicó «desde ahora puro released». Esta entrega incorpora las fases 12 y 13 a las variantes compartidas: Desarrollador → **Nuevo reporte · borrador** permite llenar el reporte, elegir un punto en MapLibre/OpenFreeMap, conservar el texto al volver y revisar los campos. El mapa muestra calles, nombres y pin. Los controles distinguen permiso denegado/aproximado/preciso, GPS desactivado y reintento, y funcionan al girar la pantalla. Publicación: [Release v0.5.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.1).

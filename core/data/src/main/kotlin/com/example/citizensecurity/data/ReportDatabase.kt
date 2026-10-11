@@ -41,6 +41,7 @@ internal class ReportDatabase(context: Context, databaseName: String?) :
                 status TEXT NOT NULL CHECK (
                     status IN ('REPORTED', 'IN_REVIEW', 'ATTENDED', 'CLOSED')
                 ),
+                ${PHOTO_COLUMNS.joinToString(",\n                ")},
                 CHECK (
                     (latitude IS NULL AND longitude IS NULL AND length(location_reference) > 0)
                     OR
@@ -64,14 +65,16 @@ internal class ReportDatabase(context: Context, databaseName: String?) :
         )
     }
 
-    /**
-     * Al aumentar VERSION se debe implementar cada paso de migración aquí.
-     * Hasta entonces, una versión inesperada falla conservando las tablas y sus datos.
-     */
+    /** La única migración soportada añade metadatos opcionales sin sustituir reportes. */
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        throw SQLiteException(
-            "No hay una migración de reportes de la versión $oldVersion a $newVersion.",
-        )
+        if (oldVersion != 1 || newVersion != 2) {
+            throw SQLiteException(
+                "No hay una migración de reportes de la versión $oldVersion a $newVersion.",
+            )
+        }
+        // SQLiteOpenHelper ejecuta este bloque dentro de una transacción. Si falla cualquier
+        // columna/constraint, las filas y la versión anterior permanecen íntegramente.
+        PHOTO_COLUMNS.forEach { declaration -> db.execSQL("ALTER TABLE reports ADD COLUMN $declaration") }
     }
 
     override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -81,7 +84,45 @@ internal class ReportDatabase(context: Context, databaseName: String?) :
     }
 
     private companion object {
-        const val VERSION = 1
+        const val VERSION = 2
+        val PHOTO_COLUMNS = listOf(
+            """
+            photo_id TEXT CHECK (photo_id IS NULL OR (
+                length(photo_id) = 36 AND photo_id = lower(photo_id)
+                AND substr(photo_id, 9, 1) = '-' AND substr(photo_id, 14, 1) = '-'
+                AND substr(photo_id, 19, 1) = '-' AND substr(photo_id, 24, 1) = '-'
+                AND length(replace(photo_id, '-', '')) = 32
+                AND photo_id NOT GLOB '*[^0-9a-f-]*'
+            ))
+            """.trimIndent(),
+            """
+            photo_sha256 TEXT CHECK (photo_sha256 IS NULL OR (
+                length(photo_sha256) = 64 AND photo_sha256 NOT GLOB '*[^0-9a-f]*'
+            ))
+            """.trimIndent(),
+            """
+            photo_byte_count INTEGER CHECK (photo_byte_count IS NULL OR (
+                typeof(photo_byte_count) = 'integer' AND photo_byte_count BETWEEN 1 AND 6291456
+            ))
+            """.trimIndent(),
+            """
+            photo_width INTEGER CHECK (photo_width IS NULL OR (
+                typeof(photo_width) = 'integer' AND photo_width BETWEEN 1 AND 2048
+            ))
+            """.trimIndent(),
+            """
+            photo_height INTEGER CHECK (
+                (photo_height IS NULL OR (typeof(photo_height) = 'integer' AND photo_height BETWEEN 1 AND 2048))
+                AND (
+                    (photo_id IS NULL AND photo_sha256 IS NULL AND photo_byte_count IS NULL
+                        AND photo_width IS NULL AND photo_height IS NULL)
+                    OR
+                    (photo_id IS NOT NULL AND photo_sha256 IS NOT NULL AND photo_byte_count IS NOT NULL
+                        AND photo_width IS NOT NULL AND photo_height IS NOT NULL)
+                )
+            )
+            """.trimIndent(),
+        )
         // El manejador predeterminado borra la base corrupta. Fallar impide ese borrado y
         // el reintento que podría recrearla vacía; reparar datos requiere otro alcance.
         val PRESERVE_CORRUPTION = DatabaseErrorHandler { database ->
