@@ -1,5 +1,25 @@
 # Avance del plan del proyecto
 
+## Avance 0.5.6 — fase 19
+
+**15/28 = 53.6%** con los mismos 28 hitos y pesos. Se completa **4.3 Geolocalización (4/4)** por la aceptación manual del usuario del **11 de octubre de 2026**: el teléfono localizó el punto, la acción de ubicación lo aceptó dentro del radio y el mapa mostró el pin. El usuario no especificó la versión de la APK probada. Esta confirmación no aporta logs, medidas de precisión, coordenadas ni un guardado físico nuevo; tampoco se suma al recuento de pruebas automatizadas.
+
+| Punto del PDF | Hitos construidos |
+| --- | --- |
+| 4.1 Usuarios | 1/4 |
+| 4.2 Reportes | 4/4 |
+| 4.3 Geolocalización | 4/4 |
+| 4.4 Consulta | 2/4 |
+| 4.5 Mapas | 4/4 |
+| 4.6 Administración | 0/4 |
+| 4.7 Notificaciones | 0/4 |
+
+[Fase 19](FASE_19.md) convierte la pantalla verde de Desarrollador en un inicio útil: **Nuevo reporte**, **Reportes en este teléfono** y **Mapa de reportes por zona**. Sus indicadores leen los diarios privados reales para mostrar una copia de borrador o un intento por comprobar; un fallo de lectura se explica y no equivale a ausencia. Abrir el inicio no obtiene GPS, guarda reportes ni escribe en los diarios. Se retira la interfaz ficticia anterior conservando código, datos e historia; las funciones reales siguen visibles.
+
+El hito original de GPS es comprobar el recorrido de ubicación y confirmación. Guardar y abrir un folio físico sería una comprobación adicional transversal de **4.2/4.4**, no una condición nueva para completar 4.3. Siguen pendientes cuentas reales/aislamiento de autores, seguimiento administrativo y notificaciones. La mejora del inicio no añade otro hito. [Criterios vigentes](#cómo-se-calcula--criterios-vigentes-de-056) · [Validación](VALIDACION.md).
+
+## Antecedentes históricos del corte anterior
+
 ## Avance 0.5.5 — fase 18
 
 **14/28 = 50%** de construcción por los criterios del PDF. El aviso de posibles repetidos mejora 4.2 y 4.4, pero no agrega un criterio ni representa autenticación o revisión administrativa.
@@ -138,7 +158,7 @@ La preparación 0.3.4 incorpora ahora el **Maps SDK for Android 20.0.0** real, m
 
 El SDK ya está incorporado y el adaptador compila, pero el hito de SDK configurado no se suma sin clave habilitada y mapa real ejecutado. Los apartados previos de captura sin permisos describen el corte anterior a esta incorporación.
 
-## Cómo se calcula
+## Cómo se calcula — criterios vigentes de 0.5.6
 
 Se definen cuatro hitos de construcción por cada requisito del PDF: **28 hitos con el mismo peso**. Cada hito comprobado aporta aproximadamente 3.57 puntos al total; cada fila puede tener 0%, 25%, 50%, 75% o 100%. Esta es una estimación de construcción, no del tiempo o dificultad de las tareas, de las funciones visibles ni de la aceptación del usuario.
 
@@ -148,13 +168,17 @@ Una pantalla visual cuenta solo como preparación visual; una lógica probada cu
 | --- | --- | --- | --- |
 | 4.1 Usuarios | Pantalla de acceso; creación de cuentas; verificación real de acceso; identidad y aislamiento de datos | Pantalla de acceso del compañero | 1/4 · 25% |
 | 4.2 Reportes | Modelo y validación; persistencia local técnica; formulario con guardado real autorizado; fotografías | Modelo/validación, persistencia técnica, formulario autorizado y fotografías con copia privada/migración probadas en 0.5.4 | 4/4 · 100% de construcción |
-| 4.3 Geolocalización | Par de coordenadas validado y conservado; captura del dispositivo; permisos y estados GPS; flujo GPS probado | Coordenadas y captura física previa comprobadas; 0.5.1 conecta los controles y comprueba denegado/aproximado/preciso/ubicación desactivada contra Android real, junto con sus estados técnicos anteriores. Falta aceptación física del flujo visual completo | 3/4 · 75% |
+| 4.3 Geolocalización | Par de coordenadas validado y conservado; captura del dispositivo; permisos y estados GPS; flujo GPS probado | Coordenadas, captura física previa y permisos/estados comprobados. El 11 de octubre de 2026 el usuario confirmó manualmente localización del punto, aceptación dentro del radio y pin visible; versión APK no especificada, sin logs, medidas o guardado físico nuevo | 4/4 · 100% de construcción |
 | 4.4 Consulta | Lectura por folio; lista y permanencia; reportes propios por usuario; seguimiento de estados | Lectura por folio, lista/permanencia y pantallas visibles en 0.5.3. Sin identidad de autor ni seguimiento administrativo | 2/4 · 50% |
-| 4.5 Mapas | Contrato de selección y confirmación; SDK configurado; mapa por zonas y marcadores; flujo visual integrado y probado | Contrato, SDK, zonas/marcadores y flujo visual integrado en 0.5.3: guardado/folio, mapa nativo con calles y pines SQLite, filtros/límite y pin→detalle. Validación con fuente de teléfono controlada, sin acreditar el hito GPS físico | 4/4 · 100% de construcción |
+| 4.5 Mapas | Contrato de selección y confirmación; SDK configurado; mapa por zonas y marcadores; flujo visual integrado y probado | Contrato, SDK, zonas/marcadores y flujo visual integrado en 0.5.3: guardado/folio, mapa nativo con calles y pines SQLite, filtros/límite y pin→detalle. La validación nativa usa una fuente de teléfono controlada; la aceptación manual física posterior se acredita por separado en 4.3 | 4/4 · 100% de construcción |
 | 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Ninguno | 0/4 · 0% |
 | 4.7 Notificaciones | Eventos de cambios; entrega de avisos; permisos y preferencias; flujo completo probado | Ninguno | 0/4 · 0% |
 
-**Avance actual estimado: 14/28 = 50%.** 0.5.4 acredita fotografías sobre el formulario y mapa ya comprobados. La recuperación fortalece fiabilidad sin añadir criterios ni cambiar pesos. Publicar y repetir pruebas no suman hitos. Faltan GPS físico del recorrido final, autenticación/aislamiento por usuario, seguimiento administrativo y avisos.
+**Avance actual estimado: 15/28 = 53.6%.** 0.5.4 acredita fotografías; la aceptación manual informada el 11 de octubre de 2026 completa el hito existente de flujo GPS. La recuperación y el inicio funcional fortalecen los mismos recorridos sin añadir criterios ni cambiar pesos. Publicar y repetir pruebas no suman hitos. Faltan autenticación/aislamiento por usuario, seguimiento administrativo y avisos. Esta estimación no declara seguridad de producción, disponibilidad GPS universal ni que los incidentes hayan sido verificados.
+
+## Antecedentes de cálculo y evidencia
+
+Los porcentajes y pendientes siguientes pertenecen a sus cortes históricos; no sustituyen la tabla vigente anterior ni la confirmación manual registrada para 0.5.6.
 
 **0.3.3 no suma otro hito ni cambia el porcentaje.** Fortalece el contrato con el radio de 5 km elegido por el usuario, exige evidencia reciente y suficientemente precisa y prepara un guard para la escritura productiva. No obtiene GPS ni configura SDK, permisos o pantalla de mapa. La regla y sus pruebas se documentan en [Proximidad de reportes](PROXIMIDAD_REPORTES.md) y [Validación](VALIDACION.md), separadas del corte 0.3.2.
 

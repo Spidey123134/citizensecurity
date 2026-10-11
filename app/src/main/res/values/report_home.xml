@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_brand">Citizen Security</string>
+    <string name="home_title">Inicio</string>
+    <string name="home_intro">Reporta un incidente y consulta lo que guardaste.</string>
+    <string name="home_checking">Comprobando si tienes un reporte para continuar…</string>
+    <string name="home_ready">Puedes iniciar un reporte nuevo.</string>
+    <string name="home_attempt_pending">Tienes un intento de guardado por comprobar. Abre el reporte para consultar su resultado antes de intentar otro.</string>
+    <string name="home_attempt_unknown">No se pudo comprobar el último intento. Abre el reporte para revisar su resultado antes de guardar otro.</string>
+    <string name="home_draft_saved">Tienes un borrador guardado. Puedes abrirlo y decidir si lo restauras.</string>
+    <string name="home_draft_linked">Tu borrador está vinculado a un folio. Abre el reporte para consultarlo.</string>
+    <string name="home_draft_unknown">No se pudo comprobar el borrador guardado. Puedes reintentar la consulta o abrir el reporte.</string>
+    <string name="home_retry">Volver a comprobar</string>
+    <string name="home_report_heading">Reportar</string>
+    <string name="home_report_description">Describe el incidente, elige su ubicación y añade una fotografía si la necesitas. Revisa los datos antes de guardar.</string>
+    <string name="home_new_report">Reportar un incidente</string>
+    <string name="home_open_report">Abrir reporte</string>
+    <string name="home_open_draft">Abrir borrador</string>
+    <string name="home_list_heading">Reportes guardados</string>
+    <string name="home_list_description">Consulta los folios, datos y fotografías de los reportes guardados en este teléfono.</string>
+    <string name="home_list_button">Ver reportes guardados</string>
+    <string name="home_map_heading">Mapa de reportes</string>
+    <string name="home_map_description">Elige una zona del mapa y consulta los incidentes guardados que aparecen en ella.</string>
+    <string name="home_map_button">Abrir mapa</string>
+    <string name="home_local_notice">Los reportes se conservan en este teléfono. No se envían a autoridades ni avisan a servicios de emergencia.</string>
+    <string name="home_back">Volver al acceso</string>
+</resources>

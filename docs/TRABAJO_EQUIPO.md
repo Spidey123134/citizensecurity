@@ -1,5 +1,15 @@
 # Trabajo del equipo
 
+## Trabajo compartido 0.5.6 — fase 19
+
+**Desarrollador → Inicio** ofrece Reportar, Reportes guardados y Mapa de reportes con sus pantallas reales. La pantalla verde anterior dejó de mostrar recepción/validación ficticia, coordenadas de ejemplo y SQLite de demostración. Login/loading del compañero, acceso académico, clases de ejemplo, pruebas, versiones y datos se conservan.
+
+ReportHomeViewModel lee ambos diarios reales de manera independiente y descarta lecturas obsoletas. Su información es orientativa; no reúne un snapshot transaccional entre archivos ni autoriza una escritura. El formulario vuelve a leer/verificar antes de recuperar o actuar. No convertir un error en ausencia ni un intento por comprobar en un reporte que no se guardó. Regresar actualiza los indicadores sin GPS ni escrituras.
+
+Para trabajar desde main conserva tus cambios propios: `git fetch origin`, `git switch main`, `git pull --ff-only origin main`. Si hay cambios locales o divergencia, resuélvelos conservándolos; no uses reset/desinstalación para actualizar. [Guía de prueba](PROBAR_0_5_6.md) · [Fase 19](FASE_19.md). Avance vigente **15/28 = 53.6%**; aceptación manual del GPS y límites en [Avance](AVANCE.md).
+
+## Antecedentes históricos del corte anterior
+
 ## Trabajo compartido 0.5.5 — fase 18
 
 La revisión previa al guardado avisa de incidentes locales del mismo tipo a 200 m y ±2 h de la fecha del incidente, rango confirmado por el usuario. El compañero conserva su login/splash. [Probar APK](PROBAR_0_5_5.md) · [Contrato de la fase](FASE_18.md).

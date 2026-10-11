@@ -1,5 +1,30 @@
 # Validación y comprobaciones del proyecto
 
+## Cierre 0.5.6 — fase 19 · 11 de octubre de 2026
+
+**856 casos distintos aprobados; 25 definiciones nuevas**: 19 JVM del inicio y seis nativas. Las repeticiones no se suman. Cero fallos, errores u omisiones en el cierre.
+
+| Suite | Casos aprobados |
+| --- | ---: |
+| Dominio JVM | 126 |
+| Datos JVM | 38 |
+| App JVM | 464 |
+| Datos nativos Android | 185 |
+| App nativa Android | 43 |
+| **Total** | **856** |
+
+Gradle conserva como UP-TO-DATE los registros aprobados de dominio/datos JVM sin cambios; no se presentan como ejecuciones nuevas. App JVM, datos nativos y app nativa se comprobaron en este incremento. Las 43 nativas de app son seis del inicio, 33 regresiones de formulario/mapa/guardado/fotos/aviso y cuatro estados de permisos ejecutados por separado contra configuración real de Android. Las seis pruebas del inicio usan la APK final; las demás regresiones de este incremento verifican sus pantallas y contratos sin cambios por el ajuste de retorno. La fuente GPS controlada pertenece exclusivamente a androidTest.
+
+El inicio comprobó tres rutas y regreso sin escrituras/GPS, solicitud durable con UUID original, recuperación explícita del borrador, archivo dañado conservado y paisaje con fuente al 200%. El primer pase encontró botones parcialmente ocultos bajo la navegación al desplazar: aplicar insets como padding del ScrollView dejaba un viewport mayor al área visible. Esperar el layout no resolvió el problema; se corrigió en producto con un contenedor exterior que aplica los insets y restringe el viewport interior. Se conservaron las exigencias de visibilidad completa/texto sin recorte y se repitieron las cinco pruebas; luego pasaron las 33 regresiones y cuatro permisos. La revisión adicional corrigió un retorno que omitía actualizar si la lectura anterior seguía en curso: onResume siempre inicia una consulta reciente. El sexto caso comprueba un borrador escrito mientras Inicio estaba detenido; se repitieron los seis casos con este ajuste.
+
+Debug, release y androidTest compilan. Lint: cero errores, 22 advertencias por variante de app y cero en datos. Retirar los textos obsoletos del menú evita nuevas advertencias por sus recursos; no se silenciaron. Se comprobaron versión 0.5.6/código 26, firma v2 con certificado académico conservado y ausencia de fixtures en DEX productivo. Se conserva SQLite esquema 2 sin cambiar migraciones ni reportes previos.
+
+API 37 en un clon de emulador de solo lectura. No se instaló en el teléfono ni se modificó el AVD original. Evidencia local ignorada: release056-{build,final-build,insets-build,data-native,home-final,regression-final}.log, cuatro release056-permission-*.log, release056-test-proof.json, release056-artifact.json, release056-inicio.png y diagnóstico landscape-failure.{txt,png}; todos bajo .gradle/validacion.
+
+La confirmación manual del usuario del punto/GPS/radio del 11 de octubre de 2026 se registra separadamente y completa 4.3: no se aportó versión exacta de APK, logs, precisión o coordenadas ni se guardó un folio físico nuevo. No aumenta el recuento automático. [Fase 19](FASE_19.md) y [Avance](AVANCE.md) conservan los límites y **15/28 = 53.6%**; este cierre no certifica ausencia universal de defectos ni aceptación productiva.
+
+## Antecedentes históricos del corte anterior
+
 ## Cierre 0.5.5 — fase 18
 
 **831 casos distintos aprobados; 79 definiciones nuevas respecto a 0.5.4.** Cero fallos, errores o omitidos en el cierre. Repeticiones de un caso no suman al total.
