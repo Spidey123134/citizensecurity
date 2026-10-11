@@ -1,5 +1,12 @@
 # Plan del proyecto
 
+## Fases 16 y 17 — 0.5.4
+
+**4.2 Reportes** incorpora fotografía opcional en el formulario, revisión y folio, con copia privada y migración de datos. La recuperación explícita de una copia completa del borrador mejora el mismo recorrido y su relación con **4.3 Geolocalización**: recuperar coordenadas no sustituye un GPS reciente y válido para guardar.
+
+Se conserva el plan original: **14/28 = 50%** de construcción, sin añadir hitos por fases, versiones o número de pruebas. [Fase 16](FASE_16.md), [Fase 17](FASE_17.md) y [Avance](AVANCE.md) registran criterios. La aceptación física del recorrido final, cuentas reales/aislamiento, administración y notificaciones siguen pendientes.
+
+## Antecedentes del corte anterior
 ## Fase 15 — 0.5.3
 
 Se conectan **4.2 Reportes** (formulario con guardado local autorizado y folio durable), **4.4 Consulta** (lista, detalle, búsqueda y filtros visibles) y **4.5 Mapas** (zona, marcadores SQLite y navegación al detalle). **4.3 Geolocalización** mantiene permiso preciso y radio de 5 km al confirmar y guardar; la aceptación física del recorrido final sigue pendiente y tiene su hito separado.

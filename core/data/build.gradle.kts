@@ -28,6 +28,8 @@ kotlin {
 dependencies {
     implementation(project(":core:domain"))
     implementation(libs.coroutines.core)
+    implementation(libs.androidx.exif)
+    implementation(libs.androidx.annotation)
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
     androidTestImplementation(libs.androidx.test.junit)

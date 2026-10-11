@@ -36,6 +36,7 @@ data class NewReport(
     val description: String,
     val occurredAt: Instant,
     val location: ReportLocation,
+    val photo: ReportPhoto? = null,
 )
 
 data class Report(
@@ -47,4 +48,5 @@ data class Report(
     val location: ReportLocation,
     val createdAt: Instant,
     val status: ReportStatus = ReportStatus.REPORTED,
+    val photo: ReportPhoto? = null,
 )

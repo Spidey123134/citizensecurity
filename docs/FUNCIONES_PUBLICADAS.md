@@ -1,5 +1,12 @@
-# Probar las funciones visibles de 0.4.0a
+# Funciones disponibles y cómo probarlas
 
+## Probar las funciones actuales — 0.5.4
+
+En **Desarrollador** están visibles nuevo reporte con guardado local, lista/detalle por folio y mapa de reportes por zona. Nuevo reporte incluye foto opcional, revisión y copia explícita del borrador para continuar después. Las coordenadas recuperadas requieren renovar GPS antes del guardado. [Instalar APK y recorrido de prueba](PROBAR_0_5_4.md).
+
+El login académico del compañero conserva `admin` / `admin` como demostración; no crea usuarios o roles reales. Los reportes se guardan en este teléfono y no se envían a autoridades. Los apartados siguientes describen la versión histórica 0.4.0a.
+
+## Antecedentes del corte anterior
 La versión **0.4.0a / código Android 19** conserva las herramientas básicas de 0.3.1: recepción, validación, coordenadas y ejemplo ficticio en memoria. Integra los layouts actuales del compañero y recupera los controles del ejemplo que faltaban en su nuevo diseño. El título interno de la base sigue en 0.3.1; no es la versión instalada del APK.
 
 El puente de ubicación y el borrador se publican como código listo para la futura conexión visual; todavía no tienen controles en la app. Guardado real y consulta continúan ocultos. [Release v0.4.0a](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0a), [Fases](FASES.md) y [Validación](VALIDACION.md) registran el estado oficial y las limitaciones. La publicación histórica v0.4.0 se conserva, sin borrar ni reescribir sus notas.

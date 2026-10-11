@@ -1,5 +1,12 @@
 # Fases de CITIZENSECURITY
 
+## Fases 16 y 17 — 0.5.4
+
+[Fotografías](FASE_16.md): selector real de Android, copia privada validada y vista previa en formulario, revisión y detalle; migración SQLite que conserva reportes sin foto. Completa fotografías en 4.2. [Recuperación del borrador](FASE_17.md): guardar por gesto desde revisión, recuperar con confirmación y conservar el folio al convertir la copia en reporte. Mejora el mismo requisito, sin sumar otro hito.
+
+Código Android 24; entrega oficial con APK académico. Construcción **14/28 = 50%**, pesos originales. [Prueba en Android](PROBAR_0_5_4.md) explica instalación y recorrido. GPS físico final, cuentas, seguimiento administrativo y avisos conservan sus pendientes.
+
+## Antecedentes del corte anterior
 ## Fase 15 — 0.5.3, recorrido local completo
 
 [FASE_15](FASE_15.md) integra formulario → punto validado → guardado → folio → consulta → mapa por zona. Retira la ocultación del guardado y consulta por autorización explícita. Incluye identidad durable ante interrupción y corrección sin pérdida de campos tras rechazo del GPS. Código Android 23; entrega oficial con APK académico. La validación nativa usa SQLite y MapLibre reales con una fuente de teléfono controlada solo en pruebas; no acredita GPS físico del flujo final.

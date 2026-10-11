@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.4] — 2026-10-10
+
+- Fase 16: fotografía opcional mediante el selector del sistema, copia privada, vista previa en formulario/revisión y fotografía en el detalle del folio. Cancelar una sustitución conserva la foto anterior.
+- JPEG, PNG y WebP se comprueban por contenido. La copia se orienta correctamente, reduce hasta 2048 píxeles y normaliza a JPEG sin metadatos EXIF; controles de tamaño, dimensiones e integridad evitan aceptar archivos incompletos o alterados.
+- SQLite pasa de esquema 1 a 2 mediante migración aditiva; conserva reportes anteriores sin fotografía y acepta diarios de guardado históricos. Una fotografía dañada impide un nuevo guardado, permite corregir y no oculta el resto de un reporte ya confirmado.
+- Fase 17: guardar una copia completa del borrador por gesto desde la revisión, recuperarla tras cerrar la app y abrir el folio cuando ya fue guardada como reporte. Leer la copia no restaura campos, inserta datos ni inicia GPS automáticamente.
+- Protección de revisiones entre pantallas: recuperación con lectura actual, comprobación de identidad y folio al escribir, recarga ante resultado incierto y reutilización del UUID para el mismo contenido. Los reintentos del mismo reporte conservan su folio.
+- Entrega oficial con APK académico, código Android 24. Construcción **14/28 = 50%**: se completa el hito de fotografías de 4.2; recuperación mejora fiabilidad y no agrega criterios al plan. Login/splash del compañero y versiones previas se conservan.
+
+## Antecedentes del corte anterior
 ## [0.5.3] — 2026-10-09
 
 - Activado por autorización: formulario con guardado SQLite real, recibo/folio, lista, búsqueda, filtros y detalle; mapa por zona con calles/pines locales y navegación al mismo detalle. Todo accesible desde Desarrollador en debug y release.

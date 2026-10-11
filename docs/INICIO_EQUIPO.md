@@ -1,5 +1,12 @@
 # Empezar a trabajar en el repositorio
 
+## Actualización actual — 0.5.4
+
+El código compartido está en main; [Release v0.5.4 y APK](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.4) permite probarlo sin Android Studio. [Guía breve de Android](PROBAR_0_5_4.md). Fotografías y recuperación de borrador están visibles junto a guardado/consulta/mapa; se conservan interfaces de acceso del compañero.
+
+Conserva tus cambios en tu rama antes de actualizar. Con el directorio limpio: `git fetch origin`, `git switch main`, `git pull --ff-only origin main`. Después sincroniza Gradle en Android Studio y ejecuta app. La APK académica se instala encima de la anterior con la misma firma; evita desinstalar o borrar datos si quieres conservar reportes.
+
+## Antecedentes del corte anterior
 Versión oficial **0.4.0a / código Android 19**, del **6 de octubre de 2026**, con validación completada. El usuario pidió revisar GitHub, incorporar el trabajo del compañero y subir/publicar esta actualización como Release; su estado en GitHub se consulta en [Release v0.4.0a](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.4.0a). Esta autorización cubre esta entrega, sin autorizar automáticamente siguientes publicaciones.
 
 Se completaron dos pasos técnicos: **fase 6A**, un puente para conectar permiso, captura explícita y ciclo de vida de la pantalla; y **fase 7**, un borrador editable que conserva los campos al ir al mapa y regresar, con recuperación mediante `SavedStateHandle` y protección ante resultados de otra sesión. También se cerró el endurecimiento de evidencia GPS de 0.3.11 que había quedado pendiente. Estas piezas quedan listas para que el compañero conecte sus controles; no añaden un formulario, login ni navegación por su cuenta, no inician GPS automáticamente y no habilitan guardado real o consulta.

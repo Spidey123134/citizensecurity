@@ -278,6 +278,7 @@ private fun ReportDetail(report: Report, onMap: (String) -> Unit) {
             DetailField("Prioridad", priorityLabel(report.priority))
             DetailField("Estado local", statusLabel(report.status))
             DetailField("Descripción", report.description, "report_description")
+            com.example.citizensecurity.report.ReportPhotoContent(report.photo, tagPrefix = "report_photo")
             DetailField("Fecha del incidente", formatReportTime(report.occurredAt))
             DetailField("Guardado en este teléfono", formatReportTime(report.createdAt))
             DetailField("Referencia", report.location.reference.ifBlank { "Sin referencia escrita" })

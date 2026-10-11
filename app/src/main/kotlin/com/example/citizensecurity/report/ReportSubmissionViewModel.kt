@@ -86,11 +86,28 @@ class ReportSubmissionViewModel(
         }
     }
 
-    fun save(draft: NewReport) {
+    fun save(draft: NewReport, requestIdHint: String? = null) {
         if (!canBegin() || !recoveryComplete || mutableState.value is ReportSubmissionState.Saved) return
         val previous = request
+        if (requestIdHint != null && !runCatching {
+                UUID.fromString(requestIdHint).toString() == requestIdHint
+            }.getOrDefault(false)
+        ) {
+            mutableState.value = ReportSubmissionState.Error(
+                "La identidad del borrador no es válida. Recupera su copia antes de guardar el reporte.",
+                previous,
+            )
+            return
+        }
         val normalized = draft.normalized()
         if (previous != null) {
+            if (requestIdHint != null && requestIdHint != previous.requestId) {
+                mutableState.value = ReportSubmissionState.Error(
+                    "El resultado anterior está pendiente con otro folio. Recupera ese resultado antes de iniciar otro reporte.",
+                    previous,
+                )
+                return
+            }
             if (previous.draft != normalized) {
                 mutableState.value = ReportSubmissionState.Error(
                     "El resultado anterior está pendiente. Recupera o reintenta los mismos datos antes de iniciar otro reporte.",
@@ -106,7 +123,7 @@ class ReportSubmissionViewModel(
             mutableState.value = ReportSubmissionState.Invalid(errors.errors.toMap(), normalized)
             return
         }
-        val next = ReportSubmissionRequest(UUID.randomUUID().toString(), normalized, clock.instant())
+        val next = ReportSubmissionRequest(requestIdHint ?: UUID.randomUUID().toString(), normalized, clock.instant())
         request = next
         submit(next)
     }

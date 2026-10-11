@@ -101,6 +101,7 @@ internal fun showValidation(report: NewReport, now: Instant) {
                 ReportField.LOCATION_REFERENCE -> "Ubicación escrita"
                 ReportField.LOCATION_COORDINATES -> "Coordenadas"
                 ReportField.OCCURRED_AT -> "Fecha del incidente"
+                ReportField.PHOTO -> "Fotografía"
             }
             println("$fieldName: $message")
         }

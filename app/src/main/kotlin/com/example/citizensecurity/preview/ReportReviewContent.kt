@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.example.citizensecurity.R
 import com.example.citizensecurity.domain.NewReport
 import com.example.citizensecurity.report.ReportReviewSnapshot
+import com.example.citizensecurity.report.ReportPhotoContent
 import java.time.ZoneId
 
 /** Resumen de lectura del borrador revisado; sus acciones no abren GPS, permisos ni SQLite. */
@@ -56,6 +57,7 @@ internal fun ReportReviewContent(
         ReviewField("Tipo de incidente", types[review.type.ordinal], "review_type")
         ReviewField("Prioridad indicada por ti", priorities[review.priority.ordinal], "review_priority")
         ReviewField("Descripción de lo ocurrido", review.description, "review_description")
+        ReportPhotoContent(draft.photo, tagPrefix = "review_photo")
         ReviewField("Fecha y hora del incidente", "${review.occurredAtText}\nZona horaria: ${review.timeZoneText}", "review_occurred_at")
         HorizontalDivider()
         Text("Lugar del incidente", style = MaterialTheme.typography.titleLarge,

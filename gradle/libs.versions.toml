@@ -13,6 +13,8 @@ espresso = "3.7.0"
 uiAutomator = "2.4.0"
 maplibre = "13.6.1"
 fragment = "1.9.1"
+exif = "1.4.2"
+annotation = "1.11.0"
 
 [libraries]
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
@@ -35,6 +37,8 @@ androidx-test-espresso = { module = "androidx.test.espresso:espresso-core", vers
 androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiAutomator" }
 maplibre = { module = "org.maplibre.gl:android-sdk-opengl", version.ref = "maplibre" }
 androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "fragment" }
+androidx-exif = { module = "androidx.exifinterface:exifinterface", version.ref = "exif" }
+androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

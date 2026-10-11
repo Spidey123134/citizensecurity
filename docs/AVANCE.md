@@ -1,5 +1,12 @@
 # Avance del plan del proyecto
 
+## Avance 0.5.4 — fases 16 y 17
+
+**14/28 = 50%** de construcción con los mismos criterios y pesos del PDF. Fotografías completa el cuarto hito de **4.2 Reportes (4/4)**: selección, copia privada, revisión/detalle, guardado real y migración. La recuperación del borrador fortalece ese recorrido y no inventa un hito adicional.
+
+**4.3 permanece 3/4**: las pruebas nuevas usan Android real y una fuente de ubicación controlada en integración, sin acreditar GPS físico final. **4.4 sigue 2/4** porque todavía no hay autor autenticado ni seguimiento administrativo. [Fase 16](FASE_16.md), [Fase 17](FASE_17.md) y [Validación](VALIDACION.md) separan construcción de aceptación.
+
+## Antecedentes del corte anterior
 ## Avance 0.5.3 — fase 15
 
 **13/28 = 46.4%**, con los mismos hitos y pesos. Se incorporan dos hitos existentes: **4.2 formulario con guardado real autorizado** (3/4) y **4.5 flujo visual integrado y probado** (4/4 de construcción). La orden «ya no mantengas nada oculto» permite conectar el guardado/consulta construidos. La aceptación nativa usa SQLite, AtomicFile y MapLibre reales; la fuente de teléfono es controlada únicamente en androidTest. Esto no acredita GPS físico nuevo: **4.3 permanece 3/4**. La consulta visible mantiene **4.4 en 2/4**, porque aún no hay identidad de usuario ni seguimiento administrativo.
@@ -122,14 +129,14 @@ Una pantalla visual cuenta solo como preparación visual; una lógica probada cu
 | Requisito | Hitos de construcción | Comprobados | Avance estimado |
 | --- | --- | --- | --- |
 | 4.1 Usuarios | Pantalla de acceso; creación de cuentas; verificación real de acceso; identidad y aislamiento de datos | Pantalla de acceso del compañero | 1/4 · 25% |
-| 4.2 Reportes | Modelo y validación; persistencia local técnica; formulario con guardado real autorizado; fotografías | Modelo/validación, persistencia técnica y formulario con guardado autorizado probado en 0.5.3 | 3/4 · 75% |
+| 4.2 Reportes | Modelo y validación; persistencia local técnica; formulario con guardado real autorizado; fotografías | Modelo/validación, persistencia técnica, formulario autorizado y fotografías con copia privada/migración probadas en 0.5.4 | 4/4 · 100% de construcción |
 | 4.3 Geolocalización | Par de coordenadas validado y conservado; captura del dispositivo; permisos y estados GPS; flujo GPS probado | Coordenadas y captura física previa comprobadas; 0.5.1 conecta los controles y comprueba denegado/aproximado/preciso/ubicación desactivada contra Android real, junto con sus estados técnicos anteriores. Falta aceptación física del flujo visual completo | 3/4 · 75% |
 | 4.4 Consulta | Lectura por folio; lista y permanencia; reportes propios por usuario; seguimiento de estados | Lectura por folio, lista/permanencia y pantallas visibles en 0.5.3. Sin identidad de autor ni seguimiento administrativo | 2/4 · 50% |
 | 4.5 Mapas | Contrato de selección y confirmación; SDK configurado; mapa por zonas y marcadores; flujo visual integrado y probado | Contrato, SDK, zonas/marcadores y flujo visual integrado en 0.5.3: guardado/folio, mapa nativo con calles y pines SQLite, filtros/límite y pin→detalle. Validación con fuente de teléfono controlada, sin acreditar el hito GPS físico | 4/4 · 100% de construcción |
 | 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Ninguno | 0/4 · 0% |
 | 4.7 Notificaciones | Eventos de cambios; entrega de avisos; permisos y preferencias; flujo completo probado | Ninguno | 0/4 · 0% |
 
-**Avance actual estimado: 13/28 = 46.4%.** 0.5.3 acredita formulario con guardado real autorizado y mapa visual integrado/probado; no añade criterios ni cambia pesos. Publicar y repetir pruebas no suman hitos. Faltan GPS físico del recorrido final, autenticación/aislamiento por usuario, fotos, seguimiento administrativo y avisos.
+**Avance actual estimado: 14/28 = 50%.** 0.5.4 acredita fotografías sobre el formulario y mapa ya comprobados. La recuperación fortalece fiabilidad sin añadir criterios ni cambiar pesos. Publicar y repetir pruebas no suman hitos. Faltan GPS físico del recorrido final, autenticación/aislamiento por usuario, seguimiento administrativo y avisos.
 
 **0.3.3 no suma otro hito ni cambia el porcentaje.** Fortalece el contrato con el radio de 5 km elegido por el usuario, exige evidencia reciente y suficientemente precisa y prepara un guard para la escritura productiva. No obtiene GPS ni configura SDK, permisos o pantalla de mapa. La regla y sus pruebas se documentan en [Proximidad de reportes](PROXIMIDAD_REPORTES.md) y [Validación](VALIDACION.md), separadas del corte 0.3.2.
 

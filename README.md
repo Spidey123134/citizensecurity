@@ -1,5 +1,16 @@
 # CITIZENSECURITY
 
+## Versión 0.5.4 — fotografías y borrador recuperable
+
+[Release y APK 0.5.4](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.4) · código Android 24. **Desarrollador → Nuevo reporte · guardado local** permite adjuntar una fotografía opcional, verla en la revisión y abrirla junto al folio guardado. La app conserva una copia privada que sigue disponible aunque desaparezca la foto de la galería.
+
+Desde la revisión puedes **Guardar borrador para continuar después**. Al volver, recuperas esa copia por confirmación; conserva los campos y la foto. Guardar el borrador no crea un reporte ni obtiene GPS. Para guardar el reporte necesitas renovar la ubicación precisa y confirmar el punto dentro de 5 km. Una copia ya convertida en reporte abre su mismo folio.
+
+[Cómo instalar y probar en Android](docs/PROBAR_0_5_4.md) · [Fase 16: fotografías](docs/FASE_16.md) · [Fase 17: recuperación](docs/FASE_17.md). Construcción: **14/28 hitos = 50%**, con los mismos criterios del PDF. Los reportes permanecen en este teléfono; cuentas reales, administración y avisos a autoridades siguen pendientes.
+
+Instala el APK académico sobre la versión anterior, sin desinstalar ni borrar datos. Para actualizar el código, conserva tus cambios y usa `git fetch origin`, `git switch main`, `git pull --ff-only origin main`.
+
+## Antecedentes del corte anterior
 ## Versión 0.5.3 — reporte, folio, consulta y mapa
 
 [Release oficial v0.5.3](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.3) · código Android 23. En **Desarrollador** están disponibles **Nuevo reporte · guardado local**, **Reportes en este teléfono** y **Mapa de reportes por zona**. Llena el reporte, confirma un punto cercano con GPS preciso y guarda; recibe un folio para abrir el detalle, copiarlo o ubicar el reporte en el mapa. Consulta y filtros leen los datos guardados en este teléfono.

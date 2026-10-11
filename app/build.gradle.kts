@@ -13,8 +13,8 @@ android {
         applicationId = "com.example.citizensecurity"
         minSdk = 26
         targetSdk = 37
-        versionCode = 23
-        versionName = "0.5.3"
+        versionCode = 24
+        versionName = "0.5.4"
         testInstrumentationRunner = "com.example.citizensecurity.testing.ReportTestRunner"
     }
     buildFeatures { compose = true }
@@ -58,4 +58,5 @@ dependencies {
     androidTestImplementation(libs.androidx.test.core)
     // Compose trae Espresso antiguo; 3.7 usa el servicio público de entrada en Android 17.
     androidTestImplementation(libs.androidx.test.espresso)
+    androidTestImplementation(libs.androidx.test.uiautomator)
 }

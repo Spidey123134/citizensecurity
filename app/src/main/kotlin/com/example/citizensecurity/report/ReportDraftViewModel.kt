@@ -12,6 +12,7 @@ import com.example.citizensecurity.domain.NearbyLocationConfirmation
 import com.example.citizensecurity.domain.NewReport
 import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.ReportLocation
+import com.example.citizensecurity.domain.ReportPhoto
 import com.example.citizensecurity.domain.ReportValidator
 import java.time.DateTimeException
 import java.time.Instant
@@ -20,7 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 enum class ReportDraftField {
-    TYPE, PRIORITY, DESCRIPTION, OCCURRED_AT, LOCATION_REFERENCE, LOCATION_COORDINATES, SNAPSHOT,
+    TYPE, PRIORITY, DESCRIPTION, OCCURRED_AT, LOCATION_REFERENCE, LOCATION_COORDINATES, PHOTO, SNAPSHOT,
 }
 
 data class ReportDraftState(
@@ -31,6 +32,8 @@ data class ReportDraftState(
     val location: ReportLocation = ReportLocation(),
     val locationSelectionPending: Boolean = false,
     val inputErrors: Map<ReportDraftField, String> = emptyMap(),
+    val photo: ReportPhoto? = null,
+    val photoSelectionPending: Boolean = false,
 )
 
 sealed interface ReportDraftEditResult {
@@ -48,6 +51,9 @@ sealed interface ReportDraftReview {
 
 /** Identidad de esta apertura; no se serializa ni se puede reutilizar tras restaurar otro modelo. */
 class ReportLocationSelectionToken internal constructor()
+
+/** Retained across Activity recreation, never restored as authority after process death. */
+class ReportPhotoSelectionToken internal constructor()
 
 data class ReportLocationSelectionRequest(
     val token: ReportLocationSelectionToken,
@@ -67,6 +73,7 @@ class ReportDraftViewModel(
 ) : ViewModel() {
     private val problems = linkedMapOf<ReportDraftField, InputProblem>()
     private var selection: ReportLocationSelectionRequest? = null
+    private var photoSelection: ReportPhotoSelectionToken? = null
     private var closed = false
     private val mutableState = MutableStateFlow(restore())
     val state: StateFlow<ReportDraftState> = mutableState.asStateFlow()
@@ -92,6 +99,45 @@ class ReportDraftViewModel(
         editText(reference, MAX_REFERENCE_CHARACTERS, InputProblem.REFERENCE_TOO_LONG) {
             copy(location = location.copy(reference = reference))
         }
+
+    fun currentPhotoSelection(): ReportPhotoSelectionToken? = if (closed) null else photoSelection
+
+    fun isCurrentPhotoSelection(token: ReportPhotoSelectionToken): Boolean =
+        !closed && photoSelection === token
+
+    /** Picking a replacement leaves the existing photograph intact until import succeeds. */
+    fun beginPhotoSelection(): ReportPhotoSelectionToken? {
+        if (closed) return null
+        return ReportPhotoSelectionToken().also {
+            photoSelection = it
+            publish(state.value.copy(photoSelectionPending = true))
+        }
+    }
+
+    fun applyPhotoSelection(token: ReportPhotoSelectionToken, photo: ReportPhoto): Boolean {
+        if (!isCurrentPhotoSelection(token)) return false
+        photoSelection = null
+        problems.remove(ReportDraftField.PHOTO)
+        publish(state.value.copy(photo = photo, photoSelectionPending = false))
+        return true
+    }
+
+    /** Cancellation and failed import keep the previous photo and its metadata. */
+    fun cancelPhotoSelection(token: ReportPhotoSelectionToken): Boolean {
+        if (!isCurrentPhotoSelection(token)) return false
+        photoSelection = null
+        publish(state.value.copy(photoSelectionPending = false))
+        return true
+    }
+
+    /** Detaches from this draft; it does not delete any stored photo or saved report. */
+    fun removePhoto(): Boolean {
+        if (closed) return false
+        photoSelection = null
+        problems.remove(ReportDraftField.PHOTO)
+        publish(state.value.copy(photo = null, photoSelectionPending = false))
+        return true
+    }
 
     /** Recupera la apertura retenida al recrear la Activity; no abre otra sesión ni pide GPS. */
     fun currentLocationSelection(): ReportLocationSelectionRequest? = if (closed) null else selection
@@ -146,6 +192,7 @@ class ReportDraftViewModel(
     fun reset(): Boolean {
         if (closed) return false
         selection = null
+        photoSelection = null
         problems.clear()
         publish(ReportDraftState())
         return true
@@ -166,6 +213,7 @@ class ReportDraftViewModel(
             !validCoordinates(draft.location.latitude, draft.location.longitude)
         ) return false
         selection = null
+        photoSelection = null
         problems.clear()
         publish(ReportDraftState(
             type = draft.type,
@@ -173,6 +221,7 @@ class ReportDraftViewModel(
             description = draft.description,
             occurredAt = draft.occurredAt,
             location = draft.location.copy(),
+            photo = draft.photo,
         ))
         return true
     }
@@ -184,11 +233,14 @@ class ReportDraftViewModel(
         if (current.locationSelectionPending) {
             errors[ReportDraftField.LOCATION_COORDINATES] = "Confirma o cancela la selección del mapa."
         }
+        if (current.photoSelectionPending) {
+            errors[ReportDraftField.PHOTO] = "Termina o cancela la selección de la fotografía antes de revisar."
+        }
         if (current.type == null) errors[ReportDraftField.TYPE] = "Selecciona el tipo de incidente."
         if (current.priority == null) errors[ReportDraftField.PRIORITY] = "Selecciona la prioridad."
         if (current.occurredAt == null) errors[ReportDraftField.OCCURRED_AT] = "Agrega una fecha válida para el incidente."
         if (current.type != null && current.priority != null && current.occurredAt != null) {
-            val draft = NewReport(current.type, current.priority, current.description, current.occurredAt, current.location)
+            val draft = NewReport(current.type, current.priority, current.description, current.occurredAt, current.location, current.photo)
             validator.validate(draft, now).errors.forEach { (field, message) ->
                 errors[ReportDraftField.valueOf(field.name)] = message
             }
@@ -200,7 +252,8 @@ class ReportDraftViewModel(
     override fun onCleared() {
         closed = true
         selection = null
-        mutableState.value = state.value.copy(locationSelectionPending = false)
+        photoSelection = null
+        mutableState.value = state.value.copy(locationSelectionPending = false, photoSelectionPending = false)
     }
 
     private fun edit(field: ReportDraftField, transform: ReportDraftState.() -> ReportDraftState): Boolean {
@@ -243,6 +296,11 @@ class ReportDraftViewModel(
         savedStateHandle[KEY_NANOS] = value.occurredAt?.nano
         savedStateHandle[KEY_LATITUDE] = value.location.latitude
         savedStateHandle[KEY_LONGITUDE] = value.location.longitude
+        savedStateHandle[KEY_PHOTO_ID] = value.photo?.id
+        savedStateHandle[KEY_PHOTO_HASH] = value.photo?.sha256
+        savedStateHandle[KEY_PHOTO_BYTES] = value.photo?.byteCount
+        savedStateHandle[KEY_PHOTO_WIDTH] = value.photo?.width
+        savedStateHandle[KEY_PHOTO_HEIGHT] = value.photo?.height
         ReportDraftField.entries.forEach { field ->
             savedStateHandle[problemKey(field)] = problems[field]?.name
         }
@@ -293,10 +351,26 @@ class ReportDraftViewModel(
         if ((rawLatitude != null && latitude == null) || (rawLongitude != null && longitude == null) ||
             !validCoordinates(latitude, longitude)
         ) problems[ReportDraftField.LOCATION_COORDINATES] = InputProblem.INVALID_COORDINATES
+        val photo = restorePhoto()
         return ReportDraftState(
             type, priority, description, occurredAt, ReportLocation(reference, latitude, longitude),
             inputErrors = problems.mapValues { it.value.message },
+            photo = photo,
         )
+    }
+
+    private fun restorePhoto(): ReportPhoto? {
+        val id = savedStateHandle.get<Any?>(KEY_PHOTO_ID)
+        val hash = savedStateHandle.get<Any?>(KEY_PHOTO_HASH)
+        val byteCount = savedStateHandle.get<Any?>(KEY_PHOTO_BYTES)
+        val width = savedStateHandle.get<Any?>(KEY_PHOTO_WIDTH)
+        val height = savedStateHandle.get<Any?>(KEY_PHOTO_HEIGHT)
+        if (listOf(id, hash, byteCount, width, height).all { it == null }) return null
+        val photo = if (id is String && hash is String && byteCount is Long && width is Int && height is Int) {
+            runCatching { ReportPhoto(id, hash, byteCount, width, height) }.getOrNull()
+        } else null
+        if (photo == null) problems[ReportDraftField.PHOTO] = InputProblem.INVALID_PHOTO
+        return photo
     }
 
     private fun readText(key: String, limit: Int, problem: InputProblem): String {
@@ -323,6 +397,7 @@ class ReportDraftViewModel(
         INVALID_DATE(ReportDraftField.OCCURRED_AT, "Vuelve a indicar una fecha válida para el incidente."),
         INVALID_REFERENCE(ReportDraftField.LOCATION_REFERENCE, "Vuelve a escribir la referencia de ubicación."),
         INVALID_COORDINATES(ReportDraftField.LOCATION_COORDINATES, "Vuelve a confirmar una ubicación válida en el mapa."),
+        INVALID_PHOTO(ReportDraftField.PHOTO, "No se pudo recuperar la fotografía. Vuelve a elegirla o quítala del borrador."),
     }
 
     companion object {
@@ -339,6 +414,11 @@ class ReportDraftViewModel(
         private const val KEY_NANOS = PREFIX + "occurredAtNanos"
         private const val KEY_LATITUDE = PREFIX + "latitude"
         private const val KEY_LONGITUDE = PREFIX + "longitude"
+        private const val KEY_PHOTO_ID = PREFIX + "photoId"
+        private const val KEY_PHOTO_HASH = PREFIX + "photoHash"
+        private const val KEY_PHOTO_BYTES = PREFIX + "photoBytes"
+        private const val KEY_PHOTO_WIDTH = PREFIX + "photoWidth"
+        private const val KEY_PHOTO_HEIGHT = PREFIX + "photoHeight"
 
         private fun problemKey(field: ReportDraftField): String = PREFIX + "problem." + field.name
 

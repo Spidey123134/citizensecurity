@@ -1,5 +1,44 @@
 # Validación y comprobaciones del proyecto
 
+## Validación 0.5.4 — fases 16 y 17 · 2026-10-10
+
+**752 casos distintos ejecutados y aprobados; 158 definiciones nuevas**, sin fallos, errores u omisiones en el cierre. Las repeticiones tras correcciones y para capturas no aumentan el total.
+
+| Suite | Casos aprobados | Nuevas definiciones frente a 0.5.3 |
+| --- | ---: | ---: |
+| Dominio JVM | 109 | 13 |
+| Datos JVM | 38 | 0 |
+| App JVM | 411 | 74 |
+| Datos Android: SQLite, diarios y fotos | 164 | 65 |
+| Interfaz Android: formulario, guardado, mapas, fotos y permisos | 30 | 6 |
+| Total | 752 | 158 |
+
+Las suites JVM se ejecutaron con el contrato vigente; el primer cierre usó `--rerun-tasks`. Después de ajustar anotaciones/dependencias y los asserts EXIF se repitieron compilación/lint y las suites afectadas. La suite completa de datos se ejecutó de nuevo contra Android; la interfaz agrupó 26 casos y cuatro permisos por separado con estado real del sistema, sin contar repeticiones.
+
+Comandos de cierre:
+
+```powershell
+.\gradlew.bat :app:testDebugUnitTest :core:domain:test :core:data:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:assembleDebugAndroidTest :core:data:assembleDebugAndroidTest :app:lintDebug :app:lintRelease :core:data:lintDebug --console=plain
+.\gradlew.bat :core:data:connectedDebugAndroidTest --console=plain
+adb -s emulator-5586 shell am instrument -w -e class com.example.citizensecurity.preview.ReportDraftUiTest,com.example.citizensecurity.report.ReportSubmissionUiTest,com.example.citizensecurity.reports.ReportsMapUiTest,com.example.citizensecurity.report.ReportPhotoUiTest com.example.citizensecurity.test/com.example.citizensecurity.testing.ReportTestRunner
+```
+
+Los cuatro `ReportPermissionUiTest` se ejecutaron individualmente con ambos permisos revocados, COARSE solo, COARSE+FINE, y COARSE+FINE con ubicación desactivada. Restaurar permisos o ubicación se hizo entre instrumentaciones, nunca dentro de un proceso activo.
+
+La validación usa una copia read-only propia de Medium_Phone_API_37.0, API 37, GPU host, sin modificar el AVD original ni datos de un teléfono. Comprueba selector Android real y su confirmación, giro/cancelación, copia privada tras desaparecer el origen, foto en SQLite/diario/detalle, rechazo de corrupción, recuperación de copia del borrador por confirmación, lectura actual antes de aplicar, CAS y mismo folio tras una escritura antigua. SQLite, AtomicFile, archivos, permisos y mapa son nativos. El origen GPS en los recorridos integrados es controlado exclusivamente en androidTest; **no acredita GPS físico del recorrido final ni revisión del usuario**.
+
+La migración 1→2 conserva campos, folios, nanosegundos e índice. Las rutas moderna y alternativa recorren las ocho orientaciones EXIF con píxeles/dimensiones comprobados y JPEG sin segmento APP1 EXIF. El primer pase detectó tres asserts que confundían orientación ausente (0, UNDEFINED) con NORMAL (1); se corrigió esa comprobación sin retirar las verificaciones de píxeles y se añadió inspección del contenedor. La ruta compatible con API 26 se fuerza en API 37: no se declara aceptación física en Android 26. También se corrigió la automatización del selector para confirmar Done antes de esperar el callback.
+
+Debug, release y APK de pruebas compilan. **Lint: 0 errores**, 22 advertencias por variante de app (19 anteriores y tres avisos de versiones de herramientas), 0 en datos. Las versiones de Gradle/Kotlin que lint propone actualizar requieren revisar su compatibilidad en otro incremento; no se confunde ese aviso con errores de la app. La comprobación de captura espera a que termine la transición de Android para evitar una imagen entre dos pantallas.
+
+Dependencias incorporadas: [ExifInterface 1.4.2](https://developer.android.com/jetpack/androidx/releases/exifinterface) y [Annotation 1.11.0](https://developer.android.com/jetpack/androidx/releases/annotation), con `RequiresApi(28)` y guard de SDK para ImageDecoder. La selección usa [Photo Picker de Android](https://developer.android.com/training/data-storage/shared/photo-picker), sin permiso general de galería ni cámara.
+
+APK académico `citizensecurity-0.5.4-academico.apk`: **54,753,106 bytes**, SHA-256 `51dec6e8aee759927b5be7921ef61221141ad77bea89380a42793447840060f9`. Firma v2 válida y mismo certificado de las entregas previas (`0a4006a1d2ef2ad02a0dad7c51b55c0ba5ffcd096a226eed6456326b2fed3ebd`). El DEX productivo excluye ReportTestApplication, ReportTestFixture y PhotoFixtureProvider. El APK anterior 0.5.3 conserva su hash; no se desinstala ni borra datos para actualizar. Se distribuye el APK académico firmado; release-unsigned solo valida compilación.
+
+Resultados, XML, logs, capturas y recibos están separados en `.gradle/validacion/release054-*`, ignorados en Git. [Fase 16](FASE_16.md), [Fase 17](FASE_17.md) y [prueba en Android](PROBAR_0_5_4.md) explican alcance. Construcción **14/28 = 50%**, mismos criterios: fotografías completa 4.2, recuperación no agrega hitos. Cuentas, administración, avisos y aceptación física final mantienen sus pendientes.
+
+## Antecedentes del corte anterior
+
 ## Validación 0.5.3 — fase 15
 
 [FASE_15](FASE_15.md) registra la ejecución de JVM, SQLite/AtomicFile Android, formulario/guardado/consulta y mapa nativo. Las suites nuevas usan bases y diarios aislados; los permisos se comprueban contra Android. Solo el origen de la lectura del teléfono es controlado en las pruebas de integración nuevas, sin incorporarlo a los APK. No se declara una lectura GPS física nueva ni aceptación del usuario por aprobar instrumentación. El emulador es una copia read-only sin alterar datos del AVD original.

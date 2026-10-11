@@ -6,6 +6,7 @@ import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.NewReport
 import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.ReportLocation
+import com.example.citizensecurity.domain.ReportPhoto
 import com.example.citizensecurity.domain.ReportSubmissionJournal
 import com.example.citizensecurity.domain.ReportSubmissionRequest
 import java.io.File
@@ -136,6 +137,13 @@ class ReportSubmissionStore(
         put("reference", request.draft.location.reference)
         put("latitude", request.draft.location.latitude ?: JSONObject.NULL)
         put("longitude", request.draft.location.longitude ?: JSONObject.NULL)
+        put("photo", request.draft.photo?.let { photo -> JSONObject().apply {
+            put("id", photo.id)
+            put("sha256", photo.sha256)
+            put("byteCount", photo.byteCount)
+            put("width", photo.width)
+            put("height", photo.height)
+        } } ?: JSONObject.NULL)
     }.toString()
 
     private fun decode(json: JSONObject): ReportSubmissionRequest {
@@ -154,12 +162,28 @@ class ReportSubmissionStore(
                 description = json.stringValue("description"),
                 occurredAt = json.instant("occurredAt"),
                 location = ReportLocation(json.stringValue("reference"), latitude, longitude),
+                photo = json.photo(),
             ),
         )
     }
 
     private fun JSONObject.stringValue(key: String): String = get(key) as? String
         ?: throw IOException("Campo de texto inválido: $key")
+
+    private fun JSONObject.photo(): ReportPhoto? {
+        // Los diarios de 0.5.3 no contenían este campo; mantienen su identidad y borrador.
+        if (!has("photo") || isNull("photo")) return null
+        val photo = get("photo") as? JSONObject ?: throw IOException("Fotografía inválida.")
+        val width = photo.longValue("width")
+        val height = photo.longValue("height")
+        require(width in 1..ReportPhoto.MAX_DIMENSION.toLong() && height in 1..ReportPhoto.MAX_DIMENSION.toLong()) {
+            "Dimensiones inválidas en la fotografía del diario."
+        }
+        return ReportPhoto(
+            id = photo.stringValue("id"), sha256 = photo.stringValue("sha256"),
+            byteCount = photo.longValue("byteCount"), width = width.toInt(), height = height.toInt(),
+        )
+    }
 
     private fun JSONObject.longValue(key: String): Long {
         val value = get(key)

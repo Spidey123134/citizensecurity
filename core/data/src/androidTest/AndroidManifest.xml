@@ -1,0 +1,9 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- Sólo fixtures de instrumentación, ausente del APK productivo. -->
+        <provider
+            android:name="com.example.citizensecurity.data.PhotoFixtureProvider"
+            android:authorities="com.example.citizensecurity.data.photos.fixture"
+            android:exported="true" />
+    </application>
+</manifest>
