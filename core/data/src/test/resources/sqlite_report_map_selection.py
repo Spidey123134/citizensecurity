@@ -14,7 +14,7 @@ for line in lines[2:]:
         None if values[1] == "NULL" else float(values[1]),
         None if values[2] == "NULL" else float(values[2]),
         values[3], values[4],
-        int(values[5]), int(values[6]), int(values[7]), int(values[8]),
+        int(values[5]), int(values[6]), int(values[7]), int(values[8]), values[9],
     ))
 
 with sqlite3.connect(":memory:") as database:
@@ -23,10 +23,11 @@ with sqlite3.connect(":memory:") as database:
             id TEXT PRIMARY KEY, latitude REAL, longitude REAL,
             incident_type TEXT NOT NULL, status TEXT NOT NULL,
             occurred_at_seconds INTEGER NOT NULL, occurred_at_nanos INTEGER NOT NULL,
-            created_at_seconds INTEGER NOT NULL, created_at_nanos INTEGER NOT NULL
+            created_at_seconds INTEGER NOT NULL, created_at_nanos INTEGER NOT NULL,
+            priority TEXT NOT NULL
         )
     """)
-    database.executemany("INSERT INTO reports VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", rows)
+    database.executemany("INSERT INTO reports VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", rows)
     before = database.execute("SELECT COUNT(*) FROM reports").fetchone()[0]
     result = database.execute(sql, arguments).fetchall()
     assert before == database.execute("SELECT COUNT(*) FROM reports").fetchone()[0]

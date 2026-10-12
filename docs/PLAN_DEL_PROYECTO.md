@@ -1,5 +1,13 @@
 # Plan del proyecto
 
+## Desarrollo para 0.6.0 — fases 21 y 22, Unreleased
+
+El equipo agrupa cambios de código en main sin publicar APK, tags o Releases por fase. [Fase 21](FASE_21.md) añade fechas del incidente al mapa y lista de la misma zona. [Fase 22](FASE_22.md) combina prioridad con los filtros de lista/mapa, mueve el cálculo de búsqueda fuera de Main y comprueba la cámara real antes de abrir una muestra de zona. La validación Android de estos controles se reserva para la entrega agrupada; la última APK publicada sigue siendo 0.5.7.
+
+Se refuerzan **4.4 Consulta / 4.5 Mapas**, con los mismos criterios: **15/28 = 53.6%**. Consulta mantiene 2/4: completar los dos criterios pendientes exige autor autenticado y seguimiento administrativo, coordinados con el equipo. La paginación del historial sigue pendiente para reducir memoria a gran escala. Cuentas, roles, administración y notificaciones no se dan por implementados mediante filtros. Los cortes siguientes son históricos.
+
+## Antecedente 0.5.7
+
 ## Fase 20 — 0.5.7, búsqueda útil en la consulta
 
 Se continúa **4.4 Consulta** con una mejora funcional de la lista: encontrar reportes por descripción o referencia y acotar la fecha del incidente. Se normalizan mayúsculas/acentos, las fechas pueden escribirse o elegirse en calendario y se combinan con tipo/estado. Texto y fechas se aplican por gesto; una entrada inválida conserva los resultados del filtro anterior. Volver del detalle cancela su lectura pendiente para permitir continuar consultando.

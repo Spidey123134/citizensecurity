@@ -38,7 +38,7 @@ data class MapRegion(
 }
 
 /**
- * Filtros vacíos aceptan cualquier categoría/estado. Conserva una copia inmutable de cada filtro.
+ * Filtros vacíos aceptan cualquier categoría/estado/prioridad. Conserva una copia inmutable de cada filtro.
  * Las fechas comparan el instante del incidente con inicio inclusivo y final exclusivo.
  * Límites iguales representan un intervalo vacío, válido para días locales omitidos.
  */
@@ -49,9 +49,11 @@ class ReportMapQuery(
     val limit: Int = DEFAULT_LIMIT,
     val startInclusive: Instant? = null,
     val endExclusive: Instant? = null,
+    priorities: Set<Priority> = emptySet(),
 ) {
     val types: Set<IncidentType> = Collections.unmodifiableSet(types.toSet())
     val statuses: Set<ReportStatus> = Collections.unmodifiableSet(statuses.toSet())
+    val priorities: Set<Priority> = Collections.unmodifiableSet(priorities.toSet())
 
     init {
         require(limit in 1..MAX_LIMIT) { "La consulta del mapa admite entre 1 y $MAX_LIMIT marcadores." }
@@ -62,7 +64,8 @@ class ReportMapQuery(
 
     override fun equals(other: Any?): Boolean = other is ReportMapQuery &&
         region == other.region && types == other.types && statuses == other.statuses && limit == other.limit &&
-            startInclusive == other.startInclusive && endExclusive == other.endExclusive
+            startInclusive == other.startInclusive && endExclusive == other.endExclusive &&
+            priorities == other.priorities
 
     override fun hashCode(): Int {
         var result = region.hashCode()
@@ -70,11 +73,12 @@ class ReportMapQuery(
         result = 31 * result + statuses.hashCode()
         result = 31 * result + limit
         result = 31 * result + (startInclusive?.hashCode() ?: 0)
-        return 31 * result + (endExclusive?.hashCode() ?: 0)
+        result = 31 * result + (endExclusive?.hashCode() ?: 0)
+        return 31 * result + priorities.hashCode()
     }
 
     override fun toString(): String = "ReportMapQuery(region=$region, types=$types, statuses=$statuses, " +
-        "limit=$limit, startInclusive=$startInclusive, endExclusive=$endExclusive)"
+        "limit=$limit, startInclusive=$startInclusive, endExclusive=$endExclusive, priorities=$priorities)"
 
     companion object {
         const val DEFAULT_LIMIT = 200

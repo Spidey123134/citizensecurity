@@ -56,6 +56,7 @@ class ReportMapVisiblePageTest {
             ReportMapQuery(region, startInclusive = start.plusNanos(1), endExclusive = end),
             ReportMapQuery(region, startInclusive = start, endExclusive = end.plusNanos(1)),
             ReportMapQuery(region),
+            ReportMapQuery(region, startInclusive = start, endExclusive = end, priorities = setOf(Priority.HIGH)),
         )
         otherQueries.forEach { assertNull(currentVisibleMapPage(scene, ReportMapState.Ready(it, page))) }
     }
@@ -66,5 +67,17 @@ class ReportMapVisiblePageTest {
         assertNull(currentVisibleMapPage(ReportMapSceneState.Ready(query, 0, true), reading))
         assertNull(currentVisibleMapPage(ReportMapSceneState.Ready(query, 2, true), reading))
         assertNull(currentVisibleMapPage(ReportMapSceneState.Ready(query, 1, false), reading))
+    }
+
+    @Test
+    fun gestoDuranteMovimientoDeCamaraNoAbreMuestraDeOtraRegion() {
+        val page = ReportMapPage(listOf(marker), false)
+        val scene = ReportMapSceneState.Ready(query, 1, false)
+        val reading = ReportMapState.Ready(query, page)
+        assertSame(page, currentVisibleMapPageInRegion(scene, reading, region))
+        assertNull(currentVisibleMapPageInRegion(scene, reading, MapRegion(20.0, 21.0, -100.0, -99.0)))
+        assertNull(currentVisibleMapPageInRegion(scene, reading, null))
+        assertNull(currentVisibleMapPageInRegion(ReportMapSceneState.Loading(query), reading, region))
+        assertNull(currentVisibleMapPageInRegion(scene, ReportMapState.Loading(query, reading), region))
     }
 }

@@ -10,6 +10,7 @@ import com.example.citizensecurity.preview.PreviewTheme
 import com.example.citizensecurity.report.ReportListState
 import com.example.citizensecurity.report.ReportListViewModel
 import com.example.citizensecurity.report.ReportQueryViewModel
+import com.example.citizensecurity.report.ReportSearchViewModel
 
 class ReportsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,12 +18,14 @@ class ReportsActivity : ComponentActivity() {
         val repository = (application as CitizenSecurityApplication).reportRepository
         val list = ViewModelProvider(this, ReportListViewModel.factory(repository))[ReportListViewModel::class.java]
         val query = ViewModelProvider(this, ReportQueryViewModel.factory(repository))[ReportQueryViewModel::class.java]
+        val search = ViewModelProvider(this, ReportSearchViewModel.factory())[ReportSearchViewModel::class.java]
         if (list.state.value == ReportListState.Idle) list.load()
         setContent {
             PreviewTheme {
                 ReportsScreen(
                     list = list,
                     query = query,
+                    search = search,
                     initialFolio = intent.getStringExtra(EXTRA_FOLIO),
                     onClose = ::finish,
                     onMap = { folio ->

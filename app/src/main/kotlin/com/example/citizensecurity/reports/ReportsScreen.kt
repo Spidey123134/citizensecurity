@@ -53,29 +53,40 @@ import com.example.citizensecurity.report.ReportListState
 import com.example.citizensecurity.report.ReportListViewModel
 import com.example.citizensecurity.report.ReportQueryState
 import com.example.citizensecurity.report.ReportQueryViewModel
-import com.example.citizensecurity.report.filterLocalReports
+import com.example.citizensecurity.report.ReportSearchViewModel
+import com.example.citizensecurity.report.ReportSearchState
+import com.example.citizensecurity.report.ReportSearchInput
+import com.example.citizensecurity.report.currentReportSearchResult
 import com.example.citizensecurity.report.parseReportSearchFilters
 import com.example.citizensecurity.report.ReportSearchFilterValidation
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun ReportsScreen(
     list: ReportListViewModel,
     query: ReportQueryViewModel,
+    search: ReportSearchViewModel,
     initialFolio: String?,
     onClose: () -> Unit,
     onMap: (String) -> Unit,
 ) {
-    val listState by list.state.collectAsStateWithLifecycle()
+    // A new equal reading must still reach the worker; avoid List.equals on Main.
+    val listReadings = remember(list) { list.state.map(::ReportListReading) }
+    val initialReading = remember(list) { ReportListReading(list.state.value) }
+    val listReading by listReadings.collectAsStateWithLifecycle(initialReading)
+    val listState = listReading.state
     val queryState by query.state.collectAsStateWithLifecycle()
+    val searchState by search.state.collectAsStateWithLifecycle()
     var folio by rememberSaveable { mutableStateOf(initialFolio.orEmpty()) }
     var detailFolio by rememberSaveable {
         mutableStateOf(initialFolio?.trim()?.lowercase()?.takeIf { it.isNotEmpty() })
     }
     var typeName by rememberSaveable { mutableStateOf<String?>(null) }
     var statusName by rememberSaveable { mutableStateOf<String?>(null) }
+    var priorityName by rememberSaveable { mutableStateOf<String?>(null) }
     var searchText by rememberSaveable { mutableStateOf("") }
     var dateFrom by rememberSaveable { mutableStateOf("") }
     var dateTo by rememberSaveable { mutableStateOf("") }
@@ -88,14 +99,18 @@ fun ReportsScreen(
     val searchZone = remember(searchZoneName) { ZoneId.of(searchZoneName) }
     val selectedType = IncidentType.entries.firstOrNull { it.name == typeName }
     val selectedStatus = ReportStatus.entries.firstOrNull { it.name == statusName }
-    val appliedFilters = remember(appliedText, appliedFrom, appliedTo, searchZone, selectedType, selectedStatus) {
-        parseReportSearchFilters(appliedText, appliedFrom, appliedTo, searchZone, selectedType, selectedStatus)
+    val selectedPriority = Priority.entries.firstOrNull { it.name == priorityName }
+    val appliedFilters = remember(appliedText, appliedFrom, appliedTo, searchZone, selectedType, selectedStatus, selectedPriority) {
+        parseReportSearchFilters(appliedText, appliedFrom, appliedTo, searchZone, selectedType, selectedStatus, selectedPriority)
     }
-    val visibleReports = remember(listState, appliedFilters) {
-        val reading = listState
-        val checked = appliedFilters
-        if (reading is ReportListState.Loaded && checked is ReportSearchFilterValidation.Valid)
-            filterLocalReports(reading.reports, checked.filters) else emptyList()
+    val source = (listState as? ReportListState.Loaded)?.reports
+    val validatedFilters = (appliedFilters as? ReportSearchFilterValidation.Valid)?.filters
+    val searchInput = if (source != null && validatedFilters != null) ReportSearchInput(source, validatedFilters) else null
+    // Check ownership during composition; an effect for new filters may not have run yet.
+    val currentSearch = if (searchInput != null && detailFolio == null)
+        currentReportSearchResult(searchInput.source, searchInput.filters, searchState) else null
+    val currentSearchError = (searchState as? ReportSearchState.Error)?.takeIf {
+        it.source === source && it.filters === validatedFilters
     }
     val focus = LocalFocusManager.current
     val scroll = rememberLazyListState()
@@ -127,6 +142,10 @@ fun ReportsScreen(
 
     LaunchedEffect(detailFolio) {
         if (detailFolio == null) query.cancelQuery() else query.findByFolio(detailFolio.orEmpty())
+    }
+    LaunchedEffect(searchInput, detailFolio != null) {
+        if (searchInput == null || detailFolio != null) search.cancelSearch()
+        else search.search(searchInput.source, searchInput.filters)
     }
     LaunchedEffect(searchError, detailFolio) {
         // Header and folio are the first two items; the rejected-search notice comes next.
@@ -212,7 +231,7 @@ fun ReportsScreen(
                             focus.clearFocus()
                             searchText = ""; dateFrom = ""; dateTo = ""
                             appliedText = ""; appliedFrom = ""; appliedTo = ""
-                            typeName = null; statusName = null; searchError = null
+                            typeName = null; statusName = null; priorityName = null; searchError = null
                         },
                         appliedText = appliedText,
                         appliedFrom = appliedFrom,
@@ -234,6 +253,13 @@ fun ReportsScreen(
                         prefix = "report_status",
                         onSelect = { statusName = it },
                     )
+                    Text("Prioridad indicada en el reporte", style = MaterialTheme.typography.titleSmall)
+                    FilterRow(
+                        items = Priority.entries.map { it.name to priorityLabel(it) },
+                        selected = priorityName,
+                        prefix = "report_priority",
+                        onSelect = { priorityName = it },
+                    )
                     OutlinedButton(
                         onClick = list::load,
                         modifier = Modifier.fillMaxWidth().testTag("report_refresh"),
@@ -247,17 +273,28 @@ fun ReportsScreen(
                     }
                     is ReportListState.Loaded -> {
                         val checked = appliedFilters
-                        val visible = visibleReports
+                        val visible = currentSearch?.reports.orEmpty()
                         item {
                             if (checked is ReportSearchFilterValidation.Invalid) {
                                 Text(checked.message, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                            } else if (currentSearchError != null) {
+                                Text(currentSearchError.message, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                                Button(onClick = {
+                                    searchInput?.let { search.search(it.source, it.filters) }
+                                }, modifier = Modifier.testTag("report_retry_search")) { Text("Reintentar búsqueda") }
+                            } else if (currentSearch == null) {
+                                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                    CircularProgressIndicator()
+                                    Text("Aplicando filtros…", Modifier.testTag("report_search_loading")
+                                        .semantics { liveRegion = LiveRegionMode.Polite })
+                                }
                             } else Text("${visible.size} de ${state.reports.size} reportes locales", Modifier.testTag("report_result_count"))
                         }
-                        if (state.reports.isNotEmpty() && checked is ReportSearchFilterValidation.Valid && visible.isEmpty()) {
+                        if (state.reports.isNotEmpty() && currentSearch != null && visible.isEmpty()) {
                             item {
                                 Text("No hay reportes con estos filtros.", Modifier.testTag("report_empty_filtered"))
                                 TextButton(onClick = {
-                                    typeName = null; statusName = null
+                                    typeName = null; statusName = null; priorityName = null
                                     searchText = ""; dateFrom = ""; dateTo = ""
                                     appliedText = ""; appliedFrom = ""; appliedTo = ""; searchError = null
                                 }) {
@@ -427,5 +464,8 @@ private fun statusLabel(status: ReportStatus): String = when (status) {
 
 private fun formatReportTime(instant: Instant, zone: ZoneId): String = DateTimeFormatter
     .ofPattern("dd/MM/yyyy HH:mm:ss z").withZone(zone).format(instant)
+
+/** Reference equality keeps lifecycle collection from comparing a whole historical reading. */
+private class ReportListReading(val state: ReportListState)
 
 private val FULL_FOLIO = Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")

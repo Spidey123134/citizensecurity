@@ -38,6 +38,10 @@ internal fun mapSelection(query: ReportMapQuery): ReportMapSqlSelection {
         selections += "status IN (${query.statuses.joinToString { "?" }})"
         arguments += query.statuses.map { it.name }.sorted()
     }
+    if (query.priorities.isNotEmpty()) {
+        selections += "priority IN (${query.priorities.joinToString { "?" }})"
+        arguments += query.priorities.map { it.name }.sorted()
+    }
     query.startInclusive?.let { start ->
         selections += "(occurred_at_seconds > ? OR (occurred_at_seconds = ? AND occurred_at_nanos >= ?))"
         arguments += listOf(start.epochSecond.toString(), start.epochSecond.toString(), start.nano.toString())

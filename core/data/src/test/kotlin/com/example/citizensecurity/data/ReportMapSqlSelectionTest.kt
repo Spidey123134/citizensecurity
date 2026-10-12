@@ -2,6 +2,7 @@ package com.example.citizensecurity.data
 
 import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.MapRegion
+import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.ReportMapQuery
 import com.example.citizensecurity.domain.ReportStatus
 import java.nio.file.Files
@@ -97,6 +98,50 @@ class ReportMapSqlSelectionTest {
         assertEquals(listOf("d", "c", "b", "a"), execute(query, rows))
     }
 
+    @Test
+    fun prioridadSeAplicaAntesDelLimiteYExcesoCuentaSoloCoincidencias() {
+        val query = ReportMapQuery(region, limit = 2, priorities = setOf(Priority.HIGH))
+        val excluded = (1..5).map {
+            Row("low-$it", 1_000, createdSeconds = 3_000 + it.toLong(), priority = "LOW")
+        }
+        val matching = (1..3).map {
+            Row("high-$it", 1_000, createdSeconds = 2_000 + it.toLong(), priority = "HIGH")
+        }
+        val fetched = execute(query, excluded + matching)
+        assertEquals(listOf("high-3", "high-2", "high-1"), fetched)
+        assertEquals(listOf("high-3", "high-2"), fetched.take(query.limit))
+        assertTrue(fetched.size > query.limit)
+        val exact = execute(query, excluded + matching.take(2))
+        assertEquals(listOf("high-2", "high-1"), exact)
+        assertFalse(exact.size > query.limit)
+        assertTrue(execute(query, excluded).isEmpty())
+    }
+
+    @Test
+    fun prioridadesSeCombinanConRegionFechaTipoYEstado() {
+        val query = ReportMapQuery(MapRegion(-1.0, 1.0, 170.0, -170.0),
+            types = setOf(IncidentType.RISK), statuses = setOf(ReportStatus.REPORTED),
+            startInclusive = instant(1_000, 100), endExclusive = instant(1_000, 200),
+            priorities = linkedSetOf(Priority.MEDIUM, Priority.HIGH))
+        val rows = listOf(
+            Row("a-high", 1_000, 100, longitude = 179.0, priority = "HIGH"),
+            Row("b-medium", 1_000, 199, longitude = -179.0, priority = "MEDIUM"),
+            Row("wrong-priority", 1_000, 150, longitude = 179.0, priority = "LOW"),
+            Row("wrong-type", 1_000, 150, longitude = 179.0, type = "FIRE", priority = "HIGH"),
+            Row("wrong-status", 1_000, 150, longitude = 179.0, status = "CLOSED", priority = "HIGH"),
+            Row("wrong-date", 1_000, 200, longitude = 179.0, priority = "HIGH"),
+            Row("wrong-lng", 1_000, 150, priority = "HIGH"),
+            Row("wrong-lat", 1_000, 150, latitude = 2.0, longitude = 179.0, priority = "HIGH"),
+            Row("no-point", 1_000, 150, latitude = null, longitude = null, priority = "HIGH"),
+        )
+        assertEquals(listOf("b-medium", "a-high"), execute(query, rows))
+        assertEquals(listOf("HIGH", "MEDIUM"), mapSelection(query).arguments.subList(6, 8))
+        val reversed = ReportMapQuery(query.region, query.types, query.statuses,
+            startInclusive = query.startInclusive, endExclusive = query.endExclusive,
+            priorities = linkedSetOf(Priority.HIGH, Priority.MEDIUM))
+        assertEquals(mapSelection(query).arguments, mapSelection(reversed).arguments)
+    }
+
     private fun execute(query: ReportMapQuery, rows: List<Row>): List<String> {
         val python = System.getenv("REPORT_SQLITE_TEST_PYTHON").orEmpty()
         assumeTrue("Set REPORT_SQLITE_TEST_PYTHON to run the host SQLite integration tests.", python.isNotBlank())
@@ -148,8 +193,9 @@ class ReportMapSqlSelectionTest {
         val status: String = "REPORTED",
         val createdSeconds: Long = 2_000,
         val createdNanos: Int = 0,
+        val priority: String = "MEDIUM",
     ) {
         fun tsv(): String = listOf(id, latitude ?: "NULL", longitude ?: "NULL", type, status,
-            occurredSeconds, occurredNanos, createdSeconds, createdNanos).joinToString("\t")
+            occurredSeconds, occurredNanos, createdSeconds, createdNanos, priority).joinToString("\t")
     }
 }
