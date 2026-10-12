@@ -1,5 +1,32 @@
 # Validación y comprobaciones del proyecto
 
+## Cierre 0.5.7 — fase 20 · 11 de octubre de 2026
+
+**545 casos distintos de app ejecutados y aprobados; 38 definiciones nuevas**: 21 JVM de filtros, nueve JVM de consulta y ocho nativas de búsqueda. No se suman repeticiones. Cero fallos, errores u omisiones en el pase de cierre.
+
+| Suite | Casos aprobados | Evidencia |
+| --- | ---: | --- |
+| App JVM | 494 | Ejecutada en este incremento |
+| App nativa Android | 51 | 47 recorridos y cuatro permisos, APK final |
+| Dominio JVM | 126 | Registro anterior reutilizado, sin cambios |
+| Datos JVM | 38 | Registro anterior reutilizado, sin cambios |
+| Datos nativos Android | 185 | Registro de 0.5.6 reutilizado, sin cambios |
+| **Total de casos distintos referenciados** | **894** | **545 actuales + 349 anteriores** |
+
+La evidencia anterior conservada no se presenta como ejecución nueva. Las pruebas de filtros cubren acentos, espacios, literalidad, orden, límites opcionales, fechas imposibles/invertidas, instante del incidente, medianoche con nanosegundos y días locales de 23/25 horas. Las de folio cubren sustitución, cancelación, errores/resultados tardíos y reentrancia.
+
+Las ocho nativas usan SQLite/diarios reales aislados en androidTest. Comprueban filtros combinados, fecha del incidente distinta del guardado, conservación del último resultado válido, giro horizontal, recreación y detalle/regreso, limpiar, datos vacíos, Search del teclado con error visible, calendario nativo/cancelación y límites de pegado aceptados/rechazados. Consultar conserva filas/diarios y no inicia GPS. Las fixtures no acreditan identidad administrativa ni GPS físico.
+
+Los pases iniciales encontraron choques del harness al desplazar/pulsar mientras Android abría el teclado y recomponía LazyColumn. Se espera su estado real mediante el controlador público de insets; Espresso podía agotar su callback al intentar cerrar un IME ya oculto en API 37. Los filtros horizontales se recorren desde su fila y la lista vertical por separado, con nodos recientes y pulsaciones reales; una captura confirmó que combinar ambos recorridos llevaba al encabezado. Se espera el layout real al girar y se desplaza hasta el contador para conservar sus aserciones.
+
+El primer pase de 39 regresiones también detectó que el aviso de base vacía había quedado fuera de los elementos visibles/compuestos tras añadir controles. Se corrigió en producto mostrándolo junto al encabezado. La revisión añadió límites explícitos a búsqueda (512), fechas (32) y folio (64) para evitar estado guardado excesivo: se rechaza el pegado y conserva el texto previo. Un eco del valor previo tampoco borra el aviso de rechazo. Los ocho casos nuevos pasaron juntos sobre la APK final. Se corrigió también el recorrido de ambas direcciones del caso anterior de guardado/consulta/filtro, comprobando selección del chip Riesgo y el contador exacto. Un pase intermedio combinado se detuvo después de identificar problemas del harness, y otro terminó al dejar de responder el emulador/ADB. No cuentan como cierres ni casos adicionales. Se cerró únicamente el clon de esta tarea y se abrió otro de solo lectura con 2048 MB: los 39 recorridos pasaron completos y luego cuatro permisos, sobre la misma APK, sin alterar el AVD original ni el teléfono.
+
+Debug/release/androidTest compilan. Lint: cero errores y 22 advertencias por variante de app, sin silenciarlas. Se conserva SQLite esquema 2, login/loading y manifiesto; versión 0.5.7/código 27, certificado académico y ausencia de fixtures/laboratorio en DEX productivo comprobados. Los filtros y presentación comparten zona horaria; los errores de búsqueda se llevan a pantalla. El calendario se descarta al salir o recrear, conservando los campos elegidos.
+
+API 37 en un clon de emulador de solo lectura, sin instalar en el teléfono ni modificar el AVD original. Logs, APK/hash y recibos bajo .gradle/validacion/release057-*. La aceptación física anterior del GPS se conserva; no se atribuye otra prueba física ni guardado manual. Avance **15/28 = 53.6%**, sin cambiar criterios ni pesos. [Fase 20](FASE_20.md).
+
+## Antecedente 0.5.6
+
 ## Cierre 0.5.6 — fase 19 · 11 de octubre de 2026
 
 **856 casos distintos aprobados; 25 definiciones nuevas**: 19 JVM del inicio y seis nativas. Las repeticiones no se suman. Cero fallos, errores u omisiones en el cierre.

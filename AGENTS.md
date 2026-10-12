@@ -1,5 +1,17 @@
 # Trabajo del equipo
 
+## Entrega 0.5.7 — fase 20, búsqueda local útil
+
+El usuario pidió continuar el avance de la app. Sigue vigente su preferencia de Releases oficiales y funciones terminadas visibles. Esta entrega amplía únicamente la lista de 4.4 Consulta con búsqueda por descripción/referencia y fechas del incidente. Mantener login/loading y acceso académico del compañero; no implementar cuentas, roles o administración por iniciativa. Conservar SQLite esquema 2, datos, fotografías, diarios/UUID, CAS, createOnce y comprobaciones GPS de 5 km.
+
+ReportSearchFilters valida fechas estrictas dd/MM/aaaa, límites opcionales e intervalo ordenado antes de aplicar. Cada día final se incluye mediante el inicio del día siguiente en la zona conservada por la pantalla; comparar occurredAt, nunca createdAt, sin sumar 24 horas fijas. Normalizar texto por mayúsculas, acentos y espacios; descripción o referencia coinciden como texto literal. Combinar con tipo/estado preservando orden y filas. No consultar GPS ni modificar SQLite desde la búsqueda.
+
+La UI conserva entradas y filtros aplicados por separado al girar. Buscar reportes aplica explícitamente texto/fechas; un error conserva el último filtro válido y sus resultados. Limpiar búsqueda/Mostrar todos limpia también tipo y estado. Los nuevos filtros son solo de lista; no declarar paridad con el mapa. ReportQueryViewModel reserva el Job antes de Loading, cancela e invalida lecturas anteriores por generación y expone cancelQuery() al volver del detalle; una respuesta tardía no bloquea ni reemplaza la nueva consulta. No cancelar el detalle por una rotación.
+
+Construcción vigente: **15/28 = 53.6%**. La fase fortalece los hitos existentes de consulta; no completa identidad de autor, seguimiento administrativo ni notificaciones. La aceptación manual GPS registrada en 0.5.6 permanece separada de pruebas automatizadas. Código Android 27. [Fase 20](docs/FASE_20.md) registra alcance, límites y cierre; el cierre aprobó 545 casos actuales de app, 38 nuevos; reutiliza separadamente 349 casos anteriores sin cambios. Los bloques siguientes son historia.
+
+## Antecedente 0.5.6
+
 ## Entrega 0.5.6 — fase 19, inicio funcional
 
 El usuario pidió que la pantalla verde use exclusivamente funciones reales del PDF/roadmap y confirmó que en su prueba física eligió el punto, obtuvo ubicación válida y fue aceptado dentro del radio. La autorización vigente de Releases oficiales permite integrar/publicar esta entrega validada. Conservar datos, historia, login/loading y acceso académico del compañero; no implementar cuentas ni roles por iniciativa.

@@ -1,5 +1,19 @@
 # CITIZENSECURITY
 
+## Versión 0.5.7 — encontrar reportes por texto y fecha
+
+[Release y APK 0.5.7](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.7) · código Android 27. En **Desarrollador → Inicio → Reportes guardados** puedes buscar una palabra o frase de la descripción o referencia, sin distinguir mayúsculas ni acentos. **Desde** y **Hasta** filtran la fecha del incidente; cada límite es opcional y el último día se incluye completo. Puedes escribir `dd/MM/aaaa` o pulsar **Elegir** para abrir el calendario.
+
+Pulsa **Buscar reportes** para aplicar texto y fechas. Una fecha imposible o un intervalo invertido muestra el error y conserva la búsqueda aplicada. Los filtros de tipo/estado se combinan con ella; **Limpiar búsqueda** retira todos los filtros. Girar o abrir un detalle y volver conserva lo escrito y la búsqueda aplicada. Volver del detalle cancela su lectura pendiente, evitando que la lista siga bloqueada por ese folio.
+
+Esta mejora corresponde a la lista; los filtros nuevos no se trasladan todavía al mapa. Se mantienen datos, fotografías, folios, borradores, GPS con radio de 5 km y login/loading del compañero. **Avance: 15/28 = 53.6%**, mismos criterios del PDF. [Fase 20](docs/FASE_20.md) · [Pasos de prueba](docs/PROBAR_0_5_7.md) · [Validación](docs/VALIDACION.md). Los reportes siguen en el teléfono; cuentas reales, seguimiento administrativo y notificaciones están pendientes.
+
+Para actualizar conserva tus cambios y ejecuta `git fetch origin`, `git switch main`, `git pull --ff-only origin main`. Instala la APK sobre la anterior, sin desinstalar ni borrar datos.
+
+**En Android Studio selecciona la configuración/módulo `app` antes de Run.** `verification:maps` es una aplicación técnica separada, marcada `testOnly`, que puede aparecer como Laboratorio al ejecutarla desde Studio. La APK oficial de CitizenSecurity no instala ese laboratorio automáticamente. Para probar el producto usa `app` o la APK de la Release.
+
+## Antecedente 0.5.6
+
 ## Versión 0.5.6 — inicio funcional
 
 [Release y APK 0.5.6](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.6) · código Android 26. La pantalla verde que abre **Desarrollador** ahora es **Inicio**, con **Reportar**, **Reportes guardados** y **Mapa de reportes**. Cada acceso abre el recorrido real; ya no contiene formulario ficticio, ejemplos de coordenadas ni guardado de demostración.

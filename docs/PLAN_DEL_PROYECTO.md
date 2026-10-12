@@ -1,5 +1,15 @@
 # Plan del proyecto
 
+## Fase 20 — 0.5.7, búsqueda útil en la consulta
+
+Se continúa **4.4 Consulta** con una mejora funcional de la lista: encontrar reportes por descripción o referencia y acotar la fecha del incidente. Se normalizan mayúsculas/acentos, las fechas pueden escribirse o elegirse en calendario y se combinan con tipo/estado. Texto y fechas se aplican por gesto; una entrada inválida conserva los resultados del filtro anterior. Volver del detalle cancela su lectura pendiente para permitir continuar consultando.
+
+La pantalla conserva campos y filtros aplicados al girar o regresar. El período usa días del calendario en la zona horaria de la pantalla, incluyendo el último día completo; no filtra por la fecha en que se guardó el reporte. La implementación es de solo lectura y no modifica datos ni inicia GPS. Esta fase corresponde a la lista; no traslada estos filtros al mapa.
+
+**15/28 = 53.6%**, mismos hitos y pesos. Refuerza consulta sin redefinir el requisito ni sumar puntos por filtros o publicación. Quedan cuentas reales/aislamiento por autor, seguimiento administrativo y notificaciones, con sus roles coordinados con el equipo. Conserva login/loading del compañero y las funciones reales anteriores. [Fase 20](FASE_20.md) · [Probar 0.5.7](PROBAR_0_5_7.md) · [Avance](AVANCE.md).
+
+## Antecedente 0.5.6
+
 ## Fase 19 — 0.5.6, inicio funcional
 
 La pantalla verde de Desarrollador ofrece tres rutas hacia funciones reales: **Nuevo reporte**, **Reportes en este teléfono** y **Mapa de reportes por zona**. El inicio lee los diarios privados para informar si hay una copia de borrador o un intento por comprobar; un intento pendiente puede haberse guardado y debe comprobarse en la pantalla del reporte. Los errores de lectura se muestran independientemente. Entrar o regresar al inicio no solicita GPS ni crea o modifica datos.

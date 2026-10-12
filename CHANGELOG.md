@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.7] — fase 20 · búsqueda local
+
+- Búsqueda en descripción y referencia, sin distinguir mayúsculas ni acentos, combinada con los filtros de tipo/estado de la lista.
+- Rango opcional de fechas del incidente con escritura estricta dd/MM/aaaa y calendario. El día final se incluye completo según la zona horaria conservada al abrir la pantalla.
+- Buscar reportes aplica texto/fechas por gesto; las fechas inválidas o invertidas explican el problema y mantienen la búsqueda válida anterior. Limpiar búsqueda retira todos los filtros; se conservan entradas y filtros aplicados al girar o volver del detalle.
+- Corregida la consulta por folio: nuevas solicitudes sustituyen las anteriores y volver del detalle cancela su lectura pendiente. Los resultados y fallos tardíos no reemplazan una consulta nueva ni mantienen bloqueada la lista.
+- Documentada la ejecución de `app` en Android Studio para distinguir el producto de `verification:maps`, laboratorio técnico separado testOnly.
+- Mantiene login/loading, datos, esquema SQLite, fotografías, identidad durable, borradores, aviso de repetidos y GPS de 5 km. Los filtros nuevos pertenecen a la lista; no modifican la consulta del mapa.
+
+[Probar APK](docs/PROBAR_0_5_7.md) · [Fase 20](docs/FASE_20.md) · [Validación](docs/VALIDACION.md). Código Android 27. Avance **15/28 = 53.6%**, mismos criterios y pesos.
+
+## Antecedente 0.5.6
+
 ## [0.5.6] — 2026-10-11
 
 - Fase 19: la pantalla verde pasa a Inicio con tres accesos reales: Reportar, Reportes guardados y Mapa de reportes. Se retiran los controles ficticios de esa pantalla, conservando su código histórico y pruebas.

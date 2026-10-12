@@ -1,5 +1,13 @@
 # Mejoras para revisar más adelante
 
+## Estado actual de propuestas — 0.5.7
+
+La fase 20 implementa una parte de **mapa y lista accesibles** en la lista real: búsqueda por descripción/referencia y fechas del incidente, calendario, filtros combinados y continuidad al girar/volver. El mapa no recibe todavía esos filtros ni una lista equivalente por zona; esa paridad sigue pendiente. No presentar esta parte como la propuesta completa.
+
+Fotos y recuperación explícita del borrador están en 0.5.4, advertencia de repetidos en 0.5.5 e inicio funcional en 0.5.6. Siguen pendientes cuentas/aislamiento de autores, seguimiento administrativo y notificaciones. Las propuestas históricas siguientes conservan sus restricciones originales; el alcance vigente está en [Fase 20](FASE_20.md), [Avance](AVANCE.md) y AGENTS.md. Construcción **15/28 = 53.6%**, mismos criterios y pesos.
+
+## Antecedente 0.5.5
+
 ## Estado actual de propuestas — 0.5.5
 
 La fase 18 incorpora la advertencia de posibles repetidos con rango acordado por el usuario: mismo tipo, 200 m y ±2 h de la fecha del incidente. Es lectura local orientativa y permite guardar un incidente distinto. Fotos y recuperación explícita del borrador ya se incorporaron en 0.5.4. [Fase 18](FASE_18.md) detalla límites.

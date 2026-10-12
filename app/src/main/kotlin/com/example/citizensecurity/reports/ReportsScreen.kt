@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -53,6 +54,8 @@ import com.example.citizensecurity.report.ReportListViewModel
 import com.example.citizensecurity.report.ReportQueryState
 import com.example.citizensecurity.report.ReportQueryViewModel
 import com.example.citizensecurity.report.filterLocalReports
+import com.example.citizensecurity.report.parseReportSearchFilters
+import com.example.citizensecurity.report.ReportSearchFilterValidation
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -73,16 +76,67 @@ fun ReportsScreen(
     }
     var typeName by rememberSaveable { mutableStateOf<String?>(null) }
     var statusName by rememberSaveable { mutableStateOf<String?>(null) }
+    var searchText by rememberSaveable { mutableStateOf("") }
+    var dateFrom by rememberSaveable { mutableStateOf("") }
+    var dateTo by rememberSaveable { mutableStateOf("") }
+    var appliedText by rememberSaveable { mutableStateOf("") }
+    var appliedFrom by rememberSaveable { mutableStateOf("") }
+    var appliedTo by rememberSaveable { mutableStateOf("") }
+    var searchError by rememberSaveable { mutableStateOf<String?>(null) }
+    // Keep the calendar interpretation stable when the screen is recreated.
+    val searchZoneName by rememberSaveable { mutableStateOf(ZoneId.systemDefault().id) }
+    val searchZone = remember(searchZoneName) { ZoneId.of(searchZoneName) }
+    val selectedType = IncidentType.entries.firstOrNull { it.name == typeName }
+    val selectedStatus = ReportStatus.entries.firstOrNull { it.name == statusName }
+    val appliedFilters = remember(appliedText, appliedFrom, appliedTo, searchZone, selectedType, selectedStatus) {
+        parseReportSearchFilters(appliedText, appliedFrom, appliedTo, searchZone, selectedType, selectedStatus)
+    }
+    val visibleReports = remember(listState, appliedFilters) {
+        val reading = listState
+        val checked = appliedFilters
+        if (reading is ReportListState.Loaded && checked is ReportSearchFilterValidation.Valid)
+            filterLocalReports(reading.reports, checked.filters) else emptyList()
+    }
     val focus = LocalFocusManager.current
+    val scroll = rememberLazyListState()
     val queryBusy = queryState is ReportQueryState.Loading
+    val leaveDetail = { query.cancelQuery(); detailFolio = null }
+    fun acceptBounded(value: String, current: String, maximum: Int, label: String, accept: (String) -> Unit) {
+        if (value.length <= maximum) {
+            if (value != current) {
+                accept(value)
+                searchError = null
+            }
+        } else {
+            focus.clearFocus()
+            searchError = "$label admite hasta $maximum caracteres. Se conserva el texto anterior."
+        }
+    }
+    val applySearch = {
+        focus.clearFocus()
+        when (val checked = parseReportSearchFilters(searchText, dateFrom, dateTo, searchZone)) {
+            is ReportSearchFilterValidation.Invalid -> searchError = checked.message
+            is ReportSearchFilterValidation.Valid -> {
+                appliedText = searchText.trim()
+                appliedFrom = dateFrom.trim()
+                appliedTo = dateTo.trim()
+                searchError = null
+            }
+        }
+    }
 
     LaunchedEffect(detailFolio) {
-        detailFolio?.let { query.findByFolio(it) }
+        if (detailFolio == null) query.cancelQuery() else query.findByFolio(detailFolio.orEmpty())
     }
-    BackHandler(enabled = detailFolio != null) { detailFolio = null }
+    LaunchedEffect(searchError, detailFolio) {
+        // Header and folio are the first two items; the rejected-search notice comes next.
+        if (searchError != null && detailFolio == null) scroll.animateScrollToItem(2)
+    }
+    BackHandler(enabled = detailFolio != null, onBack = leaveDetail)
 
     Scaffold { insets ->
         LazyColumn(
+            state = scroll,
             modifier = Modifier.fillMaxSize().padding(insets).imePadding()
                 .testTag(if (detailFolio == null) "report_list" else "report_detail"),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -90,7 +144,7 @@ fun ReportsScreen(
         ) {
             item {
                 TextButton(
-                    onClick = { if (detailFolio != null) detailFolio = null else onClose() },
+                    onClick = { if (detailFolio != null) leaveDetail() else onClose() },
                     modifier = Modifier.testTag("report_back_list"),
                 ) { Text(if (detailFolio != null) "Volver a los reportes" else "Volver") }
                 Text(
@@ -99,12 +153,15 @@ fun ReportsScreen(
                 )
                 Spacer(Modifier.height(8.dp))
                 LocalOnlyNotice()
+                if (detailFolio == null && (listState as? ReportListState.Loaded)?.reports?.isEmpty() == true) {
+                    Text("Todavía no hay reportes guardados en este teléfono.", Modifier.testTag("report_no_data"))
+                }
             }
             if (detailFolio != null) {
                 when (val state = queryState) {
                     is ReportQueryState.Found -> {
                         if (state.report.id == detailFolio) {
-                            item { ReportDetail(state.report, onMap) }
+                            item { ReportDetail(state.report, searchZone, onMap) }
                         } else {
                             item { LoadingNotice() }
                         }
@@ -121,8 +178,9 @@ fun ReportsScreen(
                 item {
                     OutlinedTextField(
                         value = folio,
-                        onValueChange = { folio = it },
+                        onValueChange = { acceptBounded(it, folio, 64, "El campo de folio") { folio = it } },
                         label = { Text("Buscar por folio completo") },
+                        supportingText = { Text("Folio completo de 36 caracteres, con guiones.") },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth().testTag("report_search"),
                     )
@@ -141,6 +199,26 @@ fun ReportsScreen(
                     ) { Text("Consultar folio") }
                     if (queryState is ReportQueryState.InvalidFolio) QueryNotice(queryState)
                 }
+                reportSearchControls(
+                        text = searchText,
+                        from = dateFrom,
+                        to = dateTo,
+                        onText = { acceptBounded(it, searchText, 512, "La búsqueda") { searchText = it } },
+                        onFrom = { acceptBounded(it, dateFrom, 32, "La fecha inicial") { dateFrom = it } },
+                        onTo = { acceptBounded(it, dateTo, 32, "La fecha final") { dateTo = it } },
+                        error = searchError,
+                        onApply = applySearch,
+                        onClear = {
+                            focus.clearFocus()
+                            searchText = ""; dateFrom = ""; dateTo = ""
+                            appliedText = ""; appliedFrom = ""; appliedTo = ""
+                            typeName = null; statusName = null; searchError = null
+                        },
+                        appliedText = appliedText,
+                        appliedFrom = appliedFrom,
+                        appliedTo = appliedTo,
+                        zoneName = searchZoneName,
+                    )
                 item {
                     Text("Tipo de incidente", style = MaterialTheme.typography.titleSmall)
                     FilterRow(
@@ -168,27 +246,27 @@ fun ReportsScreen(
                         Button(onClick = list::load) { Text("Reintentar lectura") }
                     }
                     is ReportListState.Loaded -> {
-                        val selectedType = IncidentType.entries.firstOrNull { it.name == typeName }
-                        val selectedStatus = ReportStatus.entries.firstOrNull { it.name == statusName }
-                        val visible = filterLocalReports(state.reports, selectedType, selectedStatus)
-                        item { Text("${visible.size} de ${state.reports.size} reportes locales") }
-                        if (state.reports.isEmpty()) {
-                            item {
-                                Text(
-                                    "Todavía no hay reportes guardados en este teléfono.",
-                                    modifier = Modifier.testTag("report_no_data"),
-                                )
-                            }
-                        } else if (visible.isEmpty()) {
+                        val checked = appliedFilters
+                        val visible = visibleReports
+                        item {
+                            if (checked is ReportSearchFilterValidation.Invalid) {
+                                Text(checked.message, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                            } else Text("${visible.size} de ${state.reports.size} reportes locales", Modifier.testTag("report_result_count"))
+                        }
+                        if (state.reports.isNotEmpty() && checked is ReportSearchFilterValidation.Valid && visible.isEmpty()) {
                             item {
                                 Text("No hay reportes con estos filtros.", Modifier.testTag("report_empty_filtered"))
-                                TextButton(onClick = { typeName = null; statusName = null }) {
+                                TextButton(onClick = {
+                                    typeName = null; statusName = null
+                                    searchText = ""; dateFrom = ""; dateTo = ""
+                                    appliedText = ""; appliedFrom = ""; appliedTo = ""; searchError = null
+                                }) {
                                     Text("Mostrar todos")
                                 }
                             }
                         }
                         items(visible, key = { it.id }) { report ->
-                            ReportCard(report, enabled = !queryBusy) {
+                            ReportCard(report, zone = searchZone, enabled = !queryBusy) {
                                 focus.clearFocus()
                                 detailFolio = report.id
                             }
@@ -219,7 +297,7 @@ private fun FilterRow(
     onSelect: (String?) -> Unit,
 ) {
     Row(
-        Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+        Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).testTag("${prefix}_filters"),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         FilterChip(
@@ -240,13 +318,13 @@ private fun FilterRow(
 }
 
 @Composable
-private fun ReportCard(report: Report, enabled: Boolean, onSelect: () -> Unit) {
+private fun ReportCard(report: Report, zone: ZoneId, enabled: Boolean, onSelect: () -> Unit) {
     Card(Modifier.fillMaxWidth().testTag("list_card_${report.id}")) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(typeLabel(report.type), style = MaterialTheme.typography.titleMedium)
             Text("Prioridad: ${priorityLabel(report.priority)}")
             Text("Estado local: ${statusLabel(report.status)}")
-            Text("Incidente: ${formatReportTime(report.occurredAt)}")
+            Text("Incidente: ${formatReportTime(report.occurredAt, zone)}")
             Text(report.description, maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
             Text("Folio: ${report.id}", style = MaterialTheme.typography.bodySmall)
             TextButton(
@@ -259,7 +337,7 @@ private fun ReportCard(report: Report, enabled: Boolean, onSelect: () -> Unit) {
 }
 
 @Composable
-private fun ReportDetail(report: Report, onMap: (String) -> Unit) {
+private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit) {
     val context = LocalContext.current
     var copied by remember(report.id) { mutableStateOf(false) }
     Card(Modifier.fillMaxWidth()) {
@@ -279,8 +357,8 @@ private fun ReportDetail(report: Report, onMap: (String) -> Unit) {
             DetailField("Estado local", statusLabel(report.status))
             DetailField("Descripción", report.description, "report_description")
             com.example.citizensecurity.report.ReportPhotoContent(report.photo, tagPrefix = "report_photo")
-            DetailField("Fecha del incidente", formatReportTime(report.occurredAt))
-            DetailField("Guardado en este teléfono", formatReportTime(report.createdAt))
+            DetailField("Fecha del incidente", formatReportTime(report.occurredAt, zone))
+            DetailField("Guardado en este teléfono", formatReportTime(report.createdAt, zone))
             DetailField("Referencia", report.location.reference.ifBlank { "Sin referencia escrita" })
             val latitude = report.location.latitude
             val longitude = report.location.longitude
@@ -347,7 +425,7 @@ private fun statusLabel(status: ReportStatus): String = when (status) {
     ReportStatus.CLOSED -> "Cerrado"
 }
 
-private fun formatReportTime(instant: Instant): String = DateTimeFormatter
-    .ofPattern("dd/MM/yyyy HH:mm:ss z").withZone(ZoneId.systemDefault()).format(instant)
+private fun formatReportTime(instant: Instant, zone: ZoneId): String = DateTimeFormatter
+    .ofPattern("dd/MM/yyyy HH:mm:ss z").withZone(zone).format(instant)
 
 private val FULL_FOLIO = Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
