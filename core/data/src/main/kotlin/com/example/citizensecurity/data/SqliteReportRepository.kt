@@ -176,42 +176,15 @@ class SqliteReportRepository(
     }
 
     override suspend fun queryMarkers(query: ReportMapQuery): ReportMapPage = withOpenRepository {
-        val region = query.region
-        val arguments = mutableListOf(region.south.toString(), region.north.toString())
-        val longitudeRange = if (region.west <= region.east) {
-            "longitude BETWEEN ? AND ?"
-        } else {
-            "longitude >= ? OR longitude <= ?"
-        }
-        arguments += region.west.toString()
-        arguments += region.east.toString()
-        val longitudeSelection = if (region.includesAntimeridian) {
-            "($longitudeRange OR longitude IN (-180.0, 180.0))"
-        } else {
-            "($longitudeRange)"
-        }
-        val selections = mutableListOf(
-            "latitude IS NOT NULL",
-            "longitude IS NOT NULL",
-            "latitude BETWEEN ? AND ?",
-            longitudeSelection,
-        )
-        if (query.types.isNotEmpty()) {
-            selections += "incident_type IN (${query.types.joinToString { "?" }})"
-            arguments += query.types.map { it.name }.sorted()
-        }
-        if (query.statuses.isNotEmpty()) {
-            selections += "status IN (${query.statuses.joinToString { "?" }})"
-            arguments += query.statuses.map { it.name }.sorted()
-        }
+        val selection = mapSelection(query)
         ensureActive()
         val database = databaseForRead()
         ensureActive()
         database.query(
             TABLE,
             MAP_PROJECTION,
-            selections.joinToString(" AND "),
-            arguments.toTypedArray(),
+            selection.selection,
+            selection.arguments.toTypedArray(),
             null,
             null,
             "created_at_seconds DESC, created_at_nanos DESC, id DESC",
