@@ -1,6 +1,7 @@
 package com.example.citizensecurity.report
 
 import com.example.citizensecurity.domain.IncidentType
+import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.Report
 import com.example.citizensecurity.domain.ReportStatus
 import java.text.Normalizer
@@ -11,6 +12,8 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.ResolverStyle
 import java.util.Locale
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 
 /** A validated reading filter. Its date boundaries refer to incident time, never creation time. */
 class ReportSearchFilters internal constructor(
@@ -19,6 +22,7 @@ class ReportSearchFilters internal constructor(
     val normalizedText: String,
     val startInclusive: Instant?,
     val endExclusive: Instant?,
+    val priority: Priority? = null,
 )
 
 sealed interface ReportSearchFilterValidation {
@@ -43,6 +47,7 @@ fun parseReportSearchFilters(
     zoneId: ZoneId,
     type: IncidentType? = null,
     status: ReportStatus? = null,
+    priority: Priority? = null,
 ): ReportSearchFilterValidation {
     val startInput = trimSearchWhitespace(startDate)
     val endInput = trimSearchWhitespace(endDate)
@@ -69,6 +74,7 @@ fun parseReportSearchFilters(
                 normalizedText = normalizeSearchText(text),
                 startInclusive = start?.atStartOfDay(zoneId)?.toInstant(),
                 endExclusive = end?.plusDays(1)?.atStartOfDay(zoneId)?.toInstant(),
+                priority = priority,
             ),
         )
     } catch (_: DateTimeException) {
@@ -78,15 +84,32 @@ fun parseReportSearchFilters(
 
 /** Filters the immutable reading in its existing order, without SQLite, GPS or any writes. */
 fun filterLocalReports(reports: List<Report>, filters: ReportSearchFilters): List<Report> =
-    reports.filter { report ->
-        (filters.type == null || report.type == filters.type) &&
-            (filters.status == null || report.status == filters.status) &&
-            (filters.startInclusive == null || report.occurredAt >= filters.startInclusive) &&
-            (filters.endExclusive == null || report.occurredAt < filters.endExclusive) &&
-            (filters.normalizedText.isEmpty() ||
-                normalizeSearchText(report.description).contains(filters.normalizedText) ||
-                normalizeSearchText(report.location.reference).contains(filters.normalizedText))
+    reports.filter { report -> matchesReportSearch(report, filters) }
+
+/** The search worker checks cancellation for every row, including rows rejected by cheap criteria. */
+internal suspend fun filterLocalReportsCancellable(
+    reports: List<Report>,
+    filters: ReportSearchFilters,
+): List<Report> {
+    val context = currentCoroutineContext()
+    val result = ArrayList<Report>()
+    for (report in reports) {
+        context.ensureActive()
+        if (matchesReportSearch(report, filters)) result.add(report)
     }
+    context.ensureActive()
+    return result
+}
+
+private fun matchesReportSearch(report: Report, filters: ReportSearchFilters): Boolean =
+    (filters.type == null || report.type == filters.type) &&
+        (filters.status == null || report.status == filters.status) &&
+        (filters.priority == null || report.priority == filters.priority) &&
+        (filters.startInclusive == null || report.occurredAt >= filters.startInclusive) &&
+        (filters.endExclusive == null || report.occurredAt < filters.endExclusive) &&
+        (filters.normalizedText.isEmpty() ||
+            normalizeSearchText(report.description).contains(filters.normalizedText) ||
+            normalizeSearchText(report.location.reference).contains(filters.normalizedText))
 
 private fun parseIncidentDate(input: String): LocalDate? {
     if (!incidentDateShape.matches(input)) return null

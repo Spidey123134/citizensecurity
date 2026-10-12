@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.MapRegion
+import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.ReportMapMarker
 import com.example.citizensecurity.domain.ReportMapQuery
 import com.example.citizensecurity.domain.ReportStatus
@@ -102,9 +103,10 @@ class ReportMapSceneBinding(
         limit: Int = ReportMapQuery.DEFAULT_LIMIT,
         startInclusive: Instant? = null,
         endExclusive: Instant? = null,
+        priorities: Set<Priority> = emptySet(),
     ): Boolean {
         if (!isInteractive()) return false
-        val config = Configuration(types, statuses, limit, startInclusive, endExclusive)
+        val config = Configuration(types, statuses, limit, startInclusive, endExclusive, priorities)
         val token = Any()
         operation = token
         configuration = config
@@ -293,9 +295,11 @@ class ReportMapSceneBinding(
     private class Configuration(
         types: Set<IncidentType>, statuses: Set<ReportStatus>, val limit: Int,
         val startInclusive: Instant?, val endExclusive: Instant?,
+        priorities: Set<Priority>,
     ) {
         private val types = types.toSet()
         private val statuses = statuses.toSet()
+        private val priorities = priorities.toSet()
         init {
             require(limit in 1..ReportMapQuery.MAX_LIMIT) {
                 "La consulta del mapa admite entre 1 y ${ReportMapQuery.MAX_LIMIT} marcadores."
@@ -304,7 +308,7 @@ class ReportMapSceneBinding(
                 "El inicio del intervalo no puede superar su final."
             }
         }
-        fun query(region: MapRegion) = ReportMapQuery(region, types, statuses, limit, startInclusive, endExclusive)
+        fun query(region: MapRegion) = ReportMapQuery(region, types, statuses, limit, startInclusive, endExclusive, priorities)
     }
 
     private companion object {

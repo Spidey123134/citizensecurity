@@ -38,6 +38,7 @@ import com.example.citizensecurity.maps.ReportMapSceneBinding
 import com.example.citizensecurity.maps.ReportMapSceneState
 import com.example.citizensecurity.maps.ReportMapViewModel
 import com.example.citizensecurity.maps.currentVisibleMapPage
+import com.example.citizensecurity.maps.currentVisibleMapPageInRegion
 import com.example.citizensecurity.report.parseReportSearchFilters
 import com.example.citizensecurity.report.ReportSearchFilterValidation
 import java.time.ZoneId
@@ -60,6 +61,7 @@ class ReportsMapActivity : ComponentActivity() {
     private var sceneState by mutableStateOf<ReportMapSceneState>(ReportMapSceneState.Idle)
     private var selectedType by mutableStateOf<IncidentType?>(null)
     private var selectedStatus by mutableStateOf<ReportStatus?>(null)
+    private var selectedPriority by mutableStateOf<Priority?>(null)
     private var selectedLimit by mutableIntStateOf(ReportMapQuery.DEFAULT_LIMIT)
     private var selectedFolio by mutableStateOf<String?>(null)
     private var dateFrom by mutableStateOf("")
@@ -122,6 +124,7 @@ class ReportsMapActivity : ComponentActivity() {
         queryModel = ViewModelProvider(this, dependencies.reportMapViewModelFactory)[ReportMapViewModel::class.java]
         selectedType = savedInstanceState?.getString(TYPE)?.let { value -> IncidentType.entries.find { it.name == value } }
         selectedStatus = savedInstanceState?.getString(STATUS)?.let { value -> ReportStatus.entries.find { it.name == value } }
+        selectedPriority = savedInstanceState?.getString(PRIORITY)?.let { value -> Priority.entries.find { it.name == value } }
         selectedLimit = savedInstanceState?.getInt(LIMIT, ReportMapQuery.DEFAULT_LIMIT)
             ?.takeIf { it in LIMITS } ?: ReportMapQuery.DEFAULT_LIMIT
         dateZone = savedInstanceState?.getString(DATE_ZONE)?.takeIf {
@@ -159,8 +162,7 @@ class ReportsMapActivity : ComponentActivity() {
                         items(page.markers, key = { it.id }) { marker ->
                             TextButton(onClick = {
                                 showZoneList = false
-                                if (currentVisibleMapPage(sceneState, queryModel.state.value)
-                                        ?.markers?.any { it.id == marker.id } == true) openReport(marker.id)
+                                openVisibleReport(marker.id)
                             },
                                 modifier = Modifier.fillMaxWidth().testTag("map_zone_report_${marker.id}")) {
                                 Column(Modifier.fillMaxWidth()) {
@@ -232,6 +234,11 @@ class ReportsMapActivity : ComponentActivity() {
                                 selectedStatus = it; resetQuery()
                             }
                         }
+                        ChoiceMenu("Prioridad: " + (selectedPriority?.let(::priorityLabel) ?: "Todas"),
+                            listOf(null) + Priority.entries, selectedPriority,
+                            { value -> value?.let(::priorityLabel) ?: "Todas" }, "map_priority_filter", Modifier.fillMaxWidth()) {
+                            selectedPriority = it; resetQuery()
+                        }
                         ChoiceMenu("Límite: $selectedLimit marcadores", LIMITS, selectedLimit,
                             { "$it marcadores" }, "map_limit_filter", Modifier.fillMaxWidth()) {
                             selectedLimit = it; resetQuery()
@@ -267,7 +274,9 @@ class ReportsMapActivity : ComponentActivity() {
                             Text("Prioridad indicada por el autor: rojo alta, naranja media, azul baja. El marcador no acredita que el incidente haya sido verificado.",
                                 style = MaterialTheme.typography.bodySmall)
                         }
-                        OutlinedButton(onClick = { showZoneList = true }, enabled = page != null,
+                        OutlinedButton(onClick = {
+                            if (visibleZonePage() != null) showZoneList = true else resetQuery()
+                        }, enabled = page != null,
                             modifier = Modifier.fillMaxWidth().testTag("open_map_zone_list")) {
                             Text("Ver lista de esta zona")
                         }
@@ -275,7 +284,7 @@ class ReportsMapActivity : ComponentActivity() {
                             Text("Folio seleccionado: $folio", style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.testTag("map_selected_folio"))
                             OutlinedButton(onClick = {
-                                openReport(folio)
+                                openVisibleReport(folio)
                             }, modifier = Modifier.fillMaxWidth().testTag("open_map_report")) { Text("Abrir reporte") }
                         }
                         Text("Solo se muestran reportes con coordenadas guardadas. Los que tienen únicamente una referencia aparecen en la lista.",
@@ -326,6 +335,14 @@ class ReportsMapActivity : ComponentActivity() {
         ReportStatus.CLOSED -> "Cerrado"
     }
 
+    private fun priorityLabel(value: Priority) = when (value) {
+        Priority.HIGH -> "Alta"; Priority.MEDIUM -> "Media"; Priority.LOW -> "Baja"
+    }
+
+    private fun visibleZonePage() = currentVisibleMapPageInRegion(
+        sceneState, queryModel.state.value, runCatching { host?.visibleRegion() }.getOrNull(),
+    )
+
     private fun refreshVisible() {
         if (!mapReady) return
         val filters = parseReportSearchFilters(startDate = appliedFrom, endDate = appliedTo, zoneId = ZoneId.of(dateZone))
@@ -333,7 +350,7 @@ class ReportsMapActivity : ComponentActivity() {
         val dates = (filters as ReportSearchFilterValidation.Valid).filters
         selectedFolio = null
         scene?.refreshVisible(selectedType?.let { setOf(it) }.orEmpty(), selectedStatus?.let { setOf(it) }.orEmpty(), selectedLimit,
-            dates.startInclusive, dates.endExclusive)
+            dates.startInclusive, dates.endExclusive, selectedPriority?.let { setOf(it) }.orEmpty())
     }
 
     private fun acceptDate(value: String, from: Boolean) {
@@ -357,6 +374,11 @@ class ReportsMapActivity : ComponentActivity() {
 
     private fun openReport(folio: String) {
         startActivity(Intent(this, ReportsActivity::class.java).putExtra(EXTRA_FOLIO, folio))
+    }
+
+    private fun openVisibleReport(folio: String) {
+        if (visibleZonePage()?.markers?.any { it.id == folio } == true) openReport(folio)
+        else resetQuery()
     }
 
     /** Cambiar filtros retira el resultado anterior; el siguiente gesto aplica la selección nueva. */
@@ -568,6 +590,7 @@ class ReportsMapActivity : ComponentActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(TYPE, selectedType?.name)
         outState.putString(STATUS, selectedStatus?.name)
+        outState.putString(PRIORITY, selectedPriority?.name)
         outState.putInt(LIMIT, selectedLimit)
         outState.putString(DATE_ZONE, dateZone)
         outState.putString(DATE_FROM, dateFrom); outState.putString(DATE_TO, dateTo)
@@ -594,6 +617,7 @@ class ReportsMapActivity : ComponentActivity() {
         const val EXTRA_FOLIO = "report_folio"
         private const val TYPE = "map_reports_type"
         private const val STATUS = "map_reports_status"
+        private const val PRIORITY = "map_reports_priority"
         private const val LIMIT = "map_reports_limit"
         private const val MAP_STATE = "map_reports_native_state"
         private const val DATE_ZONE = "map_date_zone"

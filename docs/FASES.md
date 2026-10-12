@@ -1,5 +1,9 @@
 # Fases de CITIZENSECURITY
 
+## Fase 22 — prioridad y búsqueda en segundo plano, Unreleased
+
+[Fase 22](FASE_22.md) añade prioridad a lista/mapa y desplaza el cálculo de búsqueda fuera del hilo de interfaz. Filtra el mapa antes del límite, invalida búsquedas anteriores y comprueba la región real de cámara al abrir su lista/folios. Refuerza **4.4 Consulta / 4.5 Mapas**; **15/28 = 53.6%**, mismos criterios/pesos. Código nuevo en main para 0.6.0, sin APK, incremento de versión, tags o Release. Aceptación Android pendiente para la entrega agrupada.
+
 ## Fase 21 — preparación de 0.6.0, Unreleased
 
 [Fase 21](FASE_21.md) amplía **4.4 Consulta / 4.5 Mapas**: fechas del incidente aplicadas antes del límite de marcadores y lista de los folios de la misma consulta de zona. Intervalos inválidos conservan la consulta anterior; una muestra invalidada no habilita abrir sus folios. El texto sigue siendo un filtro de la lista general.

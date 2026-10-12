@@ -165,6 +165,44 @@ class ReportMapSceneBindingTest {
     }
 
     @Test
+    fun prioridadSeCopiaYSeConservaAlCambiarCamara() = runTest(dispatcher) {
+        val priorities = mutableSetOf(Priority.HIGH)
+        val h = harness()
+        h.owner.resume()
+        h.binding.refreshVisible(priorities = priorities)
+        runCurrent()
+        priorities.clear()
+        h.host.region = SECOND
+        h.host.idle()
+        runCurrent()
+        assertEquals(listOf(
+            ReportMapQuery(FIRST, priorities = setOf(Priority.HIGH)),
+            ReportMapQuery(SECOND, priorities = setOf(Priority.HIGH)),
+        ), h.repository.requests)
+    }
+
+    @Test
+    fun nuevaPrioridadEnMismaZonaDescartaRespuestaTardia() = runTest(dispatcher) {
+        val completion = CompletableDeferred<Unit>()
+        val h = harness {
+            if (Priority.LOW in it.priorities) withContext(NonCancellable) {
+                completion.await(); page("anterior")
+            } else page("actual")
+        }
+        h.owner.resume()
+        h.binding.refreshVisible(priorities = setOf(Priority.LOW))
+        runCurrent()
+        h.binding.refreshVisible(priorities = setOf(Priority.HIGH))
+        runCurrent()
+        val query = ReportMapQuery(FIRST, priorities = setOf(Priority.HIGH))
+        assertEquals(ReportMapSceneState.Ready(query, 1, false), h.binding.state)
+        completion.complete(Unit)
+        advanceUntilIdle()
+        assertEquals(ReportMapState.Ready(query, page("actual")), h.model.state.value)
+        assertEquals(listOf(page("actual").markers), h.host.renders)
+    }
+
+    @Test
     fun cambiarIntervaloEnMismaZonaDescartaRespuestaAnteriorQueIgnoraCancelacion() = runTest(dispatcher) {
         val completion = CompletableDeferred<Unit>()
         val start = Instant.ofEpochSecond(1_000, 123)

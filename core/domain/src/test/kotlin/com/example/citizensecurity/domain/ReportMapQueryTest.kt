@@ -90,6 +90,7 @@ class ReportMapQueryTest {
         assertEquals(200, default.limit)
         assertTrue(default.types.isEmpty())
         assertTrue(default.statuses.isEmpty())
+        assertTrue(default.priorities.isEmpty())
         assertEquals(1, ReportMapQuery(region, limit = 1).limit)
         assertEquals(500, ReportMapQuery(region, limit = 500).limit)
         for (invalid in listOf(Int.MIN_VALUE, -1, 0, 501, Int.MAX_VALUE)) {
@@ -124,6 +125,33 @@ class ReportMapQueryTest {
         assertEquals(first.hashCode(), same.hashCode())
         assertFalse(first == ReportMapQuery(region, first.types, limit = 1))
         assertFalse(first == ReportMapQuery(region, first.types, setOf(ReportStatus.CLOSED)))
+    }
+
+    @Test
+    fun prioridadesConservanUnaCopiaInmutableDuranteLaConsulta() {
+        val priorities = linkedSetOf(Priority.HIGH)
+        val query = ReportMapQuery(MapRegion(-1.0, 1.0, -1.0, 1.0), priorities = priorities)
+        val hash = query.hashCode()
+        priorities.clear()
+        priorities.add(Priority.LOW)
+        assertEquals(setOf(Priority.HIGH), query.priorities)
+        assertEquals(hash, query.hashCode())
+        try {
+            (query.priorities as MutableSet<Priority>).add(Priority.LOW)
+            fail("Las prioridades de una consulta pendiente deben ser inmutables.")
+        } catch (_: UnsupportedOperationException) { /* Copia inmutable. */ }
+    }
+
+    @Test
+    fun identidadDeConsultaDistinguePrioridadesSinDependerDeSuOrden() {
+        val region = MapRegion(-1.0, 1.0, -1.0, 1.0)
+        val first = ReportMapQuery(region, priorities = linkedSetOf(Priority.HIGH, Priority.LOW))
+        val same = ReportMapQuery(region, priorities = linkedSetOf(Priority.LOW, Priority.HIGH))
+        assertEquals(first, same)
+        assertEquals(first.hashCode(), same.hashCode())
+        assertFalse(first == ReportMapQuery(region))
+        assertFalse(first == ReportMapQuery(region, priorities = setOf(Priority.HIGH)))
+        assertTrue(first.toString().contains("priorities=[HIGH, LOW]"))
     }
 
     @Test

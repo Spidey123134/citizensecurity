@@ -223,11 +223,46 @@ class ReportSearchFiltersTest {
         assertEquals(listOf(matching), filterLocalReports(listOf(other, matching), IncidentType.THEFT, ReportStatus.CLOSED))
     }
 
+    @Test
+    fun priorityIncludesOnlySelectedPriorityAndNullPreservesAllPriorities() {
+        val low = report("low").copy(priority = Priority.LOW)
+        val medium = report("medium")
+        val high = report("high").copy(priority = Priority.HIGH)
+        val source = listOf(high, low, medium)
+        for (priority in Priority.entries) {
+            val selected = filterLocalReports(source, filters(priority = priority))
+            assertEquals(listOf(source.single { it.priority == priority }), selected)
+        }
+        assertEquals(source, filterLocalReports(source, filters()))
+    }
+
+    @Test
+    fun priorityCombinesWithTypeStatusTextAndIncidentDateWithoutChangingRecords() {
+        val match = report("match", description = "Vehículo dañado", type = IncidentType.ACCIDENT)
+            .copy(priority = Priority.HIGH)
+        val wrongPriority = match.copy(id = "wrong-priority", priority = Priority.LOW)
+        val wrongType = match.copy(id = "wrong-type", type = IncidentType.RISK)
+        val wrongStatus = match.copy(id = "wrong-status", status = ReportStatus.CLOSED)
+        val wrongText = match.copy(id = "wrong-text", description = "Puerta rota")
+        val wrongDate = match.copy(id = "wrong-date", occurredAt = Instant.parse("2026-10-12T00:00:00Z"))
+        val source = listOf(wrongPriority, wrongType, match, wrongStatus, wrongText, wrongDate)
+        val compiled = filters(
+            text = "vehiculo", startDate = "11/10/2026", endDate = "11/10/2026",
+            type = IncidentType.ACCIDENT, status = ReportStatus.REPORTED, priority = Priority.HIGH,
+        )
+        assertEquals(Priority.HIGH, compiled.priority)
+        val result = filterLocalReports(source, compiled)
+        assertEquals(listOf(match), result)
+        assertSame(match, result.single())
+        assertEquals(6, source.size)
+        assertEquals(Priority.LOW, wrongPriority.priority)
+    }
+
     private fun filters(
         text: String = "", startDate: String = "", endDate: String = "", zoneId: ZoneId = utc,
-        type: IncidentType? = null, status: ReportStatus? = null,
+        type: IncidentType? = null, status: ReportStatus? = null, priority: Priority? = null,
     ): ReportSearchFilters {
-        val result = parseReportSearchFilters(text, startDate, endDate, zoneId, type, status)
+        val result = parseReportSearchFilters(text, startDate, endDate, zoneId, type, status, priority)
         assertTrue("Expected valid filters but was $result", result is ReportSearchFilterValidation.Valid)
         return (result as ReportSearchFilterValidation.Valid).filters
     }
