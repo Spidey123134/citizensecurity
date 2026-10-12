@@ -1,5 +1,13 @@
 # Fases de CITIZENSECURITY
 
+## Fase 21 — preparación de 0.6.0, Unreleased
+
+[Fase 21](FASE_21.md) amplía **4.4 Consulta / 4.5 Mapas**: fechas del incidente aplicadas antes del límite de marcadores y lista de los folios de la misma consulta de zona. Intervalos inválidos conservan la consulta anterior; una muestra invalidada no habilita abrir sus folios. El texto sigue siendo un filtro de la lista general.
+
+Actualizaciones de código en main, sin APK, tags ni Releases por fase. La última APK sigue siendo **0.5.7 / código Android 27**; la próxima entrega agrupada prevista es **0.6.0**. Pruebas centradas en la lógica, SQLite y compilación Kotlin; aceptación de controles Android pendiente para esa entrega. **15/28 = 53.6%**, mismos hitos/pesos: este bloque refuerza consulta/mapas, sin completar cuentas, administración o notificaciones.
+
+## Antecedente 0.5.7
+
 ## Fase 20 — 0.5.7, encontrar reportes locales
 
 [Fase 20](FASE_20.md) amplía **4.4 Consulta**: búsqueda en descripción/referencia sin distinguir mayúsculas ni acentos, fechas opcionales del incidente, calendario y combinación con tipo/estado. Buscar reportes aplica texto y fechas; un error conserva el filtro válido anterior. Limpiar retira todos los filtros. Se conservan entradas y filtros al girar y volver del detalle; salir de un detalle cancela su consulta pendiente e invalida sus resultados tardíos.

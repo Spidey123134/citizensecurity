@@ -1,5 +1,17 @@
 # CITIZENSECURITY
 
+## Preparación de 0.6.0 — Unreleased
+
+Ahora agrupamos los avances en **main** sin generar APK ni publicar una Release por cada fase. La próxima entrega prevista es **0.6.0**; la última APK publicada sigue siendo [0.5.7](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.7). El código nuevo de main todavía no está en esa APK.
+
+**Fase 21:** en **Inicio → Mapa de reportes**, **Desde** y **Hasta** filtran las fechas del incidente. Puedes escribir `dd/MM/aaaa` o elegirlas en el calendario. Pulsa **Aplicar fechas** y luego **Consultar esta zona**; los marcadores respetan fechas, tipo, estado y límite. Una fecha inválida explica el error y conserva la consulta anterior. **Ver lista de esta zona** permite abrir los folios de la misma muestra del mapa, indicando si quedan más coincidencias. La lista general conserva su búsqueda por texto.
+
+Se comprueba la lógica, la selección SQLite y la compilación de ambas variantes sin generar otra APK. La aceptación de estos controles en Android queda para la entrega agrupada. [Fase 21 y comprobaciones](docs/FASE_21.md). **Avance: 15/28 = 53.6%**; este bloque fortalece consulta/mapas. Cuentas reales, aislamiento por autor, administración y notificaciones siguen pendientes.
+
+Para obtener el código nuevo conserva tus cambios, ejecuta `git fetch origin`, `git switch main` y `git pull --ff-only origin main`. En Android Studio trabaja con el módulo **app**. Los siguientes bloques describen las entregas publicadas anteriores.
+
+## Última entrega publicada
+
 ## Versión 0.5.7 — encontrar reportes por texto y fecha
 
 [Release y APK 0.5.7](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.7) · código Android 27. En **Desarrollador → Inicio → Reportes guardados** puedes buscar una palabra o frase de la descripción o referencia, sin distinguir mayúsculas ni acentos. **Desde** y **Hasta** filtran la fecha del incidente; cada límite es opcional y el último día se incluye completo. Puedes escribir `dd/MM/aaaa` o pulsar **Elegir** para abrir el calendario.

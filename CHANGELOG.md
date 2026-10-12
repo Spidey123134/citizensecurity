@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased] — preparación de 0.6.0
+
+- Fase 21: fechas opcionales del incidente en el mapa, con calendario, validación estricta y zona horaria conservada. Se combinan con zona, tipo, estado y límite; el SQL filtra antes de limitar la muestra y respeta nanosegundos.
+- Lista de la misma zona: muestra los folios de la consulta vigente del mapa y permite abrir sus detalles. Advierte si la muestra está limitada; los resultados anteriores no se ofrecen durante una carga, cambio de filtros o error.
+- Las fechas inválidas mantienen la consulta válida anterior; entradas y fechas aplicadas se conservan por separado al recrear la pantalla. Cambiar el intervalo invalida respuestas anteriores incluso para la misma zona.
+- Se actualiza el flujo del equipo: código y GitHub durante el desarrollo; APK, versión Android, tags y Releases se agruparán en una futura entrega 0.6.0. La última entrega binaria continúa siendo 0.5.7 / código 27.
+
+[Fase 21](docs/FASE_21.md) registra las pruebas centradas y la aceptación Android pendiente. **15/28 = 53.6%**, mismos criterios del PDF; este refuerzo no completa cuentas, administración o notificaciones.
+
 ## [0.5.7] — fase 20 · búsqueda local
 
 - Búsqueda en descripción y referencia, sin distinguir mayúsculas ni acentos, combinada con los filtros de tipo/estado de la lista.

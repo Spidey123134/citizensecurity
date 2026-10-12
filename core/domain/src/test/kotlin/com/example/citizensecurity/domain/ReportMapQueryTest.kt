@@ -5,6 +5,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
+import java.time.Instant
 
 class ReportMapQueryTest {
     @Test
@@ -140,6 +141,48 @@ class ReportMapQueryTest {
             (page.markers as MutableList<ReportMapMarker>).clear()
             fail("Un resultado observado no puede cambiar fuera del modelo.")
         } catch (_: UnsupportedOperationException) { /* Copia inmutable. */ }
+    }
+
+    @Test
+    fun intervaloPorDefectoEsAbiertoYCadaExtremoEsOpcional() {
+        val region = MapRegion(-1.0, 1.0, -1.0, 1.0)
+        val time = Instant.ofEpochSecond(1_000, 123)
+        assertEquals(null, ReportMapQuery(region).startInclusive)
+        assertEquals(null, ReportMapQuery(region).endExclusive)
+        assertEquals(time, ReportMapQuery(region, startInclusive = time).startInclusive)
+        assertEquals(time, ReportMapQuery(region, endExclusive = time).endExclusive)
+    }
+
+    @Test
+    fun intervaloInvertidoSeRechazaInclusoPorUnNanosegundo() {
+        val region = MapRegion(-1.0, 1.0, -1.0, 1.0)
+        val time = Instant.ofEpochSecond(1_000, 123)
+        rejects { ReportMapQuery(region, startInclusive = time.plusNanos(1), endExclusive = time) }
+        rejects { ReportMapQuery(region, startInclusive = time.plusSeconds(1), endExclusive = time) }
+    }
+
+    @Test
+    fun limitesIgualesAceptanUnIntervaloVacio() {
+        val region = MapRegion(-1.0, 1.0, -1.0, 1.0)
+        val time = Instant.ofEpochSecond(1_000, 123)
+        val query = ReportMapQuery(region, startInclusive = time, endExclusive = time)
+        assertEquals(query.startInclusive, query.endExclusive)
+    }
+
+    @Test
+    fun identidadDeConsultaIncluyeAmbasFechasConNanosegundos() {
+        val region = MapRegion(-1.0, 1.0, -1.0, 1.0)
+        val start = Instant.ofEpochSecond(1_000, 123)
+        val end = start.plusSeconds(1)
+        val first = ReportMapQuery(region, startInclusive = start, endExclusive = end)
+        val same = ReportMapQuery(region, startInclusive = start, endExclusive = end)
+        assertEquals(first, same)
+        assertEquals(first.hashCode(), same.hashCode())
+        assertFalse(first == ReportMapQuery(region, startInclusive = start.plusNanos(1), endExclusive = end))
+        assertFalse(first == ReportMapQuery(region, startInclusive = start, endExclusive = end.plusNanos(1)))
+        assertFalse(first == ReportMapQuery(region))
+        assertTrue(first.toString().contains("startInclusive=$start"))
+        assertTrue(first.toString().contains("endExclusive=$end"))
     }
 
     private fun rejects(action: () -> Unit) {

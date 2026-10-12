@@ -11,6 +11,7 @@ import com.example.citizensecurity.domain.ReportMapMarker
 import com.example.citizensecurity.domain.ReportMapQuery
 import com.example.citizensecurity.domain.ReportStatus
 import java.io.Closeable
+import java.time.Instant
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -99,9 +100,11 @@ class ReportMapSceneBinding(
         types: Set<IncidentType> = emptySet(),
         statuses: Set<ReportStatus> = emptySet(),
         limit: Int = ReportMapQuery.DEFAULT_LIMIT,
+        startInclusive: Instant? = null,
+        endExclusive: Instant? = null,
     ): Boolean {
         if (!isInteractive()) return false
-        val config = Configuration(types, statuses, limit)
+        val config = Configuration(types, statuses, limit, startInclusive, endExclusive)
         val token = Any()
         operation = token
         configuration = config
@@ -287,15 +290,21 @@ class ReportMapSceneBinding(
         var issued = false
     }
 
-    private class Configuration(types: Set<IncidentType>, statuses: Set<ReportStatus>, val limit: Int) {
+    private class Configuration(
+        types: Set<IncidentType>, statuses: Set<ReportStatus>, val limit: Int,
+        val startInclusive: Instant?, val endExclusive: Instant?,
+    ) {
         private val types = types.toSet()
         private val statuses = statuses.toSet()
         init {
             require(limit in 1..ReportMapQuery.MAX_LIMIT) {
                 "La consulta del mapa admite entre 1 y ${ReportMapQuery.MAX_LIMIT} marcadores."
             }
+            require(startInclusive == null || endExclusive == null || startInclusive <= endExclusive) {
+                "El inicio del intervalo no puede superar su final."
+            }
         }
-        fun query(region: MapRegion) = ReportMapQuery(region, types, statuses, limit)
+        fun query(region: MapRegion) = ReportMapQuery(region, types, statuses, limit, startInclusive, endExclusive)
     }
 
     private companion object {

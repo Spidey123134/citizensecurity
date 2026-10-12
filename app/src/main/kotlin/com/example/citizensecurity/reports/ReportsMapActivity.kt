@@ -9,10 +9,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -21,17 +24,23 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.example.citizensecurity.CitizenSecurityApplication
 import com.example.citizensecurity.R
 import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.ReportMapQuery
 import com.example.citizensecurity.domain.ReportStatus
+import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.maps.MapLibreReportSceneHost
 import com.example.citizensecurity.maps.MapsConfiguration
 import com.example.citizensecurity.maps.ReportMapSceneBinding
 import com.example.citizensecurity.maps.ReportMapSceneState
 import com.example.citizensecurity.maps.ReportMapViewModel
+import com.example.citizensecurity.maps.currentVisibleMapPage
+import com.example.citizensecurity.report.parseReportSearchFilters
+import com.example.citizensecurity.report.ReportSearchFilterValidation
+import java.time.ZoneId
 import com.example.citizensecurity.preview.PreviewTheme
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -53,6 +62,12 @@ class ReportsMapActivity : ComponentActivity() {
     private var selectedStatus by mutableStateOf<ReportStatus?>(null)
     private var selectedLimit by mutableIntStateOf(ReportMapQuery.DEFAULT_LIMIT)
     private var selectedFolio by mutableStateOf<String?>(null)
+    private var dateFrom by mutableStateOf("")
+    private var dateTo by mutableStateOf("")
+    private var appliedFrom by mutableStateOf("")
+    private var appliedTo by mutableStateOf("")
+    private var dateError by mutableStateOf<String?>(null)
+    private var dateZone by mutableStateOf(ZoneId.systemDefault().id)
     private var navigationMessage by mutableStateOf("Centro inicial de navegación: Ciudad de México. Puedes mover el mapa; no representa tu ubicación.")
     private var entryReadFailed by mutableStateOf(false)
     private var entryReadInFlight by mutableStateOf(false)
@@ -109,6 +124,15 @@ class ReportsMapActivity : ComponentActivity() {
         selectedStatus = savedInstanceState?.getString(STATUS)?.let { value -> ReportStatus.entries.find { it.name == value } }
         selectedLimit = savedInstanceState?.getInt(LIMIT, ReportMapQuery.DEFAULT_LIMIT)
             ?.takeIf { it in LIMITS } ?: ReportMapQuery.DEFAULT_LIMIT
+        dateZone = savedInstanceState?.getString(DATE_ZONE)?.takeIf {
+            it.length <= 100 && runCatching { ZoneId.of(it) }.isSuccess
+        }
+            ?: ZoneId.systemDefault().id
+        dateFrom = savedInstanceState?.getString(DATE_FROM)?.takeIf { it.length <= 32 }.orEmpty()
+        dateTo = savedInstanceState?.getString(DATE_TO)?.takeIf { it.length <= 32 }.orEmpty()
+        appliedFrom = savedInstanceState?.getString(APPLIED_FROM)?.takeIf { it.length <= 32 }.orEmpty()
+        appliedTo = savedInstanceState?.getString(APPLIED_TO)?.takeIf { it.length <= 32 }.orEmpty()
+        dateError = savedInstanceState?.getString(DATE_ERROR)?.takeIf { it.length <= 256 }
         savedMapState = savedInstanceState?.getBundle(MAP_STATE)
         mapInitialized = runCatching { MapsConfiguration.initialize(this) }.isSuccess
         setContent { PreviewTheme { Content() } }
@@ -118,6 +142,42 @@ class ReportsMapActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun Content() {
+        val reading by queryModel.state.collectAsStateWithLifecycle()
+        val page = currentVisibleMapPage(sceneState, reading)
+        var showZoneList by remember { mutableStateOf(false) }
+        val focus = LocalFocusManager.current
+        LaunchedEffect(page) { if (page == null) showZoneList = false }
+        if (showZoneList && page != null) AlertDialog(
+            onDismissRequest = { showZoneList = false },
+            title = { Text("Reportes de esta zona") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(if (page.hasMore) "Misma muestra limitada del mapa; hay más coincidencias. Acerca la zona o cambia el límite."
+                        else "Mismos reportes de la consulta vigente del mapa.")
+                    if (page.markers.isEmpty()) Text("No hay coincidencias en esta consulta.")
+                    LazyColumn(Modifier.heightIn(max = 320.dp).testTag("map_zone_list")) {
+                        items(page.markers, key = { it.id }) { marker ->
+                            TextButton(onClick = {
+                                showZoneList = false
+                                if (currentVisibleMapPage(sceneState, queryModel.state.value)
+                                        ?.markers?.any { it.id == marker.id } == true) openReport(marker.id)
+                            },
+                                modifier = Modifier.fillMaxWidth().testTag("map_zone_report_${marker.id}")) {
+                                Column(Modifier.fillMaxWidth()) {
+                                    Text(typeLabel(marker.type) + " · " + statusLabel(marker.status))
+                                    Text("Prioridad: " + when (marker.priority) {
+                                        Priority.HIGH -> "Alta"; Priority.MEDIUM -> "Media"; Priority.LOW -> "Baja"
+                                    })
+                                    Text("Folio: ${marker.id}", style = MaterialTheme.typography.bodySmall)
+                                    Text("Abrir detalle")
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = { TextButton(onClick = { showZoneList = false }) { Text("Volver al mapa") } },
+        )
         Scaffold(
             topBar = { TopAppBar(title = { Text("Reportes en el mapa") },
                 navigationIcon = { TextButton(onClick = ::finish) { Text("Volver") } }) },
@@ -176,6 +236,23 @@ class ReportsMapActivity : ComponentActivity() {
                             { "$it marcadores" }, "map_limit_filter", Modifier.fillMaxWidth()) {
                             selectedLimit = it; resetQuery()
                         }
+                        Text("Fechas del incidente (opcionales)", style = MaterialTheme.typography.titleSmall)
+                        SearchDateField(dateFrom, { acceptDate(it, true) }, "Desde", "map_date_from", dateZone) {
+                            focus.clearFocus(); applyDates()
+                        }
+                        SearchDateField(dateTo, { acceptDate(it, false) }, "Hasta", "map_date_to", dateZone) {
+                            focus.clearFocus(); applyDates()
+                        }
+                        dateError?.let { Text(it, color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.testTag("map_date_error").semantics { liveRegion = LiveRegionMode.Polite }) }
+                        Text("Fechas aplicadas: ${appliedFrom.ifEmpty { "sin inicio" }} → ${appliedTo.ifEmpty { "sin final" }} ($dateZone).",
+                            style = MaterialTheme.typography.bodySmall, modifier = Modifier.testTag("map_applied_dates"))
+                        OutlinedButton(onClick = { focus.clearFocus(); applyDates() },
+                            modifier = Modifier.fillMaxWidth().testTag("apply_map_dates")) { Text("Aplicar fechas") }
+                        TextButton(onClick = {
+                            focus.clearFocus(); dateFrom = ""; dateTo = ""; appliedFrom = ""; appliedTo = ""
+                            dateError = null; resetQuery()
+                        }, modifier = Modifier.testTag("clear_map_dates")) { Text("Quitar fechas") }
                         Button(onClick = ::refreshVisible, enabled = mapReady && scene != null,
                             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("query_reports_zone")) {
                             Text(if (sceneState is ReportMapSceneState.Error) "Reintentar esta zona" else "Consultar esta zona")
@@ -190,11 +267,15 @@ class ReportsMapActivity : ComponentActivity() {
                             Text("Prioridad indicada por el autor: rojo alta, naranja media, azul baja. El marcador no acredita que el incidente haya sido verificado.",
                                 style = MaterialTheme.typography.bodySmall)
                         }
+                        OutlinedButton(onClick = { showZoneList = true }, enabled = page != null,
+                            modifier = Modifier.fillMaxWidth().testTag("open_map_zone_list")) {
+                            Text("Ver lista de esta zona")
+                        }
                         selectedFolio?.let { folio ->
                             Text("Folio seleccionado: $folio", style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.testTag("map_selected_folio"))
                             OutlinedButton(onClick = {
-                                startActivity(Intent(this@ReportsMapActivity, ReportsActivity::class.java).putExtra(EXTRA_FOLIO, folio))
+                                openReport(folio)
                             }, modifier = Modifier.fillMaxWidth().testTag("open_map_report")) { Text("Abrir reporte") }
                         }
                         Text("Solo se muestran reportes con coordenadas guardadas. Los que tienen únicamente una referencia aparecen en la lista.",
@@ -247,8 +328,35 @@ class ReportsMapActivity : ComponentActivity() {
 
     private fun refreshVisible() {
         if (!mapReady) return
+        val filters = parseReportSearchFilters(startDate = appliedFrom, endDate = appliedTo, zoneId = ZoneId.of(dateZone))
+        if (filters is ReportSearchFilterValidation.Invalid) { dateError = filters.message; return }
+        val dates = (filters as ReportSearchFilterValidation.Valid).filters
         selectedFolio = null
-        scene?.refreshVisible(selectedType?.let { setOf(it) }.orEmpty(), selectedStatus?.let { setOf(it) }.orEmpty(), selectedLimit)
+        scene?.refreshVisible(selectedType?.let { setOf(it) }.orEmpty(), selectedStatus?.let { setOf(it) }.orEmpty(), selectedLimit,
+            dates.startInclusive, dates.endExclusive)
+    }
+
+    private fun acceptDate(value: String, from: Boolean) {
+        val current = if (from) dateFrom else dateTo
+        if (value.length > 32) { dateError = "La fecha admite hasta 32 caracteres. Se conserva el texto anterior."; return }
+        if (value != current) {
+            if (from) dateFrom = value else dateTo = value
+            dateError = null
+        }
+    }
+
+    private fun applyDates() {
+        when (val checked = parseReportSearchFilters(startDate = dateFrom, endDate = dateTo, zoneId = ZoneId.of(dateZone))) {
+            is ReportSearchFilterValidation.Invalid -> dateError = checked.message + " Se conserva la consulta anterior."
+            is ReportSearchFilterValidation.Valid -> {
+                appliedFrom = dateFrom.trim(); appliedTo = dateTo.trim(); dateError = null
+                resetQuery()
+            }
+        }
+    }
+
+    private fun openReport(folio: String) {
+        startActivity(Intent(this, ReportsActivity::class.java).putExtra(EXTRA_FOLIO, folio))
     }
 
     /** Cambiar filtros retira el resultado anterior; el siguiente gesto aplica la selección nueva. */
@@ -461,6 +569,10 @@ class ReportsMapActivity : ComponentActivity() {
         outState.putString(TYPE, selectedType?.name)
         outState.putString(STATUS, selectedStatus?.name)
         outState.putInt(LIMIT, selectedLimit)
+        outState.putString(DATE_ZONE, dateZone)
+        outState.putString(DATE_FROM, dateFrom); outState.putString(DATE_TO, dateTo)
+        outState.putString(APPLIED_FROM, appliedFrom); outState.putString(APPLIED_TO, appliedTo)
+        outState.putString(DATE_ERROR, dateError)
         mapView?.let { view -> outState.putBundle(MAP_STATE, Bundle().also(view::onSaveInstanceState)) }
         super.onSaveInstanceState(outState)
     }
@@ -484,6 +596,12 @@ class ReportsMapActivity : ComponentActivity() {
         private const val STATUS = "map_reports_status"
         private const val LIMIT = "map_reports_limit"
         private const val MAP_STATE = "map_reports_native_state"
+        private const val DATE_ZONE = "map_date_zone"
+        private const val DATE_FROM = "map_date_from"
+        private const val DATE_TO = "map_date_to"
+        private const val APPLIED_FROM = "map_applied_from"
+        private const val APPLIED_TO = "map_applied_to"
+        private const val DATE_ERROR = "map_date_error"
         private val LIMITS = listOf(50, 100, 200, 500)
         private val FOLIO_PATTERN = Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
     }

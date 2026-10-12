@@ -14,6 +14,7 @@ import com.example.citizensecurity.domain.ReportMapQuery
 import com.example.citizensecurity.domain.ReportMapRepository
 import com.example.citizensecurity.domain.ReportStatus
 import java.io.IOException
+import java.time.Instant
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -144,6 +145,73 @@ class ReportMapSceneBindingTest {
 
         assertEquals(page("segunda", SECOND).markers, h.host.markers)
         assertEquals(ReportMapSceneState.Ready(query(SECOND), 1, false), h.binding.state)
+    }
+
+    @Test
+    fun cambiarCamaraConservaFechasAplicadasConNanosegundos() = runTest(dispatcher) {
+        val start = Instant.ofEpochSecond(1_000, 123)
+        val end = Instant.ofEpochSecond(2_000, 456)
+        val h = harness()
+        h.owner.resume()
+        h.binding.refreshVisible(setOf(IncidentType.FIRE), setOf(ReportStatus.CLOSED), 3, start, end)
+        runCurrent()
+        h.host.region = SECOND
+        h.host.idle()
+        runCurrent()
+        val first = ReportMapQuery(FIRST, setOf(IncidentType.FIRE), setOf(ReportStatus.CLOSED), 3, start, end)
+        val second = ReportMapQuery(SECOND, first.types, first.statuses, 3, start, end)
+        assertEquals(listOf(first, second), h.repository.requests)
+        assertEquals(ReportMapSceneState.Ready(second, 1, false), h.binding.state)
+    }
+
+    @Test
+    fun cambiarIntervaloEnMismaZonaDescartaRespuestaAnteriorQueIgnoraCancelacion() = runTest(dispatcher) {
+        val completion = CompletableDeferred<Unit>()
+        val start = Instant.ofEpochSecond(1_000, 123)
+        val end = Instant.ofEpochSecond(2_000, 456)
+        val nextStart = start.plusNanos(1)
+        val nextEnd = end.plusNanos(1)
+        val h = harness {
+            if (it.startInclusive == start) withContext(NonCancellable) {
+                completion.await()
+                page("anterior")
+            } else page("actual")
+        }
+        h.owner.resume()
+        h.binding.refreshVisible(startInclusive = start, endExclusive = end)
+        runCurrent()
+        h.binding.refreshVisible(startInclusive = nextStart, endExclusive = nextEnd)
+        runCurrent()
+        assertTrue(h.repository.jobs.first()!!.isCancelled)
+        val next = ReportMapQuery(FIRST, startInclusive = nextStart, endExclusive = nextEnd)
+        val expected = ReportMapSceneState.Ready(next, 1, false)
+        assertEquals(expected, h.binding.state)
+        completion.complete(Unit)
+        advanceUntilIdle()
+        assertEquals(expected, h.binding.state)
+        assertEquals(ReportMapState.Ready(next, page("actual")), h.model.state.value)
+        assertEquals(listOf(page("actual").markers), h.host.renders)
+        assertEquals(listOf(ReportMapQuery(FIRST, startInclusive = start, endExclusive = end), next), h.repository.requests)
+    }
+
+    @Test
+    fun intervaloInvertidoNoRetiraConsultaValidaNiTocaProyeccion() = runTest(dispatcher) {
+        val boundary = Instant.ofEpochSecond(1_000, 123)
+        val h = harness()
+        h.owner.resume()
+        h.binding.refreshVisible(startInclusive = boundary)
+        runCurrent()
+        val expected = h.binding.state
+        val reads = h.host.reads
+        val clears = h.host.clears
+        try {
+            h.binding.refreshVisible(startInclusive = boundary.plusNanos(1), endExclusive = boundary)
+            fail("El intervalo invertido debe rechazarse antes de retirar la consulta vigente.")
+        } catch (_: IllegalArgumentException) { /* Contrato del intervalo. */ }
+        assertEquals(expected, h.binding.state)
+        assertEquals(reads, h.host.reads)
+        assertEquals(clears, h.host.clears)
+        assertEquals(1, h.repository.requests.size)
     }
 
     @Test

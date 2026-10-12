@@ -102,7 +102,7 @@ internal fun LazyListScope.reportSearchControls(
 }
 
 @Composable
-private fun SearchDateField(
+internal fun SearchDateField(
     value: String,
     onChange: (String) -> Unit,
     label: String,

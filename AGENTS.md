@@ -1,5 +1,17 @@
 # Trabajo del equipo
 
+## Instrucción vigente — desarrollo para 0.6.0, sin entregas binarias frecuentes
+
+El usuario pidió continuar programando y actualizar GitHub, economizando trabajo y uso. **No generar APK, publicar Releases, crear tags ni incrementar la versión por cada fase.** La próxima entrega agrupada prevista es **0.6.0**; registrar el código nuevo como **Unreleased** mientras tanto. Esta instrucción sustituye las preferencias de publicación frecuente de los bloques históricos. Actualizar main con código validado está autorizado; publicar una entrega binaria futura requiere la instrucción correspondiente. La última APK publicada continúa siendo 0.5.7 / código Android 27.
+
+La fase 21 amplía 4.4 Consulta y 4.5 Mapas con fechas opcionales del incidente y una lista de la misma muestra de la zona. Reutilizar la validación estricta y zona horaria de la búsqueda; aplicar los extremos a occurred_at en SQL antes de LIMIT + 1, respetando nanosegundos. Cambiar fechas válidas retira la consulta anterior; consultar requiere gesto explícito. Una fecha inválida conserva el último filtro aplicado. La lista requiere resultados Ready coherentes entre escena y modelo; no iniciar otra lectura o GPS ni abrir folios de una muestra invalidada. La búsqueda de texto sigue siendo exclusiva de la lista general.
+
+Conservar login/loading del compañero, datos, SQLite esquema 2, fotografías, CAS, diarios/UUID, createOnce y GPS de 5 km. No implementar cuentas, roles ni administración por iniciativa. Hacer pruebas centradas en los cambios y compilar Kotlin sin empaquetar una APK; no repetir toda la instrumentación por cada fase. Registrar con precisión las comprobaciones ejecutadas y las pendientes de aceptación Android para la entrega agrupada.
+
+Avance: **15/28 = 53.6%**, mismos criterios del PDF. [Fase 21](docs/FASE_21.md). Los siguientes cortes son históricos y sus autorizaciones de publicación ya fueron sustituidas.
+
+## Antecedente 0.5.7
+
 ## Entrega 0.5.7 — fase 20, búsqueda local útil
 
 El usuario pidió continuar el avance de la app. Sigue vigente su preferencia de Releases oficiales y funciones terminadas visibles. Esta entrega amplía únicamente la lista de 4.4 Consulta con búsqueda por descripción/referencia y fechas del incidente. Mantener login/loading y acceso académico del compañero; no implementar cuentas, roles o administración por iniciativa. Conservar SQLite esquema 2, datos, fotografías, diarios/UUID, CAS, createOnce y comprobaciones GPS de 5 km.
