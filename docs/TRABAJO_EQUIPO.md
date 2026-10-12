@@ -1,5 +1,15 @@
 # Trabajo del equipo
 
+## Trabajo compartido 0.5.7 — fase 20
+
+**Inicio → Reportes guardados** añade búsqueda por descripción/referencia y un intervalo opcional de fechas del incidente. Texto y fechas se aplican con Buscar reportes; un error de fecha conserva la búsqueda válida anterior. Tipo/estado se combinan con ella; limpiar retira todos los filtros. Entradas, búsqueda aplicada y zona horaria sobreviven a la recreación de la pantalla. Las fechas corresponden a occurredAt; la fecha final incluye todo su día local.
+
+ReportSearchFilters solo filtra la lectura existente, conserva el orden y no escribe ni solicita GPS. La mejora es de lista; no hay transferencia de texto/fecha al mapa. ReportQueryViewModel invalida por generación al sustituir una solicitud o llamar cancelQuery(); al volver del detalle se cancela su lectura, sin cerrar el repositorio compartido. No conectar esta cancelación al giro de pantalla ni presentar resultados anteriores como propios del folio nuevo.
+
+Conserva tus cambios antes de `git fetch origin`, `git switch main`, `git pull --ff-only origin main`. Sincroniza Gradle y ejecuta el módulo **app**. `verification:maps` es el laboratorio testOnly separado; no es la APK del producto. Login/loading, acceso académico, esquema y datos conservan sus contratos. [Probar 0.5.7](PROBAR_0_5_7.md) · [Fase 20](FASE_20.md). Avance **15/28 = 53.6%**; cuentas, aislamiento por autor, seguimiento administrativo y notificaciones requieren sus siguientes alcances.
+
+## Antecedente 0.5.6
+
 ## Trabajo compartido 0.5.6 — fase 19
 
 **Desarrollador → Inicio** ofrece Reportar, Reportes guardados y Mapa de reportes con sus pantallas reales. La pantalla verde anterior dejó de mostrar recepción/validación ficticia, coordenadas de ejemplo y SQLite de demostración. Login/loading del compañero, acceso académico, clases de ejemplo, pruebas, versiones y datos se conservan.

@@ -16,13 +16,18 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -57,7 +62,6 @@ class ReportQueryViewModelTest {
 
         model.findByFolio(" \n${FOLIO.uppercase()}\t ")
         assertEquals(ReportQueryState.Loading(FOLIO), model.state.value)
-        model.findByFolio(OTHER_FOLIO)
         runCurrent()
         assertEquals(listOf(FOLIO), repository.requests)
         completion.complete(saved)
@@ -185,13 +189,181 @@ class ReportQueryViewModelTest {
         assertEquals(listOf(FOLIO), repository.requests)
     }
 
+    @Test
+    fun otroFolioSustituyeLaLecturaPendienteAunqueLaAnteriorTermineTarde() = runTest(dispatcher) {
+        val old = CompletableDeferred<Report?>()
+        val repository = QueryRepository { id ->
+            if (id == FOLIO) withContext(NonCancellable) { old.await() } else report(OTHER_FOLIO)
+        }
+        val model = model(repository)
+        model.findByFolio(FOLIO)
+        runCurrent()
+        model.findByFolio(OTHER_FOLIO)
+        runCurrent()
+        assertEquals(listOf(FOLIO, OTHER_FOLIO), repository.requests)
+        assertTrue(repository.jobs.first()!!.isCancelled)
+        assertEquals(ReportQueryState.Found(report(OTHER_FOLIO)), model.state.value)
+        old.complete(report())
+        advanceUntilIdle()
+        assertEquals(ReportQueryState.Found(report(OTHER_FOLIO)), model.state.value)
+    }
+
+    @Test
+    fun entradaInvalidaCancelaLaLecturaAnteriorSinConsultarNiAceptarSuResultado() = runTest(dispatcher) {
+        val old = CompletableDeferred<Report?>()
+        val repository = QueryRepository { withContext(NonCancellable) { old.await() } }
+        val model = model(repository)
+        model.findByFolio(FOLIO)
+        runCurrent()
+        model.findByFolio("folio incompleto")
+        assertTrue(repository.jobs.single()!!.isCancelled)
+        assertTrue(model.state.value is ReportQueryState.InvalidFolio)
+        old.complete(report())
+        advanceUntilIdle()
+        assertTrue(model.state.value is ReportQueryState.InvalidFolio)
+        assertEquals(listOf(FOLIO), repository.requests)
+    }
+
+    @Test
+    fun falloTardioDeLaLecturaAnteriorNoReemplazaElNuevoFolio() = runTest(dispatcher) {
+        val old = CompletableDeferred<Unit>()
+        val repository = QueryRepository { id ->
+            if (id == FOLIO) {
+                withContext(NonCancellable) { old.await() }
+                throw IOException("Ruta privada de la lectura anterior")
+            }
+            report(OTHER_FOLIO)
+        }
+        val model = model(repository)
+        model.findByFolio(FOLIO)
+        runCurrent()
+        model.findByFolio(OTHER_FOLIO)
+        runCurrent()
+        old.complete(Unit)
+        advanceUntilIdle()
+        assertEquals(ReportQueryState.Found(report(OTHER_FOLIO)), model.state.value)
+    }
+
+    @Test
+    fun cancelarAntesDeIniciarNoLeeDatosYPermiteOtroFolio() = runTest(dispatcher) {
+        val repository = QueryRepository { report(it) }
+        val model = model(repository)
+        model.findByFolio(FOLIO)
+        model.cancelQuery()
+        assertEquals(ReportQueryState.Idle, model.state.value)
+        runCurrent()
+        assertTrue(repository.requests.isEmpty())
+        model.findByFolio(OTHER_FOLIO)
+        runCurrent()
+        assertEquals(listOf(OTHER_FOLIO), repository.requests)
+        assertEquals(ReportQueryState.Found(report(OTHER_FOLIO)), model.state.value)
+    }
+
+    @Test
+    fun volverDeUnDetalleInvalidaSuResultadoPendienteYLiberaLaConsulta() = runTest(dispatcher) {
+        val old = CompletableDeferred<Report?>()
+        val repository = QueryRepository { id ->
+            if (id == FOLIO) withContext(NonCancellable) { old.await() } else report(OTHER_FOLIO)
+        }
+        val model = model(repository)
+        model.findByFolio(FOLIO)
+        runCurrent()
+        model.cancelQuery()
+        assertEquals(ReportQueryState.Idle, model.state.value)
+        assertTrue(repository.jobs.first()!!.isCancelled)
+        model.findByFolio(OTHER_FOLIO)
+        runCurrent()
+        old.complete(report())
+        advanceUntilIdle()
+        assertEquals(ReportQueryState.Found(report(OTHER_FOLIO)), model.state.value)
+    }
+
+    @Test
+    fun cancelacionAntiguaNoRetiraLaLecturaNuevaDelMismoFolio() = runTest(dispatcher) {
+        val old = CompletableDeferred<Report?>()
+        val newer = CompletableDeferred<Report?>()
+        var calls = 0
+        val repository = QueryRepository {
+            if (++calls == 1) withContext(NonCancellable) { old.await() } else newer.await()
+        }
+        val model = model(repository)
+        model.findByFolio(FOLIO)
+        runCurrent()
+        model.findByFolio(FOLIO)
+        runCurrent()
+        old.complete(report())
+        runCurrent()
+        assertEquals(ReportQueryState.Loading(FOLIO), model.state.value)
+        newer.complete(report())
+        advanceUntilIdle()
+        assertEquals(ReportQueryState.Found(report()), model.state.value)
+    }
+
+    @Test
+    fun coleccionistaDeLoadingPuedeSustituirElFolioAntesDeIniciarSuLectura() = runTest(dispatcher) {
+        val repository = QueryRepository { report(it) }
+        val model = model(repository)
+        var redirected = false
+        val collector = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            model.state.collect { state ->
+                if (state == ReportQueryState.Loading(FOLIO) && !redirected) {
+                    redirected = true
+                    model.findByFolio(OTHER_FOLIO)
+                }
+            }
+        }
+        model.findByFolio(FOLIO)
+        runCurrent()
+        assertTrue(redirected)
+        assertEquals(listOf(OTHER_FOLIO), repository.requests)
+        assertEquals(ReportQueryState.Found(report(OTHER_FOLIO)), model.state.value)
+        collector.cancel()
+    }
+
+    @Test
+    fun coleccionistaDeLoadingPuedeCancelarSinIniciarLaLectura() = runTest(dispatcher) {
+        val repository = QueryRepository { report(it) }
+        val model = model(repository)
+        var cancelled = false
+        val collector = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            model.state.collect { state ->
+                if (state is ReportQueryState.Loading && !cancelled) {
+                    cancelled = true
+                    model.cancelQuery()
+                }
+            }
+        }
+        model.findByFolio(FOLIO)
+        runCurrent()
+        assertTrue(cancelled)
+        assertTrue(repository.requests.isEmpty())
+        assertEquals(ReportQueryState.Idle, model.state.value)
+        collector.cancel()
+    }
+
+    @Test
+    fun coleccionistaDeEntradaInvalidaPuedeIniciarUnFolioSinPerderLaNuevaIdentidad() = runTest(dispatcher) {
+        val repository = QueryRepository { report(it) }
+        val model = model(repository)
+        val collector = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            model.state.collect { state ->
+                if (state is ReportQueryState.InvalidFolio) model.findByFolio(OTHER_FOLIO)
+            }
+        }
+        model.findByFolio("no valido")
+        runCurrent()
+        assertEquals(listOf(OTHER_FOLIO), repository.requests)
+        assertEquals(ReportQueryState.Found(report(OTHER_FOLIO)), model.state.value)
+        collector.cancel()
+    }
+
     private fun model(repository: ReportRepository, store: ViewModelStore = store()) =
         ViewModelProvider(store, ReportQueryViewModel.factory(repository))[ReportQueryViewModel::class.java]
 
     private fun store() = ViewModelStore().also { stores.add(it) }
 
-    private fun report() = Report(
-        id = FOLIO,
+    private fun report(id: String = FOLIO) = Report(
+        id = id,
         type = IncidentType.RISK,
         priority = Priority.MEDIUM,
         description = "Hay una luminaria dañada frente al parque.",

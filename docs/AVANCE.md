@@ -1,5 +1,23 @@
 # Avance del plan del proyecto
 
+## Avance 0.5.7 — fase 20
+
+**15/28 = 53.6%** con los mismos criterios y pesos. [Fase 20](FASE_20.md) fortalece **4.4 Consulta** mediante búsqueda real por descripción/referencia y fechas del incidente, filtros combinados, recuperación de entradas al girar y cancelación del folio al volver. No agrega criterios, completa identidad de autor ni implementa seguimiento administrativo. La mejora pertenece a la lista, sin acreditar un hito adicional de mapas.
+
+| Punto del PDF | Hitos construidos |
+| --- | --- |
+| 4.1 Usuarios | 1/4 |
+| 4.2 Reportes | 4/4 |
+| 4.3 Geolocalización | 4/4 |
+| 4.4 Consulta | 2/4 |
+| 4.5 Mapas | 4/4 |
+| 4.6 Administración | 0/4 |
+| 4.7 Notificaciones | 0/4 |
+
+La aceptación manual GPS del 11 de octubre de 2026 ya registrada conserva sus límites: versión APK no especificada, sin logs, nuevas medidas ni guardado físico adicional. Esta entrega no cuenta fixtures ni lecturas locales como otra prueba GPS física. Siguen pendientes cuentas reales/aislamiento de autores, seguimiento administrativo y notificaciones. [Criterios vigentes](#cómo-se-calcula--criterios-vigentes-de-056) · [Validación](VALIDACION.md).
+
+## Antecedente 0.5.6
+
 ## Avance 0.5.6 — fase 19
 
 **15/28 = 53.6%** con los mismos 28 hitos y pesos. Se completa **4.3 Geolocalización (4/4)** por la aceptación manual del usuario del **11 de octubre de 2026**: el teléfono localizó el punto, la acción de ubicación lo aceptó dentro del radio y el mapa mostró el pin. El usuario no especificó la versión de la APK probada. Esta confirmación no aporta logs, medidas de precisión, coordenadas ni un guardado físico nuevo; tampoco se suma al recuento de pruebas automatizadas.

@@ -202,8 +202,13 @@ class ReportDraftUiTest {
         try {
             ui.runOnUiThread { ui.activity.requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
             ui.waitUntil(timeoutMillis = 15_000) {
-                ui.activity.resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
+                val activity = ui.activity
+                val view = activity.window.decorView
+                activity.resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE &&
+                    activity.lifecycle.currentState == androidx.lifecycle.Lifecycle.State.RESUMED &&
+                    view.hasWindowFocus() && view.isLaidOut && !view.isLayoutRequested && view.width > view.height
             }
+            ui.waitForIdle()
             ui.onNodeWithTag("incident_map").assertIsDisplayed()
             ui.onNodeWithTag("permission_guidance").performScrollTo().assertIsDisplayed()
             ui.onNodeWithTag("confirm_point").performScrollTo().assertIsNotEnabled()
@@ -212,6 +217,11 @@ class ReportDraftUiTest {
             ui.runOnIdle { assertFalse(ui.activity.locationModel.state.value is IncidentLocationState.Capturing) }
         } finally {
             ui.runOnUiThread { ui.activity.requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT }
+            ui.waitUntil(timeoutMillis = 15_000) {
+                val view = ui.activity.window.decorView
+                ui.activity.resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT &&
+                    view.isLaidOut && !view.isLayoutRequested && view.height > view.width
+            }
         }
     }
 }

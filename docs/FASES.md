@@ -1,5 +1,15 @@
 # Fases de CITIZENSECURITY
 
+## Fase 20 — 0.5.7, encontrar reportes locales
+
+[Fase 20](FASE_20.md) amplía **4.4 Consulta**: búsqueda en descripción/referencia sin distinguir mayúsculas ni acentos, fechas opcionales del incidente, calendario y combinación con tipo/estado. Buscar reportes aplica texto y fechas; un error conserva el filtro válido anterior. Limpiar retira todos los filtros. Se conservan entradas y filtros al girar y volver del detalle; salir de un detalle cancela su consulta pendiente e invalida sus resultados tardíos.
+
+Código Android **27**, entrega **0.5.7**. Los filtros nuevos son de la lista; el mapa mantiene su consulta por zona anterior. No cambia login/loading, GPS, persistencia o datos. [Probar en Android](PROBAR_0_5_7.md) · [Validación](VALIDACION.md).
+
+**15/28 = 53.6%**, mismos 28 hitos/pesos. Esta mejora refuerza consulta sin completar cuentas/aislamiento por autor, estados administrativos o notificaciones y sin añadir un hito de mapas. La confirmación manual del recorrido GPS registrada en 0.5.6 permanece vigente.
+
+## Antecedente 0.5.6
+
 ## Fase 19 — 0.5.6, inicio funcional
 
 [Fase 19](FASE_19.md) sustituye la interfaz ficticia de la pantalla verde de Desarrollador por tres entradas útiles: **Nuevo reporte**, **Reportes en este teléfono** y **Mapa de reportes por zona**. Muestra información leída de los diarios privados sobre la copia del borrador o un intento por comprobar, con errores independientes y actualización al regresar. No obtiene GPS ni crea reportes desde el inicio; conserva login, loading, datos y código histórico de las demostraciones. Todas las funciones reales terminadas siguen accesibles.
