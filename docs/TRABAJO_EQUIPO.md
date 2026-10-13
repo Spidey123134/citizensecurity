@@ -1,5 +1,29 @@
 # Trabajo del equipo
 
+## Trabajo compartido para 0.6.0 — fase 27, Unreleased
+
+El equipo continúa actualizando **main con código**, agrupando APK, versión Android, tags y Release para una futura entrega 0.6.0. La última APK publicada sigue siendo **0.5.7 / código 27** y no contiene estos avances. El compañero conserva la interfaz del login y loading; la lógica usa sus layouts/IDs existentes.
+
+Para obtener el código nuevo, conserva primero tus cambios propios y ejecuta:
+
+```bash
+git fetch origin
+git switch main
+git pull --ff-only origin main
+```
+
+Si Git informa cambios locales o divergencia, coordina su integración conservando el trabajo. No uses reset ni borres datos para actualizar. Abre el proyecto, sincroniza Gradle y selecciona **app** en Android Studio; verification:maps sigue siendo el laboratorio separado.
+
+Las cuentas, reportes, fotografías, borradores y solicitudes están separados por UUID. Académico conserva los históricos; iniciar o cerrar sesión invalida las pantallas anteriores. Usa el ReportWorkspace capturado por pantalla y sus repositorios, sin resolver un dueño distinto durante un callback. [Fase 25](FASE_25.md) · [Fase 26](FASE_26.md).
+
+[Fase 27](FASE_27.md) añade **Consultar historial** en el detalle del folio. El reporte nuevo y su evento de creación se guardan juntos; los antiguos muestran la ausencia de un registro completo sin inventar cambios. Reportes migra de forma aditiva a esquema 3; cuentas conserva esquema 1. La lectura requiere gesto y conserva la ficha ante fallo.
+
+La asignación administrativa queda **pendiente por elección del usuario**. El servicio de estados exige actor autorizado, motivo, operationId y CAS de estado/secuencia; la composición productiva deniega escritura por defecto. No conectar un escritor, conceder roles ni convertir admin/admin en administrador real. Mantén sesión, integridad de fotos, identidad durable y GPS 5 km.
+
+**100 casos aprobados, 37 nuevos; 15 Android nuevos compilados sin ejecutar. 19/28 = 67.9% de construcción**, sin sumar hitos administrativos por preparar historial. La aceptación Android se agrupa para 0.6.0. Los bloques siguientes conservan las entregas anteriores.
+
+## Antecedente 0.5.7
+
 ## Trabajo compartido 0.5.7 — fase 20
 
 **Inicio → Reportes guardados** añade búsqueda por descripción/referencia y un intervalo opcional de fechas del incidente. Texto y fechas se aplican con Buscar reportes; un error de fecha conserva la búsqueda válida anterior. Tipo/estado se combinan con ella; limpiar retira todos los filtros. Entradas, búsqueda aplicada y zona horaria sobreviven a la recreación de la pantalla. Las fechas corresponden a occurredAt; la fecha final incluye todo su día local.

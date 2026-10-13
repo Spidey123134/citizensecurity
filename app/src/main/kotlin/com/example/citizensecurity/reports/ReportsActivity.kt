@@ -10,6 +10,7 @@ import com.example.citizensecurity.account.ReportWorkspaceActivity
 import com.example.citizensecurity.preview.PreviewTheme
 import com.example.citizensecurity.report.ReportQueryViewModel
 import com.example.citizensecurity.report.ReportPagedSearchViewModel
+import com.example.citizensecurity.report.ReportHistoryViewModel
 
 class ReportsActivity : ReportWorkspaceActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,12 +18,14 @@ class ReportsActivity : ReportWorkspaceActivity() {
         if (!hasReportWorkspace) return
         val query = ViewModelProvider(this, ReportQueryViewModel.factory(reportWorkspace.repository))[ReportQueryViewModel::class.java]
         val pages = ViewModelProvider(this, ReportPagedSearchViewModel.factory(reportWorkspace.listPageRepository))[ReportPagedSearchViewModel::class.java]
+        val history = ViewModelProvider(this, ReportHistoryViewModel.factory(reportWorkspace.historyRepository))[ReportHistoryViewModel::class.java]
         setContent {
             CompositionLocalProvider(LocalReportWorkspace provides reportWorkspace) {
                 PreviewTheme {
                     ReportsScreen(
                         query = query,
                         pages = pages,
+                        history = history,
                         initialFolio = intent.getStringExtra(EXTRA_FOLIO),
                         onClose = ::finish,
                         onMap = { folio ->

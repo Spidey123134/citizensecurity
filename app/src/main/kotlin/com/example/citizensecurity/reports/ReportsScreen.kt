@@ -54,6 +54,8 @@ import com.example.citizensecurity.report.ReportQueryState
 import com.example.citizensecurity.report.ReportQueryViewModel
 import com.example.citizensecurity.report.ReportPagedSearchViewModel
 import com.example.citizensecurity.report.ReportPagedSearchState
+import com.example.citizensecurity.report.ReportHistoryViewModel
+import com.example.citizensecurity.report.ReportHistoryState
 import com.example.citizensecurity.report.currentPagedResult
 import com.example.citizensecurity.report.parseReportSearchFilters
 import com.example.citizensecurity.report.ReportSearchFilterValidation
@@ -68,6 +70,7 @@ fun ReportsScreen(
     initialFolio: String?,
     onClose: () -> Unit,
     onMap: (String) -> Unit,
+    history: ReportHistoryViewModel? = null,
 ) {
     val queryState by query.state.collectAsStateWithLifecycle()
     val pageState by pages.state.collectAsStateWithLifecycle()
@@ -113,7 +116,7 @@ fun ReportsScreen(
     val focus = LocalFocusManager.current
     val scroll = rememberLazyListState()
     val queryBusy = queryState is ReportQueryState.Loading
-    val leaveDetail = { query.cancelQuery(); detailFolio = null }
+    val leaveDetail = { query.cancelQuery(); history?.clear(); detailFolio = null }
     fun requestSearchRestart() {
         restartSearchPending = true
         searchRevision++
@@ -144,6 +147,14 @@ fun ReportsScreen(
     }
 
     LaunchedEffect(detailFolio) {
+        val historyFolio = when (val state = history?.state?.value) {
+            is ReportHistoryState.Loading -> state.query.reportId
+            is ReportHistoryState.Ready -> state.query.reportId
+            is ReportHistoryState.NotFound -> state.query.reportId
+            is ReportHistoryState.Error -> state.query.reportId
+            else -> null
+        }
+        if (detailFolio == null || historyFolio != detailFolio) history?.clear()
         if (detailFolio == null) query.cancelQuery() else query.findByFolio(detailFolio.orEmpty())
     }
     LaunchedEffect(validatedFilters, detailFolio != null) {
@@ -186,7 +197,9 @@ fun ReportsScreen(
                 when (val state = queryState) {
                     is ReportQueryState.Found -> {
                         if (state.report.id == detailFolio) {
-                            item { ReportDetail(state.report, searchZone, onMap) }
+                            item { ReportDetail(state.report, searchZone, onMap, history) {
+                                detailFolio == state.report.id && query.state.value === state
+                            } }
                         } else {
                             item { LoadingNotice() }
                         }
@@ -389,7 +402,7 @@ private fun ReportCard(report: Report, zone: ZoneId, enabled: Boolean, onSelect:
 }
 
 @Composable
-private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit) {
+private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit, history: ReportHistoryViewModel?, isCurrent: () -> Boolean) {
     val context = LocalContext.current
     var copied by remember(report.id) { mutableStateOf(false) }
     Card(Modifier.fillMaxWidth()) {
@@ -397,6 +410,7 @@ private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit) 
             DetailField("Folio", report.id, "report_folio")
             OutlinedButton(
                 onClick = {
+                    if (!isCurrent()) return@OutlinedButton
                     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                     clipboard.setPrimaryClip(ClipData.newPlainText("Folio del reporte", report.id))
                     copied = true
@@ -407,6 +421,7 @@ private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit) 
             DetailField("Tipo de incidente", typeLabel(report.type))
             DetailField("Prioridad", priorityLabel(report.priority))
             DetailField("Estado local", statusLabel(report.status))
+            if (history != null) ReportHistoryContent(report, zone, history, isCurrent)
             DetailField("Descripción", report.description, "report_description")
             com.example.citizensecurity.report.ReportPhotoContent(report.photo, tagPrefix = "report_photo")
             DetailField("Fecha del incidente", formatReportTime(report.occurredAt, zone))
@@ -418,7 +433,7 @@ private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit) 
                 latitude in -90.0..90.0 && longitude in -180.0..180.0
             if (hasPoint) {
                 DetailField("Punto guardado", "$latitude, $longitude")
-                Button(onClick = { onMap(report.id) }, modifier = Modifier.testTag("report_detail_map")) {
+                Button(onClick = { if (isCurrent()) onMap(report.id) }, modifier = Modifier.testTag("report_detail_map")) {
                     Text("Ver en el mapa")
                 }
             } else {

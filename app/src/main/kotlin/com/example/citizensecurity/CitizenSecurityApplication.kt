@@ -67,7 +67,7 @@ open class CitizenSecurityApplication : Application() {
             checkSession()
             currentLocation().also { checkSession() }
         }, elapsedRealtimeNanos = SystemClock::elapsedRealtimeNanos)
-        val repository = SqliteReportRepository(this, names.databaseName, createGuard = { draft ->
+        val repository = SqliteReportRepository(this, names.databaseName, authorAccountId = session.account?.id, createGuard = { draft ->
             checkSession()
             guard.check(draft)
             draft.photo?.let { photo ->

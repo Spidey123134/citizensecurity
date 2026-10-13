@@ -53,6 +53,7 @@ class ReportWorkspace(
     val similarRepository = access.similarReportRepository
     val submissionJournal = access.reportSubmissionJournal
     val checkpointJournal = access.reportDraftCheckpointJournal
+    val historyRepository = access.reportHistoryRepository
 
     fun checkActive() {
         check(!closed.get() && sessions.isCurrent(session)) {

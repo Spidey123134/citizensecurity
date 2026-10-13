@@ -1,12 +1,14 @@
 # Plan del proyecto
 
-## Desarrollo para 0.6.0 — fases 21 a 26, Unreleased
+## Desarrollo para 0.6.0 — fases 21 a 27, Unreleased
 
 El equipo agrupa cambios de código en main sin publicar APK, tags o Releases por fase. [Fase 21](FASE_21.md) añade fechas del incidente al mapa y lista de la misma zona. [Fase 22](FASE_22.md) combina prioridad con los filtros de lista/mapa, mueve el cálculo de búsqueda fuera de Main y comprueba la cámara real antes de abrir una muestra de zona. [Fase 23](FASE_23.md) sustituye la lectura completa de la lista por páginas de SQLite con memoria acotada, cursor exclusivo, continuación de búsquedas incompletas y navegación. La validación Android de estos controles se reserva para la entrega agrupada; la última APK publicada sigue siendo 0.5.7.
 
-Las fases 21 a 24 refuerzan Consulta/Mapas. [Fase 25](FASE_25.md) conecta cuentas y [fase 26](FASE_26.md) separa reportes/consultas, fotos y recuperación por UUID. **19/28 = 67.9% de construcción**, Usuarios 4/4 y Consulta 3/4, mismos criterios/pesos; aceptación Android pendiente. Identidad/aislamiento locales, sin servidor ni roles administrativos. Faltan seguimiento de estados, administración con permisos/historial y notificaciones. Los controles nuevos se aceptarán en 0.6.0; los cortes siguientes son históricos.
+Las fases 21 a 24 refuerzan Consulta/Mapas. [Fase 25](FASE_25.md) conecta cuentas y [fase 26](FASE_26.md) separa reportes/consultas, fotos y recuperación por UUID. [Fase 27](FASE_27.md) prepara **4.4 seguimiento / 4.6 historial** con lectura visible de eventos reales y un servicio transaccional de cambios protegido. **19/28 = 67.9% de construcción**, Usuarios 4/4 y Consulta 3/4, mismos criterios/pesos; aceptación Android pendiente. El historial de lectura no acredita todavía el recorrido administrativo completo. Los controles nuevos se aceptarán en 0.6.0; los cortes siguientes son históricos.
 
-La [fase 24](FASE_24.md) refuerza recuperación de consulta. El compañero hace **solo la interfaz del login**; nuestras fases 25/26 conectan cuentas y espacios conservando sus layouts. Los históricos continúan en académico, sin inventar autoría. Sigue seguimiento/administración con permisos comprobados; el acceso académico no recibe roles reales.
+La [fase 24](FASE_24.md) refuerza recuperación de consulta. El compañero hace **solo la interfaz del login**; nuestras fases 25/26 conectan cuentas y espacios conservando sus layouts. Los históricos continúan en académico, sin inventar autoría. La fase 27 registra la creación junto a cada reporte nuevo y conserva los anteriores sin crear eventos ficticios. La migración de reportes es aditiva a esquema 3; cuentas permanecen en esquema 1.
+
+El usuario eligió **dejar pendiente la asignación administrativa**. El servicio de cambios exige un actor autorizado, estado/secuencia esperados, motivo y operationId; permite solo Reportado → En revisión → Atendido → Cerrado y deniega escritura por defecto. No se asignan roles ni se ofrece un formulario administrativo. Faltan la consulta administrativa, el recorrido autorizado y su aceptación, y las notificaciones. admin/admin y Desarrollador mantienen únicamente el espacio académico.
 
 ## Antecedente 0.5.7
 

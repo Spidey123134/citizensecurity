@@ -1,5 +1,13 @@
 # Avance del plan del proyecto
 
+## Preparación de 0.6.0 — fase 27, Unreleased
+
+**19/28 = 67.9% de construcción**, mismos 28 criterios/pesos. [Fase 27](FASE_27.md) añade historial real consultable por folio y un servicio protegido de transiciones; no suma hitos todavía. Usuarios 4/4, Reportes 4/4, GPS 4/4, Consulta 3/4, Mapas 4/4, Administración 0/4 y Notificaciones 0/4.
+
+**100 casos aprobados, 37 nuevos**; 15 Android nuevos compilados, no ejecutados. Lectura y creación atómica de eventos, migración aditiva y rechazo por permisos/CAS comprobados en JVM/SQLite del host; aceptación Android pendiente. El usuario eligió dejar pendiente la asignación administrativa. La escritura productiva permanece denegada por defecto: sin actor/permiso y recorrido integrado no se acreditan seguimiento de estados, cambios administrativos o historial administrativo completo. Sin APK, incremento de versión, tag o Release por fase.
+
+## Antecedente — fase 26
+
 ## Preparación de 0.6.0 — fase 26, Unreleased
 
 **19/28 = 67.9% de construcción**, mismos 28 criterios/pesos. [Fase 26](FASE_26.md) completa identidad/aislamiento local de Usuarios **4/4** y reportes propios de Consulta **3/4**. Reportes 4/4, GPS 4/4, Mapas 4/4, Administración 0/4 y Notificaciones 0/4. Reportes, fotos, diarios y pantallas separados por cuenta; históricos conservados como académicos.
@@ -203,12 +211,12 @@ Una pantalla visual cuenta solo como preparación visual; una lógica probada cu
 | 4.1 Usuarios | Pantalla de acceso; creación de cuentas; verificación real de acceso; identidad y aislamiento de datos | Pantalla del compañero; cuentas de fase 25; separación por UUID de fase 26. Aceptación Android pendiente, sin servidor | 4/4 · 100% de construcción local |
 | 4.2 Reportes | Modelo y validación; persistencia local técnica; formulario con guardado real autorizado; fotografías | Modelo/validación, persistencia técnica, formulario autorizado y fotografías con copia privada/migración probadas en 0.5.4 | 4/4 · 100% de construcción |
 | 4.3 Geolocalización | Par de coordenadas validado y conservado; captura del dispositivo; permisos y estados GPS; flujo GPS probado | Coordenadas, captura física previa y permisos/estados comprobados. El 11 de octubre de 2026 el usuario confirmó manualmente localización del punto, aceptación dentro del radio y pin visible; versión APK no especificada, sin logs, medidas o guardado físico nuevo | 4/4 · 100% de construcción |
-| 4.4 Consulta | Lectura por folio; lista y permanencia; reportes propios por usuario; seguimiento de estados | Folio, lista/permanencia y espacio de cuenta de fase 26. Aceptación Android pendiente; falta seguimiento administrativo | 3/4 · 75% de construcción |
+| 4.4 Consulta | Lectura por folio; lista y permanencia; reportes propios por usuario; seguimiento de estados | Folio, lista/permanencia y espacio de cuenta de fase 26. Fase 27 prepara lectura del historial; falta el recorrido autorizado de cambios y aceptación Android | 3/4 · 75% de construcción |
 | 4.5 Mapas | Contrato de selección y confirmación; SDK configurado; mapa por zonas y marcadores; flujo visual integrado y probado | Contrato, SDK, zonas/marcadores y flujo visual integrado en 0.5.3: guardado/folio, mapa nativo con calles y pines SQLite, filtros/límite y pin→detalle. La validación nativa usa una fuente de teléfono controlada; la aceptación manual física posterior se acredita por separado en 4.3 | 4/4 · 100% de construcción |
-| 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Ninguno | 0/4 · 0% |
+| 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Fase 27 prepara servicio protegido e historial de lectura; asignación administrativa pendiente. Sin recorrido administrativo completo, ningún hito acreditado | 0/4 · 0% |
 | 4.7 Notificaciones | Eventos de cambios; entrega de avisos; permisos y preferencias; flujo completo probado | Ninguno | 0/4 · 0% |
 
-**Avance actual estimado: 19/28 = 67.9% de construcción.** Fases 25/26 construyen cuentas/reportes propios locales; aceptación Android pendiente. Fotografías y aceptación manual GPS anteriores conservan sus hitos/límites. Publicar y repetir pruebas no suman puntos. Faltan seguimiento administrativo y avisos. No declara servidor/sincronización, seguridad de producción o veracidad de incidentes.
+**Avance actual estimado: 19/28 = 67.9% de construcción.** Fases 25/26 construyen cuentas/reportes propios locales; fase 27 prepara historial sin completar el recorrido administrativo. Aceptación Android y asignación administrativa pendientes. Fotografías y aceptación manual GPS anteriores conservan sus hitos/límites. Publicar y repetir pruebas no suman puntos. Faltan seguimiento administrativo y avisos. No declara servidor/sincronización, seguridad de producción o veracidad de incidentes.
 
 ## Antecedentes de cálculo y evidencia
 

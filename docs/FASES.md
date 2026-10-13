@@ -1,5 +1,9 @@
 # Fases de CITIZENSECURITY
 
+## Fase 27 — historial real de estados, Unreleased
+
+[Fase 27](FASE_27.md) añade consulta explícita del historial desde el folio y creación atómica de eventos para los reportes nuevos. Migración aditiva a esquema 3 sin reconstruir los cambios anteriores. El servicio de transiciones consecutivas usa CAS, operationId y autorización denegada por defecto; la asignación administrativa queda pendiente por elección del usuario. **100 aprobados/37 nuevos**; 15 Android nuevos compilados, no ejecutados. **19/28 = 67.9% permanece**, sin acreditar el recorrido administrativo. Código para 0.6.0, sin APK, versión nueva, tag o Release.
+
 ## Fase 26 — reportes por cuenta, Unreleased
 
 [Fase 26](FASE_26.md) separa reportes, consultas, fotos, borradores y solicitudes por UUID; históricos conservados en académico, esquema 2. Contextos fijos, GPS propio y revocación de pantallas. **73 aprobados/59 nuevos**; 4 Android nuevos compilados, ejecución pendiente. **19/28 = 67.9% de construcción**, Usuarios 4/4 y Consulta 3/4, solo locales. Código en main para 0.6.0, sin APK, versión nueva, tag o Release.
