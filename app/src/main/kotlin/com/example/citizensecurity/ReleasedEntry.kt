@@ -11,6 +11,7 @@ import com.example.citizensecurity.account.AccountAccessMode
 import com.example.citizensecurity.account.AccountAccessState
 import com.example.citizensecurity.account.AccountFormBinding
 import com.example.citizensecurity.account.CreateAccountActivity
+import com.example.citizensecurity.account.ReportWorkspaceActivityBinding
 import com.example.citizensecurity.release.ReleasedToolsActivity
 
 internal object ReleasedEntry {
@@ -51,6 +52,9 @@ internal object ReleasedEntry {
     }
 
     private fun openTools(activity: ComponentActivity) {
-        activity.startActivity(Intent(activity, ReleasedToolsActivity::class.java))
+        val app = activity.application as CitizenSecurityApplication
+        activity.startActivity(ReportWorkspaceActivityBinding.stamp(
+            Intent(activity, ReleasedToolsActivity::class.java), app.accountSession.capture(),
+        ))
     }
 }

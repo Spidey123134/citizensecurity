@@ -11,7 +11,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.PickVisualMediaRequest
 import android.graphics.RectF
 import android.widget.FrameLayout
-import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -38,7 +37,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.example.citizensecurity.CitizenSecurityApplication
+import com.example.citizensecurity.account.LocalReportWorkspace
+import com.example.citizensecurity.account.ReportWorkspaceActivity
 import com.example.citizensecurity.R
 import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.LocationProposal
@@ -72,7 +72,7 @@ import org.maplibre.geojson.FeatureCollection
 import org.maplibre.geojson.Point
 
 /** Formulario y guardado local por gesto, con diario durable y comprobación de cercanía SQLite. */
-class ReportDraftActivity : ComponentActivity() {
+class ReportDraftActivity : ReportWorkspaceActivity() {
     internal lateinit var draftModel: ReportDraftViewModel
         private set
     internal lateinit var locationModel: IncidentLocationViewModel
@@ -80,7 +80,6 @@ class ReportDraftActivity : ComponentActivity() {
     private lateinit var permissionModel: LocationPermissionViewModel
     private lateinit var flow: IncidentLocationFlowBinding
     private lateinit var bridge: ReportLocationFlowBinding
-    private lateinit var dependencies: CitizenSecurityApplication
     internal lateinit var submissionModel: ReportSubmissionViewModel
         private set
     internal lateinit var photoImportModel: ReportPhotoImportViewModel
@@ -92,6 +91,7 @@ class ReportDraftActivity : ComponentActivity() {
     private var restoreCheckpointQuestion by mutableStateOf(false)
     private var photoPickerMessage by mutableStateOf<String?>(null)
     private val photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (!::draftModel.isInitialized || !::photoImportModel.isInitialized || !ensureReportWorkspaceCurrent()) return@registerForActivityResult
         val token = draftModel.currentPhotoSelection()
         if (token == null) {
             if (uri != null) photoPickerMessage = "La selección se interrumpió. Vuelve a elegir la fotografía."
@@ -154,22 +154,21 @@ class ReportDraftActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!hasReportWorkspace) return
         draftModel = ViewModelProvider(this, ReportDraftViewModel.factory())[ReportDraftViewModel::class.java]
-        dependencies = application as CitizenSecurityApplication
         checkpointModel = ViewModelProvider(this, ReportDraftCheckpointViewModel.factory(
-            dependencies.reportDraftCheckpointJournal,
+            reportWorkspace.checkpointJournal,
         ))[ReportDraftCheckpointViewModel::class.java]
-        val photoStore = dependencies.reportPhotoStore
         photoImportModel = ViewModelProvider(this, ReportPhotoImportViewModel.factory(draftModel) { source ->
-            photoStore.importPhoto(source.toUri())
+            reportWorkspace.importPhoto(source.toUri())
         })[ReportPhotoImportViewModel::class.java]
         submissionModel = ViewModelProvider(this, ReportSubmissionViewModel.factory(
-            dependencies.reportRepository, dependencies.reportSubmissionJournal,
+            reportWorkspace.repository, reportWorkspace.submissionJournal,
         ))[ReportSubmissionViewModel::class.java]
         similarityModel = ViewModelProvider(this, ReportSimilarityViewModel.factory(
-            dependencies.similarReportRepository,
+            reportWorkspace.similarRepository,
         ))[ReportSimilarityViewModel::class.java]
-        locationModel = ViewModelProvider(this, dependencies.incidentLocationViewModelFactory(draftModel.state.value.location))[
+        locationModel = ViewModelProvider(this, reportWorkspace.incidentLocationViewModelFactory(draftModel.state.value.location))[
             IncidentLocationViewModel::class.java,
         ]
         permissionModel = ViewModelProvider(this, LocationPermissionViewModel.factory())[LocationPermissionViewModel::class.java]
@@ -190,10 +189,11 @@ class ReportDraftActivity : ComponentActivity() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() = goBack()
         })
-        setContent { PreviewTheme { Content() } }
+        setContent { CompositionLocalProvider(LocalReportWorkspace provides reportWorkspace) { PreviewTheme { Content() } } }
     }
 
     private fun goBack() {
+        if (!ensureReportWorkspaceCurrent()) return
         if (checkpointModel.state.value.busy) return
         when (submissionModel.state.value) {
             is ReportSubmissionState.Saving, ReportSubmissionState.Restoring -> return
@@ -487,6 +487,7 @@ class ReportDraftActivity : ComponentActivity() {
     }
 
     private fun choosePhoto() {
+        if (!ensureReportWorkspaceCurrent()) return
         if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) || checkpointModel.state.value.busy) return
         val token = draftModel.beginPhotoSelection() ?: return
         photoPickerMessage = null
@@ -522,7 +523,7 @@ class ReportDraftActivity : ComponentActivity() {
             } else {
                 Text("La copia guardada ya se convirtió en reporte. Folio: ${stored.submittedFolio}", Modifier.testTag("checkpoint_submitted"))
                 if (allowRestore) OutlinedButton(onClick = {
-                    startActivity(Intent(this@ReportDraftActivity, com.example.citizensecurity.reports.ReportsActivity::class.java)
+                    startReportActivity(Intent(this@ReportDraftActivity, com.example.citizensecurity.reports.ReportsActivity::class.java)
                         .putExtra(com.example.citizensecurity.reports.ReportsActivity.EXTRA_FOLIO, stored.submittedFolio))
                 }, enabled = !state.busy, modifier = Modifier.testTag("open_checkpoint_report")) { Text("Abrir ese reporte") }
             }
@@ -601,7 +602,7 @@ class ReportDraftActivity : ComponentActivity() {
             canContinue = !busy && canSubmitReport() && lifecycleState.isAtLeast(Lifecycle.State.RESUMED),
             onContinue = { submitAfterSimilarity(draft, explicitOverride = true) },
             onDismiss = { similarityModel.clear() },
-            onOpenReport = { folio -> startActivity(
+            onOpenReport = { folio -> startReportActivity(
                 Intent(this@ReportDraftActivity, com.example.citizensecurity.reports.ReportsActivity::class.java)
                     .putExtra("report_folio", folio),
             ) },
@@ -610,6 +611,7 @@ class ReportDraftActivity : ComponentActivity() {
     }
 
     private fun submitAfterSimilarity(draft: NewReport, explicitOverride: Boolean) {
+        if (!ensureReportWorkspaceCurrent()) return
         if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) || reviewGpsRunning || !canSubmitReport()) return
         val submission = submissionModel.state.value
         if (submission != ReportSubmissionState.Idle && submission !is ReportSubmissionState.Invalid) return
@@ -621,6 +623,7 @@ class ReportDraftActivity : ComponentActivity() {
     }
 
     private fun refreshReviewGps() {
+        if (!ensureReportWorkspaceCurrent()) return
         if (reviewGpsRunning || !lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) return
         if (permissionModel.state.value.access != LocationPermissionAccess.Precise) {
             if (flow.requestPermission() == LocationPermissionAction.ExplanationRequired) permissionExplanation = true
@@ -630,7 +633,7 @@ class ReportDraftActivity : ComponentActivity() {
         val generation = ++reviewGpsGeneration
         val job = lifecycleScope.launch(start = CoroutineStart.LAZY) {
             try {
-                val result = dependencies.refreshReportPhoneLocation()
+                val result = reportWorkspace.refreshPhoneLocation()
                 ensureActive()
                 if (reviewGpsGeneration != generation) return@launch
                 reviewGpsMessage = when (result) {
@@ -665,14 +668,15 @@ class ReportDraftActivity : ComponentActivity() {
             Text(report.description)
             Text(report.location.reference)
             Button(onClick = {
+                if (!ensureReportWorkspaceCurrent()) return@Button
                 getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText("Folio del reporte", report.id))
             }, modifier = Modifier.fillMaxWidth().testTag("copy_saved_folio")) { Text("Copiar folio") }
             Button(onClick = {
-                startActivity(Intent(this@ReportDraftActivity, com.example.citizensecurity.reports.ReportsActivity::class.java)
+                startReportActivity(Intent(this@ReportDraftActivity, com.example.citizensecurity.reports.ReportsActivity::class.java)
                     .putExtra("report_folio", report.id))
             }, modifier = Modifier.fillMaxWidth().testTag("open_saved_report")) { Text("Ver reporte guardado") }
             OutlinedButton(onClick = {
-                startActivity(Intent(this@ReportDraftActivity, com.example.citizensecurity.reports.ReportsMapActivity::class.java)
+                startReportActivity(Intent(this@ReportDraftActivity, com.example.citizensecurity.reports.ReportsMapActivity::class.java)
                     .putExtra("report_folio", report.id))
             }, modifier = Modifier.fillMaxWidth()) { Text("Ver en el mapa") }
             OutlinedButton(onClick = onNew, enabled = !checkpoint.busy && canStartAnotherReport(report),
@@ -903,6 +907,7 @@ class ReportDraftActivity : ComponentActivity() {
     }
 
     private fun pickDate() {
+        if (!ensureReportWorkspaceCurrent()) return
         val calendar = Calendar.getInstance().apply { timeInMillis = (draftModel.state.value.occurredAt ?: Instant.now()).toEpochMilli() }
         DatePickerDialog(this, { _, year, month, day ->
             calendar.set(year, month, day)
@@ -920,6 +925,7 @@ class ReportDraftActivity : ComponentActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        if (!hasReportWorkspace) { super.onSaveInstanceState(outState); return }
         outState.putBoolean(REVIEW_VISIBLE, reviewResult is ReportDraftReview.Valid)
         mapView?.let { view -> outState.putBundle(MAP_STATE, Bundle().also(view::onSaveInstanceState)) }
         super.onSaveInstanceState(outState)

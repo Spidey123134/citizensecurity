@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.citizensecurity.CitizenSecurityApplication
+import com.example.citizensecurity.account.LocalReportWorkspace
 import com.example.citizensecurity.domain.ReportPhoto
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -24,14 +25,21 @@ import java.io.IOException
 @Composable
 internal fun ReportPhotoContent(photo: ReportPhoto?, modifier: Modifier = Modifier, tagPrefix: String = "photo") {
     val app = LocalContext.current.applicationContext as CitizenSecurityApplication
-    var attempt by remember(photo) { mutableIntStateOf(0) }
-    var bitmap by remember(photo, attempt) { mutableStateOf<ImageBitmap?>(null) }
-    var error by remember(photo, attempt) { mutableStateOf(false) }
-    LaunchedEffect(photo, attempt) {
+    val suppliedWorkspace = LocalReportWorkspace.current
+    // Standalone previews/tests also capture once; production Activities always provide theirs.
+    val fallbackWorkspace = remember(app, suppliedWorkspace) {
+        if (suppliedWorkspace == null) app.openReportWorkspace(app.accountSession.capture()) else null
+    }
+    DisposableEffect(fallbackWorkspace) { onDispose { fallbackWorkspace?.close() } }
+    val workspace = suppliedWorkspace ?: checkNotNull(fallbackWorkspace)
+    var attempt by remember(workspace, photo) { mutableIntStateOf(0) }
+    var bitmap by remember(workspace, photo, attempt) { mutableStateOf<ImageBitmap?>(null) }
+    var error by remember(workspace, photo, attempt) { mutableStateOf(false) }
+    LaunchedEffect(workspace, photo, attempt) {
         if (photo == null) return@LaunchedEffect
         try {
             val loaded = withContext(Dispatchers.IO) {
-                val bytes = app.reportPhotoStore.read(photo)
+                val bytes = workspace.readPhoto(photo)
                 ensureActive()
                 val options = BitmapFactory.Options().apply {
                     inSampleSize = if (maxOf(photo.width, photo.height) > 1024) 2 else 1
@@ -47,6 +55,7 @@ internal fun ReportPhotoContent(photo: ReportPhoto?, modifier: Modifier = Modifi
                     throw failure
                 }
             }
+            workspace.checkActive()
             bitmap = loaded
         } catch (cancelled: CancellationException) {
             throw cancelled
