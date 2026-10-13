@@ -2,6 +2,10 @@ package com.example.citizensecurity
 
 import android.app.Application
 import com.example.citizensecurity.account.LocalAccountSession
+import com.example.citizensecurity.account.AccountSessionState
+import com.example.citizensecurity.account.ReportWorkspace
+import com.example.citizensecurity.account.ReportWorkspaceStorage
+import com.example.citizensecurity.data.ReportStorageNames
 import com.example.citizensecurity.data.SqliteAccountRepository
 import com.example.citizensecurity.domain.AccountRepository
 import com.example.citizensecurity.data.AndroidPhoneLocationSource
@@ -37,6 +41,48 @@ import com.example.citizensecurity.report.ReportViewModel
 open class CitizenSecurityApplication : Application() {
     open val accountRepository: AccountRepository by lazy { SqliteAccountRepository(this) }
     val accountSession = LocalAccountSession()
+
+    /** Every Activity captures its own owner and GPS evidence before creating any report model. */
+    open fun openReportWorkspace(session: AccountSessionState): ReportWorkspace {
+        check(accountSession.isCurrent(session)) { "La sesión cambió antes de abrir los reportes." }
+        val evidence = PhoneLocationEvidence(phoneLocationSource::hasPrecisePermission,
+            phoneLocationSource::isLocationEnabled)
+        val refresh = PhoneLocationRefresh(phoneLocationSource, evidence, SystemClock::elapsedRealtimeNanos)
+        return buildReportWorkspace(session, refresh::refresh, evidence::currentFix)
+    }
+
+    /** Test applications may inject their phone source; production always uses native location. */
+    protected fun buildReportWorkspace(
+        session: AccountSessionState,
+        refreshLocation: suspend () -> PhoneLocationRefreshResult,
+        currentLocation: () -> DeviceLocationFix?,
+    ): ReportWorkspace {
+        val checkSession = {
+            check(accountSession.isCurrent(session)) { "La sesión de estos reportes terminó." }
+        }
+        checkSession()
+        val names = ReportStorageNames.fromAccountId(session.account?.id)
+        val photos = ReportPhotoStore(this, names.photoDirectoryName, checkSession)
+        val guard = NearbySqliteReportGuard(deviceLocation = {
+            checkSession()
+            currentLocation().also { checkSession() }
+        }, elapsedRealtimeNanos = SystemClock::elapsedRealtimeNanos)
+        val repository = SqliteReportRepository(this, names.databaseName, createGuard = { draft ->
+            checkSession()
+            guard.check(draft)
+            draft.photo?.let { photo ->
+                try { photos.check(photo) } catch (_: IOException) {
+                    throw InvalidReportException(ValidationErrors(mapOf(ReportField.PHOTO to
+                        "La fotografía no está disponible o está dañada. Vuelve a elegirla o quítala antes de guardar.")))
+                }
+            }
+            checkSession()
+        })
+        return ReportWorkspace(session, accountSession, ReportWorkspaceStorage(repository, repository,
+            repository, repository, ReportSubmissionStore(this, names.submissionFileName),
+            ReportDraftCheckpointStore(this, names.checkpointFileName), photos, repository::close),
+            refreshLocation, currentLocation)
+    }
 
     val mapsReadinessChecker by lazy {
         MapsReadinessChecker(

@@ -9,6 +9,9 @@ import android.os.SystemClock
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.citizensecurity.CitizenSecurityApplication
+import com.example.citizensecurity.account.AccountSessionState
+import com.example.citizensecurity.account.ReportWorkspace
+import com.example.citizensecurity.account.ReportWorkspaceStorage
 import com.example.citizensecurity.data.NearbySqliteReportGuard
 import com.example.citizensecurity.data.PhoneLocationRefreshResult
 import com.example.citizensecurity.data.ReportSubmissionStore
@@ -36,6 +39,15 @@ class ReportTestApplication : CitizenSecurityApplication() {
     override val accountRepository: AccountRepository
         get() = accountTestRepository ?: super.accountRepository
     @Volatile private var testFixture: ReportTestFixture? = null
+
+    override fun openReportWorkspace(session: AccountSessionState): ReportWorkspace {
+        val fixture = testFixture ?: return super.openReportWorkspace(session)
+        // Account scopes retain real named production stores. Only the phone source is controlled.
+        if (session.account != null) return buildReportWorkspace(session, fixture::refresh, fixture::currentFix)
+        return ReportWorkspace(session, accountSession, ReportWorkspaceStorage(fixture.repository,
+            fixture.repository, fixture.repository, fixture.similarLookup ?: fixture.repository,
+            fixture.journal, fixture.checkpoint, fixture.photoStore), fixture::refresh, fixture::currentFix)
+    }
 
     override val reportRepository: IdempotentReportRepository
         get() = testFixture?.repository ?: super.reportRepository

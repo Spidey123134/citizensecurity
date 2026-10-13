@@ -32,7 +32,11 @@ import kotlinx.coroutines.withContext
  * Una selección explícita se convierte en JPEG privado, sin URI ni metadatos externos.
  * Las importaciones son nuevas identidades; nunca sustituyen ni borran una foto conservada.
  */
-class ReportPhotoStore(context: Context, directoryName: String = DIRECTORY_NAME) {
+class ReportPhotoStore(
+    context: Context,
+    directoryName: String = DIRECTORY_NAME,
+    private val accessCheck: () -> Unit = {},
+) {
     private val resolver = context.applicationContext.contentResolver
     private val parent = context.applicationContext.filesDir.canonicalFile
     private val directory: File
@@ -52,6 +56,7 @@ class ReportPhotoStore(context: Context, directoryName: String = DIRECTORY_NAME)
         importPhoto(uri, useLegacyDecoder = true)
 
     private suspend fun importPhoto(uri: Uri, useLegacyDecoder: Boolean): ReportPhoto = withContext(Dispatchers.IO) {
+        accessCheck()
         require(uri.scheme == "content") { "Selecciona una imagen desde el selector de fotos." }
         ensureActive()
         val source = resolver.openInputStream(uri)?.use { input ->
@@ -84,6 +89,7 @@ class ReportPhotoStore(context: Context, directoryName: String = DIRECTORY_NAME)
         val checksum = sha256(bytes)
         ensureActive()
         synchronized(lock) {
+            accessCheck()
             ensurePrivateDirectory()
             val id = generateSequence { UUID.randomUUID().toString() }.first { candidate ->
                 val base = photoFile(candidate)
@@ -96,6 +102,7 @@ class ReportPhotoStore(context: Context, directoryName: String = DIRECTORY_NAME)
             try {
                 output.write(bytes)
                 ensureActive()
+                accessCheck()
                 atomic.finishWrite(output)
             } catch (failure: Exception) {
                 // failWrite retira solamente el .new de esta identidad recién reservada.
@@ -104,21 +111,29 @@ class ReportPhotoStore(context: Context, directoryName: String = DIRECTORY_NAME)
             }
             // Si se canceló después de confirmar, se conserva el archivo duradero: no se borra.
             ensureActive()
+            accessCheck()
             photo
         }
     }
 
     /** Bloqueante: llamar desde el guard de SQLite en IO. No restaura, sustituye ni borra archivos. */
-    fun check(photo: ReportPhoto) { readChecked(photo) }
+    fun check(photo: ReportPhoto) {
+        accessCheck()
+        readChecked(photo)
+        accessCheck()
+    }
 
     suspend fun read(photo: ReportPhoto): ByteArray = withContext(Dispatchers.IO) {
         ensureActive()
+        accessCheck()
         val bytes = readChecked(photo)
         ensureActive()
+        accessCheck()
         bytes
     }
 
     private fun readChecked(photo: ReportPhoto): ByteArray = synchronized(lock) {
+        accessCheck()
         checkPrivateDirectory()
         val base = photoFile(photo.id)
         if (!base.isFile) throw IOException("La foto guardada no está disponible; se conserva la referencia del reporte.")

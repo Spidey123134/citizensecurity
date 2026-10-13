@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.RectF
 import android.os.Bundle
 import android.widget.FrameLayout
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -26,7 +25,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.example.citizensecurity.CitizenSecurityApplication
+import com.example.citizensecurity.account.LocalReportWorkspace
+import com.example.citizensecurity.account.ReportWorkspaceActivity
 import com.example.citizensecurity.R
 import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.ReportMapQuery
@@ -56,7 +56,7 @@ import org.maplibre.android.maps.Style
 import org.maplibre.android.style.layers.SymbolLayer
 
 /** Consulta solo los reportes de este teléfono. Abrir el mapa no inicia una lectura de zona ni GPS. */
-class ReportsMapActivity : ComponentActivity() {
+class ReportsMapActivity : ReportWorkspaceActivity() {
     private lateinit var queryModel: ReportMapViewModel
     private var sceneState by mutableStateOf<ReportMapSceneState>(ReportMapSceneState.Idle)
     private var selectedType by mutableStateOf<IncidentType?>(null)
@@ -120,8 +120,8 @@ class ReportsMapActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val dependencies = application as CitizenSecurityApplication
-        queryModel = ViewModelProvider(this, dependencies.reportMapViewModelFactory)[ReportMapViewModel::class.java]
+        if (!hasReportWorkspace) return
+        queryModel = ViewModelProvider(this, ReportMapViewModel.factory(reportWorkspace.mapRepository))[ReportMapViewModel::class.java]
         selectedType = savedInstanceState?.getString(TYPE)?.let { value -> IncidentType.entries.find { it.name == value } }
         selectedStatus = savedInstanceState?.getString(STATUS)?.let { value -> ReportStatus.entries.find { it.name == value } }
         selectedPriority = savedInstanceState?.getString(PRIORITY)?.let { value -> Priority.entries.find { it.name == value } }
@@ -138,7 +138,7 @@ class ReportsMapActivity : ComponentActivity() {
         dateError = savedInstanceState?.getString(DATE_ERROR)?.takeIf { it.length <= 256 }
         savedMapState = savedInstanceState?.getBundle(MAP_STATE)
         mapInitialized = runCatching { MapsConfiguration.initialize(this) }.isSuccess
-        setContent { PreviewTheme { Content() } }
+        setContent { CompositionLocalProvider(LocalReportWorkspace provides reportWorkspace) { PreviewTheme { Content() } } }
         if (intent.hasExtra(EXTRA_FOLIO)) readEntryReport()
     }
 
@@ -290,7 +290,7 @@ class ReportsMapActivity : ComponentActivity() {
                         Text("Solo se muestran reportes con coordenadas guardadas. Los que tienen únicamente una referencia aparecen en la lista.",
                             style = MaterialTheme.typography.bodySmall)
                         OutlinedButton(onClick = {
-                            startActivity(Intent(this@ReportsMapActivity, ReportsActivity::class.java))
+                            startReportActivity(Intent(this@ReportsMapActivity, ReportsActivity::class.java))
                         }, modifier = Modifier.fillMaxWidth().testTag("open_map_report_list")) { Text("Ver lista de reportes") }
                         Spacer(Modifier.height(8.dp))
                     }
@@ -373,7 +373,7 @@ class ReportsMapActivity : ComponentActivity() {
     }
 
     private fun openReport(folio: String) {
-        startActivity(Intent(this, ReportsActivity::class.java).putExtra(EXTRA_FOLIO, folio))
+        startReportActivity(Intent(this, ReportsActivity::class.java).putExtra(EXTRA_FOLIO, folio))
     }
 
     private fun openVisibleReport(folio: String) {
@@ -510,6 +510,7 @@ class ReportsMapActivity : ComponentActivity() {
 
     /** El folio viene de la navegación; se leen sus coordenadas guardadas, nunca extras de GPS. */
     private fun readEntryReport() {
+        if (!ensureReportWorkspaceCurrent()) return
         if (entryReadInFlight) return
         val folio = intent.getStringExtra(EXTRA_FOLIO)?.trim()?.lowercase().orEmpty()
         if (!FOLIO_PATTERN.matches(folio)) {
@@ -522,8 +523,9 @@ class ReportsMapActivity : ComponentActivity() {
         navigationMessage = "Consultando el lugar guardado del folio…"
         entryRead = lifecycleScope.launch {
             try {
-                val report = (application as CitizenSecurityApplication).reportRepository.findById(folio)
+                val report = reportWorkspace.repository.findById(folio)
                 ensureActive()
+                reportWorkspace.checkActive()
                 val latitude = report?.location?.latitude
                 val longitude = report?.location?.longitude
                 when {
@@ -588,6 +590,7 @@ class ReportsMapActivity : ComponentActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        if (!hasReportWorkspace) { super.onSaveInstanceState(outState); return }
         outState.putString(TYPE, selectedType?.name)
         outState.putString(STATUS, selectedStatus?.name)
         outState.putString(PRIORITY, selectedPriority?.name)

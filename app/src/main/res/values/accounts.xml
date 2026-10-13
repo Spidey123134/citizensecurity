@@ -1,6 +1,6 @@
 <resources>
     <item name="account_status" type="id" />
-    <string name="account_local_hint">Cuenta local de este teléfono. Los reportes todavía se comparten entre las cuentas del dispositivo.</string>
+    <string name="account_local_hint">Cuenta local de este teléfono. Inicia sesión para guardar y consultar tus reportes.</string>
     <string name="account_register_hint">Usuario: 3 a 30 letras, números o guion bajo. Contraseña: 15 a 128 caracteres. La cuenta se guarda solo en este teléfono.</string>
     <string name="account_working">Comprobando cuenta…</string>
     <string name="account_invalid">Revisa los campos indicados y vuelve a escribir la contraseña.</string>
@@ -11,7 +11,7 @@
     <string name="account_login_interrupted">Ingreso interrumpido. Vuelve a escribir la contraseña para continuar.</string>
     <string name="account_created">Cuenta creada en este teléfono. Escribe tu contraseña para iniciar sesión.</string>
     <string name="account_authenticated">Acceso comprobado.</string>
-    <string name="account_home_signed_in">Cuenta local: %1$s. Los reportes de este teléfono todavía se comparten entre cuentas.</string>
-    <string name="account_home_guest">Modo académico sin cuenta. Reportes compartidos de este teléfono; sin permisos administrativos.</string>
+    <string name="account_home_signed_in">Cuenta local: %1$s. Reportes, fotos y borradores de esta cuenta en este teléfono.</string>
+    <string name="account_home_guest">Modo académico sin cuenta. Conserva los reportes históricos y de demostración; sin acceso a los de cuentas registradas ni permisos administrativos.</string>
     <string name="account_sign_out">Cerrar sesión</string>
 </resources>

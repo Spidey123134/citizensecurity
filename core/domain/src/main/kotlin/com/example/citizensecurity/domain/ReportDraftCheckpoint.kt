@@ -20,7 +20,7 @@ data class ReportDraftCheckpoint(
 }
 
 /**
- * Una copia privada por teléfono, independiente del intento de inserción y de SQLite.
+ * Una copia privada por espacio local, independiente del intento de inserción y de SQLite.
  * Una lectura fallida nunca equivale a una copia ausente. [write] compara [expectedId]
  * y [expectedSubmittedFolio] con la revisión y marca almacenadas (null cuando no existen);
  * cambiar campos necesita un [ReportDraftCheckpoint.id] nuevo. Así una pantalla que no

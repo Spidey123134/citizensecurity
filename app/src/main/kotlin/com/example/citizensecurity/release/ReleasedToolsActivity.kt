@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import androidx.activity.ComponentActivity
+import com.example.citizensecurity.account.ReportWorkspaceActivity
 import androidx.activity.addCallback
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -21,16 +21,16 @@ import com.example.citizensecurity.reports.ReportsMapActivity
 import kotlinx.coroutines.launch
 
 /** Functional home. Opening or refreshing it only reads the private recovery journals. */
-class ReleasedToolsActivity : ComponentActivity() {
+class ReleasedToolsActivity : ReportWorkspaceActivity() {
     private val homeModel: ReportHomeViewModel by lazy {
-        val app = application as CitizenSecurityApplication
         ViewModelProvider(this, ReportHomeViewModel.factory(
-            app.reportSubmissionJournal, app.reportDraftCheckpointJournal,
+            reportWorkspace.submissionJournal, reportWorkspace.checkpointJournal,
         ))[ReportHomeViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!hasReportWorkspace) return
         setContentView(R.layout.activity_released_tools)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.home_root)) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -38,17 +38,17 @@ class ReleasedToolsActivity : ComponentActivity() {
             insets
         }
         findViewById<Button>(R.id.tools_preview_interface).setOnClickListener {
-            startActivity(Intent(this, ReportDraftActivity::class.java))
+            startReportActivity(Intent(this, ReportDraftActivity::class.java))
         }
         findViewById<Button>(R.id.tools_reports).setOnClickListener {
-            startActivity(Intent(this, ReportsActivity::class.java))
+            startReportActivity(Intent(this, ReportsActivity::class.java))
         }
         findViewById<Button>(R.id.tools_reports_map).setOnClickListener {
-            startActivity(Intent(this, ReportsMapActivity::class.java))
+            startReportActivity(Intent(this, ReportsMapActivity::class.java))
         }
         findViewById<Button>(R.id.tools_back).setOnClickListener { closeSession() }
         onBackPressedDispatcher.addCallback(this) { closeSession() }
-        findViewById<Button>(R.id.home_retry).setOnClickListener { homeModel.refresh() }
+        findViewById<Button>(R.id.home_retry).setOnClickListener { if (ensureReportWorkspaceCurrent()) homeModel.refresh() }
         render(homeModel.state.value)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -59,7 +59,8 @@ class ReleasedToolsActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        val account = (application as CitizenSecurityApplication).accountSession.account
+        if (!hasReportWorkspace) return
+        val account = reportWorkspace.session.account
         findViewById<TextView>(R.id.home_account).text = if (account == null)
             getString(R.string.account_home_guest) else getString(R.string.account_home_signed_in, account.username)
         findViewById<Button>(R.id.tools_back).setText(if (account == null) R.string.home_back else R.string.account_sign_out)
@@ -68,11 +69,13 @@ class ReleasedToolsActivity : ComponentActivity() {
     }
 
     private fun closeSession() {
-        (application as CitizenSecurityApplication).accountSession.signOut()
+        if (!ensureReportWorkspaceCurrent()) return
+        (application as CitizenSecurityApplication).accountSession.signOutIfCurrent(reportWorkspace.session)
         finish()
     }
 
     private fun render(state: ReportHomeState) {
+        if (!hasReportWorkspace) return
         val messages = if (state.loading) listOf(getString(R.string.home_checking)) else buildList {
             if (state.submissionReadFailed) add(getString(R.string.home_attempt_unknown))
             else if (state.pendingAttempt) add(getString(R.string.home_attempt_pending))

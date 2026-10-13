@@ -1,5 +1,9 @@
 # Fases de CITIZENSECURITY
 
+## Fase 26 — reportes por cuenta, Unreleased
+
+[Fase 26](FASE_26.md) separa reportes, consultas, fotos, borradores y solicitudes por UUID; históricos conservados en académico, esquema 2. Contextos fijos, GPS propio y revocación de pantallas. **73 aprobados/59 nuevos**; 4 Android nuevos compilados, ejecución pendiente. **19/28 = 67.9% de construcción**, Usuarios 4/4 y Consulta 3/4, solo locales. Código en main para 0.6.0, sin APK, versión nueva, tag o Release.
+
 ## Fase 25 — cuentas locales, Unreleased
 
 [Fase 25](FASE_25.md) conecta Crear cuenta, comprobación de contraseña y cierre de sesión a los layouts existentes del compañero. SQLite separado, verificadores PBKDF2 y operaciones cancelables sin guardar contraseñas en estado restaurable. **36 casos nuevos aprobados**, incluidos 6 con SQLite del host; 12 Android compilados, ejecución pendiente. **17/28 = 60.7% de construcción**, Usuarios 3/4: cuentas solo locales, reportes aún compartidos, sin aislamiento/roles. Código en main para 0.6.0, sin APK, incremento de versión, tags o Release.
