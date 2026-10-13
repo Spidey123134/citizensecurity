@@ -11,6 +11,8 @@ import android.database.sqlite.SQLiteOpenHelper
 internal class ReportDatabase(context: Context, databaseName: String?) :
     SQLiteOpenHelper(context.applicationContext, databaseName, null, VERSION, PRESERVE_CORRUPTION) {
 
+    override fun onConfigure(db: SQLiteDatabase) { db.setForeignKeyConstraintsEnabled(true) }
+
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(
             """
@@ -63,18 +65,22 @@ internal class ReportDatabase(context: Context, databaseName: String?) :
                 ON reports (created_at_seconds DESC, created_at_nanos DESC, id DESC)
             """.trimIndent(),
         )
+        db.execSQL(ReportHistorySql.CREATE_TABLE)
     }
 
-    /** La única migración soportada añade metadatos opcionales sin sustituir reportes. */
+    /** Additive upgrades preserve every row; unknown earlier history is never reconstructed. */
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion != 1 || newVersion != 2) {
+        if (oldVersion !in 1..2 || newVersion != VERSION) {
             throw SQLiteException(
                 "No hay una migración de reportes de la versión $oldVersion a $newVersion.",
             )
         }
         // SQLiteOpenHelper ejecuta este bloque dentro de una transacción. Si falla cualquier
         // columna/constraint, las filas y la versión anterior permanecen íntegramente.
-        PHOTO_COLUMNS.forEach { declaration -> db.execSQL("ALTER TABLE reports ADD COLUMN $declaration") }
+        if (oldVersion == 1) {
+            PHOTO_COLUMNS.forEach { declaration -> db.execSQL("ALTER TABLE reports ADD COLUMN $declaration") }
+        }
+        db.execSQL(ReportHistorySql.CREATE_TABLE)
     }
 
     override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -84,7 +90,7 @@ internal class ReportDatabase(context: Context, databaseName: String?) :
     }
 
     private companion object {
-        const val VERSION = 2
+        const val VERSION = 3
         val PHOTO_COLUMNS = listOf(
             """
             photo_id TEXT CHECK (photo_id IS NULL OR (

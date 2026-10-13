@@ -2,6 +2,11 @@
 
 ## [Unreleased] — preparación de 0.6.0
 
+- Fase 27: Historial de estados visible desde cada folio por consulta explícita, con actualización, eventos anteriores, cancelación y reintento de la página fallida. La ficha permanece disponible si falla solo el historial.
+- Los reportes nuevos y su evento real de creación se guardan en una misma transacción. Migración aditiva de reportes a esquema 3; conserva filas, fotos y estados anteriores sin inventar eventos ni asignarles un autor. Cuentas mantienen esquema 1.
+- Servicio de cambios consecutivos Reportado → En revisión → Atendido → Cerrado, con estado/secuencia esperados, motivo, actor autorizado y operationId idempotente. Escritura denegada por defecto antes de abrir la base; sin controles de escritura ni asignación administrativa. El usuario eligió dejar esa asignación pendiente; admin/admin sigue académico.
+- Historial acotado a una página de 50 eventos, ordenada por secuencia descendente con cursor exclusivo; autorización de lectura por sesión antes/después, cancelación/generaciones y gestos vinculados al folio vigente.
+- 100 casos distintos aprobados, 37 nuevos; 15 Android nuevos compilados sin ejecutar. 19/28 = 67.9% permanece: no se acredita todavía seguimiento administrativo ni sus permisos.
 - Fase 26: reportes propios en guardado, folio, páginas, mapa y posibles repetidos. Base, diarios, checkpoint y fotos por UUID; históricos conservados en modo académico sin reasignarlos.
 - Contexto fijo y GPS propio por pantalla; comprobación de sesión antes/después. Conserva esquema 2, integridad de fotos, CAS y createOnce; escritura incierta permanece con su dueño.
 - Sellos de dueño/proceso/revisión antes de restaurar UI y al navegar. Retira pantallas viejas sin interrumpir la navegación nueva; cierre antiguo no termina otra cuenta. No restaura borrador de cuenta como académico ni renderiza sobre vistas retiradas.
@@ -25,7 +30,7 @@
 - Las fechas inválidas mantienen la consulta válida anterior; entradas y fechas aplicadas se conservan por separado al recrear la pantalla. Cambiar el intervalo invalida respuestas anteriores incluso para la misma zona.
 - Se actualiza el flujo del equipo: código y GitHub durante el desarrollo; APK, versión Android, tags y Releases se agruparán en una futura entrega 0.6.0. La última entrega binaria continúa siendo 0.5.7 / código 27.
 
-[Fases 21–26](docs/FASES.md) registran pruebas y aceptación Android pendiente. **19/28 = 67.9% de construcción**, mismos criterios; cuentas/reportes propios locales construidos, administración y notificaciones pendientes.
+[Fases 21–27](docs/FASES.md) registran pruebas y aceptación Android pendiente. **19/28 = 67.9% de construcción**, mismos criterios; cuentas/reportes propios e historial de lectura locales construidos, recorrido administrativo y notificaciones pendientes.
 
 ## [0.5.7] — fase 20 · búsqueda local
 

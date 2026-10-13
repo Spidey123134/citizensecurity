@@ -12,8 +12,20 @@ class ScopedReportAccess(
     similar: SimilarReportRepository,
     submission: ReportSubmissionJournal,
     checkpoint: ReportDraftCheckpointJournal,
+    history: ReportHistoryRepository?,
     private val checkAccess: () -> Unit,
 ) {
+    /** Preserve the original trailing-lambda API for callers without a separate history reader. */
+    constructor(
+        repo: IdempotentReportRepository,
+        list: ReportListPageRepository,
+        map: ReportMapRepository,
+        similar: SimilarReportRepository,
+        submission: ReportSubmissionJournal,
+        checkpoint: ReportDraftCheckpointJournal,
+        checkAccess: () -> Unit,
+    ) : this(repo, list, map, similar, submission, checkpoint, repo as? ReportHistoryRepository, checkAccess)
+
     private val checkpointStore = checkpoint
     val reportRepository: IdempotentReportRepository = object : IdempotentReportRepository {
         override suspend fun create(draft: NewReport): Report = checked { repo.create(draft) }
@@ -35,6 +47,9 @@ class ScopedReportAccess(
         override suspend fun write(checkpoint: ReportDraftCheckpoint, expectedId: String?, expectedSubmittedFolio: String?) =
             checked { checkpointStore.write(checkpoint, expectedId, expectedSubmittedFolio) }
         override suspend fun markSubmitted(id: String, folio: String) = checked { checkpointStore.markSubmitted(id, folio) }
+    }
+    val reportHistoryRepository = ReportHistoryRepository { query ->
+        checked { checkNotNull(history) { "El historial no está disponible en este espacio." }.readHistory(query) }
     }
 
     private suspend fun <T> checked(action: suspend () -> T): T {

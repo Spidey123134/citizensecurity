@@ -22,6 +22,17 @@ import com.example.citizensecurity.domain.ReportMapRepository
 import com.example.citizensecurity.domain.ReportRequestConflictException
 import com.example.citizensecurity.domain.ReportStatus
 import com.example.citizensecurity.domain.ReportValidator
+import com.example.citizensecurity.domain.ReportHistoryRepository
+import com.example.citizensecurity.domain.ReportHistoryQuery
+import com.example.citizensecurity.domain.ReportHistoryPage
+import com.example.citizensecurity.domain.ReportStatusRepository
+import com.example.citizensecurity.domain.ReportStatusChangeCommand
+import com.example.citizensecurity.domain.ReportStatusEvent
+import com.example.citizensecurity.domain.ReportStatusEventKind
+import com.example.citizensecurity.domain.ReportStatusPermissionDeniedException
+import com.example.citizensecurity.domain.ReportStatusConflictException
+import com.example.citizensecurity.domain.ReportStatusOperationConflictException
+import com.example.citizensecurity.domain.ReportStatusNotFoundException
 import com.example.citizensecurity.domain.SimilarReportMatch
 import com.example.citizensecurity.domain.SimilarReportPage
 import com.example.citizensecurity.domain.SimilarReportQuery
@@ -52,7 +63,10 @@ class SqliteReportRepository(
     private val clock: Clock = Clock.systemUTC(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val createGuard: (NewReport) -> Unit = {},
-) : IdempotentReportRepository, ReportMapRepository, SimilarReportRepository, ReportListPageRepository, Closeable {
+    private val authorAccountId: String? = null,
+    private val statusAuthority: (ReportStatusChangeCommand) -> String = { throw ReportStatusPermissionDeniedException() },
+) : IdempotentReportRepository, ReportMapRepository, SimilarReportRepository, ReportListPageRepository,
+    ReportHistoryRepository, ReportStatusRepository, Closeable {
 
     private val lock = Any()
     private val validator = ReportValidator()
@@ -62,6 +76,7 @@ class SqliteReportRepository(
     private var closed = false
 
     init {
+        authorAccountId?.let { requireCanonicalActor(it) }
         require(
             databaseName == null || (
                 databaseName.isNotBlank() &&
@@ -126,6 +141,8 @@ class SqliteReportRepository(
                 return@withOpenRepository resolveExisting(existing, normalized)
             }
             database.insertOrThrow(TABLE, null, report.toValues())
+            insertHistoryEvent(database, report.id, ReportStatusEvent(report.id, 1L,
+                ReportStatusEventKind.CREATED, null, report.status, report.createdAt, authorAccountId))
             ensureActive()
             createGuard(normalized)
             ensureActive()
@@ -138,6 +155,121 @@ class SqliteReportRepository(
 
     override suspend fun findById(id: String): Report? = withOpenRepository {
         findStoredReport(databaseForRead(), id)
+    }
+
+    /** Current state and one bounded page share a fresh SQLite snapshot. No GPS or status write. */
+    override suspend fun readHistory(query: ReportHistoryQuery): ReportHistoryPage? = withOpenRepository {
+        val database = databaseForRead()
+        ensureActive()
+        database.beginTransactionNonExclusive()
+        try {
+            val head = readHistoryHead(database, query.reportId) ?: return@withOpenRepository null
+            val events = database.rawQuery(ReportHistorySql.page(query), ReportHistorySql.pageArguments(query)).use { cursor ->
+                buildList {
+                    while (cursor.moveToNext()) { ensureActive(); add(cursor.toHistoryEvent()) }
+                }
+            }
+            ensureActive()
+            database.setTransactionSuccessful()
+            ReportHistoryPage(query.reportId, head.status, head.sequence, events.take(query.limit),
+                events.size > query.limit, head.complete)
+        } finally { database.endTransaction() }
+    }
+
+    /** Denied before opening storage by default; the app exposes no administrative authority. */
+    override suspend fun changeStatus(command: ReportStatusChangeCommand): ReportStatusEvent = withOpenRepository {
+        val actor = authorizedActor(command)
+        ensureActive()
+        val database = databaseForWrite()
+        ensureActive()
+        requireSameAuthority(command, actor)
+        database.beginTransaction()
+        try {
+            val existing = database.rawQuery(ReportHistorySql.FIND_OPERATION, arrayOf(command.operationId)).use { cursor ->
+                if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndexOrThrow("report_id")) to cursor.toHistoryEvent()
+                else null
+            }
+            if (existing != null) {
+                val event = existing.second
+                if (existing.first != command.reportId || event.kind != ReportStatusEventKind.STATUS_CHANGED ||
+                    event.sequence != command.expectedSequence + 1 || event.fromStatus != command.expectedStatus ||
+                    event.toStatus != command.targetStatus || event.reason != command.reason || event.actorAccountId != actor
+                ) throw ReportStatusOperationConflictException()
+                ensureActive()
+                requireSameAuthority(command, actor)
+                database.setTransactionSuccessful()
+                return@withOpenRepository event
+            }
+            val head = readHistoryHead(database, command.reportId) ?: throw ReportStatusNotFoundException()
+            if (head.sequence != command.expectedSequence || head.status != command.expectedStatus) {
+                throw ReportStatusConflictException()
+            }
+            val event = ReportStatusEvent(command.operationId, command.expectedSequence + 1,
+                ReportStatusEventKind.STATUS_CHANGED, command.expectedStatus, command.targetStatus,
+                clock.instant(), actor, command.reason)
+            val update = database.compileStatement(ReportHistorySql.CAS_UPDATE)
+            val changed = update.use {
+                it.bindString(1, command.targetStatus.name); it.bindString(2, command.reportId)
+                it.bindString(3, command.expectedStatus.name); it.bindLong(4, command.expectedSequence)
+                it.executeUpdateDelete()
+            }
+            if (changed != 1) throw ReportStatusConflictException()
+            insertHistoryEvent(database, command.reportId, event)
+            ensureActive()
+            requireSameAuthority(command, actor)
+            ensureActive()
+            database.setTransactionSuccessful()
+            event
+        } finally { database.endTransaction() }
+    }
+
+    private data class HistoryHead(val status: ReportStatus, val sequence: Long, val complete: Boolean)
+    private fun readHistoryHead(database: SQLiteDatabase, reportId: String): HistoryHead? =
+        database.rawQuery(ReportHistorySql.HEAD, arrayOf(reportId)).use { cursor ->
+            if (!cursor.moveToFirst()) null else {
+                val latestIndex = cursor.getColumnIndexOrThrow("latest_sequence")
+                check(cursor.getType(latestIndex) == Cursor.FIELD_TYPE_INTEGER && cursor.getLong(latestIndex) >= 0) {
+                    "La secuencia guardada del historial es inválida."
+                }
+                HistoryHead(ReportStatus.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("status"))),
+                    cursor.getLong(latestIndex), cursor.getInt(cursor.getColumnIndexOrThrow("complete_from_creation")) == 1)
+            }
+        }
+
+    private fun authorizedActor(command: ReportStatusChangeCommand): String =
+        statusAuthority(command).also(::requireCanonicalActor)
+    private fun requireSameAuthority(command: ReportStatusChangeCommand, expected: String) {
+        if (authorizedActor(command) != expected) throw ReportStatusPermissionDeniedException()
+    }
+    private fun requireCanonicalActor(actor: String) {
+        require(runCatching { UUID.fromString(actor).toString() == actor }.getOrDefault(false)) {
+            "El actor autorizado necesita una identidad canónica."
+        }
+    }
+
+    private fun insertHistoryEvent(database: SQLiteDatabase, reportId: String, event: ReportStatusEvent) {
+        database.execSQL(ReportHistorySql.INSERT, arrayOf<Any?>(event.operationId, reportId, event.sequence,
+            event.kind.name, event.fromStatus?.name, event.toStatus.name, event.recordedAt.epochSecond,
+            event.recordedAt.nano, event.actorAccountId, event.reason))
+    }
+
+    private fun Cursor.toHistoryEvent(): ReportStatusEvent {
+        listOf("sequence", "recorded_at_seconds", "recorded_at_nanos").forEach { name ->
+            check(getType(getColumnIndexOrThrow(name)) == Cursor.FIELD_TYPE_INTEGER) {
+                "El historial guardado contiene tipos numéricos inválidos."
+            }
+        }
+        val nanos = getLong(getColumnIndexOrThrow("recorded_at_nanos"))
+        check(nanos in 0..999999999) { "La fecha guardada del historial es inválida." }
+        return ReportStatusEvent(
+            getString(getColumnIndexOrThrow("operation_id")), getLong(getColumnIndexOrThrow("sequence")),
+            ReportStatusEventKind.valueOf(getString(getColumnIndexOrThrow("kind"))),
+            getColumnIndexOrThrow("from_status").let { if (isNull(it)) null else ReportStatus.valueOf(getString(it)) },
+            ReportStatus.valueOf(getString(getColumnIndexOrThrow("to_status"))),
+            Instant.ofEpochSecond(getLong(getColumnIndexOrThrow("recorded_at_seconds")), nanos),
+            getColumnIndexOrThrow("actor_account_id").let { if (isNull(it)) null else getString(it) },
+            getString(getColumnIndexOrThrow("reason")),
+        )
     }
 
     private fun findStoredReport(database: SQLiteDatabase, id: String): Report? =

@@ -16,7 +16,9 @@ Ahora agrupamos los avances en **main** sin generar APK ni publicar una Release 
 
 **Fase 26:** cada cuenta guarda y consulta sus reportes, fotos, borradores y solicitudes pendientes. Lista, folios, mapa y posibles repetidos usan ese espacio. Al cambiar sesión se cierran las pantallas anteriores; volver a ingresar recupera sus archivos. Los históricos permanecen en modo académico, sin atribuirlos a una cuenta nueva. Tras perderse el proceso, una pantalla de cuenta requiere login. [Alcance y pruebas](docs/FASE_26.md).
 
-Se comprueba la lógica, SQLite del host y compilación sin generar APK. **19/28 = 67.9% de construcción**, Usuarios 4/4 y Consulta 3/4, identidad/aislamiento locales; aceptación Android pendiente para 0.6.0. Siguen seguimiento de estados, administración con permisos/historial y notificaciones. El compañero conserva la interfaz del login.
+**Fase 27:** abre un folio y pulsa **Consultar historial** para ver los eventos de estado registrados realmente. Los reportes nuevos guardan su evento de creación junto al reporte; los anteriores conservan su estado y avisan cuando no existe un historial completo. Puedes actualizar, consultar eventos anteriores o reintentar sin perder la ficha. El cambio de estado queda protegido y la asignación administrativa continúa pendiente por elección del usuario; `admin/admin` conserva únicamente acceso académico. [Alcance y pruebas](docs/FASE_27.md).
+
+Se comprueba la lógica, SQLite del host y compilación sin generar APK. **19/28 = 67.9% de construcción**, Usuarios 4/4 y Consulta 3/4, identidad/aislamiento locales; aceptación Android pendiente para 0.6.0. Esta fase aprobó 100 casos, 37 nuevos, y compiló 15 nuevos casos Android sin ejecutarlos. El historial de lectura prepara el seguimiento; siguen pendientes el recorrido autorizado de cambios, administración con permisos y notificaciones. El compañero conserva la interfaz del login.
 
 Para obtener el código nuevo conserva tus cambios, ejecuta `git fetch origin`, `git switch main` y `git pull --ff-only origin main`. En Android Studio trabaja con el módulo **app**. Los siguientes bloques describen las entregas publicadas anteriores.
 
