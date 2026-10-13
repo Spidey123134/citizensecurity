@@ -1,12 +1,12 @@
 # Plan del proyecto
 
-## Desarrollo para 0.6.0 — fases 21 a 24, Unreleased
+## Desarrollo para 0.6.0 — fases 21 a 25, Unreleased
 
 El equipo agrupa cambios de código en main sin publicar APK, tags o Releases por fase. [Fase 21](FASE_21.md) añade fechas del incidente al mapa y lista de la misma zona. [Fase 22](FASE_22.md) combina prioridad con los filtros de lista/mapa, mueve el cálculo de búsqueda fuera de Main y comprueba la cámara real antes de abrir una muestra de zona. [Fase 23](FASE_23.md) sustituye la lectura completa de la lista por páginas de SQLite con memoria acotada, cursor exclusivo, continuación de búsquedas incompletas y navegación. La validación Android de estos controles se reserva para la entrega agrupada; la última APK publicada sigue siendo 0.5.7.
 
-Se refuerzan **4.4 Consulta / 4.5 Mapas**, con los mismos criterios: **15/28 = 53.6%**. Consulta mantiene 2/4: completar los dos criterios pendientes exige autor autenticado y seguimiento administrativo, coordinados con el equipo. La paginación está conectada en código y su aceptación visual se integra a la entrega agrupada. Cuentas, roles, administración y notificaciones no se dan por implementados mediante filtros o paginación. Los cortes siguientes son históricos.
+Las fases 21 a 24 refuerzan **4.4 Consulta / 4.5 Mapas**. La [fase 25](FASE_25.md) conecta **4.1 Usuarios**: creación, comprobación de contraseña y cierre de sesión locales, conservando los layouts del compañero. **17/28 = 60.7% de construcción**, Usuarios 3/4, mismos criterios/pesos; aceptación Android pendiente. Cuentas solo del teléfono, sin aislamiento de reportes, servidor o roles. Consulta mantiene 2/4: completar los dos criterios pendientes exige autor y seguimiento administrativo. La paginación y los controles nuevos se aceptarán en la entrega agrupada. Los cortes siguientes son históricos.
 
-La [fase 24](FASE_24.md) añade recuperación de posición ante restauración del proceso y corrige el reinicio explícito de búsquedas repetidas. El usuario aclaró que el compañero hace **solo la interfaz del login**; la lógica de cuentas y su acoplamiento quedan como siguiente bloque de nuestro trabajo. No se acredita todavía autenticación/aislamiento ni se otorgan permisos administrativos al acceso académico. Ese alcance conserva la interfaz del compañero y los datos anteriores.
+La [fase 24](FASE_24.md) añade recuperación de posición y reinicio explícito de búsquedas repetidas. El usuario aclaró que el compañero hace **solo la interfaz del login**; nuestro trabajo conecta la lógica de cuentas de fase 25. El siguiente bloque será autoría/aislamiento de reportes y coordinación de borradores/solicitudes con esa identidad, conservando los históricos compartidos sin inventar autor. No se otorgan permisos administrativos al acceso académico.
 
 ## Antecedente 0.5.7
 

@@ -1,0 +1,17 @@
+<resources>
+    <item name="account_status" type="id" />
+    <string name="account_local_hint">Cuenta local de este teléfono. Los reportes todavía se comparten entre las cuentas del dispositivo.</string>
+    <string name="account_register_hint">Usuario: 3 a 30 letras, números o guion bajo. Contraseña: 15 a 128 caracteres. La cuenta se guarda solo en este teléfono.</string>
+    <string name="account_working">Comprobando cuenta…</string>
+    <string name="account_invalid">Revisa los campos indicados y vuelve a escribir la contraseña.</string>
+    <string name="account_invalid_credentials">Usuario o contraseña incorrectos. Vuelve a escribir la contraseña.</string>
+    <string name="account_already_exists">Ese usuario ya existe en este teléfono. Inicia sesión con su contraseña; no se reemplazó la cuenta.</string>
+    <string name="account_registration_unknown">No pudimos confirmar el registro. Intenta iniciar sesión con ese usuario antes de registrarlo de nuevo.</string>
+    <string name="account_login_failed">No pudimos comprobar el acceso. Vuelve a escribir la contraseña e inténtalo otra vez.</string>
+    <string name="account_login_interrupted">Ingreso interrumpido. Vuelve a escribir la contraseña para continuar.</string>
+    <string name="account_created">Cuenta creada en este teléfono. Escribe tu contraseña para iniciar sesión.</string>
+    <string name="account_authenticated">Acceso comprobado.</string>
+    <string name="account_home_signed_in">Cuenta local: %1$s. Los reportes de este teléfono todavía se comparten entre cuentas.</string>
+    <string name="account_home_guest">Modo académico sin cuenta. Reportes compartidos de este teléfono; sin permisos administrativos.</string>
+    <string name="account_sign_out">Cerrar sesión</string>
+</resources>

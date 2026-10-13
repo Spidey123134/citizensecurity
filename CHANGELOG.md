@@ -2,6 +2,10 @@
 
 ## [Unreleased] — preparación de 0.6.0
 
+- Fase 25: Crear cuenta registra usuarios locales y vuelve al login; Iniciar sesión comprueba su contraseña y abre Inicio con identidad local. Cerrar sesión/volver limpia la sesión en memoria, conservando datos y cuentas. Se reutilizan los layouts del compañero.
+- Base de cuentas independiente, usuario único normalizado, admin reservado y contraseña de 15 a 128 caracteres Unicode conservada exactamente. Verificador PBKDF2-HMAC-SHA256 con sal aleatoria; sin contraseñas en texto plano o estado restaurable. Registro transaccional sin reemplazar usuarios existentes.
+- Registro/ingreso trabajan fuera de Main, bloquean dobles gestos y descartan respuestas tras cancelación. Un registro incierto pide comprobar el ingreso antes de repetir. El acceso académico permanece sin roles y limpia cualquier identidad real previa.
+- Las cuentas son exclusivamente del teléfono. Inicio indica que los reportes aún se comparten; identidad de autor y aislamiento quedan como siguiente bloque. 36 casos nuevos aprobados; aceptación Android pendiente para la entrega agrupada.
 - Fase 24: recuperación de criterios, cursor, página y navegación si Android restaura el estado después de cerrar el proceso. Se guardan metadatos acotados; los resultados se vuelven a consultar. La restauración no recupera evidencia GPS ni inicia una lectura desde el constructor.
 - Los checkpoints incompatibles, corruptos o incoherentes se rechazan completos. La representación versionada conserva nanosegundos, solicitudes pendientes/fallidas e historial truncado; soporta la expansión Unicode del texto normalizado sin guardar páginas enteras.
 - Corregido Buscar reportes con valores idénticos: ahora reinicia el recorrido. Limpiar búsqueda y Mostrar todos también vuelven al inicio aunque sus valores ya estuvieran vacíos; fechas inválidas mantienen la consulta aplicada.
@@ -17,7 +21,7 @@
 - Las fechas inválidas mantienen la consulta válida anterior; entradas y fechas aplicadas se conservan por separado al recrear la pantalla. Cambiar el intervalo invalida respuestas anteriores incluso para la misma zona.
 - Se actualiza el flujo del equipo: código y GitHub durante el desarrollo; APK, versión Android, tags y Releases se agruparán en una futura entrega 0.6.0. La última entrega binaria continúa siendo 0.5.7 / código 27.
 
-[Fase 21](docs/FASE_21.md), [Fase 22](docs/FASE_22.md), [Fase 23](docs/FASE_23.md) y [Fase 24](docs/FASE_24.md) registran pruebas centradas y aceptación Android pendiente. **15/28 = 53.6%**, mismos criterios del PDF; este refuerzo no completa cuentas, administración o notificaciones.
+[Fase 21](docs/FASE_21.md), [Fase 22](docs/FASE_22.md), [Fase 23](docs/FASE_23.md), [Fase 24](docs/FASE_24.md) y [Fase 25](docs/FASE_25.md) registran pruebas y aceptación Android pendiente. **17/28 = 60.7% de construcción**, mismos criterios del PDF; creación/verificación locales completas en código, aislamiento, administración y notificaciones pendientes.
 
 ## [0.5.7] — fase 20 · búsqueda local
 

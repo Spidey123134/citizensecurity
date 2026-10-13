@@ -22,6 +22,7 @@ import java.io.IOException
 import com.example.citizensecurity.data.SqliteReportRepository
 import com.example.citizensecurity.domain.DeviceLocationFix
 import com.example.citizensecurity.domain.IdempotentReportRepository
+import com.example.citizensecurity.domain.AccountRepository
 import com.example.citizensecurity.domain.ReportMapRepository
 import com.example.citizensecurity.domain.ReportListPageRepository
 import com.example.citizensecurity.domain.SimilarReportRepository
@@ -31,6 +32,9 @@ import org.junit.rules.ExternalResource
 
 /** Delegates to the real application until a test explicitly opts into its isolated fixture. */
 class ReportTestApplication : CitizenSecurityApplication() {
+    var accountTestRepository: AccountRepository? = null
+    override val accountRepository: AccountRepository
+        get() = accountTestRepository ?: super.accountRepository
     @Volatile private var testFixture: ReportTestFixture? = null
 
     override val reportRepository: IdempotentReportRepository

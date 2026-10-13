@@ -3,20 +3,41 @@ package com.example.citizensecurity
 import android.content.Intent
 import android.graphics.Color
 import android.widget.Button
-import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
-import com.example.citizensecurity.release.DemoLogin
+import androidx.activity.result.contract.ActivityResultContracts
+import com.example.citizensecurity.account.AccountAccessMode
+import com.example.citizensecurity.account.AccountAccessState
+import com.example.citizensecurity.account.AccountFormBinding
+import com.example.citizensecurity.account.CreateAccountActivity
 import com.example.citizensecurity.release.ReleasedToolsActivity
 
 internal object ReleasedEntry {
     fun attach(activity: ComponentActivity) {
+        val dependencies = activity.application as CitizenSecurityApplication
+        val form = AccountFormBinding(activity, AccountAccessMode.LOGIN, onSuccess = { state ->
+            dependencies.accountSession.signIn((state as AccountAccessState.Authenticated).account)
+            openTools(activity)
+        }, onAcademicAccess = { openTools(activity) })
+        val createAccount = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == android.app.Activity.RESULT_OK) {
+                result.data?.getStringExtra(CreateAccountActivity.EXTRA_USERNAME)?.let(form::showAccountCreated)
+            }
+        }
+        activity.findViewById<TextView>(R.id.create_account_link).setOnClickListener {
+            form.leaveForm()
+            createAccount.launch(Intent(activity, CreateAccountActivity::class.java))
+        }
         val container = activity.findViewById<LinearLayout>(R.id.main_container)
         val button = Button(activity).apply {
             id = R.id.released_tools_entry
             setText(R.string.released_tools_entry)
-            setOnClickListener { openTools(activity) }
+            setOnClickListener {
+                form.leaveForm()
+                dependencies.accountSession.signOut()
+                openTools(activity)
+            }
         }
         val params = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -27,18 +48,6 @@ internal object ReleasedEntry {
             setText(R.string.demo_login_hint)
             setTextColor(Color.BLACK)
         }, container.childCount - 1)
-
-        val username = activity.findViewById<EditText>(R.id.user)
-        val password = activity.findViewById<EditText>(R.id.pass)
-        activity.findViewById<Button>(R.id.login_button).setOnClickListener {
-            if (DemoLogin.accepts(username.text.toString(), password.text.toString())) {
-                password.error = null
-                password.text.clear()
-                openTools(activity)
-            } else {
-                password.error = activity.getString(R.string.demo_login_error)
-            }
-        }
     }
 
     private fun openTools(activity: ComponentActivity) {

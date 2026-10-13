@@ -12,7 +12,9 @@ Ahora agrupamos los avances en **main** sin generar APK ni publicar una Release 
 
 **Fase 24:** la consulta puede retomar su página cuando Android restaura la app tras cerrar el proceso para recuperar memoria. Conserva criterios y posición, y relee los resultados. No garantiza esa recuperación si fuerzas el cierre o quitas la tarea. **Buscar reportes**, **Limpiar búsqueda** y **Mostrar todos** ahora vuelven al inicio incluso cuando repites los mismos valores. [Alcance y comprobaciones](docs/FASE_24.md).
 
-Se comprueba la lógica, la selección SQLite y la compilación de ambas variantes sin generar otra APK. La aceptación de estos controles en Android queda para la entrega agrupada. **Avance: 15/28 = 53.6%**; estos bloques fortalecen consulta/mapas. Cuentas reales, aislamiento por autor, administración y notificaciones siguen pendientes. El compañero conserva la interfaz del login; la lógica de cuentas es el siguiente bloque coordinado.
+**Fase 25:** **Crear cuenta** ya registra un usuario en este teléfono y vuelve al login. Usa de 3 a 30 letras sin acentos, números o guion bajo, y una contraseña de 15 a 128 caracteres. **Iniciar sesión** verifica esa contraseña; Inicio muestra la cuenta y ofrece **Cerrar sesión**. Se conservan los layouts del compañero. Las cuentas son locales y los reportes siguen compartidos entre cuentas del dispositivo; el acceso académico no concede roles. [Alcance y comprobaciones](docs/FASE_25.md).
+
+Se comprueba la lógica, SQLite del host y la compilación de ambas variantes sin generar otra APK. La aceptación Android queda para la entrega agrupada. **Avance: 17/28 = 60.7% de construcción**, Usuarios 3/4. Aislamiento por autor, administración y notificaciones siguen pendientes. El compañero conserva la interfaz del login; el siguiente bloque de lógica será asociar y consultar reportes por autor sin atribuir los históricos a una cuenta nueva.
 
 Para obtener el código nuevo conserva tus cambios, ejecuta `git fetch origin`, `git switch main` y `git pull --ff-only origin main`. En Android Studio trabaja con el módulo **app**. Los siguientes bloques describen las entregas publicadas anteriores.
 
