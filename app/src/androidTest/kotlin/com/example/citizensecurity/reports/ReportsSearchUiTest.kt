@@ -323,6 +323,25 @@ class ReportsSearchUiTest {
         assertReadingOnly()
     }
 
+    @Test fun repeatedExplicitSearchAndClearRestartAtTheFirstPage() {
+        seedPagedHistory(70)
+        launch()
+        awaitCount(50)
+        select("report_next_page")
+        awaitCount(20, page = 2)
+        apply() // Los campos aplicados no cambian; el gesto sí debe reiniciar.
+        awaitCount(50)
+        assertCard(before.first())
+        field("report_previous_page").assertIsNotEnabled()
+        select("report_next_page")
+        awaitCount(20, page = 2)
+        select("report_clear_search")
+        awaitCount(50)
+        assertCard(before.first())
+        field("report_previous_page").assertIsNotEnabled()
+        assertReadingOnly()
+    }
+
     private fun seedPagedHistory(count: Int) = runBlocking {
         fixture.publishFreshFix()
         val occurredAt = firstDay.atTime(12, 0).atZone(zone).toInstant()

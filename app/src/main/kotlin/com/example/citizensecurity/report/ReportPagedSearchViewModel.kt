@@ -2,6 +2,8 @@ package com.example.citizensecurity.report
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -63,27 +65,39 @@ fun currentPagedResult(
 private const val RESULTS_PER_PAGE = 50
 private const val FETCH_BATCH_SIZE = 100
 private const val MAX_EXAMINED_PER_PAGE = 500
-private const val MAX_CURSOR_HISTORY = 50
 
 /** Reads and scans bounded batches on Default; keeps one page and at most 50 page starts. */
 class ReportPagedSearchViewModel(
     private val repository: ReportListPageRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val savedStateHandle: SavedStateHandle? = null,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<ReportPagedSearchState>(ReportPagedSearchState.Idle)
     val state: StateFlow<ReportPagedSearchState> = mutableState.asStateFlow()
     private var generation = 0L
     private var pending: Job? = null
-    private val history = ArrayList<PageStart>(MAX_CURSOR_HISTORY)
+    private val history = ArrayList<ReportPageStart>(MAX_REPORT_CURSOR_HISTORY)
     private var historyIndex = 0
-    private var lastRequest: PageRequest? = null
+    private var lastRequest: ReportPageRequest? = null
+
+    init {
+        val restored = ReportSearchCheckpointCodec.decode(savedStateHandle?.get<Any?>(ReportSearchCheckpointCodec.KEY))
+        if (restored != null) {
+            history.addAll(restored.history)
+            historyIndex = restored.historyIndex
+            lastRequest = restored.request
+        } else {
+            savedStateHandle?.remove<Any?>(ReportSearchCheckpointCodec.KEY)
+        }
+        // Restoration retains only a reading position; activate supplies the screen's criteria.
+    }
 
     /** Every explicit search starts a fresh traversal, including a repeated criteria object. */
     fun search(filters: ReportSearchFilters) {
         if (!viewModelScope.isActive) return
         history.clear()
         historyIndex = 0
-        load(PageRequest(filters, null, 1, Navigation.SEARCH))
+        load(ReportPageRequest(filters, null, 1, ReportPageNavigation.SEARCH))
     }
 
     /** Recreated criteria rebind ownership while retaining this traversal's current page start. */
@@ -92,7 +106,7 @@ class ReportPagedSearchViewModel(
         if (request == null || !sameCriteria(request.filters, filters)) {
             search(filters)
         } else {
-            load(PageRequest(
+            load(ReportPageRequest(
                 filters, request.before, request.pageNumber, request.navigation, request.historyIndex,
             ))
         }
@@ -101,7 +115,8 @@ class ReportPagedSearchViewModel(
     fun nextPage() {
         val ready = mutableState.value as? ReportPagedSearchState.Ready ?: return
         val before = ready.nextCursor ?: return
-        load(PageRequest(ready.filters, before, ready.pageNumber + 1, Navigation.NEXT))
+        if (ready.pageNumber == Int.MAX_VALUE) return
+        load(ReportPageRequest(ready.filters, before, ready.pageNumber + 1, ReportPageNavigation.NEXT))
     }
 
     fun previousPage() {
@@ -109,7 +124,7 @@ class ReportPagedSearchViewModel(
         if (!ready.hasPrevious || historyIndex <= 0) return
         val targetIndex = historyIndex - 1
         val start = history[targetIndex]
-        load(PageRequest(ready.filters, start.before, start.pageNumber, Navigation.PREVIOUS, targetIndex))
+        load(ReportPageRequest(ready.filters, start.before, start.pageNumber, ReportPageNavigation.PREVIOUS, targetIndex))
     }
 
     /** A failed navigation repeats its original start without altering the successful history. */
@@ -127,12 +142,13 @@ class ReportPagedSearchViewModel(
         mutableState.value = ReportPagedSearchState.Idle
     }
 
-    private fun load(pageRequest: PageRequest) {
+    private fun load(pageRequest: ReportPageRequest) {
         val scope = viewModelScope
         if (!scope.isActive) return
         val requestGeneration = ++generation
         pending?.cancel()
         lastRequest = pageRequest
+        persistCheckpoint()
         val loading = ReportPagedSearchState.Loading(pageRequest.filters)
         // Reserve ownership before Loading: its collector can replace or cancel this request.
         val job = scope.launch(start = CoroutineStart.LAZY) {
@@ -141,10 +157,11 @@ class ReportPagedSearchViewModel(
                 ensureActive()
                 if (generation == requestGeneration) {
                     commitHistory(pageRequest)
-                    lastRequest = PageRequest(
+                    lastRequest = ReportPageRequest(
                         pageRequest.filters, pageRequest.before, pageRequest.pageNumber,
-                        Navigation.RELOAD, historyIndex,
+                        ReportPageNavigation.RELOAD, historyIndex,
                     )
+                    persistCheckpoint()
                     mutableState.value = ReportPagedSearchState.Ready(
                         pageRequest.filters, scanned.reports, scanned.nextCursor, scanned.examined,
                         pageRequest.pageNumber, historyIndex > 0,
@@ -172,7 +189,7 @@ class ReportPagedSearchViewModel(
         if (generation == requestGeneration) job.start() else job.cancel()
     }
 
-    private suspend fun scan(request: PageRequest): ScannedPage {
+    private suspend fun scan(request: ReportPageRequest): ScannedPage {
         val context = currentCoroutineContext()
         val result = ArrayList<Report>(RESULTS_PER_PAGE)
         var before = request.before
@@ -232,32 +249,31 @@ class ReportPagedSearchViewModel(
             first.priority == second.priority && first.normalizedText == second.normalizedText &&
             first.startInclusive == second.startInclusive && first.endExclusive == second.endExclusive
 
-    private fun commitHistory(request: PageRequest) {
+    private fun commitHistory(request: ReportPageRequest) {
         when (request.navigation) {
-            Navigation.SEARCH -> {
+            ReportPageNavigation.SEARCH -> {
                 history.clear()
-                history.add(PageStart(request.before, request.pageNumber))
+                history.add(ReportPageStart(request.before, request.pageNumber))
                 historyIndex = 0
             }
-            Navigation.NEXT -> {
+            ReportPageNavigation.NEXT -> {
                 while (history.lastIndex > historyIndex) history.removeAt(history.lastIndex)
-                history.add(PageStart(request.before, request.pageNumber))
-                if (history.size > MAX_CURSOR_HISTORY) history.removeAt(0)
+                history.add(ReportPageStart(request.before, request.pageNumber))
+                if (history.size > MAX_REPORT_CURSOR_HISTORY) history.removeAt(0)
                 historyIndex = history.lastIndex
             }
-            Navigation.PREVIOUS, Navigation.RELOAD -> historyIndex = request.historyIndex
+            ReportPageNavigation.PREVIOUS, ReportPageNavigation.RELOAD -> historyIndex = request.historyIndex
         }
     }
 
-    private enum class Navigation { SEARCH, NEXT, PREVIOUS, RELOAD }
-    private class PageStart(val before: ReportListCursor?, val pageNumber: Int)
-    private class PageRequest(
-        val filters: ReportSearchFilters,
-        val before: ReportListCursor?,
-        val pageNumber: Int,
-        val navigation: Navigation,
-        val historyIndex: Int = 0,
-    )
+    private fun persistCheckpoint() {
+        val handle = savedStateHandle ?: return
+        val request = lastRequest ?: return
+        val encoded = ReportSearchCheckpointCodec.encode(ReportSearchCheckpoint(request, history, historyIndex))
+        if (encoded == null) handle.remove<Any?>(ReportSearchCheckpointCodec.KEY)
+        else handle[ReportSearchCheckpointCodec.KEY] = encoded
+    }
+
     private class ScannedPage(
         val reports: List<Report>,
         val nextCursor: ReportListCursor?,
@@ -269,7 +285,7 @@ class ReportPagedSearchViewModel(
             repository: ReportListPageRepository,
             dispatcher: CoroutineDispatcher = Dispatchers.Default,
         ): ViewModelProvider.Factory = viewModelFactory {
-            initializer { ReportPagedSearchViewModel(repository, dispatcher) }
+            initializer { ReportPagedSearchViewModel(repository, dispatcher, createSavedStateHandle()) }
         }
     }
 }

@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -84,13 +85,15 @@ fun ReportsScreen(
     var appliedFrom by rememberSaveable { mutableStateOf("") }
     var appliedTo by rememberSaveable { mutableStateOf("") }
     var searchError by rememberSaveable { mutableStateOf<String?>(null) }
+    var searchRevision by rememberSaveable { mutableIntStateOf(0) }
+    var restartSearchPending by rememberSaveable { mutableStateOf(false) }
     // Keep the calendar interpretation stable when the screen is recreated.
     val searchZoneName by rememberSaveable { mutableStateOf(ZoneId.systemDefault().id) }
     val searchZone = remember(searchZoneName) { ZoneId.of(searchZoneName) }
     val selectedType = IncidentType.entries.firstOrNull { it.name == typeName }
     val selectedStatus = ReportStatus.entries.firstOrNull { it.name == statusName }
     val selectedPriority = Priority.entries.firstOrNull { it.name == priorityName }
-    val appliedFilters = remember(appliedText, appliedFrom, appliedTo, searchZone, selectedType, selectedStatus, selectedPriority) {
+    val appliedFilters = remember(appliedText, appliedFrom, appliedTo, searchZone, selectedType, selectedStatus, selectedPriority, searchRevision) {
         parseReportSearchFilters(appliedText, appliedFrom, appliedTo, searchZone, selectedType, selectedStatus, selectedPriority)
     }
     val validatedFilters = (appliedFilters as? ReportSearchFilterValidation.Valid)?.filters
@@ -111,6 +114,10 @@ fun ReportsScreen(
     val scroll = rememberLazyListState()
     val queryBusy = queryState is ReportQueryState.Loading
     val leaveDetail = { query.cancelQuery(); detailFolio = null }
+    fun requestSearchRestart() {
+        restartSearchPending = true
+        searchRevision++
+    }
     fun acceptBounded(value: String, current: String, maximum: Int, label: String, accept: (String) -> Unit) {
         if (value.length <= maximum) {
             if (value != current) {
@@ -131,6 +138,7 @@ fun ReportsScreen(
                 appliedFrom = dateFrom.trim()
                 appliedTo = dateTo.trim()
                 searchError = null
+                requestSearchRestart()
             }
         }
     }
@@ -140,7 +148,10 @@ fun ReportsScreen(
     }
     LaunchedEffect(validatedFilters, detailFolio != null) {
         if (validatedFilters == null || detailFolio != null) pages.cancelSearch()
-        else pages.activate(validatedFilters)
+        else if (restartSearchPending) {
+            restartSearchPending = false
+            pages.search(validatedFilters)
+        } else pages.activate(validatedFilters)
     }
     LaunchedEffect(searchError, detailFolio) {
         // Header and folio are the first two items; the rejected-search notice comes next.
@@ -227,6 +238,7 @@ fun ReportsScreen(
                             searchText = ""; dateFrom = ""; dateTo = ""
                             appliedText = ""; appliedFrom = ""; appliedTo = ""
                             typeName = null; statusName = null; priorityName = null; searchError = null
+                            requestSearchRestart()
                         },
                         appliedText = appliedText,
                         appliedFrom = appliedFrom,
@@ -299,6 +311,7 @@ fun ReportsScreen(
                         } else Text("No hay reportes con estos filtros en el tramo restante.", Modifier.testTag("report_empty_filtered"))
                         TextButton(onClick = {
                             typeName = null; statusName = null; priorityName = null
+                            requestSearchRestart()
                             searchText = ""; dateFrom = ""; dateTo = ""
                             appliedText = ""; appliedFrom = ""; appliedTo = ""; searchError = null
                         }) { Text("Mostrar todos") }
