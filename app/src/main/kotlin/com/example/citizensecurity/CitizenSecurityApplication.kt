@@ -21,6 +21,7 @@ import com.example.citizensecurity.domain.ValidationErrors
 import java.io.IOException
 import com.example.citizensecurity.data.PhoneLocationRefreshResult
 import com.example.citizensecurity.domain.ReportMapRepository
+import com.example.citizensecurity.domain.ReportListPageRepository
 import com.example.citizensecurity.domain.SimilarReportRepository
 import com.example.citizensecurity.domain.ReportLocation
 import com.example.citizensecurity.maps.IncidentLocationViewModel
@@ -84,6 +85,7 @@ open class CitizenSecurityApplication : Application() {
         })
     }
     open val reportRepository: IdempotentReportRepository get() = sharedReportRepository
+    open val reportListPageRepository: ReportListPageRepository get() = sharedReportRepository
     open val reportMapRepository: ReportMapRepository get() = sharedReportRepository
     open val similarReportRepository: SimilarReportRepository get() = sharedReportRepository
     val reportViewModelFactory: ViewModelProvider.Factory by lazy {

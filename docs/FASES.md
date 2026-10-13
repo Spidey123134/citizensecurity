@@ -1,5 +1,9 @@
 # Fases de CITIZENSECURITY
 
+## Fase 23 — historial por páginas, Unreleased
+
+[Fase 23](FASE_23.md) conecta la lista a consultas acotadas de SQLite: hasta 50 coincidencias, lotes de 100 y 500 candidatos examinados por gesto. Cursor exclusivo sin OFFSET, texto con la semántica anterior, continuación explícita si queda recorrido, navegación/reintento y página conservada al volver del detalle o recrearse. Refuerza **4.4 Consulta**, con **15/28 = 53.6%**, mismos hitos/pesos. Código en main para 0.6.0, sin APK, incremento de versión, tags o Release; aceptación Android pendiente.
+
 ## Fase 22 — prioridad y búsqueda en segundo plano, Unreleased
 
 [Fase 22](FASE_22.md) añade prioridad a lista/mapa y desplaza el cálculo de búsqueda fuera del hilo de interfaz. Filtra el mapa antes del límite, invalida búsquedas anteriores y comprueba la región real de cámara al abrir su lista/folios. Refuerza **4.4 Consulta / 4.5 Mapas**; **15/28 = 53.6%**, mismos criterios/pesos. Código nuevo en main para 0.6.0, sin APK, incremento de versión, tags o Release. Aceptación Android pendiente para la entrega agrupada.

@@ -49,37 +49,27 @@ import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.Report
 import com.example.citizensecurity.domain.ReportStatus
-import com.example.citizensecurity.report.ReportListState
-import com.example.citizensecurity.report.ReportListViewModel
 import com.example.citizensecurity.report.ReportQueryState
 import com.example.citizensecurity.report.ReportQueryViewModel
-import com.example.citizensecurity.report.ReportSearchViewModel
-import com.example.citizensecurity.report.ReportSearchState
-import com.example.citizensecurity.report.ReportSearchInput
-import com.example.citizensecurity.report.currentReportSearchResult
+import com.example.citizensecurity.report.ReportPagedSearchViewModel
+import com.example.citizensecurity.report.ReportPagedSearchState
+import com.example.citizensecurity.report.currentPagedResult
 import com.example.citizensecurity.report.parseReportSearchFilters
 import com.example.citizensecurity.report.ReportSearchFilterValidation
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import kotlinx.coroutines.flow.map
 
 @Composable
 fun ReportsScreen(
-    list: ReportListViewModel,
     query: ReportQueryViewModel,
-    search: ReportSearchViewModel,
+    pages: ReportPagedSearchViewModel,
     initialFolio: String?,
     onClose: () -> Unit,
     onMap: (String) -> Unit,
 ) {
-    // A new equal reading must still reach the worker; avoid List.equals on Main.
-    val listReadings = remember(list) { list.state.map(::ReportListReading) }
-    val initialReading = remember(list) { ReportListReading(list.state.value) }
-    val listReading by listReadings.collectAsStateWithLifecycle(initialReading)
-    val listState = listReading.state
     val queryState by query.state.collectAsStateWithLifecycle()
-    val searchState by search.state.collectAsStateWithLifecycle()
+    val pageState by pages.state.collectAsStateWithLifecycle()
     var folio by rememberSaveable { mutableStateOf(initialFolio.orEmpty()) }
     var detailFolio by rememberSaveable {
         mutableStateOf(initialFolio?.trim()?.lowercase()?.takeIf { it.isNotEmpty() })
@@ -103,15 +93,20 @@ fun ReportsScreen(
     val appliedFilters = remember(appliedText, appliedFrom, appliedTo, searchZone, selectedType, selectedStatus, selectedPriority) {
         parseReportSearchFilters(appliedText, appliedFrom, appliedTo, searchZone, selectedType, selectedStatus, selectedPriority)
     }
-    val source = (listState as? ReportListState.Loaded)?.reports
     val validatedFilters = (appliedFilters as? ReportSearchFilterValidation.Valid)?.filters
-    val searchInput = if (source != null && validatedFilters != null) ReportSearchInput(source, validatedFilters) else null
     // Check ownership during composition; an effect for new filters may not have run yet.
-    val currentSearch = if (searchInput != null && detailFolio == null)
-        currentReportSearchResult(searchInput.source, searchInput.filters, searchState) else null
-    val currentSearchError = (searchState as? ReportSearchState.Error)?.takeIf {
-        it.source === source && it.filters === validatedFilters
+    val currentPage = if (validatedFilters != null && detailFolio == null)
+        currentPagedResult(validatedFilters, pageState) else null
+    val currentPageError = (pageState as? ReportPagedSearchState.Error)?.takeIf {
+        it.filters === validatedFilters
     }
+    val hasNoCriteria = validatedFilters?.let {
+        it.type == null && it.status == null && it.priority == null &&
+            it.startInclusive == null && it.endExclusive == null && it.normalizedText.isEmpty()
+    } == true
+    val emptyDatabase = hasNoCriteria && currentPage?.let {
+        it.pageNumber == 1 && it.examined == 0 && it.reports.isEmpty() && it.nextCursor == null
+    } == true
     val focus = LocalFocusManager.current
     val scroll = rememberLazyListState()
     val queryBusy = queryState is ReportQueryState.Loading
@@ -143,9 +138,9 @@ fun ReportsScreen(
     LaunchedEffect(detailFolio) {
         if (detailFolio == null) query.cancelQuery() else query.findByFolio(detailFolio.orEmpty())
     }
-    LaunchedEffect(searchInput, detailFolio != null) {
-        if (searchInput == null || detailFolio != null) search.cancelSearch()
-        else search.search(searchInput.source, searchInput.filters)
+    LaunchedEffect(validatedFilters, detailFolio != null) {
+        if (validatedFilters == null || detailFolio != null) pages.cancelSearch()
+        else pages.activate(validatedFilters)
     }
     LaunchedEffect(searchError, detailFolio) {
         // Header and folio are the first two items; the rejected-search notice comes next.
@@ -172,7 +167,7 @@ fun ReportsScreen(
                 )
                 Spacer(Modifier.height(8.dp))
                 LocalOnlyNotice()
-                if (detailFolio == null && (listState as? ReportListState.Loaded)?.reports?.isEmpty() == true) {
+                if (detailFolio == null && emptyDatabase) {
                     Text("Todavía no hay reportes guardados en este teléfono.", Modifier.testTag("report_no_data"))
                 }
             }
@@ -261,52 +256,59 @@ fun ReportsScreen(
                         onSelect = { priorityName = it },
                     )
                     OutlinedButton(
-                        onClick = list::load,
+                        onClick = { validatedFilters?.let(pages::search) },
                         modifier = Modifier.fillMaxWidth().testTag("report_refresh"),
-                    ) { Text(if (listState == ReportListState.Loading) "Reiniciar lectura" else "Actualizar lista") }
+                    ) { Text(if (pageState is ReportPagedSearchState.Loading) "Reiniciar búsqueda" else "Actualizar lista · volver al inicio") }
                 }
-                when (val state = listState) {
-                    ReportListState.Idle, ReportListState.Loading -> item { LoadingNotice() }
-                    is ReportListState.Error -> item {
-                        Text(state.message, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
-                        Button(onClick = list::load) { Text("Reintentar lectura") }
+                item {
+                    val checked = appliedFilters
+                    if (checked is ReportSearchFilterValidation.Invalid) {
+                        Text(checked.message, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                    } else if (currentPageError != null) {
+                        Text(currentPageError.message, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
+                        Button(onClick = pages::retry, modifier = Modifier.testTag("report_retry_search")) { Text("Reintentar búsqueda") }
+                    } else if (currentPage == null) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            CircularProgressIndicator()
+                            Text("Buscando reportes…", Modifier.testTag("report_search_loading")
+                                .semantics { liveRegion = LiveRegionMode.Polite })
+                        }
+                    } else {
+                        Text("Página ${currentPage.pageNumber}: ${currentPage.reports.size} coincidencias", Modifier.testTag("report_result_count"))
+                        if (currentPage.nextCursor != null) Text("Quedan reportes por revisar. Esta página no representa toda la búsqueda.")
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(onClick = {
+                                if (validatedFilters != null && currentPagedResult(validatedFilters, pages.state.value) === currentPage)
+                                    pages.previousPage()
+                            }, enabled = currentPage.hasPrevious,
+                                modifier = Modifier.weight(1f).testTag("report_previous_page")) { Text("Anterior") }
+                            Button(onClick = {
+                                if (validatedFilters != null && currentPagedResult(validatedFilters, pages.state.value) === currentPage)
+                                    pages.nextPage()
+                            }, enabled = currentPage.nextCursor != null,
+                                modifier = Modifier.weight(1f).testTag("report_next_page")) {
+                                Text(if (currentPage.reports.isEmpty()) "Continuar búsqueda" else "Más reportes")
+                            }
+                        }
                     }
-                    is ReportListState.Loaded -> {
-                        val checked = appliedFilters
-                        val visible = currentSearch?.reports.orEmpty()
-                        item {
-                            if (checked is ReportSearchFilterValidation.Invalid) {
-                                Text(checked.message, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
-                            } else if (currentSearchError != null) {
-                                Text(currentSearchError.message, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
-                                Button(onClick = {
-                                    searchInput?.let { search.search(it.source, it.filters) }
-                                }, modifier = Modifier.testTag("report_retry_search")) { Text("Reintentar búsqueda") }
-                            } else if (currentSearch == null) {
-                                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                    CircularProgressIndicator()
-                                    Text("Aplicando filtros…", Modifier.testTag("report_search_loading")
-                                        .semantics { liveRegion = LiveRegionMode.Polite })
-                                }
-                            } else Text("${visible.size} de ${state.reports.size} reportes locales", Modifier.testTag("report_result_count"))
-                        }
-                        if (state.reports.isNotEmpty() && currentSearch != null && visible.isEmpty()) {
-                            item {
-                                Text("No hay reportes con estos filtros.", Modifier.testTag("report_empty_filtered"))
-                                TextButton(onClick = {
-                                    typeName = null; statusName = null; priorityName = null
-                                    searchText = ""; dateFrom = ""; dateTo = ""
-                                    appliedText = ""; appliedFrom = ""; appliedTo = ""; searchError = null
-                                }) {
-                                    Text("Mostrar todos")
-                                }
-                            }
-                        }
-                        items(visible, key = { it.id }) { report ->
-                            ReportCard(report, zone = searchZone, enabled = !queryBusy) {
-                                focus.clearFocus()
-                                detailFolio = report.id
-                            }
+                }
+                if (currentPage != null && currentPage.reports.isEmpty() && !emptyDatabase) {
+                    item {
+                        if (currentPage.nextCursor != null) {
+                            Text("No hay coincidencias en el tramo revisado. Continúa buscando.", Modifier.testTag("report_search_incomplete"))
+                        } else Text("No hay reportes con estos filtros en el tramo restante.", Modifier.testTag("report_empty_filtered"))
+                        TextButton(onClick = {
+                            typeName = null; statusName = null; priorityName = null
+                            searchText = ""; dateFrom = ""; dateTo = ""
+                            appliedText = ""; appliedFrom = ""; appliedTo = ""; searchError = null
+                        }) { Text("Mostrar todos") }
+                    }
+                }
+                items(currentPage?.reports.orEmpty(), key = { it.id }) { report ->
+                    ReportCard(report, zone = searchZone, enabled = !queryBusy) {
+                        if (validatedFilters != null && currentPagedResult(validatedFilters, pages.state.value) === currentPage) {
+                            focus.clearFocus()
+                            detailFolio = report.id
                         }
                     }
                 }
@@ -464,8 +466,5 @@ private fun statusLabel(status: ReportStatus): String = when (status) {
 
 private fun formatReportTime(instant: Instant, zone: ZoneId): String = DateTimeFormatter
     .ofPattern("dd/MM/yyyy HH:mm:ss z").withZone(zone).format(instant)
-
-/** Reference equality keeps lifecycle collection from comparing a whole historical reading. */
-private class ReportListReading(val state: ReportListState)
 
 private val FULL_FOLIO = Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")

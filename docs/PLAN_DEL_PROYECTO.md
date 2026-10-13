@@ -1,10 +1,10 @@
 # Plan del proyecto
 
-## Desarrollo para 0.6.0 — fases 21 y 22, Unreleased
+## Desarrollo para 0.6.0 — fases 21 a 23, Unreleased
 
-El equipo agrupa cambios de código en main sin publicar APK, tags o Releases por fase. [Fase 21](FASE_21.md) añade fechas del incidente al mapa y lista de la misma zona. [Fase 22](FASE_22.md) combina prioridad con los filtros de lista/mapa, mueve el cálculo de búsqueda fuera de Main y comprueba la cámara real antes de abrir una muestra de zona. La validación Android de estos controles se reserva para la entrega agrupada; la última APK publicada sigue siendo 0.5.7.
+El equipo agrupa cambios de código en main sin publicar APK, tags o Releases por fase. [Fase 21](FASE_21.md) añade fechas del incidente al mapa y lista de la misma zona. [Fase 22](FASE_22.md) combina prioridad con los filtros de lista/mapa, mueve el cálculo de búsqueda fuera de Main y comprueba la cámara real antes de abrir una muestra de zona. [Fase 23](FASE_23.md) sustituye la lectura completa de la lista por páginas de SQLite con memoria acotada, cursor exclusivo, continuación de búsquedas incompletas y navegación. La validación Android de estos controles se reserva para la entrega agrupada; la última APK publicada sigue siendo 0.5.7.
 
-Se refuerzan **4.4 Consulta / 4.5 Mapas**, con los mismos criterios: **15/28 = 53.6%**. Consulta mantiene 2/4: completar los dos criterios pendientes exige autor autenticado y seguimiento administrativo, coordinados con el equipo. La paginación del historial sigue pendiente para reducir memoria a gran escala. Cuentas, roles, administración y notificaciones no se dan por implementados mediante filtros. Los cortes siguientes son históricos.
+Se refuerzan **4.4 Consulta / 4.5 Mapas**, con los mismos criterios: **15/28 = 53.6%**. Consulta mantiene 2/4: completar los dos criterios pendientes exige autor autenticado y seguimiento administrativo, coordinados con el equipo. La paginación está conectada en código y su aceptación visual se integra a la entrega agrupada. Cuentas, roles, administración y notificaciones no se dan por implementados mediante filtros o paginación. Los cortes siguientes son históricos.
 
 ## Antecedente 0.5.7
 

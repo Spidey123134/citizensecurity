@@ -23,6 +23,7 @@ import com.example.citizensecurity.data.SqliteReportRepository
 import com.example.citizensecurity.domain.DeviceLocationFix
 import com.example.citizensecurity.domain.IdempotentReportRepository
 import com.example.citizensecurity.domain.ReportMapRepository
+import com.example.citizensecurity.domain.ReportListPageRepository
 import com.example.citizensecurity.domain.SimilarReportRepository
 import com.example.citizensecurity.domain.ReportSubmissionJournal
 import java.util.UUID
@@ -34,6 +35,8 @@ class ReportTestApplication : CitizenSecurityApplication() {
 
     override val reportRepository: IdempotentReportRepository
         get() = testFixture?.repository ?: super.reportRepository
+    override val reportListPageRepository: ReportListPageRepository
+        get() = testFixture?.repository ?: super.reportListPageRepository
     override val reportMapRepository: ReportMapRepository
         get() = testFixture?.repository ?: super.reportMapRepository
     override val similarReportRepository: SimilarReportRepository

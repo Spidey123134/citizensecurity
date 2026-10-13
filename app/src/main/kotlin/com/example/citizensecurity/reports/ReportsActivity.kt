@@ -7,25 +7,20 @@ import androidx.activity.compose.setContent
 import androidx.lifecycle.ViewModelProvider
 import com.example.citizensecurity.CitizenSecurityApplication
 import com.example.citizensecurity.preview.PreviewTheme
-import com.example.citizensecurity.report.ReportListState
-import com.example.citizensecurity.report.ReportListViewModel
 import com.example.citizensecurity.report.ReportQueryViewModel
-import com.example.citizensecurity.report.ReportSearchViewModel
+import com.example.citizensecurity.report.ReportPagedSearchViewModel
 
 class ReportsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val repository = (application as CitizenSecurityApplication).reportRepository
-        val list = ViewModelProvider(this, ReportListViewModel.factory(repository))[ReportListViewModel::class.java]
-        val query = ViewModelProvider(this, ReportQueryViewModel.factory(repository))[ReportQueryViewModel::class.java]
-        val search = ViewModelProvider(this, ReportSearchViewModel.factory())[ReportSearchViewModel::class.java]
-        if (list.state.value == ReportListState.Idle) list.load()
+        val dependencies = application as CitizenSecurityApplication
+        val query = ViewModelProvider(this, ReportQueryViewModel.factory(dependencies.reportRepository))[ReportQueryViewModel::class.java]
+        val pages = ViewModelProvider(this, ReportPagedSearchViewModel.factory(dependencies.reportListPageRepository))[ReportPagedSearchViewModel::class.java]
         setContent {
             PreviewTheme {
                 ReportsScreen(
-                    list = list,
                     query = query,
-                    search = search,
+                    pages = pages,
                     initialFolio = intent.getStringExtra(EXTRA_FOLIO),
                     onClose = ::finish,
                     onMap = { folio ->

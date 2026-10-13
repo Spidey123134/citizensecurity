@@ -183,13 +183,13 @@ class ReportsSearchUiTest {
     @Test fun searchingAnEmptyDatabaseExplainsNoStoredReportsWithoutGpsOrWrites() {
         before = storedRows()
         launch()
-        awaitCount(0, total = 0)
+        awaitCount(0)
         search("arból")
-        awaitCount(0, total = 0)
+        awaitCount(0)
         field("report_no_data").assertExists()
         ui.onNodeWithTag("report_empty_filtered").assertDoesNotExist()
         select("report_clear_search")
-        awaitCount(0, total = 0)
+        awaitCount(0)
         assertReadingOnly()
     }
 
@@ -289,6 +289,53 @@ class ReportsSearchUiTest {
         assertReadingOnly()
     }
 
+    @Test fun pagedHistoryReplacesResultsAndDetailReturnKeepsTheCurrentPage() {
+        seedPagedHistory(70)
+        launch()
+        awaitCount(50)
+        field("report_previous_page").assertIsNotEnabled()
+        assertCard(before.first())
+        assertCard(before[49])
+        field("report_next_page").assertIsEnabled()
+
+        select("report_next_page")
+        awaitCount(20, page = 2) // La segunda página reemplaza las 50 filas anteriores.
+        assertCard(before[50])
+        assertCard(before.last())
+        field("report_next_page").assertIsNotEnabled()
+        field("report_previous_page").assertIsEnabled()
+
+        val selected = before[50]
+        select("report_open_${selected.id}")
+        ui.waitUntil(15_000) { ui.onAllNodesWithTag("report_folio").fetchSemanticsNodes().isNotEmpty() }
+        ui.onNodeWithTag("report_folio").assertTextEquals(selected.id)
+        ui.onNodeWithTag("report_back_list").performScrollTo().performClick()
+        awaitCount(20, page = 2)
+        assertCard(selected)
+        field("report_next_page").assertIsNotEnabled()
+
+        select("report_previous_page")
+        awaitCount(50)
+        assertCard(before.first())
+        assertCard(before[49])
+        field("report_previous_page").assertIsNotEnabled()
+        field("report_next_page").assertIsEnabled()
+        assertReadingOnly()
+    }
+
+    private fun seedPagedHistory(count: Int) = runBlocking {
+        fixture.publishFreshFix()
+        val occurredAt = firstDay.atTime(12, 0).atZone(zone).toInstant()
+        repeat(count) { index ->
+            fixture.repository.create(draft(IncidentType.RISK, occurredAt,
+                "Un árbol obstruye la entrada del parque, reporte ${index + 1}.",
+                "Entrada del parque, referencia ${index + 1}"))
+        }
+        before = storedRows() // Orden real de SQLite, incluidos los empates por nanosegundos/folio.
+        assertEquals(count, before.size)
+        fixture.clearFix()
+    }
+
     private fun seed() = runBlocking {
         fixture.publishFreshFix()
         val start = firstDay.atStartOfDay(zone).toInstant()
@@ -375,16 +422,16 @@ class ReportsSearchUiTest {
     private fun assertEditableField(tag: String, expected: String) = field(tag).assert(
         SemanticsMatcher.expectValue(SemanticsProperties.EditableText, androidx.compose.ui.text.AnnotatedString(expected)),
     )
-    private fun awaitCount(visible: Int, total: Int = 5) {
+    private fun awaitCount(visible: Int, page: Int = 1) {
         ui.waitUntil(15_000) {
             // Una lectura inicial aún puede estar pendiente y no tener el item de contador.
             runCatching {
                 field("report_result_count")
-                ui.onAllNodes(hasTestTag("report_result_count") and hasText("$visible de $total reportes locales"))
+                ui.onAllNodes(hasTestTag("report_result_count") and hasText("Página $page: $visible coincidencias"))
                     .fetchSemanticsNodes().isNotEmpty()
             }.getOrDefault(false)
         }
-        ui.onNodeWithTag("report_result_count").assertTextEquals("$visible de $total reportes locales")
+        ui.onNodeWithTag("report_result_count").assertTextEquals("Página $page: $visible coincidencias")
     }
     private fun awaitError() {
         field("report_search_error")
