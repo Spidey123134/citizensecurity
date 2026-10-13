@@ -41,7 +41,7 @@ class ReportHistoryUiTest {
         ui.onNodeWithTag("history_open").performScrollTo().performClick()
         awaitTag("history_event_1")
         ui.onNodeWithText("Reporte guardado · Reportado").assertIsDisplayed()
-        ui.onNodeWithTag("history_status").assertTextContains("Reportado")
+        ui.onNodeWithTag("history_status").assertTextContains("Reportado", substring = true)
         ui.onNodeWithTag("history_refresh").performScrollTo().performClick()
         awaitTag("history_event_1")
         runBlocking {

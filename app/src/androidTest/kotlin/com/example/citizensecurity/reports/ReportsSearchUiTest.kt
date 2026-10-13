@@ -180,16 +180,20 @@ class ReportsSearchUiTest {
         }
     }
 
-    @Test fun searchingAnEmptyDatabaseExplainsNoStoredReportsWithoutGpsOrWrites() {
+    @Test fun emptyUnfilteredPageAndFilteredNoMatchesAreDistinctWithoutGpsOrWrites() {
         before = storedRows()
         launch()
         awaitCount(0)
+        field("report_no_data").assertExists()
         search("arból")
+        awaitCount(0)
+        field("report_empty_filtered").assertExists()
+        ui.onNodeWithTag("report_list").performScrollToIndex(0)
+        ui.onNodeWithTag("report_no_data").assertDoesNotExist()
+        select("report_clear_search")
         awaitCount(0)
         field("report_no_data").assertExists()
         ui.onNodeWithTag("report_empty_filtered").assertDoesNotExist()
-        select("report_clear_search")
-        awaitCount(0)
         assertReadingOnly()
     }
 

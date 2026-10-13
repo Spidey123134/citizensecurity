@@ -1,5 +1,17 @@
 # CITIZENSECURITY
 
+## Entrega 0.6.0
+
+**0.6.0 / código Android 28** agrupa el avance de las fases 21 a 27 y una base pequeña de la fase 28. Incluye cuentas locales con datos propios por UUID, lista por páginas con recuperación de criterios, fechas/prioridad en el mapa, lista de la misma zona e historial real consultable por folio. Se conservan datos, firma académica, GPS 5 km y login/loading del compañero.
+
+La asignación administrativa continúa pendiente por elección del usuario. El servicio de cambios está protegido y la base nueva conserva la identidad de una solicitud incierta; todavía no se conecta un escritor administrativo ni se conceden roles a admin/admin. Faltan permiso/actor y recuperación durable para ese recorrido. **19/28 = 67.9% de construcción**, mismos criterios del PDF.
+
+[Release y APK 0.6.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.0) · [Cambios y límites](docs/ENTREGA_0_6_0.md) · [Pasos para probar](docs/PROBAR_0_6_0.md). **1164 casos distintos aprobados**, incluidos 271 Android; cero fallos, errores u omitidos. Compilación, lint y firma académica verificados. [Validación](docs/VALIDACION.md) · [Base de fase 28](docs/FASE_28.md).
+
+Para actualizar el código conserva tus cambios y ejecuta `git fetch origin`, `git switch main` y `git pull --ff-only origin main`; selecciona **app** en Android Studio. Instala la APK 0.6.0 sobre la anterior, sin desinstalar ni borrar datos. Los siguientes bloques conservan los cortes anteriores; sus etiquetas Unreleased describen la preparación que se agrupa en esta entrega.
+
+## Antecedente — preparación de 0.6.0
+
 ## Preparación de 0.6.0 — Unreleased
 
 Ahora agrupamos los avances en **main** sin generar APK ni publicar una Release por cada fase. La próxima entrega prevista es **0.6.0**; la última APK publicada sigue siendo [0.5.7](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.7). El código nuevo de main todavía no está en esa APK.
@@ -22,7 +34,7 @@ Se comprueba la lógica, SQLite del host y compilación sin generar APK. **19/28
 
 Para obtener el código nuevo conserva tus cambios, ejecuta `git fetch origin`, `git switch main` y `git pull --ff-only origin main`. En Android Studio trabaja con el módulo **app**. Los siguientes bloques describen las entregas publicadas anteriores.
 
-## Última entrega publicada
+## Antecedente 0.5.7
 
 ## Versión 0.5.7 — encontrar reportes por texto y fecha
 

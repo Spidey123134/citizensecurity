@@ -1,5 +1,15 @@
 # Plan del proyecto
 
+## Entrega agrupada 0.6.0 — fases 21–28
+
+El usuario autorizó cerrar fase 27, preparar una base pequeña de la siguiente y publicar APK 0.6.0 / código Android 28. La entrega reúne las mejoras de Consulta/Mapas (21–24), cuentas y aislamiento local (25/26), historial real (27) y coordinación interna de cambios (28). El compañero conserva la interfaz del login y loading. [Entrega](ENTREGA_0_6_0.md) · [Validación agrupada](VALIDACION.md).
+
+**19/28 = 67.9% de construcción**, mismos criterios. Usuarios 4/4 y Consulta 3/4 conservan sus hitos locales; preparar historial/coordinación no acredita seguimiento administrativo completo. La asignación de permisos queda pendiente por decisión del usuario. No conectar un escritor hasta tener actor/permiso y diario durable con recuperación del resultado incierto. Consulta administrativa y notificaciones siguen pendientes; la fase 28 no añade una función ficticia visible.
+
+El cierre 0.6.0 aprobó **1164 casos distintos**, incluidos 271 Android, sin fallos, errores u omitidos. Los 15 Android de fase 27 se ejecutaron; el permiso administrativo y aceptación del usuario siguen separados. Los cortes siguientes describen la preparación Unreleased que se agrupa en esta entrega; sus recuentos no se duplican. [Release y APK](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.0).
+
+## Antecedente — preparación de 0.6.0
+
 ## Desarrollo para 0.6.0 — fases 21 a 27, Unreleased
 
 El equipo agrupa cambios de código en main sin publicar APK, tags o Releases por fase. [Fase 21](FASE_21.md) añade fechas del incidente al mapa y lista de la misma zona. [Fase 22](FASE_22.md) combina prioridad con los filtros de lista/mapa, mueve el cálculo de búsqueda fuera de Main y comprueba la cámara real antes de abrir una muestra de zona. [Fase 23](FASE_23.md) sustituye la lectura completa de la lista por páginas de SQLite con memoria acotada, cursor exclusivo, continuación de búsquedas incompletas y navegación. La validación Android de estos controles se reserva para la entrega agrupada; la última APK publicada sigue siendo 0.5.7.

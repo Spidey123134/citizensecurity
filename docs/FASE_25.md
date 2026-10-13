@@ -1,5 +1,11 @@
 # Fase 25 — cuentas locales y acceso comprobado
 
+## Incorporación a 0.6.0 — cierre validado
+
+Esta fase está incluida en **0.6.0 / código 28**. El cierre agrupado ejecutó SQLite de cuentas y el recorrido Android de acceso, conservando los layouts del compañero: **1164 casos distintos aprobados** en total, sin fallos, errores u omitidos. Cuentas exclusivamente locales; sin rol administrativo por nombre o acceso académico. Los resultados de preparación no se duplican. [Entrega](ENTREGA_0_6_0.md) · [Validación](VALIDACION.md). Los bloques siguientes conservan el registro original.
+
+## Registro de preparación
+
 Estado: **Unreleased para 0.6.0**, código en main. Sin APK, incremento de versión, tag o Release. La última entrega binaria continúa siendo 0.5.7 / código 27.
 
 ## Recorrido conectado

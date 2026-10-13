@@ -86,7 +86,7 @@ class ReportSubmissionUiTest {
         ui.onNodeWithTag("report_list").performScrollToNode(hasTestTag("list_card_$folio"))
         ui.onNodeWithTag("list_card_$folio").assertExists()
         ui.onNodeWithTag("report_list").performScrollToNode(hasTestTag("report_result_count"))
-        ui.onNodeWithTag("report_result_count").assertTextEquals("1 de 2 reportes locales")
+        ui.onNodeWithTag("report_result_count").assertTextEquals("Página 1: 1 coincidencias")
         assertEquals(refreshes, fixture.refreshCalls)
         assertEquals(2, runBlocking { fixture.repository.list().size })
     }

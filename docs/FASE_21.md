@@ -1,5 +1,11 @@
 # Fase 21 — fechas y lista de la zona
 
+## Incorporación a 0.6.0 — cierre validado
+
+Esta fase está incluida en **0.6.0 / código 28**. El cierre agrupado ejecutó las pruebas Android de fechas/prioridad y lista de la misma zona, junto con las regresiones de consulta. **1164 casos distintos aprobados** en total, sin fallos, errores u omitidos; los resultados de preparación no se suman de nuevo. [Entrega](ENTREGA_0_6_0.md) · [Validación](VALIDACION.md). Los bloques siguientes conservan el registro original.
+
+## Registro de preparación
+
 Estado: **Unreleased, preparación de 0.6.0**. Se actualiza el código de main sin generar APK, incrementar versión Android, crear tags ni publicar una Release. La última APK continúa siendo 0.5.7 / código 27.
 
 ## Comportamiento

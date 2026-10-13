@@ -1,6 +1,25 @@
 # Changelog
 
-## [Unreleased] — preparación de 0.6.0
+## [Unreleased]
+
+Sin cambios posteriores registrados.
+
+## [0.6.0] — 2026-10-13
+
+- Agrupa fases 21–27 y una base pequeña de fase 28, con APK académica y código Android 28; conserva datos, firma y login/loading del compañero.
+- Cuentas locales con registro/verificación y espacio propio por UUID para reportes, consultas, fotos, borrador y solicitudes. El modo académico conserva los históricos.
+- Lista paginada con memoria acotada, recuperación de criterios/posición y reinicio explícito. Fechas del incidente y prioridad en mapa, lista de la misma muestra y comprobación de cámara antes de abrirla.
+- Historial real del folio consultable por gesto, creación atómica del evento y migración aditiva de reportes a esquema 3 sin inventar cambios anteriores. Cuentas mantienen esquema 1.
+- Fase 28: comando de estado retenido durante la vida del modelo, recibo comprobado y reintento explícito con la misma identidad ante incertidumbre/cancelación. No hay diario durable ni composición administrativa; asignación pendiente y escritura denegada por defecto.
+- Avance permanece en 19/28 = 67.9%; publicar o preparar el servicio no completa permisos, seguimiento administrativo o notificaciones. El cierre agrupado se registra en [Validación](docs/VALIDACION.md).
+- 1164 casos distintos aprobados: 159 dominio JVM, 88 datos JVM, 646 app JVM, 207 datos Android y 64 app Android. 14 nuevos en este incremento; repeticiones e incorporaciones previas no se duplican. Los 15 Android de fase 27 ya se ejecutaron.
+- Debug/release/androidTest ensamblados, firma v2/certificado académico conservados, sin fixtures en el producto; lint cero errores y 22 advertencias por variante de app, datos sin incidencias.
+
+[Release y APK](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.0) · [Entrega](docs/ENTREGA_0_6_0.md) · [Probar 0.6.0](docs/PROBAR_0_6_0.md).
+
+## Antecedente de preparación de 0.6.0 — fases 21–27
+
+Los cortes Unreleased siguientes se agrupan en 0.6.0. Sus recuentos y pruebas solo compiladas describen aquella preparación; el cierre agrupado no los suma de nuevo.
 
 - Fase 27: Historial de estados visible desde cada folio por consulta explícita, con actualización, eventos anteriores, cancelación y reintento de la página fallida. La ficha permanece disponible si falla solo el historial.
 - Los reportes nuevos y su evento real de creación se guardan en una misma transacción. Migración aditiva de reportes a esquema 3; conserva filas, fotos y estados anteriores sin inventar eventos ni asignarles un autor. Cuentas mantienen esquema 1.

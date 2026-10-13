@@ -1,5 +1,23 @@
 # Avance del plan del proyecto
 
+## Entrega agrupada 0.6.0 — fases 21–28
+
+**19/28 = 67.9% de construcción**, mismos 28 criterios/pesos. La entrega reúne cuentas/aislamiento local, consulta paginada/restaurable, mapa filtrado e historial real. La [fase 28](FASE_28.md) prepara coordinación de solicitudes de cambio con identidad retenida y reintento explícito; falta diario durable y no se conecta escritura administrativa.
+
+| Punto del PDF | Hitos construidos |
+| --- | --- |
+| 4.1 Usuarios | 4/4 |
+| 4.2 Reportes | 4/4 |
+| 4.3 Geolocalización | 4/4 |
+| 4.4 Consulta | 3/4 |
+| 4.5 Mapas | 4/4 |
+| 4.6 Administración | 0/4 |
+| 4.7 Notificaciones | 0/4 |
+
+La asignación administrativa sigue pendiente por elección del usuario. Preparar historial/servicio/modelo o publicar una APK no suma permisos, seguimiento completo o notificaciones. El [cierre agrupado](VALIDACION.md) aprobó **1164 casos distintos**, incluidos 271 Android y los 15 de historial que antes estaban solo compilados. Esas pruebas se separan de la aceptación del usuario y no acreditan otra captura GPS física. [Entrega 0.6.0](ENTREGA_0_6_0.md).
+
+## Antecedente — preparación de 0.6.0
+
 ## Preparación de 0.6.0 — fase 27, Unreleased
 
 **19/28 = 67.9% de construcción**, mismos 28 criterios/pesos. [Fase 27](FASE_27.md) añade historial real consultable por folio y un servicio protegido de transiciones; no suma hitos todavía. Usuarios 4/4, Reportes 4/4, GPS 4/4, Consulta 3/4, Mapas 4/4, Administración 0/4 y Notificaciones 0/4.

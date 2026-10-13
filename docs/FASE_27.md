@@ -1,5 +1,13 @@
 # Fase 27 — historial real de estados
 
+## Incorporación a 0.6.0 — cierre validado
+
+Esta fase está incluida en **0.6.0 / código 28**. Se ejecutaron sus **15 casos Android que antes solo estaban compilados**: 13 de datos y dos de interfaz. SQLiteOpenHelper comprobó migración/rollback, creación y reintento atómicos, permiso denegado sin abrir base, CAS/conflictos, revocación/cancelación y corrupción. La interfaz comprobó consulta explícita del evento real, actualización sin duplicarlo y error independiente que conserva la ficha del reporte.
+
+Esos 15 forman parte, una sola vez, de los **1164 casos distintos aprobados** del cierre agrupado, con cero fallos, errores u omitidos. La asignación administrativa sigue pendiente y el escritor productivo no está conectado; la lectura probada no concede permisos o acredita atención por una autoridad. **19/28 = 67.9% permanece**. [Entrega](ENTREGA_0_6_0.md) · [Validación](VALIDACION.md) · [Base de fase 28](FASE_28.md). Los bloques siguientes conservan el registro original de preparación.
+
+## Registro de preparación
+
 Estado: **Unreleased para 0.6.0**, actualización de código. Sin APK, cambio de versión, tag o Release; última entrega binaria 0.5.7 / código 27.
 
 ## Recorrido visible

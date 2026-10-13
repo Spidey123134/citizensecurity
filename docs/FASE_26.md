@@ -1,5 +1,11 @@
 # Fase 26 — reportes separados por cuenta
 
+## Incorporación a 0.6.0 — cierre validado
+
+Esta fase está incluida en **0.6.0 / código 28**. El cierre agrupado ejecutó aislamiento SQLite y pantallas de cuenta con archivos de pruebas independientes: **1164 casos distintos aprobados** en total, sin fallos, errores u omitidos. Los datos históricos siguen académicos, sin reasignación. El esquema 2 de este registro fue actualizado aditivamente a 3 por fase 27. Los resultados de preparación no se duplican. [Entrega](ENTREGA_0_6_0.md) · [Validación](VALIDACION.md). Los bloques siguientes conservan el registro original.
+
+## Registro de preparación
+
 Estado: **Unreleased para 0.6.0**, código en main. Sin APK, cambio de versión, tag o Release; última entrega binaria 0.5.7 / código 27.
 
 ## Recorrido

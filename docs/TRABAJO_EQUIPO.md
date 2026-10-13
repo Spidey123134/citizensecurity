@@ -1,5 +1,17 @@
 # Trabajo del equipo
 
+## Trabajo compartido 0.6.0 — entrega agrupada
+
+El usuario autorizó terminar fase 27, avanzar una base pequeña de fase 28 y entregar APK 0.6.0 / código 28. Reúne lo trabajado desde 0.5.7: cuentas locales/datos propios, páginas/restauración de consulta, filtros del mapa/lista de zona e historial real. [Release y APK](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.0) · [Entrega](ENTREGA_0_6_0.md) · [Probar 0.6.0](PROBAR_0_6_0.md).
+
+El compañero conserva **la interfaz del login y loading**. Para trabajar desde main conserva tus cambios, ejecuta `git fetch origin`, `git switch main` y `git pull --ff-only origin main`; sincroniza Gradle y elige **app**. Si Git informa divergencia, integra el trabajo sin reset. La APK se actualiza encima de la anterior, con la misma firma, sin desinstalar ni borrar datos.
+
+Mantén ReportWorkspace fijo, UUID y comprobaciones de sesión antes/después. Reportes esquema 3 migra de forma aditiva; cuentas sigue esquema 1. Histórico académico, fotos, folios, diarios y GPS 5 km se conservan. La asignación administrativa queda pendiente: no conceder roles a admin/admin ni conectar un escritor. Fase 28 conserva el comando mientras vive el modelo, pero falta diario durable y actor/permiso antes de activar cambios.
+
+**19/28 = 67.9% permanece**. El cierre agrupado de [Validación](VALIDACION.md) aprobó 1164 casos distintos, incluidos 271 Android; los 15 de fase 27 ya se ejecutaron. Compilación, lint y firma verificados. Los bloques siguientes conservan los cortes anteriores, sin duplicar su evidencia ni atribuir aceptación al usuario.
+
+## Antecedente — preparación de 0.6.0
+
 ## Trabajo compartido para 0.6.0 — fase 27, Unreleased
 
 El equipo continúa actualizando **main con código**, agrupando APK, versión Android, tags y Release para una futura entrega 0.6.0. La última APK publicada sigue siendo **0.5.7 / código 27** y no contiene estos avances. El compañero conserva la interfaz del login y loading; la lógica usa sus layouts/IDs existentes.
