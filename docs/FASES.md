@@ -1,5 +1,17 @@
 # Fases de CITIZENSECURITY
 
+## Entrega agrupada 0.6.0 — fases 21–28
+
+El usuario autorizó la APK 0.6.0 / código 28. La entrega incluye las fases 21–27 y la base interna de [fase 28](FASE_28.md): coordinación de estado, identidad retenida y reintento explícito, sin diario durable ni escritor administrativo conectado. La asignación sigue pendiente. **19/28 = 67.9% permanece**; el historial no acredita el recorrido administrativo completo. [Entrega y límites](ENTREGA_0_6_0.md) · [Prueba Android](PROBAR_0_6_0.md) · [Cierre agrupado](VALIDACION.md).
+
+**1164 casos distintos aprobados**, cero fallos, errores u omitidos, incluidos 271 Android. Los 15 Android de fase 27 ya se ejecutaron. Los bloques Unreleased siguientes conservan los cortes previos a esta entrega y su evidencia original; su código se incluye en 0.6.0 y el cierre no duplica sus recuentos. [Release y APK](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.0).
+
+## Fase 28 — base siguiente
+
+[Fase 28](FASE_28.md) añade ReportStatusChangeViewModel y 12 pruebas JVM: comando completo, single flight, verificación de recibo e incertidumbre que conserva UUID y exige reintento explícito. No se activa administración ni se promete recuperación tras muerte del proceso. Falta actor/permiso y diario durable antes de conectar escritura.
+
+## Antecedente — preparación de 0.6.0
+
 ## Fase 27 — historial real de estados, Unreleased
 
 [Fase 27](FASE_27.md) añade consulta explícita del historial desde el folio y creación atómica de eventos para los reportes nuevos. Migración aditiva a esquema 3 sin reconstruir los cambios anteriores. El servicio de transiciones consecutivas usa CAS, operationId y autorización denegada por defecto; la asignación administrativa queda pendiente por elección del usuario. **100 aprobados/37 nuevos**; 15 Android nuevos compilados, no ejecutados. **19/28 = 67.9% permanece**, sin acreditar el recorrido administrativo. Código para 0.6.0, sin APK, versión nueva, tag o Release.

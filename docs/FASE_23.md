@@ -1,5 +1,11 @@
 # Fase 23 — historial por páginas
 
+## Incorporación a 0.6.0 — cierre validado
+
+Esta fase está incluida en **0.6.0 / código 28**. Se ejecutaron las pruebas Android de páginas, navegación y consulta en el cierre agrupado de **1164 casos distintos aprobados**, sin fallos, errores u omitidos. La memoria y continuación siguen acotadas; una página no declara un total global. Los resultados de preparación no se suman de nuevo. [Entrega](ENTREGA_0_6_0.md) · [Validación](VALIDACION.md). Los bloques siguientes conservan el registro original.
+
+## Registro de preparación
+
 Estado: **Unreleased, preparación de 0.6.0**. Código en main sin generar APK, incrementar versión Android, crear tags ni publicar Release. Última entrega binaria: 0.5.7 / código 27.
 
 ## Comportamiento visible

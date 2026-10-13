@@ -167,7 +167,7 @@ class SqliteAccountRepositoryTest {
         }
     }
 
-    @Test fun cuentasSeparadasConservanLosReportesYEsquema2() = runBlocking {
+    @Test fun cuentasSeparadasConservanLosReportesYEsquema3() = runBlocking {
         withFixture { accountsName ->
             val reportsName = "citizensecurity_accounts_test_${UUID.randomUUID()}_reports.db"
             val now = Instant.parse("2026-10-12T18:00:00Z")
@@ -180,7 +180,7 @@ class SqliteAccountRepositoryTest {
                 SqliteAccountRepository(context, accountsName).use { it.register("ana", password) }
                 SqliteReportRepository(context, reportsName).use { assertEquals(report, it.findById(report.id)) }
                 SQLiteDatabase.openDatabase(context.getDatabasePath(reportsName).path, null, SQLiteDatabase.OPEN_READONLY).use {
-                    assertEquals(2, it.version)
+                    assertEquals(3, it.version)
                 }
             } finally {
                 check(reportsName.matches(Regex("citizensecurity_accounts_test_[0-9a-f-]{36}_reports\\.db")))

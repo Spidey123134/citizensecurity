@@ -1,5 +1,11 @@
 # Fase 22 — prioridad y búsqueda en segundo plano
 
+## Incorporación a 0.6.0 — cierre validado
+
+Esta fase está incluida en **0.6.0 / código 28**. Se ejecutaron las pruebas Android de filtros combinados, mapa/lista de zona y consulta dentro del cierre agrupado de **1164 casos distintos aprobados**, sin fallos, errores u omitidos. Se conserva el alcance de prioridad indicada por el autor. Los resultados de preparación no se duplican. [Entrega](ENTREGA_0_6_0.md) · [Validación](VALIDACION.md). Los bloques siguientes conservan el registro original.
+
+## Registro de preparación
+
 Estado: **Unreleased, preparación de 0.6.0**. Actualización de código en main; no genera APK, incrementa versión Android, crea tags ni publica Release. Última entrega binaria: 0.5.7 / código 27.
 
 ## Función visible

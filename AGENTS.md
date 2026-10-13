@@ -1,6 +1,18 @@
 # Trabajo del equipo
 
-## Instrucción vigente — desarrollo para 0.6.0, sin entregas binarias frecuentes
+## Entrega autorizada 0.6.0
+
+El usuario pidió cerrar la fase 27, avanzar una base pequeña de la siguiente y **subir la APK 0.6.0 ahora**. Autoriza compilar, probar en un emulador aislado, actualizar main, crear tag/Release y adjuntar APK/checksum para esta entrega agrupada. Versión Android 0.6.0 / código 28. La asignación administrativa continúa pendiente por su decisión: no conceder roles ni habilitar escritura desde admin/admin. Conservar datos, firma académica y login/loading; no instalar ni borrar datos de un teléfono sin su instrucción. Los bloques siguientes conservan la preparación previa y su evidencia original.
+
+La entrega agrupa fases 21–27 y la base pequeña de fase 28. ReportStatusChangeViewModel no está compuesto en la app: conserva comando/operationId mientras vive, verifica recibo, bloquea otro intento ante resultado incierto/cancelación y reintenta explícitamente la misma solicitud. No tiene diario durable ni recuperación tras muerte del proceso. No activar escritura sin actor/permiso acordados y recuperación durable; el usuario eligió dejar pendiente la asignación. Conservar esas restricciones aunque el código esté incluido en la APK.
+
+Avance permanece **19/28 = 67.9%**, sin sumar seguimiento/administración por preparar historial o publicar. [Entrega](docs/ENTREGA_0_6_0.md), [fase 28](docs/FASE_28.md), [prueba](docs/PROBAR_0_6_0.md) y [validación](docs/VALIDACION.md) registran el cierre agrupado. Las publicaciones siguientes necesitan su instrucción correspondiente; la autorización de APK de este bloque es específica de 0.6.0.
+
+Cierre validado: **1164 casos distintos aprobados**, cero fallos/errores/omitidos: dominio JVM 159, datos JVM 88, app JVM 646, datos Android 207 y app Android 64. Nuevos en este incremento 14 (12 VM fase 28 y 2 mapa); conservar antecedentes sin doble conteo. Fase 27 ejecutó sus 15 Android antes solo compilados. Debug/release/androidTest ensamblados; lint cero errores/22 avisos por variante app y cero datos. APK min26/target37/0.6.0/code28, misma firma académica v2, sin fixtures o instrumentación productiva. Evidencia ignorada release060-test-proof.json; fuente/datos/APK 0.5.7 conservados. Pruebas en emulador aislado, sin otra aceptación física GPS o del usuario.
+
+## Antecedente — preparación de 0.6.0
+
+## Instrucción durante la preparación de 0.6.0 — sin entregas binarias frecuentes
 
 El usuario pidió continuar programando y actualizar GitHub, economizando trabajo y uso. **No generar APK, publicar Releases, crear tags ni incrementar la versión por cada fase.** La próxima entrega agrupada prevista es **0.6.0**; registrar el código nuevo como **Unreleased** mientras tanto. Esta instrucción sustituye las preferencias de publicación frecuente de los bloques históricos. Actualizar main con código validado está autorizado; publicar una entrega binaria futura requiere la instrucción correspondiente. La última APK publicada continúa siendo 0.5.7 / código Android 27.
 

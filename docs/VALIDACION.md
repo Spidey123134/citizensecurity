@@ -1,5 +1,39 @@
 # Validación y comprobaciones del proyecto
 
+## Cierre validado 0.6.0 — fases 21–28 · 13 de octubre de 2026
+
+**1164 casos distintos ejecutados y aprobados; cero fallos, errores u omitidos.** El cierre incorpora **14 definiciones nuevas en este incremento**: 12 JVM de ReportStatusChangeViewModel y dos nativas de filtros/lista del mapa. Las incorporaciones de fases 21–27 conservan sus registros originales; no se suman como ejecuciones adicionales ni se cuentan otra vez como nuevas.
+
+| Suite | Casos aprobados | Evidencia del cierre |
+| --- | ---: | --- |
+| Dominio JVM | 159 | XML final |
+| Datos JVM / SQLite del host | 88 | XML final, nueve suites |
+| App JVM | 646 | XML final, incluye 12 nuevos de fase 28 |
+| Datos nativos Android | 207 | Instrumentación en emulador aislado |
+| App nativa Android | 64 | Recibos finales de flujos y permisos |
+| **Total** | **1164** | **893 JVM + 271 Android** |
+
+Los 64 de app son acceso de cuentas (3), aislamiento (4), reportes (18), borrador (11), inicio (6), fotografías (6), repetidos (7), guardado (5) y cuatro estados reales de permiso configurados por separado. Los casos de reportes incluyen consulta paginada/restauración, historial y filtros de mapa/lista de zona. Las fixtures utilizan SQLite y datos privados aislados, sin consultar o borrar los archivos del teléfono del usuario.
+
+**Fase 27:** se ejecutaron los 15 casos Android que antes solo estaban compilados: 13 de datos y dos de interfaz. Comprueban la migración aditiva, creación/reintento, autorización denegada antes de abrir la base, CAS/conflictos, revocación/cancelación y corrupción. La interfaz comprueba consulta explícita del evento real y fallo del historial que conserva la ficha. No habilitan un rol o escritor productivo.
+
+El primer pase de reportes detectó tres aserciones antiguas o ambiguas del harness: comparación parcial del texto del historial, prioridad repetida entre encabezado/fila y expectativa de lista vacía después de buscar con un filtro. Se corrigieron los selectores/expectativas sin modificar el producto. Otro pase de flujos encontró una expectativa antigua del contador, también corregida en el test. Los recibos finales sustituyen esos casos; los intentos fallidos y repeticiones se conservan como evidencia, sin aumentar el total. El primer build corrigió además la sintaxis de un helper de prueba antes del pase final.
+
+Debug/release/androidTest ensamblados. Lint final: **app cero errores y 22 advertencias por variante debug/release; datos cero incidencias**, sin silenciarlas. APK **0.6.0 / código 28**, minSdk 26 y targetSdk 37, firma v2 con el mismo certificado académico; sin fixtures de pruebas, instrumentación o testOnly en el producto. Login/loading se conservan. La APK 0.5.7 anterior mantiene su hash.
+
+| Comprobación del APK | Valor verificado |
+| --- | --- |
+| Archivo | citizensecurity-0.6.0-academico.apk |
+| Tamaño | 54.951.553 bytes |
+| SHA-256 | `c32201071bb245ef8fa3236e124788ba100bd0fc9ba2614afeaf9bb6549ee039` |
+| Certificado SHA-256 | `0a4006a1d2ef2ad02a0dad7c51b55c0ba5ffcd096a226eed6456326b2fed3ebd` |
+
+El recibo local ignorado **.gradle/validacion/release060-test-proof.json** reúne XML, resultados nativos y comprobaciones finales. Una revisión independiente no encontró bloqueos. Las pruebas se realizaron en un emulador aislado; no se instaló la APK en el teléfono ni se alteraron sus datos. El GPS controlado de pruebas no acredita otra captura física; la confirmación manual previa del usuario se conserva por separado.
+
+**19/28 = 67.9% de construcción**, mismos criterios. La asignación administrativa continúa pendiente; la app deniega escritura y la fase 28 aún no tiene diario durable ni identidad administrativa acordada. La aceptación del usuario sigue siendo una comprobación distinta. [Entrega 0.6.0](ENTREGA_0_6_0.md) · [Probar en Android](PROBAR_0_6_0.md) · [Historial](FASE_27.md) · [Base siguiente](FASE_28.md).
+
+## Antecedente 0.5.7
+
 ## Cierre 0.5.7 — fase 20 · 11 de octubre de 2026
 
 **545 casos distintos de app ejecutados y aprobados; 38 definiciones nuevas**: 21 JVM de filtros, nueve JVM de consulta y ocho nativas de búsqueda. No se suman repeticiones. Cero fallos, errores u omisiones en el pase de cierre.
