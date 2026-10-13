@@ -2,6 +2,9 @@
 
 ## [Unreleased] — preparación de 0.6.0
 
+- Fase 24: recuperación de criterios, cursor, página y navegación si Android restaura el estado después de cerrar el proceso. Se guardan metadatos acotados; los resultados se vuelven a consultar. La restauración no recupera evidencia GPS ni inicia una lectura desde el constructor.
+- Los checkpoints incompatibles, corruptos o incoherentes se rechazan completos. La representación versionada conserva nanosegundos, solicitudes pendientes/fallidas e historial truncado; soporta la expansión Unicode del texto normalizado sin guardar páginas enteras.
+- Corregido Buscar reportes con valores idénticos: ahora reinicia el recorrido. Limpiar búsqueda y Mostrar todos también vuelven al inicio aunque sus valores ya estuvieran vacíos; fechas inválidas mantienen la consulta aplicada.
 - Fase 23: historial por páginas de hasta 50 coincidencias, con Más reportes, Anterior y actualización desde el inicio. La lista productiva consulta lotes acotados en SQLite en lugar de cargar todos los reportes; conserva criterios y página al recrearse o regresar del detalle.
 - Cursor exclusivo por fecha de guardado, nanosegundos y folio, sin OFFSET. Fechas del incidente, tipo, estado y prioridad filtran antes del límite; el texto conserva la normalización y coincidencia literal anteriores, en segundo plano.
 - Una búsqueda revisa hasta 500 candidatos por gesto. Si aún queda recorrido, lo explica y permite Continuar búsqueda incluso cuando esa página no tiene coincidencias. La página siguiente reemplaza la anterior; no se acumula todo el historial en memoria.
@@ -14,7 +17,7 @@
 - Las fechas inválidas mantienen la consulta válida anterior; entradas y fechas aplicadas se conservan por separado al recrear la pantalla. Cambiar el intervalo invalida respuestas anteriores incluso para la misma zona.
 - Se actualiza el flujo del equipo: código y GitHub durante el desarrollo; APK, versión Android, tags y Releases se agruparán en una futura entrega 0.6.0. La última entrega binaria continúa siendo 0.5.7 / código 27.
 
-[Fase 21](docs/FASE_21.md), [Fase 22](docs/FASE_22.md) y [Fase 23](docs/FASE_23.md) registran pruebas centradas y aceptación Android pendiente. **15/28 = 53.6%**, mismos criterios del PDF; este refuerzo no completa cuentas, administración o notificaciones.
+[Fase 21](docs/FASE_21.md), [Fase 22](docs/FASE_22.md), [Fase 23](docs/FASE_23.md) y [Fase 24](docs/FASE_24.md) registran pruebas centradas y aceptación Android pendiente. **15/28 = 53.6%**, mismos criterios del PDF; este refuerzo no completa cuentas, administración o notificaciones.
 
 ## [0.5.7] — fase 20 · búsqueda local
 

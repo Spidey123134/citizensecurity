@@ -1,10 +1,12 @@
 # Plan del proyecto
 
-## Desarrollo para 0.6.0 — fases 21 a 23, Unreleased
+## Desarrollo para 0.6.0 — fases 21 a 24, Unreleased
 
 El equipo agrupa cambios de código en main sin publicar APK, tags o Releases por fase. [Fase 21](FASE_21.md) añade fechas del incidente al mapa y lista de la misma zona. [Fase 22](FASE_22.md) combina prioridad con los filtros de lista/mapa, mueve el cálculo de búsqueda fuera de Main y comprueba la cámara real antes de abrir una muestra de zona. [Fase 23](FASE_23.md) sustituye la lectura completa de la lista por páginas de SQLite con memoria acotada, cursor exclusivo, continuación de búsquedas incompletas y navegación. La validación Android de estos controles se reserva para la entrega agrupada; la última APK publicada sigue siendo 0.5.7.
 
 Se refuerzan **4.4 Consulta / 4.5 Mapas**, con los mismos criterios: **15/28 = 53.6%**. Consulta mantiene 2/4: completar los dos criterios pendientes exige autor autenticado y seguimiento administrativo, coordinados con el equipo. La paginación está conectada en código y su aceptación visual se integra a la entrega agrupada. Cuentas, roles, administración y notificaciones no se dan por implementados mediante filtros o paginación. Los cortes siguientes son históricos.
+
+La [fase 24](FASE_24.md) añade recuperación de posición ante restauración del proceso y corrige el reinicio explícito de búsquedas repetidas. El usuario aclaró que el compañero hace **solo la interfaz del login**; la lógica de cuentas y su acoplamiento quedan como siguiente bloque de nuestro trabajo. No se acredita todavía autenticación/aislamiento ni se otorgan permisos administrativos al acceso académico. Ese alcance conserva la interfaz del compañero y los datos anteriores.
 
 ## Antecedente 0.5.7
 
