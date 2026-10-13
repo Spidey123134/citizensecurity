@@ -2,6 +2,10 @@
 
 ## [Unreleased] — preparación de 0.6.0
 
+- Fase 23: historial por páginas de hasta 50 coincidencias, con Más reportes, Anterior y actualización desde el inicio. La lista productiva consulta lotes acotados en SQLite en lugar de cargar todos los reportes; conserva criterios y página al recrearse o regresar del detalle.
+- Cursor exclusivo por fecha de guardado, nanosegundos y folio, sin OFFSET. Fechas del incidente, tipo, estado y prioridad filtran antes del límite; el texto conserva la normalización y coincidencia literal anteriores, en segundo plano.
+- Una búsqueda revisa hasta 500 candidatos por gesto. Si aún queda recorrido, lo explica y permite Continuar búsqueda incluso cuando esa página no tiene coincidencias. La página siguiente reemplaza la anterior; no se acumula todo el historial en memoria.
+- Reintentos conservan el inicio de la página fallida y las respuestas anteriores no sustituyen un recorrido nuevo. Los accesos de navegación/detalle comprueban que la página mostrada siga vigente.
 - Fase 22: filtro Todas/Alta/Media/Baja en lista y mapa, combinado con los criterios anteriores. La prioridad del mapa se aplica en SQL antes del límite; ambas pantallas conservan la selección al recrearse. Limpiar/Mostrar todos en la lista incluye prioridad.
 - La búsqueda general se calcula en segundo plano con cancelación por fila, carga, error y reintento. Fuente y filtros exactos identifican cada resultado; respuestas anteriores no reemplazan una búsqueda nueva ni aparecen como cero coincidencias durante la carga.
 - Corregido el acceso a la lista de zona durante movimiento de cámara: antes de abrir la muestra o sus folios, se comprueba que la región real sigue coincidiendo. Si cambió, se retira la muestra y se pide consultar nuevamente.
@@ -10,7 +14,7 @@
 - Las fechas inválidas mantienen la consulta válida anterior; entradas y fechas aplicadas se conservan por separado al recrear la pantalla. Cambiar el intervalo invalida respuestas anteriores incluso para la misma zona.
 - Se actualiza el flujo del equipo: código y GitHub durante el desarrollo; APK, versión Android, tags y Releases se agruparán en una futura entrega 0.6.0. La última entrega binaria continúa siendo 0.5.7 / código 27.
 
-[Fase 21](docs/FASE_21.md) y [Fase 22](docs/FASE_22.md) registran pruebas centradas y aceptación Android pendiente. **15/28 = 53.6%**, mismos criterios del PDF; este refuerzo no completa cuentas, administración o notificaciones.
+[Fase 21](docs/FASE_21.md), [Fase 22](docs/FASE_22.md) y [Fase 23](docs/FASE_23.md) registran pruebas centradas y aceptación Android pendiente. **15/28 = 53.6%**, mismos criterios del PDF; este refuerzo no completa cuentas, administración o notificaciones.
 
 ## [0.5.7] — fase 20 · búsqueda local
 

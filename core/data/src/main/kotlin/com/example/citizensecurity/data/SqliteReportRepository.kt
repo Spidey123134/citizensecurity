@@ -11,6 +11,9 @@ import com.example.citizensecurity.domain.NewReport
 import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.Report
 import com.example.citizensecurity.domain.ReportLocation
+import com.example.citizensecurity.domain.ReportListPage
+import com.example.citizensecurity.domain.ReportListPageQuery
+import com.example.citizensecurity.domain.ReportListPageRepository
 import com.example.citizensecurity.domain.ReportPhoto
 import com.example.citizensecurity.domain.ReportMapMarker
 import com.example.citizensecurity.domain.ReportMapPage
@@ -49,7 +52,7 @@ class SqliteReportRepository(
     private val clock: Clock = Clock.systemUTC(),
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val createGuard: (NewReport) -> Unit = {},
-) : IdempotentReportRepository, ReportMapRepository, SimilarReportRepository, Closeable {
+) : IdempotentReportRepository, ReportMapRepository, SimilarReportRepository, ReportListPageRepository, Closeable {
 
     private val lock = Any()
     private val validator = ReportValidator()
@@ -198,6 +201,32 @@ class SqliteReportRepository(
             }
             ensureActive()
             ReportMapPage(markers.take(query.limit), hasMore = markers.size > query.limit)
+        }
+    }
+
+    override suspend fun listPage(query: ReportListPageQuery): ReportListPage = withOpenRepository {
+        val selection = listPageSelection(query)
+        ensureActive()
+        val database = databaseForRead()
+        ensureActive()
+        database.query(
+            TABLE,
+            PROJECTION,
+            selection.selection,
+            selection.arguments.toTypedArray(),
+            null,
+            null,
+            REPORT_LIST_PAGE_ORDER,
+            (query.limit + 1).toString(),
+        ).use { cursor ->
+            val reports = buildList {
+                while (cursor.moveToNext()) {
+                    ensureActive()
+                    add(cursor.toReport())
+                }
+            }
+            ensureActive()
+            ReportListPage(reports.take(query.limit), hasMore = reports.size > query.limit)
         }
     }
 
