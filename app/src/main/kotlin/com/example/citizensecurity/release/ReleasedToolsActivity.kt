@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.activity.addCallback
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
@@ -45,7 +46,8 @@ class ReleasedToolsActivity : ComponentActivity() {
         findViewById<Button>(R.id.tools_reports_map).setOnClickListener {
             startActivity(Intent(this, ReportsMapActivity::class.java))
         }
-        findViewById<Button>(R.id.tools_back).setOnClickListener { finish() }
+        findViewById<Button>(R.id.tools_back).setOnClickListener { closeSession() }
+        onBackPressedDispatcher.addCallback(this) { closeSession() }
         findViewById<Button>(R.id.home_retry).setOnClickListener { homeModel.refresh() }
         render(homeModel.state.value)
         lifecycleScope.launch {
@@ -57,8 +59,17 @@ class ReleasedToolsActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        val account = (application as CitizenSecurityApplication).accountSession.account
+        findViewById<TextView>(R.id.home_account).text = if (account == null)
+            getString(R.string.account_home_guest) else getString(R.string.account_home_signed_in, account.username)
+        findViewById<Button>(R.id.tools_back).setText(if (account == null) R.string.home_back else R.string.account_sign_out)
         // Always supersede a read that could have started before another screen changed a file.
         homeModel.refresh()
+    }
+
+    private fun closeSession() {
+        (application as CitizenSecurityApplication).accountSession.signOut()
+        finish()
     }
 
     private fun render(state: ReportHomeState) {

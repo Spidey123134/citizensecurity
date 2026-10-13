@@ -1,5 +1,13 @@
 # Avance del plan del proyecto
 
+## Preparación de 0.6.0 — fase 25, Unreleased
+
+**17/28 = 60.7% de construcción**, mismos 28 criterios/pesos. [Fase 25](FASE_25.md) añade creación local y verificación de credenciales: Usuarios **3/4**; Reportes 4/4, GPS 4/4, Consulta 2/4, Mapas 4/4, Administración 0/4 y Notificaciones 0/4. Los dos hitos técnicos se apoyan en validación/KDF reales, SQLite del host con SQL productivo y coordinación/integración compilada: **36 casos nuevos aprobados**.
+
+La aceptación del repositorio y del recorrido en Android queda pendiente para 0.6.0; 12 casos nativos se compilaron, no ejecutaron. Cuentas solo del teléfono, reportes todavía compartidos: sesión no acredita aislamiento, autoría, permisos administrativos, servidor o sincronización. El cuarto hito de Usuarios y el tercero de Consulta requieren separar datos por autor, conservando los reportes históricos sin atribuirlos a una cuenta nueva. Código en main; sin APK/Release por fase.
+
+## Antecedente 0.5.7
+
 ## Avance 0.5.7 — fase 20
 
 **15/28 = 53.6%** con los mismos criterios y pesos. [Fase 20](FASE_20.md) fortalece **4.4 Consulta** mediante búsqueda real por descripción/referencia y fechas del incidente, filtros combinados, recuperación de entradas al girar y cancelación del folio al volver. No agrega criterios, completa identidad de autor ni implementa seguimiento administrativo. La mejora pertenece a la lista, sin acreditar un hito adicional de mapas.
@@ -184,7 +192,7 @@ Una pantalla visual cuenta solo como preparación visual; una lógica probada cu
 
 | Requisito | Hitos de construcción | Comprobados | Avance estimado |
 | --- | --- | --- | --- |
-| 4.1 Usuarios | Pantalla de acceso; creación de cuentas; verificación real de acceso; identidad y aislamiento de datos | Pantalla de acceso del compañero | 1/4 · 25% |
+| 4.1 Usuarios | Pantalla de acceso; creación de cuentas; verificación real de acceso; identidad y aislamiento de datos | Pantalla del compañero; creación/verificación locales en fase 25. Aceptación Android pendiente; sin aislamiento por autor | 3/4 · 75% de construcción |
 | 4.2 Reportes | Modelo y validación; persistencia local técnica; formulario con guardado real autorizado; fotografías | Modelo/validación, persistencia técnica, formulario autorizado y fotografías con copia privada/migración probadas en 0.5.4 | 4/4 · 100% de construcción |
 | 4.3 Geolocalización | Par de coordenadas validado y conservado; captura del dispositivo; permisos y estados GPS; flujo GPS probado | Coordenadas, captura física previa y permisos/estados comprobados. El 11 de octubre de 2026 el usuario confirmó manualmente localización del punto, aceptación dentro del radio y pin visible; versión APK no especificada, sin logs, medidas o guardado físico nuevo | 4/4 · 100% de construcción |
 | 4.4 Consulta | Lectura por folio; lista y permanencia; reportes propios por usuario; seguimiento de estados | Lectura por folio, lista/permanencia y pantallas visibles en 0.5.3. Sin identidad de autor ni seguimiento administrativo | 2/4 · 50% |
@@ -192,7 +200,7 @@ Una pantalla visual cuenta solo como preparación visual; una lógica probada cu
 | 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Ninguno | 0/4 · 0% |
 | 4.7 Notificaciones | Eventos de cambios; entrega de avisos; permisos y preferencias; flujo completo probado | Ninguno | 0/4 · 0% |
 
-**Avance actual estimado: 15/28 = 53.6%.** 0.5.4 acredita fotografías; la aceptación manual informada el 11 de octubre de 2026 completa el hito existente de flujo GPS. La recuperación y el inicio funcional fortalecen los mismos recorridos sin añadir criterios ni cambiar pesos. Publicar y repetir pruebas no suman hitos. Faltan autenticación/aislamiento por usuario, seguimiento administrativo y avisos. Esta estimación no declara seguridad de producción, disponibilidad GPS universal ni que los incidentes hayan sido verificados.
+**Avance actual estimado: 17/28 = 60.7% de construcción.** Fase 25 añade creación/verificación locales de cuentas; aceptación Android pendiente. 0.5.4 acredita fotografías; la aceptación manual informada el 11 de octubre de 2026 completa el hito existente de flujo GPS. Publicar y repetir pruebas no suman hitos. Faltan aislamiento por usuario, seguimiento administrativo y avisos. Esta estimación no declara seguridad de producción, servidor/sincronización, disponibilidad GPS universal ni que los incidentes hayan sido verificados.
 
 ## Antecedentes de cálculo y evidencia
 

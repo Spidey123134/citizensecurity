@@ -1,5 +1,9 @@
 # Fases de CITIZENSECURITY
 
+## Fase 25 — cuentas locales, Unreleased
+
+[Fase 25](FASE_25.md) conecta Crear cuenta, comprobación de contraseña y cierre de sesión a los layouts existentes del compañero. SQLite separado, verificadores PBKDF2 y operaciones cancelables sin guardar contraseñas en estado restaurable. **36 casos nuevos aprobados**, incluidos 6 con SQLite del host; 12 Android compilados, ejecución pendiente. **17/28 = 60.7% de construcción**, Usuarios 3/4: cuentas solo locales, reportes aún compartidos, sin aislamiento/roles. Código en main para 0.6.0, sin APK, incremento de versión, tags o Release.
+
 ## Fase 24 — recuperación de consulta y reinicio explícito, Unreleased
 
 [Fase 24](FASE_24.md) añade un checkpoint pequeño de criterios/cursor/página para restauración del proceso por Android, con lectura fresca, validación completa y sin resultados/GPS guardados. Corrige Buscar/Limpiar/Mostrar todos con valores repetidos para volver al inicio. **34 casos aprobados, 16 nuevos**; pruebas Android compiladas, ejecución pendiente para la entrega agrupada. **15/28 = 53.6%**, mismos criterios del PDF. Código en main para 0.6.0, sin APK, incremento de versión, tags o Release.

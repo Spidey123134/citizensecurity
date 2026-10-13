@@ -1,6 +1,9 @@
 package com.example.citizensecurity
 
 import android.app.Application
+import com.example.citizensecurity.account.LocalAccountSession
+import com.example.citizensecurity.data.SqliteAccountRepository
+import com.example.citizensecurity.domain.AccountRepository
 import com.example.citizensecurity.data.AndroidPhoneLocationSource
 import com.example.citizensecurity.data.PhoneLocationRefresh
 import android.os.SystemClock
@@ -32,6 +35,9 @@ import com.example.citizensecurity.report.ReportQueryViewModel
 import com.example.citizensecurity.report.ReportViewModel
 
 open class CitizenSecurityApplication : Application() {
+    open val accountRepository: AccountRepository by lazy { SqliteAccountRepository(this) }
+    val accountSession = LocalAccountSession()
+
     val mapsReadinessChecker by lazy {
         MapsReadinessChecker(
             { MapsConfiguration.initialize(this) },
