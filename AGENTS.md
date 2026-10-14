@@ -1,5 +1,19 @@
 # Trabajo del equipo
 
+Validación fases 29–30: 1000 casos distintos ejecutados en este corte (930 JVM + 70 Android), 91 nuevos y cero fallos/errores/omitidos finales. PDF nativo revisado con Poppler: Unicode/foto dos A4, punto/referencia/foto omitidos una A4; textos completos e integridad. Conservar la retención/repropagación de la primera excepción de OutputStream: el puente nativo PdfDocument puede consumirla. No confirmar un parcial. Lint app cero errores/22 avisos por variante, datos sin incidencias. Recibos y límites en docs/VALIDACION.md; sin publicar otro APK/tag/Release.
+
+## Alcance activo — utilidad del incidente, Unreleased
+
+El usuario pidió mejorar la utilidad práctica con evidencia, contactos y un posible uso por policías, y confirmó **proyecto académico en México**. Las fases [29](docs/FASE_29.md) y [30](docs/FASE_30.md) añaden ficha PDF compartible desde un reporte guardado y Ayuda y contactos desde Inicio. El código nuevo se registra como **Unreleased**; actualizar GitHub con código validado continúa autorizado. No crear versión, tag, Release ni publicar una APK por esta petición. Android conserva **0.6.0 / código 28** y la APK oficial de esa entrega no contiene estas mejoras.
+
+La ficha relee el folio del ReportWorkspace capturado, conserva la descripción, fechas/zona, prioridad indicada y estado local. Ubicación y foto son elecciones explícitas revisadas antes de preparar; ubicación inicialmente marcada y foto inicialmente desmarcada. Preparar no comparte: un segundo gesto abre el selector Android con una copia PDF de caché y permiso de lectura mediante FileProvider restringido a evidence_shared. Verificar folio, generación, sesión y estado RESUMED antes de exportar o conceder acceso. No exponer la base, fotos privadas, bytes o URI en estado restaurable ni buscar un dueño dinámico. Foto normalizada no equivale al archivo original ni a evidencia forense; no prometer recepción oficial, veracidad o valor legal. No obtener GPS nuevo para la ficha. Un fallo conserva el reporte y necesita otra decisión explícita.
+
+Ayuda abre ACTION_DIAL para 911/089 o un contacto manual vigente; el usuario revisa el marcador y decide llamar. Hasta cinco contactos por cuenta local, con espacio académico separado y compartido solo entre quienes usan ese acceso en este teléfono. No leer la agenda ni pedir CALL_PHONE, SMS o ubicación. Archivo privado acotado, validación estricta, AtomicFile y revisión CAS; un error de lectura nunca autoriza sobrescribir con vacío, y una escritura incierta exige releer. Guardar/eliminar solo por gesto y con sesión vigente.
+
+La asignación administrativa permanece **pendiente por elección del usuario**. La ficha puede entregarse voluntariamente a una persona o autoridad; no activa una integración policial ni concede roles a admin/admin. Colaboración institucional, servidor, recepción verificable y permisos reales son alcances futuros por acordar. Conservar login/loading del compañero, datos, esquema, firma e historial. **19/28 = 67.9% permanece**: estas mejoras extienden la utilidad, sin redefinir los 28 criterios del PDF. Los resultados de comprobación nuevos se documentan en [Validación](docs/VALIDACION.md), separados del cierre 0.6.0. Los bloques siguientes conservan su contexto histórico.
+
+## Antecedente — entrega 0.6.0
+
 ## Entrega autorizada 0.6.0
 
 El usuario pidió cerrar la fase 27, avanzar una base pequeña de la siguiente y **subir la APK 0.6.0 ahora**. Autoriza compilar, probar en un emulador aislado, actualizar main, crear tag/Release y adjuntar APK/checksum para esta entrega agrupada. Versión Android 0.6.0 / código 28. La asignación administrativa continúa pendiente por su decisión: no conceder roles ni habilitar escritura desde admin/admin. Conservar datos, firma académica y login/loading; no instalar ni borrar datos de un teléfono sin su instrucción. Los bloques siguientes conservan la preparación previa y su evidencia original.

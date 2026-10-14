@@ -1,5 +1,15 @@
 # CITIZENSECURITY
 
+## Desarrollo Unreleased — ficha del incidente y contactos
+
+El proyecto académico en México incorpora dos recorridos para usar la información del incidente. **Inicio → Ayuda y contactos** abre el marcador de emergencias o de un contacto de confianza; puedes guardar hasta cinco teléfonos manualmente en tu espacio local. **Inicio → Reportes guardados → folio → Ficha del incidente** prepara un PDF con los datos del reporte, revisando si incluyes ubicación y foto. Después puedes abrir el selector de Android y elegir a quién compartirlo.
+
+La llamada la decides en el marcador. El PDF conserva datos locales y una copia normalizada de la foto si la eliges; permite entregarlos voluntariamente a otra persona o autoridad, sin acreditar recepción oficial ni verificación del hecho. Los accesos de México se basan en [SSPC: diferencia entre 089 y 911](https://www.gob.mx/sspc/es/articulos/sabes-cual-es-la-diferencia-entre-los-numeros-088-089-y-911). El alcance práctico y sus límites están en [Fase 29](docs/FASE_29.md) y [Fase 30](docs/FASE_30.md).
+
+Estas mejoras son **código Unreleased** y todavía no están en la APK publicada 0.6.0. No se cambia versión Android, tag o Release; 0.6.0 / código 28 sigue vigente. El plan original conserva **19/28 = 67.9%** y la asignación administrativa pendiente. Para trabajar con el código conserva tus cambios y actualiza main con `git fetch origin`, `git switch main` y `git pull --ff-only origin main`; en Android Studio selecciona **app**. [Plan](docs/PLAN_DEL_PROYECTO.md) · [Validación](docs/VALIDACION.md).
+
+## Antecedente — entrega 0.6.0
+
 ## Entrega 0.6.0
 
 **0.6.0 / código Android 28** agrupa el avance de las fases 21 a 27 y una base pequeña de la fase 28. Incluye cuentas locales con datos propios por UUID, lista por páginas con recuperación de criterios, fechas/prioridad en el mapa, lista de la misma zona e historial real consultable por folio. Se conservan datos, firma académica, GPS 5 km y login/loading del compañero.

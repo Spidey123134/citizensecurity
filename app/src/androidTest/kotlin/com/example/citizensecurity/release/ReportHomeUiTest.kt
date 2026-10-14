@@ -111,6 +111,22 @@ class ReportHomeUiTest {
         assertEquals(before, journalBytes())
     }
 
+    @Test fun helpRouteOpensEmergencyAccessWithoutPreparingAReportOrGps() {
+        val before = journalBytes()
+        launchHome()
+        clickHome(R.id.home_help)
+        awaitActivity<com.example.citizensecurity.help.HelpContactsActivity>()
+        awaitTag("help_dial_911")
+        ui.onNodeWithTag("help_dial_911").assertExists()
+        ui.onNodeWithTag("help_dial_089").assertExists()
+        assertEquals(0, fixture.refreshCalls)
+        assertNull(fixture.currentFix())
+        assertTrue(runBlocking { fixture.repository.list().isEmpty() })
+        assertEquals(before, journalBytes())
+        pressBack()
+        awaitHome()
+    }
+
     @Test fun pendingDurableAttemptCanBeOpenedWithItsOriginalFieldsAndIdentity() {
         val request = ReportSubmissionRequest(UUID.randomUUID().toString(), draft(), Instant.now())
         runBlocking { fixture.journal.write(request) }
@@ -445,7 +461,7 @@ class ReportHomeUiTest {
         Log.i("ReportHomeReturnTest", line)
     }
 
-    private val homeRouteIds get() = listOf(R.id.tools_preview_interface, R.id.tools_reports, R.id.tools_reports_map, R.id.tools_back)
+    private val homeRouteIds get() = listOf(R.id.home_help, R.id.tools_preview_interface, R.id.tools_reports, R.id.tools_reports_map, R.id.tools_back)
 
     private companion object { const val DESCRIPTION = "Un cable caído impide pasar por la entrada norte del parque." }
 }

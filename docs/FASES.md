@@ -1,5 +1,15 @@
 # Fases de CITIZENSECURITY
 
+## Fases 29 y 30 — utilidad práctica, Unreleased
+
+El usuario confirmó **proyecto académico en México** y pidió evidencia, contactos y utilidad para un posible uso por policías. [Fase 29](FASE_29.md) añade una ficha PDF revisada desde un folio real, con compartir explícito. [Fase 30](FASE_30.md) añade Ayuda y contactos: marcador de 911/089 y hasta cinco contactos manuales privados por cuenta. Una llamada no necesita preparar reporte o conseguir GPS; una ficha permite conservar y entregar información organizada después.
+
+Código **Unreleased**, sin nueva versión, tag, Release ni APK publicada. Android conserva **0.6.0 / código 28**; la APK de esa entrega no contiene estos recorridos. El resultado de sus comprobaciones se registra por separado en [Validación](VALIDACION.md), sin trasladar ni volver a sumar las 1164 pruebas del cierre anterior.
+
+**19/28 = 67.9% permanece**, mismos criterios del PDF. Estas fases refuerzan reportes/consulta y amplían la utilidad fuera de los 28 criterios originales; no acreditan seguimiento policial, administración o notificaciones. La asignación de permisos sigue pendiente y admin/admin conserva su acceso académico.
+
+## Antecedente — entrega 0.6.0
+
 ## Entrega agrupada 0.6.0 — fases 21–28
 
 El usuario autorizó la APK 0.6.0 / código 28. La entrega incluye las fases 21–27 y la base interna de [fase 28](FASE_28.md): coordinación de estado, identidad retenida y reintento explícito, sin diario durable ni escritor administrativo conectado. La asignación sigue pendiente. **19/28 = 67.9% permanece**; el historial no acredita el recorrido administrativo completo. [Entrega y límites](ENTREGA_0_6_0.md) · [Prueba Android](PROBAR_0_6_0.md) · [Cierre agrupado](VALIDACION.md).

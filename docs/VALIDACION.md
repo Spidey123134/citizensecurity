@@ -1,5 +1,32 @@
 # Validación y comprobaciones del proyecto
 
+## Utilidad académica — fases 29 y 30, Unreleased · 13 de octubre de 2026
+
+**1000 casos distintos ejecutados y aprobados en este corte; cero fallos, errores u omitidos en los recibos finales.** Incluye **91 definiciones nuevas**: 37 JVM y 54 Android. No sumar repeticiones ni atribuir a este corte los Android históricos que no se volvieron a ejecutar. El cierre 0.6.0 siguiente conserva su evidencia separada.
+
+| Suite ejecutada | Aprobados | Nuevos |
+| --- | ---: | ---: |
+| Dominio JVM | 165 | 6 contactos |
+| Datos JVM / SQLite del host | 93 | 5 codec de contactos |
+| App JVM | 672 | 14 ficha PDF + 12 contactos |
+| Datos Android | 12 | 12 guardado de contactos |
+| App Android | 58 | 19 writer PDF + 8 exportación + 6 UI PDF + 3 marcador + 5 UI contactos + 1 ruta Inicio |
+| **Total** | **1000** | **91** |
+
+Los 58 Android de app son evidencia PDF (33), ayuda/contactos (8), Inicio (7, seis regresiones) y consulta/búsqueda/historial (10 regresiones). Se usan contratos/callbacks de marcador y un selector PDF interceptado como cancelado: no se efectuaron llamadas, mensajes ni entregas a destinatarios. Se ejecutaron en un emulador propio de solo lectura, API 37, luego cerrado, con fixtures privadas. No se instaló la app en el teléfono del usuario ni se requirió otra aceptación GPS física.
+
+Contactos comprueba reapertura, separación por cuenta, CAS concurrente, corrupción/UTF-8/límites, revocación y recibo perdido después de guardar. La pantalla comprueba alta/número normalizado, confirmación/cancelación de eliminación, diálogo antiguo invalidado y acceso al marcador aunque falle la lectura. Inicio no obtiene GPS ni prepara un reporte; se conservan rutas accesibles en horizontal y con letra grande.
+
+PDF comprueba folio guardado, lectura fresca de sesión, integridad de foto, cancelación, revocación, cuota y recibo alterado/de otra sesión. FileProvider expone solo cache/evidence_shared; ACTION_SEND usa application/pdf, ClipData y lectura temporal, sin SQLite o caché general. Preparar exige confirmación y no abre selector; compartir exige otro gesto vigente y no acredita entrega.
+
+**Defecto corregido mediante prueba nativa:** PdfDocument.writeTo podía consumir una excepción del OutputStream. CheckedOutputStream conserva el primer fallo y lo repropaga antes del commit; pasan disco fallido, escritura parcial y sesión retirada durante escritura. No se anuncia un PDF incompleto como listo. El primer pase nativo tuvo cinco fallos: tres del harness (directorio externo/umbral de paginación), este defecto y una etiqueta antigua. Los recibos finales sustituyen esos intentos sin doble conteo. Las verificaciones SQLite del host se repitieron con REPORT_SQLITE_TEST_PYTHON configurado, sin contabilizar las omisiones iniciales.
+
+**QA del PDF:** Kotlin nativo generó dos fixtures, extraídas y renderizadas con Poppler. Se inspeccionaron todas las páginas del PDF largo Unicode/foto (dos A4) y de campos omitidos (una A4). Se verificaron las 30 líneas completas, 90 Ñ sin cortar, folio, horas/zona, coordenadas y huella. Foto proporcionada, márgenes y paginación legibles; reservar el aviso final evita una página con una sola línea. En el PDF que omite punto/referencia no aparecen sus coordenadas/referencia ni se incrusta foto. Descripción/foto aún pueden revelar el lugar, como explica la UI.
+
+Kotlin debug/release, assembleDebug/assembleDebugAndroidTest para instrumentación y lint aprobados: **app cero errores/22 advertencias por variante; datos cero incidencias**. No se aumentó versión, creó tag/Release o distribuyó otra APK. Android sigue 0.6.0/code28; el archivo oficial conserva SHA-256 c32201071bb245ef8fa3236e124788ba100bd0fc9ba2614afeaf9bb6549ee039. Login/loading, datos y esquemas conservados. Revisión independiente del recorrido de compartir sin bloqueos adicionales.
+
+Recibo local ignorado: .gradle/validacion/utility-test-proof.json, logs utility-*-final y fixtures/renderizados utility-pdf-qa. No acredita recepción oficial, autenticidad forense, integración policial o roles reales. **19/28 = 67.9% permanece**, mismos criterios del PDF; administración pendiente. [Ficha](FASE_29.md) · [Ayuda/contactos](FASE_30.md).
+
 ## Cierre validado 0.6.0 — fases 21–28 · 13 de octubre de 2026
 
 **1164 casos distintos ejecutados y aprobados; cero fallos, errores u omitidos.** El cierre incorpora **14 definiciones nuevas en este incremento**: 12 JVM de ReportStatusChangeViewModel y dos nativas de filtros/lista del mapa. Las incorporaciones de fases 21–27 conservan sus registros originales; no se suman como ejecuciones adicionales ni se cuentan otra vez como nuevas.
