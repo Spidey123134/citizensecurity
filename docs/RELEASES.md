@@ -1,5 +1,21 @@
 # Versiones y GitHub Releases
 
+## Entrega oficial 0.6.1 — cámara, ficha y ayuda rápida
+
+**14 de octubre de 2026 · código Android 29 · publicación solicitada expresamente.** [Release v0.6.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1) agrupa **fases 29–34**: ficha PDF, contactos locales, recuperación durable de una solicitud de cambio, Ayuda inmediata/atajos, cámara junto a galería y mosaico de Ajustes rápidos. Las marcas Unreleased de esos cortes inferiores son antecedentes de preparación, no el estado de esta entrega.
+
+Assets: **citizensecurity-0.6.1-academico.apk** y **SHA256SUMS-0.6.1.txt**. APK de **55.217.523 bytes**, SHA-256 `7395a049aee8cf92324ac31f3c4e08453fb639bcf5103fc8eaa48484302815f1`; paquete `com.example.citizensecurity`, minSdk26/targetSdk37, misma firma v2 y certificado académico. Actualiza encima de la anterior, sin desinstalar/borrar datos; las publicaciones anteriores conservan sus assets. [Entrega](ENTREGA_0_6_1.md) · [Prueba en tu teléfono](PROBAR_0_6_1.md).
+
+El cierre registra **1237 casos distintos aprobados, 307 definiciones nuevas respecto a 0.6.0**, sin fallos/errores/omitidos finales; lint sin errores. Las pruebas nativas se ejecutan en API 37 y la cámara usa protocolo controlado con provider real. Firma/versión/hash verificados; no se declara una prueba de instalación como actualización, cámara física, muerte completa del proceso o ejecución física API 26. [Desglose y recibos](VALIDACION.md).
+
+El avance original conserva **19/28 = 67.9%**. Administración/roles, seguimiento autorizado y notificaciones siguen pendientes; `admin/admin` es académico. La publicación de esta entrega está autorizada, sin que prepare por sí sola una entrega posterior.
+
+## Antecedente — entrega 0.6.0
+
+[Release v0.6.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.0) · código Android 28 · 13 de octubre de 2026. Agrupó fases 21–27 y la base interna de fase 28; sus APK, checksum y certificado se conservan. [Entrega y límites originales](ENTREGA_0_6_0.md).
+
+## Antecedentes conservados anteriores a 0.6.0
+
 ## Entrega oficial 0.5.4 — fotografías y borrador recuperable
 
 [Release v0.5.4](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.5.4) · código Android 24. El APK académico y SHA-256 están en Assets. Se instala sobre el APK anterior con la misma firma, sin desinstalar ni borrar datos. Main contiene el código para que el equipo continúe desde ahí; la Release identifica el corte probado.

@@ -32,6 +32,25 @@ class ReportPhotoImportViewModel(
     val state: StateFlow<ReportPhotoImportState> = mutableState.asStateFlow()
     private var generation = 0L
     private var pending: Job? = null
+    private var pickerToken: ReportPhotoSelectionToken? = null
+
+    /** Reserve the gallery's own token before launching, rather than adopting any pending source. */
+    fun beginPickerSelection(): ReportPhotoSelectionToken? {
+        if (!viewModelScope.isActive || pickerToken != null || draft.state.value.photoSelectionPending) return null
+        return draft.beginPhotoSelection()?.also { pickerToken = it }
+    }
+
+    fun hasPendingPickerSelection(): Boolean = pickerToken != null
+
+    fun completePickerSelection(source: String?): Boolean {
+        val token = pickerToken ?: return false
+        pickerToken = null
+        return if (source == null) cancelSelection(token) else importPhoto(token, source)
+    }
+
+    fun abortPickerLaunch(token: ReportPhotoSelectionToken) {
+        if (pickerToken === token) { pickerToken = null; cancelSelection(token) }
+    }
 
     fun importPhoto(token: ReportPhotoSelectionToken, source: String): Boolean {
         val scope = viewModelScope
@@ -90,10 +109,13 @@ class ReportPhotoImportViewModel(
     /** Cancels the importer after detaching/resetting/correcting a draft by an explicit gesture. */
     fun clearStatus() {
         if (!viewModelScope.isActive) return
+        val ownToken = (mutableState.value as? ReportPhotoImportState.Importing)?.token
         ++generation
         pending?.cancel()
         pending = null
-        draft.currentPhotoSelection()?.let(draft::cancelPhotoSelection)
+        // A gallery status reset must not cancel a token belonging to the camera or an
+        // external picker still waiting to return. Its own import alone may be retired.
+        ownToken?.let(draft::cancelPhotoSelection)
         mutableState.value = ReportPhotoImportState.Idle
     }
 

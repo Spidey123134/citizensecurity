@@ -1,5 +1,25 @@
 # Trabajo del equipo
 
+## Entrega autorizada 0.6.1 — fases 29–34
+
+El usuario pidió **terminar cámara, hacer una fase más y subir al GitHub como Release 0.6.1**. Autoriza esta entrega concreta con código en main, tag/Release/APK y checksum; sustituye para este corte la restricción de solo código Unreleased. Android **0.6.1 / código 29**, misma firma académica/datos/esquemas y login/loading. No instalar/borrar datos del teléfono sin instrucción. Las preferencias históricas inferiores conservan su contexto.
+
+Cerrar fase 33 y añadir fase 34/E04: mosaico Android de Ayuda inmediata. Solo ruta pública, sin cuenta/GPS/contactos/folios y sin llamadas automáticas. Bind de servicio protegido por BIND_QUICK_SETTINGS_TILE; abrir exige click y dispositivo desbloqueado, API34+ PendingIntent inmutable explícito, API26–33 Intent. Alta API33+ por gesto/confirmación Android, sin afirmar éxito hasta respuesta confirmada; fallback Editar manual. Invalidar callbacks de desbloqueo al retirar/destruir o nuevo gesto, conservar unlock legítimo al cerrar panel. No cambiar botones físicos/SOS, ni conceder roles; asignación administrativa pendiente. La entrega agrupa PDF, contactos y atajos antes Unreleased. **19/28 = 67.9%** mantiene los criterios.
+
+Cierre 0.6.1 validado: **1237 casos distintos aprobados**, 1074 JVM/163 Android, 307 definiciones nuevas frente a 0.6.0; fase 34 añade 33. Cero fallos/errores/omitidos finales. Lint app 0 errores/22 avisos por variante, datos 0. Misma firma v2/paquete, APK 55 217 523 bytes, SHA-256 `7395a049aee8cf92324ac31f3c4e08453fb639bcf5103fc8eaa48484302815f1`. API37 emulador aislado, diálogos cancelados, tile real abierto desde HOME por SystemUI/shell y retirado restaurando lista. Cámara física, actualización del teléfono, muerte completa del proceso y ejecución API26–33 no acreditadas. Recibos y separación de conteos en [Validación](docs/VALIDACION.md); [Entrega](docs/ENTREGA_0_6_1.md). Autorización binaria específica de 0.6.1, sin autorizar otra publicación por cada fase.
+
+## Antecedente — fase 33 Unreleased
+
+## Alcance vigente — fase 33: cámara del reporte, Unreleased
+
+El usuario pidió añadir **Tomar foto con la cámara** además de galería y continuar la app. [Fase 33](docs/FASE_33.md) / E10 utiliza TakePicture con imagen completa y URI propia en `cache/report_camera`, proveedor independiente `.camera_capture` no exportado y grants READ/WRITE + ClipData exclusivamente para ese temporal. No pedir CAMERA/almacenamiento ni exigir hardware de cámara. Importar mediante el ReportWorkspace capturado y ReportPhotoStore existente: límites, orientación, JPEG privado sin EXIF, comprobación de sesión y token antes de aplicar. Ignorar extras/URI/miniatura devueltos.
+
+Conservar foto anterior/campos ante cancelación, archivo inválido, cámara ausente o revocación. Reservar cada apertura por origen/token antes de lanzar; el selector no adopta el token de la cámara. Bloquear cámara/galería/revisión hasta acabar importación y limpieza. Revocar grants y retirar solo el temporal exacto, incluyendo cancelación antes del job de resultado y cierre dentro del lanzamiento; esperar a un importador no cooperativo antes de limpiar. No borrar fotos definitivas, reportes o residuos desconocidos. URI/token únicamente vivos en VM, sin SavedState/Bundle/checkpoint; giro conserva captura, un proceso nuevo rechaza un callback sin su solicitud.
+
+Código validado en GitHub/main continúa autorizado, **Unreleased**, Android **0.6.0 / código 28**, sin nuevo tag/Release/APK publicada. Preservar login/loading, datos y esquemas. **19/28 = 67.9%** permanece: fotografía ya tenía su criterio original. Asignación administrativa pendiente. Resultados en docs/VALIDACION.md; cámara física y muerte completa del proceso no se atribuyen a pruebas interceptadas.
+
+## Antecedente — fases 31 y 32
+
 ## Alcance vigente — 14 de octubre de 2026, fases 31/32 Unreleased
 
 El usuario pidió **documentar mejoras útiles adicionales al PDF/cliente**, continuar sus requisitos e incorporar la idea de botones/atajos del teléfono. [MEJORAS_UTILES](docs/MEJORAS_UTILES.md) es el catálogo vigente E01–E09: origen, prioridad, estado y aceptación por mejora. E01–E03 tienen implementación validada Unreleased, E03 en fase 32; E04 mosaico, E05 guía dependiente del fabricante, E06 composición revisada, E07 varias fotos, E08 institución y E09 zonas conservan su estado propuesto/guía. No trasladar una propuesta a función implementada por estar documentada.

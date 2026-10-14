@@ -1,5 +1,25 @@
 # CITIZENSECURITY
 
+## Entrega oficial 0.6.1
+
+**14 de octubre de 2026 · Android 0.6.1 / código 29.** La entrega agrupa **fases 29–34**: ficha PDF revisada para compartir desde un folio, hasta cinco contactos manuales por cuenta, Ayuda inmediata sin login/GPS, atajos del icono y mosaico voluntario de Ajustes rápidos. El reporte permite **tomar una foto con la cámara o elegirla de la galería**; cancelar/fallar conserva la fotografía anterior y los campos. La base durable de cambios de estado queda incluida sin activar un panel administrativo o conceder roles.
+
+[Release y APK 0.6.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1) · [Cambios y límites](docs/ENTREGA_0_6_1.md) · [Pasos para probar en tu teléfono](docs/PROBAR_0_6_1.md). La APK conserva el mismo paquete y certificado académico; instálala encima de la anterior, sin desinstalar ni borrar datos. La ficha se comparte por decisión explícita y los accesos de ayuda abren el marcador: no realizan llamadas o envíos automáticos.
+
+**1237 casos distintos aprobados, 307 definiciones nuevas respecto a la APK 0.6.0**, cero fallos/errores/omitidos finales: 1074 JVM y 163 Android API 37. Lint sin errores, con 22 avisos por variante de app y ninguna incidencia de datos. Firma, paquete, versión y checksum del APK comprobados; no se atribuye una prueba nueva de instalación como actualización, cámara física, muerte completa del proceso o ejecución física API 26. [Validación](docs/VALIDACION.md).
+
+El PDF mantiene **19/28 = 67.9%**, con nueve criterios pendientes de seguimiento autorizado, administración y notificaciones. Cámara/ayuda amplían utilidad sin sumar criterios ya completos. La asignación administrativa sigue pendiente y `admin/admin` mantiene acceso académico; login/loading del compañero, esquemas y datos históricos se conservan. [Plan](docs/PLAN_DEL_PROYECTO.md) · [Mejoras útiles](docs/MEJORAS_UTILES.md).
+
+## Antecedente — preparación Unreleased de 0.6.1
+
+Los siguientes bloques conservan el estado y los recuentos de cada corte de desarrollo. Sus marcas **Unreleased** corresponden a aquella preparación; las fases 29–34 ahora se agrupan en 0.6.1. No se suman sus ejecuciones como si fueran pruebas distintas del cierre.
+
+## Desarrollo Unreleased — cámara para el reporte
+
+**14 de octubre de 2026.** El formulario permite **Elegir de la galería** o **Tomar foto con la cámara**. Al volver se prepara y muestra la copia antes de revisar/guardar; cancelar o fallar conserva la foto anterior. Aperturas separadas evitan resultados cruzados; no se solicitan nuevos permisos ni se obtiene GPS por capturar. [Fase 33](docs/FASE_33.md) · [Mejoras útiles E01–E10](docs/MEJORAS_UTILES.md).
+
+Código Unreleased en main; la APK oficial **0.6.0 / código 28** conserva el corte anterior. Avance del PDF **19/28 = 67.9%**, porque la fotografía ya estaba acreditada. [Pruebas y límites](docs/VALIDACION.md); cámara física se prueba por separado.
+
 ## Desarrollo Unreleased — utilidad y continuación del PDF
 
 **14 de octubre de 2026.** [Mejoras útiles](docs/MEJORAS_UTILES.md) documenta **E01–E09**, propuestas adicionales al PDF/cliente con origen, prioridad, estado y aceptación: ficha/evidencia, contactos, atajos, mensaje revisado, varias fotos, uso institucional y datos por zonas. Ficha PDF, contactos y ayuda/atajos tienen implementación validada en código Unreleased; los demás estados se identifican individualmente.

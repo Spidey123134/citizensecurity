@@ -84,6 +84,8 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
         private set
     internal lateinit var photoImportModel: ReportPhotoImportViewModel
         private set
+    internal lateinit var cameraModel: ReportCameraViewModel
+        private set
     internal lateinit var checkpointModel: ReportDraftCheckpointViewModel
         private set
     internal lateinit var similarityModel: ReportSimilarityViewModel
@@ -92,14 +94,20 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
     private var photoPickerMessage by mutableStateOf<String?>(null)
     private val photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (!::draftModel.isInitialized || !::photoImportModel.isInitialized || !ensureReportWorkspaceCurrent()) return@registerForActivityResult
-        val token = draftModel.currentPhotoSelection()
-        if (token == null) {
-            if (uri != null) photoPickerMessage = "La selección se interrumpió. Vuelve a elegir la fotografía."
-        } else if (uri == null) {
-            photoImportModel.cancelSelection(token)
-        } else {
-            photoPickerMessage = null
-            photoImportModel.importPhoto(token, uri.toString())
+        if (photoImportModel.completePickerSelection(uri?.toString())) photoPickerMessage = null
+        else if (uri != null) photoPickerMessage = "La selección se interrumpió. Vuelve a elegir la fotografía."
+    }
+    private val cameraLauncher = registerForActivityResult(object : ActivityResultContracts.TakePicture() {
+        override fun createIntent(context: android.content.Context, input: android.net.Uri): Intent =
+            super.createIntent(context, input).apply {
+                clipData = ClipData.newRawUri("Fotografía del reporte", input)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            }
+    }) { success ->
+        if (!::cameraModel.isInitialized) return@registerForActivityResult
+        if (!ensureReportWorkspaceCurrent()) { cameraModel.complete(false); return@registerForActivityResult }
+        if (!cameraModel.complete(success) && success) {
+            photoPickerMessage = "La captura se interrumpió. Vuelve a tomar la fotografía o elige una de la galería."
         }
     }
     private var reviewGpsJob: Job? = null
@@ -162,6 +170,12 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
         photoImportModel = ViewModelProvider(this, ReportPhotoImportViewModel.factory(draftModel) { source ->
             reportWorkspace.importPhoto(source.toUri())
         })[ReportPhotoImportViewModel::class.java]
+        val cameraWorkspace = reportWorkspace
+        cameraModel = ViewModelProvider(this, ReportCameraViewModel.factory(draftModel,
+            ReportCameraCaptureStore(applicationContext),
+            importer = { source -> cameraWorkspace.importPhoto(source.toUri()) },
+            checkCurrent = cameraWorkspace::checkActive,
+        ))[ReportCameraViewModel::class.java]
         submissionModel = ViewModelProvider(this, ReportSubmissionViewModel.factory(
             reportWorkspace.repository, reportWorkspace.submissionJournal,
         ))[ReportSubmissionViewModel::class.java]
@@ -238,6 +252,7 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
                 !draftModel.state.value.photoSelectionPending && draftModel.restoreForCorrection(restored.draft)) {
                 checkpointModel.acknowledgeRestore(restored.id)
                 photoImportModel.clearStatus()
+                cameraModel.clearStatus()
                 photoPickerMessage = null
                 screens.removeState("report_form_$formRevision")
                 formRevision++
@@ -257,6 +272,7 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
             invalid?.draft?.let { recovered ->
                 if (draftModel.restoreForCorrection(recovered)) {
                     photoImportModel.clearStatus()
+                    cameraModel.clearStatus()
                     submissionModel.acknowledgeCorrectionDraft()
                     screens.removeState("report_form_$formRevision")
                     formRevision++
@@ -272,6 +288,7 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
                 draftModel.reset()
                 similarityModel.clear()
                 photoImportModel.clearStatus()
+                cameraModel.clearStatus()
                 photoPickerMessage = null
                 draftModel.setOccurredAt(Instant.now().minusSeconds(30))
                 reviewResult = null
@@ -370,6 +387,7 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
     @Composable
     private fun Form(draft: ReportDraftState, modifier: Modifier) {
         val photoImport by photoImportModel.state.collectAsStateWithLifecycle()
+        val cameraBusy by cameraModel.busy.collectAsStateWithLifecycle()
         val locale = LocalConfiguration.current.locales[0]
         val focus = LocalFocusManager.current
         val keyboard = LocalSoftwareKeyboardController.current
@@ -455,24 +473,32 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
             HorizontalDivider()
             Text("3. Fotografía del incidente", style = MaterialTheme.typography.titleLarge)
             ReportPhotoContent(draft.photo, tagPrefix = "draft_photo")
-            Text("Elige una imagen relacionada con lo ocurrido. Guardamos una copia en este teléfono sin los metadatos de la cámara; no se envía.",
+            Text("Toma una foto o elige una imagen relacionada con lo ocurrido. Guardamos una copia en este teléfono sin los metadatos de la cámara; no se envía.",
                 style = MaterialTheme.typography.bodySmall)
             Text("JPEG, PNG o WebP · hasta 16 MB · una fotografía opcional.", style = MaterialTheme.typography.bodySmall)
             OutlinedButton(onClick = ::choosePhoto,
-                enabled = !draft.photoSelectionPending && !checkpointModel.state.collectAsStateWithLifecycle().value.busy,
+                enabled = !draft.photoSelectionPending && !cameraBusy && !checkpointModel.state.collectAsStateWithLifecycle().value.busy,
                 modifier = Modifier.fillMaxWidth().testTag("choose_photo")) {
-                Text(if (draft.photo == null) "Elegir fotografía" else "Cambiar fotografía")
+                Text(if (draft.photo == null) "Elegir de la galería" else "Cambiar desde la galería")
+            }
+            OutlinedButton(onClick = ::takePhoto,
+                enabled = !draft.photoSelectionPending && !cameraBusy && !checkpointModel.state.collectAsStateWithLifecycle().value.busy,
+                modifier = Modifier.fillMaxWidth().testTag("take_photo")) {
+                Text(if (draft.photo == null) "Tomar foto con la cámara" else "Tomar otra foto")
             }
             if (draft.photo != null || errors[ReportDraftField.PHOTO] != null) TextButton(onClick = {
                 draftModel.removePhoto()
                 photoImportModel.clearStatus()
+                cameraModel.clearStatus()
                 photoPickerMessage = null
-            }, enabled = !draft.photoSelectionPending, modifier = Modifier.testTag("remove_photo")) { Text("Quitar del borrador") }
-            if (draft.photoSelectionPending) {
+            }, enabled = !draft.photoSelectionPending && !cameraBusy, modifier = Modifier.testTag("remove_photo")) { Text("Quitar del borrador") }
+            if (draft.photoSelectionPending || cameraBusy) {
                 LinearProgressIndicator(Modifier.fillMaxWidth())
                 Text("Preparando fotografía… Espera antes de revisar.", Modifier.testTag("photo_import_busy"))
             }
             if (photoImport is ReportPhotoImportState.Error) FieldError((photoImport as ReportPhotoImportState.Error).message)
+            val cameraState by cameraModel.state.collectAsStateWithLifecycle()
+            if (cameraState is ReportCameraState.Error) FieldError((cameraState as ReportCameraState.Error).message)
             photoPickerMessage?.let { FieldError(it) }
             FieldError(errors[ReportDraftField.PHOTO])
             HorizontalDivider()
@@ -480,7 +506,7 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
                 val result = draftModel.review(Instant.now())
                 reviewResult = result
                 reviewErrors = (result as? ReportDraftReview.Invalid)?.errors ?: emptyMap()
-            }, enabled = !draft.photoSelectionPending && !checkpointModel.state.collectAsStateWithLifecycle().value.busy,
+            }, enabled = !draft.photoSelectionPending && !cameraBusy && !checkpointModel.state.collectAsStateWithLifecycle().value.busy,
                 modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("review_draft")) { Text("Revisar borrador") }
             errors[ReportDraftField.SNAPSHOT]?.let { FieldError(it) }
         }
@@ -489,14 +515,26 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
     private fun choosePhoto() {
         if (!ensureReportWorkspaceCurrent()) return
         if (!lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) || checkpointModel.state.value.busy) return
-        val token = draftModel.beginPhotoSelection() ?: return
+        if (draftModel.state.value.photoSelectionPending || cameraModel.busy.value) return
+        val token = photoImportModel.beginPickerSelection() ?: return
+        cameraModel.clearStatus()
         photoPickerMessage = null
         try {
             photoPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         } catch (_: Exception) {
-            photoImportModel.cancelSelection(token)
+            photoImportModel.abortPickerLaunch(token)
             photoPickerMessage = "No se pudo abrir el selector de fotografías. Puedes reintentar o continuar sin fotografía."
         }
+    }
+
+    private fun takePhoto() {
+        if (!ensureReportWorkspaceCurrent() || !lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) return
+        if (checkpointModel.state.value.busy || draftModel.state.value.photoSelectionPending || cameraModel.busy.value || photoImportModel.hasPendingPickerSelection()) return
+        photoImportModel.clearStatus()
+        photoPickerMessage = null
+        cameraModel.prepare(canLaunch = {
+            lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && ensureReportWorkspaceCurrent() && !checkpointModel.state.value.busy
+        }, launch = { source -> cameraLauncher.launch(source.toUri()) })
     }
 
     @Composable

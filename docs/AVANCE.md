@@ -1,8 +1,10 @@
 # Avance del plan del proyecto
 
+**Entrega 0.6.1 — 14 de octubre de 2026 · código Android 29:** fases 29–34 agrupadas, con cámara/galería, ficha PDF, contactos, Ayuda inmediata/atajos y mosaico de Ajustes rápidos. Amplían utilidad y la fotografía ya construida, por lo que **19/28 = 67.9%** conserva los mismos criterios y nueve pendientes. [Entrega](ENTREGA_0_6_1.md) · [Pruebas y límites](VALIDACION.md). Administración y asignación siguen pendientes.
+
 ## Avance vigente — 14 de octubre de 2026
 
-**19/28 = 67.9% de construcción**, mismos criterios y pesos del PDF/cliente. Fases 29/30 aportan ficha PDF y contactos; fase 32 añade la ruta rápida de Ayuda, como ampliaciones E01–E03 en [Mejoras útiles](MEJORAS_UTILES.md). La fase 31 prepara diario/recibo durables para el cambio de estado. Ninguna de estas bases o extensiones completa el recorrido administrativo pendiente por sí sola.
+**19/28 = 67.9% de construcción**, mismos criterios y pesos del PDF/cliente. Fases 29/30 aportan ficha PDF/contactos, fase 32 la ruta rápida de Ayuda, fase 33 cámara y fase 34 Ajustes rápidos; E01–E04/E10 están incluidos en 0.6.1 según [Mejoras útiles](MEJORAS_UTILES.md). La fase 31 aporta diario/recibo durables para el cambio de estado. Ninguna de estas bases o extensiones completa el recorrido administrativo pendiente por sí sola.
 
 | Punto original | Construidos | Pendientes |
 |---|---|---|
@@ -14,11 +16,11 @@
 | 4.6 Administración | 0/4 | 4: consulta, cambio, roles/permisos, historial administrativo |
 | 4.7 Notificaciones | 0/4 | 4: eventos, entrega, permisos/preferencias, recorrido probado |
 
-Faltan **9 criterios originales**. La asignación administrativa sigue pendiente por decisión del usuario; no existe un panel productivo de cambios ni roles reales. La aceptación Android del corte agrupado **0.6.0 ya se ejecutó** (1164 casos distintos en ese cierre, 271 Android), separada de la aceptación del usuario. Las comprobaciones nuevas se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
+Faltan **9 criterios originales**. La asignación administrativa sigue pendiente por decisión del usuario; no existe un panel productivo de cambios ni roles reales. El cierre **0.6.1 aprobó 1237 casos distintos, 307 definiciones nuevas frente a 0.6.0**, separado de la aceptación física del usuario. Las comprobaciones se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
 
-El corte fases 31/32 aprobó **1062 casos distintos, 112 nuevos**, sin fallos/errores/omitidos finales; 997 JVM y 65 Android ejecutadas solo en API 37. Lint sin errores. Ese cierre valida la base de recuperación y E03, manteniendo nueve criterios pendientes; no acredita administración visible, llamadas, icono fijado real o botones físicos.
+El cierre agrupado contiene **1074 JVM** (169 dominio, 111 datos, 794 app) y **163 Android** (65 datos, 98 app), sin fallos/errores/omitidos finales. Los recibos JVM intactos de dominio/datos pertenecen a la misma sesión y la app se comprobó sobre la fuente final. Lint app cero errores/22 avisos por variante y datos sin incidencias. Las nativas se ejecutan en API 37; no acreditan cámara física, muerte completa del proceso, instalación como actualización o ejecución física API 26.
 
-[Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Plan](PLAN_DEL_PROYECTO.md) · [Fases 31/32](FASES.md). Código Unreleased, Android **0.6.0 / código 28**, APK publicada sin estas mejoras. Los bloques siguientes conservan sus cifras y pendientes históricos.
+[Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Plan](PLAN_DEL_PROYECTO.md) · [Fases 29–34](FASES.md) · [Release 0.6.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1). Android **0.6.1 / código 29**, misma firma/esquemas y nueve pendientes originales. Los bloques siguientes conservan sus cifras y pendientes históricos; sus marcas Unreleased describen aquella preparación.
 
 ## Antecedente — entrega 0.6.0
 
