@@ -1,5 +1,17 @@
 # Mejoras para revisar más adelante
 
+## Catálogo vigente — 14 de octubre de 2026
+
+El usuario pidió dejar por escrito las mejoras que hacen más útil la app **además del PDF/cliente**, incluyendo evidencia, contactos, posible uso por policías y botones/atajos del teléfono. [MEJORAS_UTILES](MEJORAS_UTILES.md) es ahora el catálogo vigente **E01–E09**, con origen de cada idea, prioridad, estado y aceptación concreta. E01 ficha PDF, E02 contactos y E03 ayuda/atajos tienen implementación validada Unreleased; E03 corresponde a la fase 32. Mosaico de Ajustes rápidos, composición de mensajes, múltiples fotos, integración institucional y datos verificados por zona siguen propuestos.
+
+El plan original conserva **19/28 = 67.9%**, con cuentas e ingreso locales reales, aislamiento por UUID, fotografías, guardado/consulta, GPS/mapa e historial de lectura ya construidos. Seguimiento autorizado, administración y notificaciones continúan pendientes. La fase 31 prepara recuperación durable del cambio de estado y conserva la asignación de permisos pendiente. La aceptación Android del cierre 0.6.0 ya se ejecutó; una mejora nueva necesita su propia comprobación registrada en [Validación](VALIDACION.md).
+
+El cierre fases 31/32 aprobó **1062 casos distintos, 112 nuevos**, sin fallos/errores/omitidos finales, con nativas en API 37. La guía Motorola sí corresponde al Edge 50 Fusion, pero no se configuró/probó físicamente el gesto. El acceso rápido validado tampoco acredita llamada o icono fijado real; los límites están en [Fase 32](FASE_32.md).
+
+El código nuevo permanece **Unreleased** y no está en la APK publicada 0.6.0; Android **0.6.0 / código 28** permanece. Las propuestas no fijan nueva versión o publicación. Los estados de las secciones siguientes corresponden a sus fechas y se conservan como historia; no representan el estado actual ni sustituyen la autorización vigente de actualizar código en GitHub.
+
+## Antecedente — 0.5.7
+
 ## Estado actual de propuestas — 0.5.7
 
 La fase 20 implementa una parte de **mapa y lista accesibles** en la lista real: búsqueda por descripción/referencia y fechas del incidente, calendario, filtros combinados y continuidad al girar/volver. El mapa no recibe todavía esos filtros ni una lista equivalente por zona; esa paridad sigue pendiente. No presentar esta parte como la propuesta completa.
@@ -36,4 +48,4 @@ El paso técnico siguiente, **0.3.4 Unreleased**, continúa la **fase 6**: obten
 - Acordar cuándo dos reportes podrían referirse al mismo incidente; la advertencia debe evitar repeticiones sin ocultar incidentes nuevos.
 - Definir quién puede cambiar estados y qué evidencia respalda cada cambio antes de activar seguimiento y avisos.
 
-El [plan del proyecto](PLAN_DEL_PROYECTO.md) conserva los requisitos originales. Nuestra parte prepara lógica, datos y pruebas; el [reparto del equipo](TRABAJO_EQUIPO.md) mantiene interfaces y login con el compañero. Cada propuesta necesita un alcance pequeño, comprobaciones y revisión del usuario antes de activarla. Crear commits, subir, integrar, etiquetar, publicar o borrar requiere una instrucción humana precisa para esa acción.
+El [plan del proyecto](PLAN_DEL_PROYECTO.md) conserva los requisitos originales. Este párrafo y las decisiones de esta sección pertenecen a la propuesta histórica del 3 de octubre; su reparto y restricciones describen aquel momento. El catálogo vigente y la autorización actual de código/publicación se consultan en [MEJORAS_UTILES](MEJORAS_UTILES.md), [Trabajo del equipo](TRABAJO_EQUIPO.md) y AGENTS.md.

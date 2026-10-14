@@ -1,5 +1,35 @@
 # Plan del proyecto
 
+## Plan vigente — 14 de octubre de 2026
+
+Se mantienen los siete requisitos **4.1–4.7 del PDF/cliente** y sus 28 criterios. Las mejoras pedidas después por el usuario tienen registro separado **E01–E09** en [Mejoras útiles](MEJORAS_UTILES.md), con origen, prioridad, estado y aceptación. Ficha PDF, contactos y acceso rápido amplían la utilidad, sin convertir una llamada o documento local en recepción institucional ni aumentar el porcentaje del plan original.
+
+| Requisito original | Situación vigente | Siguiente condición para completarlo | Construcción |
+|---|---|---|---|
+| **4.1 Usuarios** | Registro/verificación locales reales, sesión e identidad/aislamiento por UUID; interfaz del login/loading del compañero conservada. Recorrido Android comprobado en el cierre 0.6.0. | La construcción local está completa. Servidor, identidad civil y roles administrativos son otros alcances. | **4/4** |
+| **4.2 Reportes** | Formulario con guardado real y folio durable, revisión, fotografías privadas y recuperación explícita de borrador. | La construcción acordada está completa. La ficha PDF E01 añade exportación revisada; múltiples fotografías E07 sigue propuesta. | **4/4** |
+| **4.3 Geolocalización** | Selección del punto separada del GPS, permiso preciso, evidencia reciente/no simulada y radio de 5 km. Prueba manual del usuario registrada el 11 de octubre; sin atribuirle otro guardado físico. | Mantener esos controles y separar nuevas pruebas automatizadas de la aceptación física ya registrada. | **4/4** |
+| **4.4 Consulta** | Folio/lista/reportes propios, búsqueda y paginación restaurable; historial real consultable desde el detalle. | Cerrar el seguimiento de cambios mediante un recorrido autorizado visible y recuperación del resultado. La fase 31 prepara el diario/recibo; faltan actor/permiso acordados y composición productiva. | **3/4** |
+| **4.5 Mapas** | MapLibre/OpenFreeMap con calles, punto elegido, zonas y marcadores de SQLite, filtros y lista de la misma muestra; flujo integrado comprobado. | Mantener fuente/cobertura y avisos de muestra limitada. Datos externos verificados E09 sigue propuesta independiente. | **4/4** |
+| **4.6 Administración** | Servicio protegido e historial preparados; fase 31 añade recuperación durable. Asignación administrativa pendiente, escritura denegada por defecto y sin controles administrativos productivos. | Consulta administrativa, cambio autorizado, roles/permisos comprobados e historial administrativo completo. `admin/admin` conserva acceso académico. | **0/4** |
+| **4.7 Notificaciones** | No hay entrega de avisos de cambios implementada. Abrir el marcador/selector de compartir no cumple este requisito. | Eventos reales, entrega, permisos/preferencias y recorrido probado. | **0/4** |
+
+**19/28 = 67.9%**, nueve criterios pendientes: uno de seguimiento, cuatro administrativos y cuatro de notificaciones. [Avance](AVANCE.md) conserva los mismos pesos y la diferencia entre construcción, prueba automatizada y aceptación del usuario.
+
+| Orden inmediato | Alcance | Resultado esperado | Estado |
+|---|---|---|---|
+| [Fase 31](FASE_31.md) | Recuperación durable de una solicitud de cambio, ligada a dueño/actor | Tras una interrupción se comprueba el mismo intento por lectura; se reconoce su recibo antes de limpiar y no se inventa otro UUID | Implementación validada Unreleased; JVM y almacenamiento/acceso Android API 37 ejecutados, sin activar administración |
+| [Fase 32](FASE_32.md) / E03 | Ayuda inmediata pública y atajos Android | Abrir ayuda desde el icono sin login/GPS ni datos privados; llamada y fijado del acceso por gestos explícitos, petición fuera del hilo UI | Implementación validada Unreleased; nativas API 37 ejecutadas sin llamadas ni aprobación de un icono real. Compatibilidad física por launcher/modelo pendiente |
+| Siguiente alcance del PDF | Seguimiento/administración autorizados | Definir actor/permiso y conectar un recorrido con diario/recibo durables antes de las notificaciones | Asignación pendiente por decisión del usuario; sin formulario ficticio |
+
+Las fases 29/30 implementan E01 ficha PDF y E02 contactos; fase 32 implementa E03 ayuda/atajos, todo en código Unreleased. E04 mosaico, E05 guía por fabricante, E06 mensaje revisado, E07 varias fotos, E08 institución y E09 datos por zona tienen estado y aceptación explícitos en el catálogo. La configuración de un botón físico depende del modelo: abrir la app normal puede mostrar splash/login. La guía Motorola consultada corresponde al Edge 50 Fusion, sin configurar/probar físicamente su gesto. No se intercepta el botón de encendido ni se modifica el SOS del sistema.
+
+Android conserva **0.6.0 / código 28** y la APK/tag/Release publicada corresponde al corte anterior. Actualizar GitHub con código validado sigue autorizado; publicar otra entrega binaria necesita la instrucción correspondiente. Se conservan datos, esquemas/historial, firma, GPS y login/loading del compañero. Los bloques siguientes documentan cortes anteriores; cuando una tabla dice “actual” dentro de un antecedente se refiere a aquel corte.
+
+Las fases 31/32 aprobaron **1062 casos distintos, 112 nuevos**, cero fallos/errores/omitidos finales; JVM y Android API 37, con lint sin errores. Las pruebas de Ayuda se repitieron tras la revalidación final de vigencia posterior a Keyguard. Sin llamadas, creación aprobada de un icono real, ejecución API 26 o configuración física de gestos. [Validación](VALIDACION.md) conserva desglose y recibos; las repeticiones no aumentan total o porcentaje.
+
+## Antecedente — fases 29 y 30
+
 ## Prioridad actual — utilidad práctica, Unreleased
 
 El usuario confirmó que CitizenSecurity es un **proyecto académico en México**. La crítica de que llamar a emergencias puede ser más útil orienta dos recorridos concretos: acceso inmediato al marcador y contactos de confianza, y conservación de una ficha del incidente que después pueda entregarse voluntariamente. La app mantiene los datos locales; guardar un reporte no comunica por sí mismo el incidente a una autoridad.
@@ -153,13 +183,15 @@ El alcance sigue siendo académico y de simulación. Guardar o consultar localme
 
 ## 3. Usuarios y Público Objetivo
 
-La visión contempla ciudadanos, usuarios registrados, personal administrativo y estudiantes o desarrolladores. La base actual no tiene autenticación, propietario del reporte ni particiones por usuario. Por tanto, la consulta local todavía no acredita que cada usuario vea únicamente sus reportes.
+La visión contempla ciudadanos, usuarios registrados, personal administrativo y estudiantes o desarrolladores. **Contraste histórico de la base 0.4.0a/fases 8–11:** aquella base no tenía autenticación, propietario del reporte ni particiones por usuario; su consulta local no acreditaba reportes propios. Las cuentas/particiones actuales están registradas en la matriz vigente al principio de este documento.
 
 El compañero desarrolla interfaces, navegación y autenticación. A petición del usuario, la base oficial 0.2.1 añadió un botón de herramientas y el acceso local admin / admin para demostrar recepción y validación; no implementa cuentas ni roles. La lógica y los datos usan contratos compartidos para que pueda conectar después sus pantallas. La autenticación, los permisos y los servicios externos necesitan su propio alcance y comprobaciones antes de afirmar que los distintos perfiles están implementados.
 
 ## 4. Funcionalidades Principales
 
-| Requisito del PDF | Situación actual y trabajo acotado | Pendiente |
+**Matriz histórica — base 0.4.0a y preparación de fases 8–11.** Conserva el contraste original con las páginas del PDF. Sus pendientes no sustituyen la matriz vigente del 14 de octubre de 2026.
+
+| Requisito del PDF | Situación histórica y trabajo acotado | Pendiente en aquel corte |
 | --- | --- | --- |
 | 4.1. Registro de usuarios, página 2 | El compañero aportó splash y login visual. Se conserva su interfaz y el acceso local admin / admin solicitado para demostración; no es autenticación real. | Cuenta, ingreso real, identificación del autor y aislamiento de datos. El login corresponde al compañero. |
 | 4.2. Reporte de emergencia o robo, página 3 | El modelo recibe tipo, fecha y hora, descripción, ubicación y prioridad. 0.4.0a incluye el borrador editable con recuperación de campos; fase 8 local coordina sus acciones con ubicación, sin insertar datos. La lógica de guardado se conserva y su acceso real queda oculto. El ejemplo visible utiliza datos ficticios fijos en SQLite en memoria. | Formulario del compañero, aceptación visual y autorización para activar guardado real. Fotografías y almacenamiento necesitan otro alcance. Fase 3 / 0.3.0 sigue sin entrega separada. |
@@ -175,7 +207,7 @@ Los estados futuros descritos por 4.4 y los cambios administrativos de 4.6 son r
 
 La visión busca una demostración académica con registro, organización y seguimiento, una arquitectura manejable y tareas repartidas. También contempla incorporar bases de datos, GPS, mapas, fotografías y notificaciones. Esa lista describe posibilidades del producto; no significa que todas estén activas o autorizadas en cada incremento.
 
-Nuestra estructura de `app`, `core/domain` y `core/data` se conserva. La consulta por zona reutiliza el repositorio SQLite compartido y sus coordenadas, con parámetros y proyección directa; no necesita migración ni escritura. El trabajo de ubicación y borrador también conserva sus contratos, sin autenticación ni servicios en segundo plano. El ejemplo visible usa SQLite en memoria y datos ficticios fijos; no lee el formulario ni la base productiva. El compañero conserva sus pantallas y login, mientras nuestra parte entrega lógica, composición y pruebas.
+**Arquitectura y recorrido en aquel corte histórico:** se conservaban `app`, `core/domain` y `core/data`; la consulta por zona reutilizaba el repositorio SQLite compartido y sus coordenadas sin migración/escritura. Ubicación y borrador todavía no tenían autenticación. El ejemplo visible usaba SQLite en memoria y datos ficticios fijos. El reparto e integración vigentes se describen en la matriz actual; este antecedente no vuelve a ocultar funciones o desactivar cuentas.
 
 ## Secuencia y revisión
 

@@ -1,5 +1,19 @@
 # CITIZENSECURITY
 
+## Desarrollo Unreleased — utilidad y continuación del PDF
+
+**14 de octubre de 2026.** [Mejoras útiles](docs/MEJORAS_UTILES.md) documenta **E01–E09**, propuestas adicionales al PDF/cliente con origen, prioridad, estado y aceptación: ficha/evidencia, contactos, atajos, mensaje revisado, varias fotos, uso institucional y datos por zonas. Ficha PDF, contactos y ayuda/atajos tienen implementación validada en código Unreleased; los demás estados se identifican individualmente.
+
+La **fase 32** añade **Ayuda inmediata** pública: mantener pulsado el icono en un launcher compatible abre la ayuda sin login/GPS o datos privados. Desde esa pantalla se puede pedir un acceso en Inicio por un gesto explícito si el teléfono lo admite; la petición trabaja fuera del hilo de interfaz. Tocar un número abre el marcador para que tú decidas llamar; pedir fijar el acceso no confirma por sí mismo que el launcher lo creó. Las pruebas API 37 no realizaron llamadas ni aprobaron un icono fijado real. No se modifican botones físicos o SOS. [Recorrido y límites](docs/FASE_32.md).
+
+La **fase 31** continúa seguimiento/administración del PDF: conserva una solicitud de cambio de estado en un diario, comprueba su mismo recibo después de una interrupción y requiere reconocimiento explícito antes de limpiar. Es una base interna; la asignación administrativa y el recorrido visible siguen pendientes, y `admin/admin` mantiene acceso académico. [Contrato](docs/FASE_31.md).
+
+[Plan](docs/PLAN_DEL_PROYECTO.md) y [Avance](docs/AVANCE.md) mantienen **19/28 = 67.9%**, con nueve criterios originales pendientes. Las pruebas Android de la entrega 0.6.0 ya se ejecutaron; las comprobaciones nuevas del corte están en [Validación](docs/VALIDACION.md). Código **Unreleased**, Android **0.6.0 / código 28**; la APK/tag/Release publicada 0.6.0 conserva su corte y no incluye las mejoras siguientes. [Fases](docs/FASES.md).
+
+**Cierre fases 31/32: 1062 casos distintos aprobados, 112 nuevos**, cero fallos/errores/omitidos finales. Lint sin errores; pruebas nativas nuevas en emulador API 37, sin llamadas o aprobación de un icono fijado real. Se corrige la comprobación de vigencia después de consultar bloqueo y antes de pedir el fijado. [Desglose y límites](docs/VALIDACION.md).
+
+## Antecedente — fases 29 y 30
+
 ## Desarrollo Unreleased — ficha del incidente y contactos
 
 El proyecto académico en México incorpora dos recorridos para usar la información del incidente. **Inicio → Ayuda y contactos** abre el marcador de emergencias o de un contacto de confianza; puedes guardar hasta cinco teléfonos manualmente en tu espacio local. **Inicio → Reportes guardados → folio → Ficha del incidente** prepara un PDF con los datos del reporte, revisando si incluyes ubicación y foto. Después puedes abrir el selector de Android y elegir a quién compartirlo.
