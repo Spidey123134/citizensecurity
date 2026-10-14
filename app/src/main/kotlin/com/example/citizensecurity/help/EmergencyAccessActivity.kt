@@ -52,14 +52,18 @@ class EmergencyAccessActivity : ComponentActivity() {
     private var pendingPinResult: EmergencyPinResult? = null
     private val foreground = AtomicBoolean()
     private val pinGeneration = AtomicLong()
+    private val tileGeneration = AtomicLong()
+    private var tileBusy by mutableStateOf(false)
+    private var tileMessage by mutableStateOf<String?>(null)
+    private var pendingTileResult: TileAddResult? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> { foreground.set(true); publishPinResult() }
+                Lifecycle.Event.ON_RESUME -> { foreground.set(true); publishPinResult(); publishTileResult() }
                 Lifecycle.Event.ON_PAUSE, Lifecycle.Event.ON_STOP -> foreground.set(false)
-                Lifecycle.Event.ON_DESTROY -> { foreground.set(false); pinGeneration.incrementAndGet() }
+                Lifecycle.Event.ON_DESTROY -> { foreground.set(false); pinGeneration.incrementAndGet(); tileGeneration.incrementAndGet() }
                 else -> Unit
             }
         })
@@ -93,6 +97,11 @@ class EmergencyAccessActivity : ComponentActivity() {
                         if (pinRequested) TextButton(onClick = { if (canAct()) pinRequested = false }) { Text("Intentar fijarlo nuevamente") }
                         Text("También puedes mantener pulsado el icono de CITIZENSECURITY y elegir Ayuda, si tu pantalla de inicio admite atajos.",
                             style = MaterialTheme.typography.bodySmall)
+                        OutlinedButton(onClick = ::requestHelpTile, enabled = !tileBusy,
+                            modifier = Modifier.fillMaxWidth().testTag("emergency_add_tile")) { Text("Añadir Ayuda a Ajustes rápidos") }
+                        Text("También puedes bajar dos veces el panel superior, tocar Editar y añadir Ayuda. La posición y los nombres dependen de tu teléfono.",
+                            style = MaterialTheme.typography.bodySmall)
+                        tileMessage?.let { Text(it, Modifier.testTag("emergency_tile_message").semantics { liveRegion = LiveRegionMode.Polite }) }
                         message?.let { Text(it, Modifier.testTag("emergency_message").semantics { liveRegion = LiveRegionMode.Polite }) }
                         TextButton(onClick = { if (canAct()) finish() }, modifier = Modifier.testTag("emergency_close")) { Text("Volver") }
                     }
@@ -154,6 +163,44 @@ class EmergencyAccessActivity : ComponentActivity() {
             EmergencyPinResult.LOCKED -> "Desbloquea el teléfono y vuelve a solicitar el acceso."
             EmergencyPinResult.NOT_CURRENT -> "Vuelve a Ayuda inmediata para solicitar el acceso."
             EmergencyPinResult.FAILED -> "No se pudo solicitar el acceso. Puedes intentarlo nuevamente o buscar Ayuda al mantener pulsado el icono."
+        }
+    }
+
+    private fun requestHelpTile() {
+        if (!canAct() || tileBusy) return
+        val token = tileGeneration.incrementAndGet()
+        tileBusy = true
+        tileMessage = "Solicitando el mosaico… Revisa la confirmación de Android."
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                EmergencyTileRequest.request(applicationContext,
+                    canAct = { foreground.get() && tileGeneration.get() == token },
+                    result = { result ->
+                        lifecycleScope.launch {
+                            if (!isDestroyed && tileGeneration.get() == token) {
+                                pendingTileResult = result
+                                publishTileResult()
+                            }
+                        }
+                    },
+                )
+            }
+        }
+    }
+
+    private fun publishTileResult() {
+        if (!canAct()) return
+        val result = pendingTileResult ?: return
+        pendingTileResult = null
+        tileBusy = false
+        tileMessage = when (result) {
+            TileAddResult.ADDED -> "Android confirmó que añadió Ayuda a Ajustes rápidos."
+            TileAddResult.ALREADY_ADDED -> "Ayuda ya está en Ajustes rápidos. Puedes moverlo desde Editar."
+            TileAddResult.DECLINED -> "No se añadió Ayuda. Puedes solicitarlo de nuevo o añadirlo desde Editar en Ajustes rápidos."
+            TileAddResult.UNSUPPORTED -> "En este teléfono, añade Ayuda manualmente desde Editar en Ajustes rápidos."
+            TileAddResult.NOT_CURRENT -> "Vuelve a Ayuda inmediata para solicitar el mosaico."
+            TileAddResult.LOCKED -> "Desbloquea el teléfono y solicita el mosaico de nuevo."
+            TileAddResult.FAILED -> "Android no pudo añadir Ayuda. Puedes reintentar o usar Editar en Ajustes rápidos."
         }
     }
 }

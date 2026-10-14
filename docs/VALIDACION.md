@@ -1,5 +1,66 @@
 # Validación y comprobaciones del proyecto
 
+## Cierre de entrega 0.6.1 — fases 29–34 · 14 de octubre de 2026
+
+**1237 casos distintos aprobados en los recibos de este cierre; cero fallos, errores u omitidos finales.** Son 1074 JVM y 163 Android. Hay **307 definiciones nuevas frente a la entrega 0.6.0**, incluidas las **33 de la fase 34** (28 JVM y cinco Android). Los cortes históricos siguientes y sus repeticiones no se suman a este total.
+
+| Suite | Aprobados | Evidencia del cierre |
+| --- | ---: | --- |
+| Dominio JVM | 169 | XML de esta sesión, fuente sin cambios desde el pase |
+| Datos JVM / SQLite del host | 111 | XML de esta sesión, fuente sin cambios desde el pase |
+| App JVM | 794 | Pase final con cámara, galería y mosaico |
+| Datos Android | 65 | Recuperación durable 53 y contactos privados 12 |
+| App Android: ayuda pública | 9 | Mosaico 5 y atajo/ayuda 4 |
+| App Android: utilidad y consulta | 61 | PDF 33, marcador/contactos 8, Inicio 8 y búsqueda/historial 12 |
+| App Android: cámara/galería | 28 | Almacén/provider 15, captura 7 y galería 6 |
+| **Total distinto** | **1237** | **163 nativos sobre producto 0.6.1 / código 29** |
+
+El producto, tests Android y variantes debug/release ensamblan. **Lint: app cero errores y 22 advertencias por variante; datos cero incidencias.** El detector de `startActivityAndCollapse(Intent)` advertía también dentro de la rama protegida para API 26–33; se conserva una supresión local en ese helper con comprobación de versión, porque allí no existe la sobrecarga PendingIntent. API 34+ utiliza únicamente el PendingIntent inmutable explícito. No se desactivó lint globalmente.
+
+La fase 34 comprueba gesto único, bloqueo vigente, callbacks tardíos o duplicados, cierre del panel durante desbloqueo, retirada/destrucción del mosaico y reemplazo de un desbloqueo cancelado por un gesto nuevo. La petición de alta comprueba versión, bloqueo, vigencia antes/después y respuesta única. Abrir o recrear Ayuda no añade un mosaico. El diálogo real de SystemUI fue **cancelado** y se confirmó que no aparecía el acceso; no se presenta esa cancelación como una aceptación del alta.
+
+Los cinco nativos del mosaico verifican manifest/componente, permiso de firma denegado al UID del APK de pruebas separado, entrega real de PendingIntent y destino público, ausencia de acción automática y petición/cancelación real del diálogo Android. La comprobación del permiso es mediante PackageManager, no una prueba de IPC hostil. La ayuda pública se ejecutó con ubicación denegada, sin modificar sesión, contactos ni reportes; los marcadores de sus pruebas se interceptan y no realizan llamadas.
+
+Además, una comprobación separada usó `cmd statusbar add-tile`, `expand-settings` y `click-tile` en el emulador propio: **SystemUI enlazó el servicio real y desde HOME abrió EmergencyAccessActivity con 911/089**. Se retiró solo nuestro mosaico y la lista completa de ajustes volvió exactamente a su valor anterior. Ese recorrido asistido por shell queda fuera del conteo de casos, no acredita aceptación manual del alta, bloqueo físico ni comportamiento de fabricantes. Recibos `release061-tile-bound.log`, `release061-tile-ui.xml` y `release061-tile-systemui-proof.json`.
+
+La cámara y galería se repitieron sobre la APK 0.6.1: copia privada, URI/grants exclusivos, limpieza, orientación/metadatos, guardado y consulta real SQLite, cancelación y sesión revocada. IMAGE_CAPTURE se intercepta para escribir el archivo completo controlado; no acredita cámara óptica o app del fabricante. La recreación conserva el modelo y usa callback de prueba explícito; no es una muerte completa del proceso por el sistema operativo.
+
+Los primeros intentos del cierre corrigieron el nombre de un recurso y un import de test. Un intento instaló el APK de pruebas anterior antes de finalizar su ensamblado; la clase nueva no estaba allí y no se contó ese fallo de inicialización como una aprobación. SystemUI expone Ayuda en content-desc, y un selector inicial por texto dejó su diálogo abierto; el harness ahora identifica ese contenido y cancela únicamente su diálogo antes/después. Un PendingIntent con NEW_TASK puede reutilizar la Activity: se verifica su entrega mediante OnFinished, sin exigir una instancia nueva. Los logs iniciales se conservan; los pases finales de 65, 9, 61 y 28 aprobaron con el APK/test APK actualizados.
+
+**Artefacto académico:** `citizensecurity-0.6.1-academico.apk`, 55 217 523 bytes, paquete `com.example.citizensecurity`, versión **0.6.1 / código 29**, mínimo API 26 y objetivo API 37. SHA-256 **`7395a049aee8cf92324ac31f3c4e08453fb639bcf5103fc8eaa48484302815f1`**. Certificado v2 SHA-256 `0a4006a1d2ef2ad02a0dad7c51b55c0ba5ffcd096a226eed6456326b2fed3ebd`, idéntico al de 0.6.0. Verificados manifest/DEX: sin testOnly, instrumentación o fixtures en producto; provider de cámara privado y servicio protegido. No añade CAMERA, almacenamiento, CALL_PHONE o SMS.
+
+La firma, paquete, versión creciente y esquemas se comprobaron para conservar la ruta de actualización. **No se ejecutó una instalación de actualización en el teléfono del usuario**; la aceptación física de cámara/mosaico queda pendiente. Emulador aislado API 37 de solo lectura; API 26–33 está compilada y protegida por versión, sin ejecución nativa allí. No hay nueva aceptación física GPS, llamadas/mensajes, integración policial o permisos administrativos asignados. El diario administrativo sigue siendo una base interna sin controles productivos de escritura; admin/admin conserva su acceso académico.
+
+Recibo local ignorado `.gradle/validacion/release061-test-proof.json`, artefacto `release061-artifact.json` y logs `release061-verified-build`, `release061-data-native`, `release061-public-final3`, `release061-utility-final` y `release061-camera-final`. La publicación autorizada agrupa estas mejoras; el archivo anterior 0.6.0 conserva SHA-256 `c32201071bb245ef8fa3236e124788ba100bd0fc9ba2614afeaf9bb6549ee039`. **19/28 = 67.9% del plan original permanece**. [Entrega 0.6.1](ENTREGA_0_6_1.md) · [Probar](PROBAR_0_6_1.md) · [Fase 34](FASE_34.md).
+
+## Antecedentes de validación antes de agrupar la entrega 0.6.1
+
+## Cámara del reporte — fase 33, Unreleased · 14 de octubre de 2026
+
+**794 casos distintos de app aprobados, con 71 definiciones nuevas.** Cero fallos, errores u omitidos finales. Este corte modifica app; los resultados anteriores de dominio/core:data se conservan por separado y no se presentan como ejecuciones nuevas. No sumar repeticiones o los cortes siguientes a este total.
+
+| Suite ejecutada | Aprobados | Nuevos |
+| --- | ---: | ---: |
+| App JVM | 766 | 35 modelo cámara + 14 vínculo galería |
+| Almacén/provider Android | 15 | 15 |
+| Recorrido cámara Android | 7 | 7 |
+| Galería/checkpoint Android | 6 | 0: regresiones |
+| **Total** | **794** | **71** |
+
+JVM comprueba una captura por gesto, reserva antes de recomponer, URI propia, resultado consumido una vez, cámara ausente, salida/importación fallida, permisos de sesión revocados, respuesta tardía, giro y modelo nuevo sin captura restaurada. Comprueba reentrancia al publicar estado, revocación dentro del predicado de lanzamiento y limpieza tras cierre antes del cuerpo de importación o dentro del lanzamiento. Un importador no cooperativo termina de leer antes de retirar su archivo. La galería conserva su token propio y un reset de su estado no cancela una selección de cámara.
+
+Los 15 nativos usan filesystem y FileProvider reales: UUID/URI únicos, grants revocados, limpieza del temporal exacto, archivo ajeno conservado, cuotas concurrentes, symlinks/traversal y exclusión de fotos privadas, base, PDF y caché general. Las cuotas de cuatro archivos/64 MiB se comprueban antes de crear; no limitan los bytes que una cámara externa escriba después.
+
+Los siete recorridos interceptan únicamente IMAGE_CAPTURE y escriben JPEG/controlados en EXTRA_OUTPUT real; verifican ClipData/READ/WRITE, metadatos eliminados, miniatura/URI devueltos ignorados, guardado SQLite con foto, cancelación, archivo vacío/corrupto, ausencia de receptor y sesión revocada. La recreación conserva la VM/archivo y usa un callback simulado explícito. Las seis regresiones ejecutan también el selector real de galería, giro/cancelación, copia privada, guardado, origen eliminado, checkpoint y consulta. No prueban óptica/enfoque o la app de cámara de un teléfono físico, ni un recorrido completo de muerte del proceso. No se solicita CAMERA/almacenamiento; GPS de guardado pertenece a una fixture controlada y no es otra aceptación física.
+
+**Defectos corregidos:** el callback de galería adoptaba cualquier token pendiente; ahora consume su apertura propia y bloquea el doble gesto antes de recomponer. Cerrar antes de entrar al job de resultado o dentro del lanzamiento podía dejar un temporal; el trabajo tiene dueño de limpieza aun si no arrancó, y CAS evita retirarlo dos veces. Un pase nativo detectó un segundo gesto mientras terminaba la limpieza: los controles conservan busy hasta el final, evitando un botón habilitado cuya petición todavía se rechaza. Una prueba JVM bloquea la limpieza para verificar ese intervalo.
+
+El primer pase nativo tuvo nueve fallos del harness: dos aliases /data/user/0 frente a /data/data en la limpieza de sentinelas y siete descripciones preparadas en modelo sin escribirlas en el campo recordado de UI. Se corrigió solo la preparación de pruebas y se conservaron sus assertions. La compilación inicial también corrigió un import EXIF no expuesto por la dependencia; usa API Android nativa en androidTest. Los logs iniciales se conservan; no se cuentan como aprobaciones ni casos extra. El pase final de 22 y las seis regresiones aprobaron sobre el código final.
+
+Kotlin debug/release, app JVM, ensamblado interno de debug/androidTest y lint aprobados: **cero errores y 22 advertencias por variante de app**. Emulador propio de solo lectura API 37, luego cerrado; sin instalar o borrar datos en el teléfono. Ninguna nueva APK, tag o Release publicada; Android **0.6.0 / código 28**, datos/esquemas/firma y login/loading conservados. La APK oficial anterior conserva SHA-256 `c32201071bb245ef8fa3236e124788ba100bd0fc9ba2614afeaf9bb6549ee039`.
+
+Recibo local ignorado `.gradle/validacion/camera-test-proof.json`; logs `camera-native-final2`, `camera-gallery-final` y `camera-busy-final-build`. **19/28 = 67.9% permanece**: cámara amplía una fotografía ya acreditada y no habilita administración/notificaciones. [Fase 33](FASE_33.md) · [Catálogo E10](MEJORAS_UTILES.md).
+
 ## Recuperación durable y acceso rápido — fases 31 y 32, Unreleased · 14 de octubre de 2026
 
 **1062 casos distintos aprobados en este corte, con 112 definiciones nuevas.** Cero fallos, errores u omitidos en los recibos finales. Se cuentan 997 JVM y 65 Android; las repeticiones y las suites nativas históricas no ejecutadas en este corte no aumentan el total.

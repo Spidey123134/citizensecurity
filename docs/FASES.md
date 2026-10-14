@@ -1,5 +1,30 @@
 # Fases de CITIZENSECURITY
 
+## Entrega agrupada 0.6.1 — fases 29–34
+
+**14 de octubre de 2026 · Android 0.6.1 / código 29**, entrega solicitada expresamente con APK/Release. Agrupa los siguientes recorridos y la base protegida del PDF:
+
+| Fase | Contenido incluido en 0.6.1 |
+|---|---|
+| [29](FASE_29.md) | Ficha PDF desde un folio real, opciones revisadas y compartir por gesto separado |
+| [30](FASE_30.md) | Ayuda y hasta cinco contactos manuales privados por cuenta |
+| [31](FASE_31.md) | Solicitud durable de cambio, mismo UUID/recibo y reconocimiento antes de limpiar; sin administración activada |
+| [32](FASE_32.md) | Ayuda inmediata pública, atajo del icono y petición de acceso directo |
+| [33](FASE_33.md) | Cámara además de galería, conservación del borrador al cancelar/fallar y limpieza del temporal exacto |
+| [34](FASE_34.md) | Mosaico voluntario en Ajustes rápidos, alta explícita y apertura de ayuda por toque/desbloqueo |
+
+**1237 casos distintos aprobados, 307 definiciones nuevas frente a 0.6.0**, cero fallos/errores/omitidos finales: 1074 JVM + 163 Android API 37. Fase 34 añade 33 casos (28 JVM + cinco Android). Lint app cero errores/22 avisos por variante y datos sin incidencias. Recibos, reutilización de resultados intactos y límites en [Validación](VALIDACION.md); no se declara cámara física, muerte completa del proceso, actualización por instalación o ejecución física API 26.
+
+**19/28 = 67.9% permanece**, nueve criterios originales pendientes. El mosaico/cámara amplían utilidad; asignación y recorrido administrativos siguen pendientes. Datos/esquemas/firma y login/loading se conservan. [Release y APK](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1) · [Entrega](ENTREGA_0_6_1.md) · [Probar](PROBAR_0_6_1.md).
+
+## Antecedente — preparación Unreleased de 0.6.1
+
+Los bloques siguientes describen sus cortes de desarrollo y mantienen sus cifras originales. Fases 29–34 se incluyen ahora en 0.6.1; las marcas **Unreleased** y la ausencia de otra APK descritas en aquella preparación no vuelven a dejar pendiente su entrega.
+
+## Fase 33 — cámara del reporte, Unreleased
+
+**14 de octubre de 2026.** [Tomar fotografía](FASE_33.md) amplía 4.2 con captura desde la cámara además de galería: URI temporal propia, normalización/revisión y conservación de foto anterior ante fallo/cancelación. Apertura vinculada al origen/token, giro sin relanzar, revocación/limpieza solo del temporal y controles bloqueados hasta terminar. Sin nuevos permisos o modificación de login/loading; Android **0.6.0 / código 28**, sin nueva APK/Release. El criterio de foto ya estaba completo: **19/28 = 67.9%** permanece. [Validación](VALIDACION.md).
+
 ## Fases 31 y 32 — seguimiento durable y acceso rápido, Unreleased
 
 **14 de octubre de 2026.** Se continúa el PDF/cliente con [fase 31](FASE_31.md): diario privado de una solicitud de cambio, recuperación explícita por lectura del recibo y reconocimiento con reverificación antes de limpiar el cuerpo exacto. Conserva dueño/actor/UUID y autorización denegada por defecto, sin componer administración o asignar roles.

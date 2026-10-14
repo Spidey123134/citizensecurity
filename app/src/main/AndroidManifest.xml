@@ -32,6 +32,20 @@
         <activity android:name=".account.CreateAccountActivity" android:exported="false" />
         <activity android:name=".help.HelpContactsActivity" android:exported="false" />
         <activity android:name=".help.EmergencyAccessActivity" android:exported="true" />
+        <service android:name=".help.EmergencyHelpTileService"
+            android:exported="true" android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:icon="@drawable/ic_help_shortcut" android:label="@string/emergency_long_label">
+            <intent-filter><action android:name="android.service.quicksettings.action.QS_TILE" /></intent-filter>
+        </service>
+
+        <provider
+            android:name=".report.ReportCameraFileProvider"
+            android:authorities="${applicationId}.camera_capture"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/camera_capture_paths" />
+        </provider>
 
         <provider
             android:name="androidx.core.content.FileProvider"

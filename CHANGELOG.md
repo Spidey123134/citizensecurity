@@ -2,6 +2,29 @@
 
 ## [Unreleased]
 
+Sin incrementos adicionales pendientes de entrega en este cierre.
+
+## [0.6.1] — 2026-10-14
+
+- Entrega solicitada expresamente: **fases 29–34 agrupadas**, APK 0.6.1 / código Android 29, mismo paquete y firma académica. Conserva esquemas, datos e interfaz de login/loading; APK y assets anteriores intactos.
+- **Cámara y galería:** captura completa con URI temporal propia, importación/normalización privada, selección vinculada al borrador y origen, vista previa antes de guardar. Cancelación/fallo conserva foto anterior y campos; giro sin relanzar, sesión revocada y callbacks antiguos descartados. Limpieza/revocación únicamente de su temporal, sin nuevos permisos CAMERA/almacenamiento.
+- **Ficha y contactos:** PDF paginado desde un folio guardado, inclusión de ubicación/foto revisada y compartir separado; hasta cinco contactos manuales por cuenta y accesos al marcador. Un parcial no queda listo, no se lee la agenda ni se llama/envía automáticamente.
+- **Ayuda inmediata y fase 34:** ruta pública sin login/GPS, atajo del icono, solicitud de acceso directo y mosaico voluntario de Ajustes rápidos. Alta mediante diálogo del sistema desde API 33 o edición manual; toque/desbloqueo abre ayuda, con PendingIntent desde API 34 y ruta Intent protegida por versión en API 26–33. Pedir el alta no se anuncia como confirmación.
+- **Recuperación durable:** conserva el mismo intento/UUID de cambio de estado y verifica su recibo antes de reconocer/limpiar. Asignación y panel administrativos permanecen pendientes; `admin/admin` no concede roles.
+- **1237 casos distintos aprobados, 307 definiciones nuevas frente a 0.6.0**, cero fallos/errores/omitidos finales: JVM 169 dominio + 111 datos + 794 app; Android 65 datos + 98 app. Fase 34 aporta 33 nuevos (28 JVM + cinco Android). Lint app cero errores/22 avisos por variante y datos sin incidencias.
+- APK **55.217.523 bytes**, SHA-256 `7395a049aee8cf92324ac31f3c4e08453fb639bcf5103fc8eaa48484302815f1`; paquete, 0.6.1/código 29, min26/target37 y certificado académico verificados. Pruebas de cámara con protocolo controlado; sin nueva aceptación física, muerte completa del proceso, instalación como actualización o ejecución física API 26.
+- **19/28 = 67.9% permanece**: las ampliaciones no completan seguimiento autorizado, administración o notificaciones.
+
+[Release y APK](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1) · [Entrega](docs/ENTREGA_0_6_1.md) · [Probar 0.6.1](docs/PROBAR_0_6_1.md) · [Validación](docs/VALIDACION.md).
+
+### Antecedente de preparación de 0.6.1 — fases 29–33
+
+Las marcas Unreleased y cifras siguientes conservan los cortes originales de desarrollo; su código se incluye en 0.6.1 junto a fase 34. Los recuentos no se suman otra vez al cierre agrupado, y la ausencia de APK descrita aquí corresponde a esos antecedentes.
+
+- Fase 33: tomar una foto con la cámara junto a la galería. Captura completa en URI temporal propia, normalización privada existente y revisión antes del guardado; cancelación/fallo conserva foto anterior y campos. Sin nuevo permiso de cámara/almacenamiento.
+- Validación fase 33: **794 casos distintos aprobados, 71 nuevos** (766 JVM + 28 Android API 37); galería real y captura mediante protocolo controlado, sin cámara física. Cero fallos/errores/omitidos finales; lint cero errores/22 avisos por variante. Detalle en [Validación](docs/VALIDACION.md).
+- Aperturas ligadas a su propio origen/token y bloqueo de doble gesto. Giro conserva la captura sin volver a abrirla; un callback de otro proceso o sesión no adjunta una imagen. Limpieza/revocación del temporal exacto incluso al cerrar antes del job de resultado; los controles esperan a que termine la limpieza. [Alcance](docs/FASE_33.md).
+
 - 14 de octubre de 2026: catálogo [E01–E09 de mejoras útiles](docs/MEJORAS_UTILES.md), con origen de las ideas, prioridad, estado y criterios de aceptación. Se separan las ampliaciones del usuario de los siete requisitos/28 criterios del PDF; se conserva 19/28 = 67.9%.
 - Fase 31 implementada/validada: solicitud durable de cambio de estado por dueño/actor, diario privado acotado, CAS/exclusión compartida y recuperación explícita mediante consulta de recibo de solo lectura. Reconocer vuelve a verificar SQLite antes de limpiar exactamente el pendiente; permiso denegado por defecto y actor comprobado antes del commit. Sin asignación o controles administrativos productivos.
 - Fase 32 implementada/validada: Ayuda inmediata pública y sin datos privados, atajo estático del icono y solicitud explícita de fijado en Inicio si el launcher lo admite. Petición fuera del hilo de interfaz; abrir el marcador exige pantalla visible y dispositivo desbloqueado. Las pruebas API 37 no realizaron llamadas ni aprobaron un icono fijado real. La aceptación de la solicitud de fijado no se presenta como icono confirmado; SOS/botones físicos conservados.
