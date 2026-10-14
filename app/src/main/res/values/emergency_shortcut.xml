@@ -1,0 +1,5 @@
+<resources>
+    <string name="emergency_short_label">Ayuda</string>
+    <string name="emergency_long_label">Ayuda inmediata</string>
+    <string name="home_quick_help">Ayuda inmediata y acceso rápido</string>
+</resources>

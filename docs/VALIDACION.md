@@ -1,5 +1,28 @@
 # Validación y comprobaciones del proyecto
 
+## Recuperación durable y acceso rápido — fases 31 y 32, Unreleased · 14 de octubre de 2026
+
+**1062 casos distintos aprobados en este corte, con 112 definiciones nuevas.** Cero fallos, errores u omitidos en los recibos finales. Se cuentan 997 JVM y 65 Android; las repeticiones y las suites nativas históricas no ejecutadas en este corte no aumentan el total.
+
+| Suite ejecutada | Aprobados | Nuevos |
+| --- | ---: | ---: |
+| Dominio JVM | 169 | 4 contrato/recibo |
+| Datos JVM / SQLite del host | 111 | 18 codec |
+| App JVM | 717 | 36 recuperación + 9 petición de atajo |
+| Datos Android | 53 | 19 diario + 21 acceso SQLite |
+| App Android | 12 | 4 ayuda pública + 1 ruta Inicio |
+| **Total** | **1062** | **112** |
+
+Los 53 de datos incluyen 13 regresiones del historial y los 12 de app son cuatro de ayuda pública y ocho de Inicio, con siete regresiones. Los diarios prueban reconstrucción, aislamiento de dueño/actor, CAS, límites, corrupción, autorización, cancelación y exclusión hasta finalizar un escritor no cooperativo. SQLite prueba recibo real después de reconstruir el acceso, lectura sin crear/migrar/reparar la base, actor correcto, permiso antes de abrir y revocación antes del commit. Los modelos prueban reconstrucción de solicitudes, UUID/cuerpo inmutables, fallo o cancelación con resultado incierto, reintento explícito, respuestas tardías y reconocimiento con recibo fresco. No se ejecutó un recorrido completo de muerte del proceso por el sistema operativo; se distingue de reconstruir almacenes/modelos en pruebas.
+
+Ayuda inmediata se abrió desde fuera con extras ajenos ignorados, se recreó con permisos de ubicación denegados y conservó la sesión. Se verificaron metadatos/intents públicos del atajo estático, ambos ACTION_DIAL por gesto y la cancelación del diálogo real del launcher sin crear un icono. Los marcadores fueron interceptados como cancelados: no hubo llamadas, mensajes, aprobación del fijado ni configuración de botones físicos. Inicio conserva acceso a cuentas y datos y no inicia GPS ni prepara un reporte al abrir ayuda.
+
+**Correcciones del cierre:** la petición de fijado se ejecuta fuera del hilo de UI, reservando un solo trabajo y conservando únicamente su resultado mientras el diálogo pausa la pantalla. La revisión independiente detectó que la última consulta de bloqueo podía devolver después de salir de la actividad; un caso nuevo comprueba la revalidación antes de pedir el atajo y cero solicitudes si el gesto ya caducó. El primer pase nativo de ayuda tuvo un timeout del harness por asumir que el paquete resuelto como HOME coincidía con la ventana de confirmación observada; el selector se corrigió y los cuatro casos pasaron sobre el código final. Ese intento se conserva sin doble conteo.
+
+JVM, Kotlin debug/release, ensamblado interno de debug/androidTest y lint aprobados. **Lint: app cero errores y 22 advertencias por variante; datos cero incidencias.** Android sigue **0.6.0 / código 28**, reportes esquema 3 y cuentas esquema 1; login/loading, firma y datos conservados. No se publicó una APK, tag o Release. El archivo oficial anterior conserva SHA-256 `c32201071bb245ef8fa3236e124788ba100bd0fc9ba2614afeaf9bb6549ee039`.
+
+Pruebas en emulador propio de solo lectura, API 37; ninguna instalación o borrado en el teléfono del usuario. La compatibilidad declarada API 26–37 no equivale a haber ejecutado cada versión o fabricante. Recibo ignorado: `.gradle/validacion/recovery-test-proof.json`; logs `recovery-data-native`, `recovery-home-native`, `recovery-shortcuts-final` y `recovery-guard-final-build`. Sin nueva aceptación física GPS, integración institucional o asignación administrativa. El escritor administrativo continúa sin componer y deniega acceso por defecto. **19/28 = 67.9% permanece**: se mejora una base del PDF y una función adicional sin inventar criterios terminados. [Fase 31](FASE_31.md) · [Fase 32](FASE_32.md) · [Mejoras adicionales](MEJORAS_UTILES.md).
+
 ## Utilidad académica — fases 29 y 30, Unreleased · 13 de octubre de 2026
 
 **1000 casos distintos ejecutados y aprobados en este corte; cero fallos, errores u omitidos en los recibos finales.** Incluye **91 definiciones nuevas**: 37 JVM y 54 Android. No sumar repeticiones ni atribuir a este corte los Android históricos que no se volvieron a ejecutar. El cierre 0.6.0 siguiente conserva su evidencia separada.

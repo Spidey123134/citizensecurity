@@ -1,5 +1,27 @@
 # Avance del plan del proyecto
 
+## Avance vigente — 14 de octubre de 2026
+
+**19/28 = 67.9% de construcción**, mismos criterios y pesos del PDF/cliente. Fases 29/30 aportan ficha PDF y contactos; fase 32 añade la ruta rápida de Ayuda, como ampliaciones E01–E03 en [Mejoras útiles](MEJORAS_UTILES.md). La fase 31 prepara diario/recibo durables para el cambio de estado. Ninguna de estas bases o extensiones completa el recorrido administrativo pendiente por sí sola.
+
+| Punto original | Construidos | Pendientes |
+|---|---|---|
+| 4.1 Usuarios | 4/4 | 0 |
+| 4.2 Reportes | 4/4 | 0 |
+| 4.3 Geolocalización | 4/4 | 0 |
+| 4.4 Consulta | 3/4 | 1: seguimiento de cambios mediante recorrido autorizado |
+| 4.5 Mapas | 4/4 | 0 |
+| 4.6 Administración | 0/4 | 4: consulta, cambio, roles/permisos, historial administrativo |
+| 4.7 Notificaciones | 0/4 | 4: eventos, entrega, permisos/preferencias, recorrido probado |
+
+Faltan **9 criterios originales**. La asignación administrativa sigue pendiente por decisión del usuario; no existe un panel productivo de cambios ni roles reales. La aceptación Android del corte agrupado **0.6.0 ya se ejecutó** (1164 casos distintos en ese cierre, 271 Android), separada de la aceptación del usuario. Las comprobaciones nuevas se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
+
+El corte fases 31/32 aprobó **1062 casos distintos, 112 nuevos**, sin fallos/errores/omitidos finales; 997 JVM y 65 Android ejecutadas solo en API 37. Lint sin errores. Ese cierre valida la base de recuperación y E03, manteniendo nueve criterios pendientes; no acredita administración visible, llamadas, icono fijado real o botones físicos.
+
+[Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Plan](PLAN_DEL_PROYECTO.md) · [Fases 31/32](FASES.md). Código Unreleased, Android **0.6.0 / código 28**, APK publicada sin estas mejoras. Los bloques siguientes conservan sus cifras y pendientes históricos.
+
+## Antecedente — entrega 0.6.0
+
 ## Entrega agrupada 0.6.0 — fases 21–28
 
 **19/28 = 67.9% de construcción**, mismos 28 criterios/pesos. La entrega reúne cuentas/aislamiento local, consulta paginada/restaurable, mapa filtrado e historial real. La [fase 28](FASE_28.md) prepara coordinación de solicitudes de cambio con identidad retenida y reintento explícito; falta diario durable y no se conecta escritura administrativa.
@@ -56,7 +78,7 @@ La aceptación del repositorio y del recorrido en Android queda pendiente para 0
 | 4.6 Administración | 0/4 |
 | 4.7 Notificaciones | 0/4 |
 
-La aceptación manual GPS del 11 de octubre de 2026 ya registrada conserva sus límites: versión APK no especificada, sin logs, nuevas medidas ni guardado físico adicional. Esta entrega no cuenta fixtures ni lecturas locales como otra prueba GPS física. Siguen pendientes cuentas reales/aislamiento de autores, seguimiento administrativo y notificaciones. [Criterios vigentes](#cómo-se-calcula--criterios-vigentes-de-056) · [Validación](VALIDACION.md).
+La aceptación manual GPS del 11 de octubre de 2026 ya registrada conserva sus límites: versión APK no especificada, sin logs, nuevas medidas ni guardado físico adicional. Esta entrega no cuenta fixtures ni lecturas locales como otra prueba GPS física. Siguen pendientes cuentas reales/aislamiento de autores, seguimiento administrativo y notificaciones. [Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Validación](VALIDACION.md).
 
 ## Antecedente 0.5.6
 
@@ -76,7 +98,7 @@ La aceptación manual GPS del 11 de octubre de 2026 ya registrada conserva sus l
 
 [Fase 19](FASE_19.md) convierte la pantalla verde de Desarrollador en un inicio útil: **Nuevo reporte**, **Reportes en este teléfono** y **Mapa de reportes por zona**. Sus indicadores leen los diarios privados reales para mostrar una copia de borrador o un intento por comprobar; un fallo de lectura se explica y no equivale a ausencia. Abrir el inicio no obtiene GPS, guarda reportes ni escribe en los diarios. Se retira la interfaz ficticia anterior conservando código, datos e historia; las funciones reales siguen visibles.
 
-El hito original de GPS es comprobar el recorrido de ubicación y confirmación. Guardar y abrir un folio físico sería una comprobación adicional transversal de **4.2/4.4**, no una condición nueva para completar 4.3. Siguen pendientes cuentas reales/aislamiento de autores, seguimiento administrativo y notificaciones. La mejora del inicio no añade otro hito. [Criterios vigentes](#cómo-se-calcula--criterios-vigentes-de-056) · [Validación](VALIDACION.md).
+El hito original de GPS es comprobar el recorrido de ubicación y confirmación. Guardar y abrir un folio físico sería una comprobación adicional transversal de **4.2/4.4**, no una condición nueva para completar 4.3. Siguen pendientes cuentas reales/aislamiento de autores, seguimiento administrativo y notificaciones. La mejora del inicio no añade otro hito. [Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Validación](VALIDACION.md).
 
 ## Antecedentes históricos del corte anterior
 
@@ -218,7 +240,7 @@ La preparación 0.3.4 incorpora ahora el **Maps SDK for Android 20.0.0** real, m
 
 El SDK ya está incorporado y el adaptador compila, pero el hito de SDK configurado no se suma sin clave habilitada y mapa real ejecutado. Los apartados previos de captura sin permisos describen el corte anterior a esta incorporación.
 
-## Cómo se calcula — criterios vigentes de 0.5.6
+## Cómo se calcula — criterios vigentes
 
 Se definen cuatro hitos de construcción por cada requisito del PDF: **28 hitos con el mismo peso**. Cada hito comprobado aporta aproximadamente 3.57 puntos al total; cada fila puede tener 0%, 25%, 50%, 75% o 100%. Esta es una estimación de construcción, no del tiempo o dificultad de las tareas, de las funciones visibles ni de la aceptación del usuario.
 
@@ -226,15 +248,15 @@ Una pantalla visual cuenta solo como preparación visual; una lógica probada cu
 
 | Requisito | Hitos de construcción | Comprobados | Avance estimado |
 | --- | --- | --- | --- |
-| 4.1 Usuarios | Pantalla de acceso; creación de cuentas; verificación real de acceso; identidad y aislamiento de datos | Pantalla del compañero; cuentas de fase 25; separación por UUID de fase 26. Aceptación Android pendiente, sin servidor | 4/4 · 100% de construcción local |
+| 4.1 Usuarios | Pantalla de acceso; creación de cuentas; verificación real de acceso; identidad y aislamiento de datos | Pantalla del compañero; cuentas de fase 25; separación por UUID de fase 26. Recorrido Android ejecutado en 0.6.0, sin servidor | 4/4 · 100% de construcción local |
 | 4.2 Reportes | Modelo y validación; persistencia local técnica; formulario con guardado real autorizado; fotografías | Modelo/validación, persistencia técnica, formulario autorizado y fotografías con copia privada/migración probadas en 0.5.4 | 4/4 · 100% de construcción |
 | 4.3 Geolocalización | Par de coordenadas validado y conservado; captura del dispositivo; permisos y estados GPS; flujo GPS probado | Coordenadas, captura física previa y permisos/estados comprobados. El 11 de octubre de 2026 el usuario confirmó manualmente localización del punto, aceptación dentro del radio y pin visible; versión APK no especificada, sin logs, medidas o guardado físico nuevo | 4/4 · 100% de construcción |
-| 4.4 Consulta | Lectura por folio; lista y permanencia; reportes propios por usuario; seguimiento de estados | Folio, lista/permanencia y espacio de cuenta de fase 26. Fase 27 prepara lectura del historial; falta el recorrido autorizado de cambios y aceptación Android | 3/4 · 75% de construcción |
+| 4.4 Consulta | Lectura por folio; lista y permanencia; reportes propios por usuario; seguimiento de estados | Folio, lista/permanencia y espacio de cuenta de fase 26; historial de lectura de fase 27 ejecutado en Android en 0.6.0. Fase 31 prepara recuperación durable; falta el recorrido autorizado de cambios, su composición productiva y aceptación | 3/4 · 75% de construcción |
 | 4.5 Mapas | Contrato de selección y confirmación; SDK configurado; mapa por zonas y marcadores; flujo visual integrado y probado | Contrato, SDK, zonas/marcadores y flujo visual integrado en 0.5.3: guardado/folio, mapa nativo con calles y pines SQLite, filtros/límite y pin→detalle. La validación nativa usa una fuente de teléfono controlada; la aceptación manual física posterior se acredita por separado en 4.3 | 4/4 · 100% de construcción |
-| 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Fase 27 prepara servicio protegido e historial de lectura; asignación administrativa pendiente. Sin recorrido administrativo completo, ningún hito acreditado | 0/4 · 0% |
+| 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Fase 27 prepara servicio protegido e historial de lectura; fase 31 prepara diario/recibo durables. Asignación pendiente y sin composición administrativa productiva; ningún hito acreditado | 0/4 · 0% |
 | 4.7 Notificaciones | Eventos de cambios; entrega de avisos; permisos y preferencias; flujo completo probado | Ninguno | 0/4 · 0% |
 
-**Avance actual estimado: 19/28 = 67.9% de construcción.** Fases 25/26 construyen cuentas/reportes propios locales; fase 27 prepara historial sin completar el recorrido administrativo. Aceptación Android y asignación administrativa pendientes. Fotografías y aceptación manual GPS anteriores conservan sus hitos/límites. Publicar y repetir pruebas no suman puntos. Faltan seguimiento administrativo y avisos. No declara servidor/sincronización, seguridad de producción o veracidad de incidentes.
+**Avance actual estimado: 19/28 = 67.9% de construcción.** Cuentas/reportes propios e historial de lectura ya tuvieron comprobación Android en 0.6.0. Asignación administrativa, recorrido autorizado de seguimiento y notificaciones continúan pendientes. La recuperación durable de fase 31 y las extensiones E01–E09 no cambian el denominador. Fotografías y aceptación manual GPS anteriores conservan sus hitos/límites. Publicar y repetir pruebas no suman puntos. No declara servidor/sincronización, seguridad de producción o veracidad de incidentes.
 
 ## Antecedentes de cálculo y evidencia
 
@@ -254,4 +276,4 @@ El nuevo commit remoto del compañero `b665a56` añade y ajusta layouts, incluid
 
 Los cortes históricos Unreleased fueron locales. Para 0.4.0a el usuario autorizó expresamente integrar, subir y publicar; la comprobación final y publicación se registran en [Validación](VALIDACION.md) y [Releases](RELEASES.md). La aceptación funcional de los hitos sigue pendiente. El criterio de los hitos se conserva en cada corte para que futuros porcentajes sean comparables; un cambio de alcance o de pesos se documentará antes de comparar resultados.
 
-Las [mejoras futuras](MEJORAS_FUTURAS.md) recogen ideas priorizadas para una revisión posterior. No están implementadas, no fijan una versión oficial ni añaden hitos o porcentaje a este corte.
+El catálogo vigente [Mejoras útiles](MEJORAS_UTILES.md) distingue E01–E03 implementadas/validadas Unreleased y E04–E09 propuestas o guía por fabricante. [Mejoras futuras](MEJORAS_FUTURAS.md) conserva los antecedentes. No fijan una versión oficial ni añaden hitos o porcentaje a este corte.

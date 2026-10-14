@@ -49,6 +49,11 @@ class ReleasedToolsActivity : ReportWorkspaceActivity() {
         findViewById<Button>(R.id.home_help).setOnClickListener {
             startReportActivity(Intent().setClassName(this, "$packageName.help.HelpContactsActivity"))
         }
+        findViewById<Button>(R.id.home_quick_help).setOnClickListener {
+            if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && ensureReportWorkspaceCurrent()) {
+                startActivity(com.example.citizensecurity.help.EmergencyHelpShortcut.entryIntent(this))
+            }
+        }
         findViewById<Button>(R.id.tools_back).setOnClickListener { closeSession() }
         onBackPressedDispatcher.addCallback(this) { closeSession() }
         findViewById<Button>(R.id.home_retry).setOnClickListener { if (ensureReportWorkspaceCurrent()) homeModel.refresh() }

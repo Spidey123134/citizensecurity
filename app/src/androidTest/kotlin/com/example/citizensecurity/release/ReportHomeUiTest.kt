@@ -127,6 +127,21 @@ class ReportHomeUiTest {
         awaitHome()
     }
 
+    @Test fun quickHelpRouteReturnsWithoutLoggingOutOrPreparingAReport() {
+        val app = context.applicationContext as com.example.citizensecurity.CitizenSecurityApplication
+        launchHome()
+        val before = app.accountSession.capture()
+        val journals = journalBytes()
+        clickHome(R.id.home_quick_help)
+        awaitActivity<com.example.citizensecurity.help.EmergencyAccessActivity>()
+        awaitTag("emergency_title")
+        assertSame(before, app.accountSession.capture())
+        assertEquals(0, fixture.refreshCalls)
+        assertEquals(journals, journalBytes())
+        pressBack()
+        awaitHome()
+    }
+
     @Test fun pendingDurableAttemptCanBeOpenedWithItsOriginalFieldsAndIdentity() {
         val request = ReportSubmissionRequest(UUID.randomUUID().toString(), draft(), Instant.now())
         runBlocking { fixture.journal.write(request) }
@@ -461,7 +476,7 @@ class ReportHomeUiTest {
         Log.i("ReportHomeReturnTest", line)
     }
 
-    private val homeRouteIds get() = listOf(R.id.home_help, R.id.tools_preview_interface, R.id.tools_reports, R.id.tools_reports_map, R.id.tools_back)
+    private val homeRouteIds get() = listOf(R.id.home_help, R.id.home_quick_help, R.id.tools_preview_interface, R.id.tools_reports, R.id.tools_reports_map, R.id.tools_back)
 
     private companion object { const val DESCRIPTION = "Un cable caído impide pasar por la entrada norte del parque." }
 }

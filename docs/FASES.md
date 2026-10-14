@@ -1,5 +1,19 @@
 # Fases de CITIZENSECURITY
 
+## Fases 31 y 32 — seguimiento durable y acceso rápido, Unreleased
+
+**14 de octubre de 2026.** Se continúa el PDF/cliente con [fase 31](FASE_31.md): diario privado de una solicitud de cambio, recuperación explícita por lectura del recibo y reconocimiento con reverificación antes de limpiar el cuerpo exacto. Conserva dueño/actor/UUID y autorización denegada por defecto, sin componer administración o asignar roles.
+
+[Fase 32](FASE_32.md) implementa la idea del usuario sobre atajos: Ayuda inmediata pública, sin login/GPS ni contactos privados, atajo estático del icono y solicitud explícita de acceso en Inicio si el launcher la admite. La comprobación/petición de fijado trabaja fuera del hilo de interfaz. El marcador exige gesto visible y dispositivo desbloqueado. No modifica botones físicos/SOS ni implementa un mosaico de Ajustes rápidos.
+
+El nuevo [catálogo E01–E09](MEJORAS_UTILES.md) documenta origen, prioridad, estado y aceptación de las mejoras adicionales al PDF: evidencia, contactos, atajos, mensajes revisados, múltiples fotos, institución y zonas. [Plan](PLAN_DEL_PROYECTO.md) y [Avance](AVANCE.md) corrigen la matriz vigente, separando los pendientes históricos de los actuales.
+
+Las implementaciones están validadas con JVM y pruebas nativas en un emulador aislado **API 37**; resultados ejecutados y recibos en [Validación](VALIDACION.md). No se realizaron llamadas ni se aprobó un acceso fijado real, y no se atribuye ejecución API 26 o prueba física de botones/launcher. **19/28 = 67.9% permanece**, nueve criterios originales pendientes. Código Unreleased, Android **0.6.0 / código 28**, sin otra APK publicada, tag o Release. Asignación administrativa y composición del panel pendientes; login/loading del compañero y datos conservados.
+
+El cierre aprobó **1062 casos distintos, 112 nuevos**, cero fallos/errores/omitidos finales: 997 JVM y 65 Android API 37. Lint app cero errores/22 avisos por variante, datos sin incidencias. Las cuatro de Ayuda volvieron a aprobar tras revalidar vigencia después de la consulta Keyguard previa al fijado; la repetición no aumenta el total.
+
+## Antecedente — fases 29 y 30
+
 ## Fases 29 y 30 — utilidad práctica, Unreleased
 
 El usuario confirmó **proyecto académico en México** y pidió evidencia, contactos y utilidad para un posible uso por policías. [Fase 29](FASE_29.md) añade una ficha PDF revisada desde un folio real, con compartir explícito. [Fase 30](FASE_30.md) añade Ayuda y contactos: marcador de 911/089 y hasta cinco contactos manuales privados por cuenta. Una llamada no necesita preparar reporte o conseguir GPS; una ficha permite conservar y entregar información organizada después.

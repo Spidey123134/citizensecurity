@@ -27,6 +27,7 @@ import com.example.citizensecurity.domain.ReportHistoryQuery
 import com.example.citizensecurity.domain.ReportHistoryPage
 import com.example.citizensecurity.domain.ReportStatusRepository
 import com.example.citizensecurity.domain.ReportStatusChangeCommand
+import com.example.citizensecurity.domain.ReportStatusChangeReceipt
 import com.example.citizensecurity.domain.ReportStatusEvent
 import com.example.citizensecurity.domain.ReportStatusEventKind
 import com.example.citizensecurity.domain.ReportStatusPermissionDeniedException
@@ -177,12 +178,28 @@ class SqliteReportRepository(
     }
 
     /** Denied before opening storage by default; the app exposes no administrative authority. */
-    override suspend fun changeStatus(command: ReportStatusChangeCommand): ReportStatusEvent = withOpenRepository {
+    override suspend fun changeStatus(command: ReportStatusChangeCommand): ReportStatusEvent =
+        changeStatusWithActor(command, null, {})
+
+    /** Recovery fixes the actor before storage is opened; changing authorization cannot mutate. */
+    suspend fun changeStatusForActor(command: ReportStatusChangeCommand, expectedActor: String,
+        checkCurrent: () -> Unit = {}): ReportStatusEvent {
+        requireCanonicalActor(expectedActor)
+        return changeStatusWithActor(command, expectedActor, checkCurrent)
+    }
+
+    private suspend fun changeStatusWithActor(command: ReportStatusChangeCommand, expectedActor: String?,
+        checkCurrent: () -> Unit): ReportStatusEvent = withOpenRepository {
+        checkCurrent()
+        ensureActive()
         val actor = authorizedActor(command)
+        if (expectedActor != null && actor != expectedActor) throw ReportStatusPermissionDeniedException()
         ensureActive()
         val database = databaseForWrite()
         ensureActive()
+        checkCurrent()
         requireSameAuthority(command, actor)
+        ensureActive()
         database.beginTransaction()
         try {
             val existing = database.rawQuery(ReportHistorySql.FIND_OPERATION, arrayOf(command.operationId)).use { cursor ->
@@ -196,7 +213,9 @@ class SqliteReportRepository(
                     event.toStatus != command.targetStatus || event.reason != command.reason || event.actorAccountId != actor
                 ) throw ReportStatusOperationConflictException()
                 ensureActive()
+                checkCurrent()
                 requireSameAuthority(command, actor)
+                ensureActive()
                 database.setTransactionSuccessful()
                 return@withOpenRepository event
             }
@@ -216,12 +235,58 @@ class SqliteReportRepository(
             if (changed != 1) throw ReportStatusConflictException()
             insertHistoryEvent(database, command.reportId, event)
             ensureActive()
+            checkCurrent()
             requireSameAuthority(command, actor)
             ensureActive()
             database.setTransactionSuccessful()
             event
         } finally { database.endTransaction() }
     }
+
+    /** Read an exact receipt without creating, upgrading, repairing, or opening a missing file. */
+    suspend fun findStatusChange(command: ReportStatusChangeCommand, expectedActor: String? = null,
+        checkCurrent: () -> Unit = {}): ReportStatusChangeReceipt? =
+        withOpenRepository {
+            checkCurrent()
+            ensureActive()
+            expectedActor?.let(::requireCanonicalActor)
+            val actor = authorizedActor(command)
+            if (expectedActor != null && actor != expectedActor) throw ReportStatusPermissionDeniedException()
+            ensureActive()
+            val receipt = if (databaseFile == null) {
+                // A previously opened in-memory helper already owns schema 3; never create it here.
+                if (!databaseWasOpened) null else readStatusChangeReceipt(databaseForRead(), command, actor)
+            } else if (!databaseFile.exists()) null else {
+                check(databaseFile.isFile) { "La base local no es un archivo válido." }
+                SQLiteDatabase.openDatabase(databaseFile.path, null, SQLiteDatabase.OPEN_READONLY,
+                    android.database.DatabaseErrorHandler { broken ->
+                        runCatching { broken.close() }
+                        throw android.database.sqlite.SQLiteDatabaseCorruptException(
+                            "La base local contiene datos dañados. No se ha eliminado ni recreado.")
+                    }).use { database ->
+                    check(database.version == 3) { "La recuperación requiere el esquema de historial existente." }
+                    ensureActive(); checkCurrent(); requireSameAuthority(command, actor); ensureActive()
+                    readStatusChangeReceipt(database, command, actor)
+                }
+            }
+            ensureActive(); checkCurrent(); requireSameAuthority(command, actor); ensureActive()
+            receipt
+        }
+
+    private fun readStatusChangeReceipt(database: SQLiteDatabase, command: ReportStatusChangeCommand,
+        actor: String): ReportStatusChangeReceipt? =
+        database.rawQuery(ReportHistorySql.FIND_OPERATION, arrayOf(command.operationId)).use { cursor ->
+            if (!cursor.moveToFirst()) null else {
+                val reportId = cursor.getString(cursor.getColumnIndexOrThrow("report_id"))
+                val event = cursor.toHistoryEvent()
+                if (reportId != command.reportId || event.kind != ReportStatusEventKind.STATUS_CHANGED ||
+                    event.operationId != command.operationId || event.sequence != command.expectedSequence + 1L ||
+                    event.fromStatus != command.expectedStatus || event.toStatus != command.targetStatus ||
+                    event.reason != command.reason || event.actorAccountId != actor
+                ) throw ReportStatusOperationConflictException()
+                ReportStatusChangeReceipt(reportId, event)
+            }
+        }
 
     private data class HistoryHead(val status: ReportStatus, val sequence: Long, val complete: Boolean)
     private fun readHistoryHead(database: SQLiteDatabase, reportId: String): HistoryHead? =
