@@ -46,6 +46,9 @@ class ReleasedToolsActivity : ReportWorkspaceActivity() {
         findViewById<Button>(R.id.tools_reports_map).setOnClickListener {
             startReportActivity(Intent(this, ReportsMapActivity::class.java))
         }
+        findViewById<Button>(R.id.home_help).setOnClickListener {
+            startReportActivity(Intent().setClassName(this, "$packageName.help.HelpContactsActivity"))
+        }
         findViewById<Button>(R.id.tools_back).setOnClickListener { closeSession() }
         onBackPressedDispatcher.addCallback(this) { closeSession() }
         findViewById<Button>(R.id.home_retry).setOnClickListener { if (ensureReportWorkspaceCurrent()) homeModel.refresh() }

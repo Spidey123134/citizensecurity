@@ -1,5 +1,17 @@
 # Trabajo del equipo
 
+## Trabajo compartido — fases 29 y 30, Unreleased
+
+El usuario confirmó proyecto académico en México. Se trabaja en [Ficha del incidente](FASE_29.md), PDF revisado desde el folio, y [Ayuda y contactos](FASE_30.md), marcador y contactos manuales privados. El compañero conserva **la interfaz del login y loading**. La APK publicada sigue siendo 0.6.0 / código 28 y no contiene estas mejoras; este incremento actualiza código, sin versión, tag, Release o APK nuevos.
+
+Para obtener el código conserva tus cambios, ejecuta `git fetch origin`, `git switch main` y `git pull --ff-only origin main`; sincroniza Gradle y selecciona **app**. Si Git informa divergencia, integra los cambios conservando el trabajo propio. Los recorridos nuevos se abren desde Inicio → Ayuda y contactos y desde el detalle de un reporte guardado → Ficha del incidente.
+
+Mantén el ReportWorkspace capturado por pantalla y las comprobaciones de sesión/folio/generación. Preparar el PDF y abrir el selector son gestos separados. FileProvider concede lectura de una copia en evidence_shared; no ampliar su ruta a bases, fotos privadas o todo filesDir. La ficha no crea otra ubicación GPS, cambia estados ni acredita recepción policial. Los contactos usan revisión CAS y lectura tras incertidumbre; un archivo inválido nunca se sustituye automáticamente con vacío.
+
+Asignación administrativa pendiente, admin/admin académico, sin integración institucional confirmada. **19/28 = 67.9% permanece** y las pruebas nuevas se documentan separadas en [Validación](VALIDACION.md). Los bloques siguientes conservan los cortes anteriores.
+
+## Antecedente — entrega 0.6.0
+
 ## Trabajo compartido 0.6.0 — entrega agrupada
 
 El usuario autorizó terminar fase 27, avanzar una base pequeña de fase 28 y entregar APK 0.6.0 / código 28. Reúne lo trabajado desde 0.5.7: cuentas locales/datos propios, páginas/restauración de consulta, filtros del mapa/lista de zona e historial real. [Release y APK](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.0) · [Entrega](ENTREGA_0_6_0.md) · [Probar 0.6.0](PROBAR_0_6_0.md).

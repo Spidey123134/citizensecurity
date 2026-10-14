@@ -50,6 +50,10 @@ import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.Report
 import com.example.citizensecurity.domain.ReportStatus
+import com.example.citizensecurity.evidence.ReportEvidenceContent
+import com.example.citizensecurity.evidence.ReportEvidenceState
+import com.example.citizensecurity.evidence.ReportEvidenceViewModel
+import com.example.citizensecurity.evidence.evidenceRequest
 import com.example.citizensecurity.report.ReportQueryState
 import com.example.citizensecurity.report.ReportQueryViewModel
 import com.example.citizensecurity.report.ReportPagedSearchViewModel
@@ -71,6 +75,8 @@ fun ReportsScreen(
     onClose: () -> Unit,
     onMap: (String) -> Unit,
     history: ReportHistoryViewModel? = null,
+    evidence: ReportEvidenceViewModel? = null,
+    onShareEvidence: (ReportEvidenceState.Ready, () -> Boolean) -> Unit = { _, _ -> },
 ) {
     val queryState by query.state.collectAsStateWithLifecycle()
     val pageState by pages.state.collectAsStateWithLifecycle()
@@ -116,7 +122,7 @@ fun ReportsScreen(
     val focus = LocalFocusManager.current
     val scroll = rememberLazyListState()
     val queryBusy = queryState is ReportQueryState.Loading
-    val leaveDetail = { query.cancelQuery(); history?.clear(); detailFolio = null }
+    val leaveDetail = { query.cancelQuery(); history?.clear(); evidence?.clear(); detailFolio = null }
     fun requestSearchRestart() {
         restartSearchPending = true
         searchRevision++
@@ -155,6 +161,7 @@ fun ReportsScreen(
             else -> null
         }
         if (detailFolio == null || historyFolio != detailFolio) history?.clear()
+        if (detailFolio == null || evidence?.state?.value?.evidenceRequest()?.reportId != detailFolio) evidence?.clear()
         if (detailFolio == null) query.cancelQuery() else query.findByFolio(detailFolio.orEmpty())
     }
     LaunchedEffect(validatedFilters, detailFolio != null) {
@@ -197,7 +204,7 @@ fun ReportsScreen(
                 when (val state = queryState) {
                     is ReportQueryState.Found -> {
                         if (state.report.id == detailFolio) {
-                            item { ReportDetail(state.report, searchZone, onMap, history) {
+                            item { ReportDetail(state.report, searchZone, onMap, history, evidence, onShareEvidence) {
                                 detailFolio == state.report.id && query.state.value === state
                             } }
                         } else {
@@ -402,7 +409,9 @@ private fun ReportCard(report: Report, zone: ZoneId, enabled: Boolean, onSelect:
 }
 
 @Composable
-private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit, history: ReportHistoryViewModel?, isCurrent: () -> Boolean) {
+private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit, history: ReportHistoryViewModel?,
+    evidence: ReportEvidenceViewModel?, onShareEvidence: (ReportEvidenceState.Ready, () -> Boolean) -> Unit,
+    isCurrent: () -> Boolean) {
     val context = LocalContext.current
     var copied by remember(report.id) { mutableStateOf(false) }
     Card(Modifier.fillMaxWidth()) {
@@ -423,6 +432,7 @@ private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit, 
             DetailField("Estado local", statusLabel(report.status))
             if (history != null) ReportHistoryContent(report, zone, history, isCurrent)
             DetailField("Descripción", report.description, "report_description")
+            if (evidence != null) ReportEvidenceContent(report, zone, evidence, isCurrent, onShareEvidence)
             com.example.citizensecurity.report.ReportPhotoContent(report.photo, tagPrefix = "report_photo")
             DetailField("Fecha del incidente", formatReportTime(report.occurredAt, zone))
             DetailField("Guardado en este teléfono", formatReportTime(report.createdAt, zone))

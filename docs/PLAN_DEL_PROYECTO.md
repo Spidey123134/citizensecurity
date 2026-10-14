@@ -1,5 +1,25 @@
 # Plan del proyecto
 
+## Prioridad actual — utilidad práctica, Unreleased
+
+El usuario confirmó que CitizenSecurity es un **proyecto académico en México**. La crítica de que llamar a emergencias puede ser más útil orienta dos recorridos concretos: acceso inmediato al marcador y contactos de confianza, y conservación de una ficha del incidente que después pueda entregarse voluntariamente. La app mantiene los datos locales; guardar un reporte no comunica por sí mismo el incidente a una autoridad.
+
+| Orden | Trabajo | Resultado para el usuario | Relación con el plan original |
+|---|---|---|---|
+| Fase 29 | Ficha PDF desde un folio guardado, revisión de ubicación/foto y compartir explícito | Reunir descripción, fechas, lugar y fotografía seleccionada en un documento legible | Refuerza 4.2 Reportes y 4.4 Consulta; extensión de utilidad sin añadir criterios al porcentaje |
+| Fase 30 | Ayuda y contactos, accesos al marcador de México y hasta cinco teléfonos manuales | Encontrar un contacto o abrir el marcador sin GPS ni formulario previo | Extensión de utilidad; no completa 4.7 Notificaciones ni un envío de emergencia |
+| Siguiente alcance por acordar | Uso institucional y seguimiento autorizado | Definir quién recibe, quién puede revisar/cambiar estados y cómo se confirma la recepción | Retomar 4.4 seguimiento / 4.6 Administración con permisos reales, servidor y recuperación durable |
+
+La ficha contiene prioridad declarada y estado local, conserva fechas con zona y permite elegir ubicación/foto antes de prepararla. El selector Android se abre por otro gesto; la elección y el envío dependen de la aplicación destinataria. La foto es la copia normalizada que guarda CitizenSecurity. Organizarla no demuestra autenticidad forense, veracidad del incidente o recepción oficial. [Fase 29](FASE_29.md).
+
+Ayuda conserva hasta cinco contactos manuales por cuenta local; el acceso académico tiene su propio espacio compartido en este teléfono. Abre el marcador de 911 para emergencias y 089 para denuncia anónima, conforme a [SSPC México](https://www.gob.mx/sspc/es/articulos/sabes-cual-es-la-diferencia-entre-los-numeros-088-089-y-911). El usuario revisa el número y pulsa llamar. No hace falta crear reporte, conceder ubicación o leer la agenda. [Fase 30](FASE_30.md).
+
+Para una colaboración real con policías todavía habría que acordar una institución receptora, consentimiento y datos necesarios, permisos verificables, transporte/almacenamiento, recepción y seguimiento. Ese alcance no está confirmado ni se representa con controles ficticios. **La asignación administrativa permanece pendiente**; admin/admin sigue académico y el escritor de cambios de fase 28 continúa sin conexión productiva hasta disponer de actor/permiso y diario durable.
+
+**19/28 = 67.9% permanece**, mismos hitos y pesos del PDF. Fases nuevas, filtros, cantidad de pruebas o publicaciones no añaden puntos. Código Unreleased, Android **0.6.0 / código 28**, sin nueva versión, tag, Release ni APK publicada. Actualizar GitHub con código validado sigue autorizado; la entrega binaria futura necesita su instrucción. Se conservan login/loading del compañero, GPS 5 km, datos e historial. [Validación](VALIDACION.md) registra el nuevo cierre técnico por separado; los bloques siguientes son antecedentes.
+
+## Antecedente — entrega 0.6.0
+
 ## Entrega agrupada 0.6.0 — fases 21–28
 
 El usuario autorizó cerrar fase 27, preparar una base pequeña de la siguiente y publicar APK 0.6.0 / código Android 28. La entrega reúne las mejoras de Consulta/Mapas (21–24), cuentas y aislamiento local (25/26), historial real (27) y coordinación interna de cambios (28). El compañero conserva la interfaz del login y loading. [Entrega](ENTREGA_0_6_0.md) · [Validación agrupada](VALIDACION.md).

@@ -2,7 +2,14 @@
 
 ## [Unreleased]
 
-Sin cambios posteriores registrados.
+- Validación: 91 casos nuevos aprobados, 1000 distintos ejecutados en este corte; PDF revisado en todas sus páginas y comprobación de campos omitidos. Corregida propagación de fallos de escritura que el puente PDF nativo podía consumir; un parcial no queda listo para compartir. Lint sin errores. Detalle en [Validación](docs/VALIDACION.md).
+
+- Fase 29: ficha PDF desde un reporte guardado, con folio, descripción, tipo, prioridad indicada, estado local y fechas/zona. Revisión de ubicación y fotografía opcionales antes de preparar; compartir requiere otro gesto y abre el selector Android.
+- PDF paginado con fotografía normalizada opcional, comprobación de integridad y copia de caché compartida solo para lectura. Un fallo de preparación conserva el reporte; no se obtiene GPS nuevo ni se envía automáticamente.
+- Fase 30: Ayuda y contactos desde Inicio. Accesos al marcador de 911/089 para México y hasta cinco contactos ingresados manualmente, con guardado privado por cuenta, espacio académico separado, eliminación confirmada y recuperación por lectura ante un cambio incierto.
+- Los gestos comprueban sesión y resultado vigente; no se lee la agenda, no se llama automáticamente y no se solicitan permisos de llamadas, SMS o ubicación para estas funciones.
+- El alcance sigue siendo académico: la ficha organiza datos para entregarlos voluntariamente, sin afirmar recepción policial, verificación del incidente o autenticidad forense. Administración y asignación de permisos siguen pendientes. El plan original conserva 19/28 = 67.9%.
+- Código de desarrollo sin nueva versión, tag, Release o APK publicada. Android permanece en 0.6.0 / código 28; la APK oficial 0.6.0 corresponde al corte anterior. Alcance y comprobaciones en [Fase 29](docs/FASE_29.md), [Fase 30](docs/FASE_30.md) y [Validación](docs/VALIDACION.md).
 
 ## [0.6.0] — 2026-10-13
 
