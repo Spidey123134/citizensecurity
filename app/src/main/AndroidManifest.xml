@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".CitizenSecurityApplication"
@@ -29,6 +30,7 @@
         <activity android:name=".preview.ReportDraftActivity" android:exported="false" />
         <activity android:name=".reports.ReportsActivity" android:exported="false" />
         <activity android:name=".reports.ReportActivityActivity" android:exported="false" />
+        <activity android:name=".alerts.ReportAlertsActivity" android:exported="false" />
         <activity android:name=".reports.ReportsMapActivity" android:exported="false" />
         <activity android:name=".account.CreateAccountActivity" android:exported="false" />
         <activity android:name=".help.HelpContactsActivity" android:exported="false" />

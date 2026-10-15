@@ -28,6 +28,10 @@ class ReportActivityActivity : ReportWorkspaceActivity() {
                             startReportActivity(Intent(this, ReportsActivity::class.java)
                                 .putExtra(ReportsActivity.EXTRA_FOLIO, entry.reportId))
                         }
+                    }, onAlerts = {
+                        if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && ensureReportWorkspaceCurrent()) {
+                            startReportActivity(Intent(this, com.example.citizensecurity.alerts.ReportAlertsActivity::class.java))
+                        }
                     }, onClose = {
                         if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
                             ensureReportWorkspaceCurrent()) finish()

@@ -1,12 +1,14 @@
 # CITIZENSECURITY
 
-## Desarrollo Unreleased — fase 35: actividad real de reportes
+## Desarrollo Unreleased — fases 35 y 36: actividad y avisos
 
 Desde **Inicio → Actividad de reportes** se consultan guardados y cambios de estado del espacio actual. **Toda la actividad** incluye creaciones reales; **Cambios de estado** muestra únicamente transiciones registradas. Cada evento abre su folio; páginas de 50, anterior/siguiente, actualización desde el inicio y recuperación de errores conservan sesión y consulta al girar.
 
 La base de reportes migra aditivamente a esquema 4 para añadir el índice de actividad, conservando fotos, folios e historial. Los históricos sin eventos permanecen sin actividad inventada. El guardado local se distingue de un cambio posterior y de una recepción institucional. [Fase 35](docs/FASE_35.md) · [Validación](docs/VALIDACION.md).
 
-Este código prepara el consumidor de cambios de **4.7 Notificaciones**; los avisos Android y sus preferencias son el siguiente alcance. La asignación administrativa sigue pendiente. **19/28 = 67.9%** conserva los criterios del PDF. La descarga oficial siguiente corresponde al corte 0.6.1/fases 29–34; este avance se mantiene Unreleased.
+En **Actividad → Avisos de cambios de estado** puedes activar el permiso y la preferencia de tu acceso. **Revisar cambios** busca transiciones registradas y publica un resumen general de Android, sin datos privados; repetir la revisión evita avisar de las mismas operaciones. Es una revisión manual desde la app, sin ejecución en segundo plano. Desactivar conserva su registro y retira el resumen. [Fase 36](docs/FASE_36.md).
+
+El avance del PDF llega a **20/28 = 71.4%** por permisos/preferencias comprobados. La asignación administrativa sigue pendiente: no se crean cambios ficticios ni se concede un rol a `admin/admin`. La descarga oficial siguiente corresponde al corte 0.6.1/fases 29–34; las fases 35/36 permanecen como código Unreleased. [Avance vigente](docs/AVANCE.md).
 
 ## Entrega oficial 0.6.1
 
@@ -16,7 +18,7 @@ Este código prepara el consumidor de cambios de **4.7 Notificaciones**; los avi
 
 **1237 casos distintos aprobados, 307 definiciones nuevas respecto a la APK 0.6.0**, cero fallos/errores/omitidos finales: 1074 JVM y 163 Android API 37. Lint sin errores, con 22 avisos por variante de app y ninguna incidencia de datos. Firma, paquete, versión y checksum del APK comprobados; no se atribuye una prueba nueva de instalación como actualización, cámara física, muerte completa del proceso o ejecución física API 26. [Validación](docs/VALIDACION.md).
 
-El PDF mantiene **19/28 = 67.9%**, con nueve criterios pendientes de seguimiento autorizado, administración y notificaciones. Cámara/ayuda amplían utilidad sin sumar criterios ya completos. La asignación administrativa sigue pendiente y `admin/admin` mantiene acceso académico; login/loading del compañero, esquemas y datos históricos se conservan. [Plan](docs/PLAN_DEL_PROYECTO.md) · [Mejoras útiles](docs/MEJORAS_UTILES.md).
+En ese corte el PDF quedó en **19/28 = 67.9%**, con nueve criterios pendientes de seguimiento autorizado, administración y notificaciones. Cámara/ayuda amplían utilidad sin sumar criterios ya completos. La asignación administrativa sigue pendiente y `admin/admin` mantiene acceso académico; login/loading del compañero y datos históricos se conservan. El porcentaje del código posterior se registra arriba. [Plan](docs/PLAN_DEL_PROYECTO.md) · [Mejoras útiles](docs/MEJORAS_UTILES.md).
 
 ## Antecedente — preparación Unreleased de 0.6.1
 

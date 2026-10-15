@@ -1,5 +1,15 @@
 # Fases de CITIZENSECURITY
 
+## Fase 36 — preferencias y avisos de cambios, Unreleased
+
+Desde Actividad se activa voluntariamente el permiso y la preferencia por acceso. Revisar cambios consulta transiciones reales y prepara un único aviso general de Android, sin datos privados. Registro durable por dueño, deduplicación, revisión acotada con continuación y recuperación explícita ante incertidumbre. Sin revisión en segundo plano ni administración habilitada. [Alcance y límites](FASE_36.md) · [Validación](VALIDACION.md) · [Avance vigente](AVANCE.md).
+
+Android conserva 0.6.1/código 29 y su APK oficial; las fases 35/36 son código Unreleased. La asignación administrativa sigue pendiente.
+
+**20/28 = 71.4%:** se completa permisos/preferencias de 4.7. Los otros tres criterios de avisos esperan el recorrido productivo autorizado; los cambios de pruebas no conceden roles. Fase 36 añade 87 definiciones aprobadas (57 JVM/30 Android).
+
+## Antecedente — fase 35
+
 ## Fase 35 — actividad de reportes, Unreleased
 
 Centro visible desde Inicio para consultar creaciones y cambios realmente registrados, filtrar transiciones y abrir el folio. Fuente única SQL paginada, una página de 50 y hasta 50 posiciones anteriores; reintento, giro y sesión revocada comprobados en el cierre. Migración aditiva del índice a esquema 4, fotos/historial conservados y recibos 3/4 de solo lectura. [Alcance y límites](FASE_35.md) · [Validación](VALIDACION.md).

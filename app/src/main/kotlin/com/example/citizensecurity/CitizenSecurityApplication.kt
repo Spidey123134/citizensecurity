@@ -37,10 +37,39 @@ import com.example.citizensecurity.maps.MapsReadinessChecker
 import com.example.citizensecurity.maps.ReportMapViewModel
 import com.example.citizensecurity.report.ReportQueryViewModel
 import com.example.citizensecurity.report.ReportViewModel
+import com.example.citizensecurity.alerts.AndroidReportAlertsPublisher
+import com.example.citizensecurity.data.ReportAlertsStore
+import com.example.citizensecurity.domain.ReportAlertsRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.launch
 
 open class CitizenSecurityApplication : Application() {
     open val accountRepository: AccountRepository by lazy { SqliteAccountRepository(this) }
     val accountSession = LocalAccountSession()
+
+    override fun onCreate() {
+        super.onCreate()
+        // Notifications carry no private payload. Retire our own summary on a new process
+        // or identity transition without acknowledging events or changing preferences.
+        val publisher = AndroidReportAlertsPublisher(this)
+        runCatching(publisher::cancel)
+        CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate).launch {
+            accountSession.state.drop(1).collect { runCatching(publisher::cancel) }
+        }
+    }
+
+    open fun openReportAlertsRepository(session: AccountSessionState, checkCurrent: () -> Unit): ReportAlertsRepository {
+        val checkScope = {
+            check(accountSession.isCurrent(session)) { "La sesión de estos avisos terminó." }
+            checkCurrent()
+        }
+        checkScope()
+        return ReportAlertsStore(this, session.account?.id, checkAccess = checkScope)
+    }
 
     /** Every Activity captures its own owner and GPS evidence before creating any report model. */
     open fun openReportWorkspace(session: AccountSessionState): ReportWorkspace {

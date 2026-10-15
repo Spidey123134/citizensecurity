@@ -1,5 +1,34 @@
 # Validación y comprobaciones del proyecto
 
+## Preferencias y avisos de cambios — fase 36, Unreleased · 15 de octubre de 2026
+
+**1223 casos distintos aprobados en este corte, 87 definiciones nuevas; cero fallos, errores u omitidos finales.** Son 1180 JVM y 43 Android. Se ejecutaron las suites JVM completas y las nativas afectadas; las otras suites nativas del cierre anterior no se repitieron ni se suman a este corte. Un total menor que el de otra fase no elimina sus pruebas ni convierte aquellas ejecuciones en casos nuevos.
+
+| Suite ejecutada | Aprobados | Nuevos |
+| --- | ---: | ---: |
+| Dominio JVM | 187 | 8 contrato/preferencias |
+| Datos JVM / SQLite del host | 127 | 8 codec estricto |
+| App JVM | 866 | 37 modelo y 4 coordinación del permiso |
+| Datos Android | 16 | 16 AtomicFile/CAS/aislamiento |
+| App Android | 27 | 10 publicador y 4 interfaz; 13 regresiones de Actividad/Inicio |
+| **Total distinto** | **1223** | **87** |
+
+Los cuatro recorridos nuevos de interfaz usan el permiso real de Android: entrar no lo pide, el gesto de activar abre el diálogo, denegar conserva la preferencia desactivada y la siguiente concesión explícita la guarda. Un reporte se crea en SQLite y su CREATED no notifica; una transición confirmada con autorización exclusiva del test produce el resumen nativo y registra solo su operationId. Otra revisión no añade IDs ni otra notificación. Giro y retorno desde Ajustes conservan la preferencia; desactivar conserva IDs y retira el resumen. Cambio A→B→A cierra la pantalla antigua y mantiene preferencias separadas; corrupción exige recarga y conserva los bytes. No se obtiene GPS al abrir estas rutas.
+
+El publicador se comprueba con NotificationManager y PendingIntent reales: resumen único silencioso, texto genérico, visibilidad SECRET en la notificación, sin extras privados, destino explícito/inmutable que ignora un fill-in hostil y pasa por Splash/login. El bloqueo real del canal se realiza con **su interruptor de Android Settings**, conservando el permiso general. Preparar de nuevo no lo elude. La cancelación de un intento antiguo respeta un resumen posterior y el cancelado explícito conserva notificaciones ajenas. Los canales de esas pruebas llevan UUID propio y se retiran únicamente esos canales.
+
+El almacén nativo comprueba archivo ausente sin creación, habilitar/registrar/deshabilitar/reabrir, conflicto entre instancias, conservación de IDs, límite 4096 sin recorte, corrupción/UTF-8/tamaño, `.new` incierto, rutas y enlaces, captura del set antes del dispatcher y cancelación/revocación antes/después del commit. Los modelos cubren páginas de 50, máximo 500 por gesto, continuación exacta, exclusión de CREATED, fechas atrasadas, capacidad antes de publicar, cambios de preferencia concurrentes, fallo/cancelación y resultados inciertos que requieren recarga.
+
+**Corrección de concurrencia:** si otra pantalla desactiva mientras una revisión está publicando, el conflicto CAS posterior retira ese intento tardío sin alterar el registro. Los tickets del publicador impiden que su limpieza retire un aviso más nuevo. Cancelación y sesión revocada hacen la misma limpieza, conservando el fallo original y los IDs ya confirmados.
+
+Los intentos iniciales detectaron un helper de test sin receptor TestScope, una assertion de excepción que no contemplaba la copia de stack de coroutines y una constante de visibilidad de plataforma usada en Builder compat; se corrigieron sin desactivar lint. En Android, el canal devolvió NO_OVERRIDE para visibilidad, que solo puede modificar el sistema, mientras la notificación mantuvo SECRET. La prueba inicial de AppOps no representaba el bloqueo de Android en API 37 y se sustituyó por el interruptor real del canal. [Contrato oficial del canal](https://developer.android.com/reference/android/app/NotificationChannel#setLockscreenVisibility(int)). Los logs iniciales se conservan; solo los pases finales cuentan como aprobados.
+
+Kotlin debug/release, ensamblado interno de producto/tests y JVM aprobados. **Lint: app cero errores y 22 advertencias por variante; datos sin incidencias.** Reportes esquema **4**, cuentas **1**, sin cambios de migración en esta fase. Emulador propio de solo lectura **API 37**, sin instalación o borrado en teléfono, nueva aceptación física, ejecución API 26 o muerte completa del proceso. Los eventos autorizados de pruebas no conceden un rol productivo; la asignación administrativa sigue pendiente. La revisión de avisos es manual, sin servidor o trabajo en segundo plano; notify aceptado no demuestra lectura, presentación efectiva o recepción institucional.
+
+**20/28 = 71.4%** suma únicamente permisos/preferencias de 4.7; conserva pendientes eventos/entrega del recorrido autorizado y su comprobación completa. Recibo local ignorado `.gradle/validacion/alerts36-test-proof.json`, XML JVM y logs `alerts36-release-check`, `alerts36-settings-build`, `alerts36-ui-native`, `alerts36-publisher-native-final`, `alerts36-store-native` y `alerts36-regression-native`. Los 4 UI se aprobaron antes de los 10 del publicador; denegar un permiso concedido durante instrumentación mata el proceso, por lo que esa clase exige emulador inicialmente sin POST_NOTIFICATIONS y ejecuta denegación/concesión en orden.
+
+Android conserva **0.6.1 / código 29**, código Unreleased y sin nueva APK/tag/Release publicada. Verificados el asset y el archivo archivado de la APK oficial: **55 217 523 bytes**, SHA-256 `7395a049aee8cf92324ac31f3c4e08453fb639bcf5103fc8eaa48484302815f1`. [Fase 36](FASE_36.md) · [Plan](PLAN_DEL_PROYECTO.md) · [Avance](AVANCE.md).
+
 ## Actividad real de reportes — fase 35, Unreleased · 14 de octubre de 2026
 
 **1224 casos distintos aprobados en este corte, con 66 definiciones nuevas; cero fallos, errores u omitidos finales.** Son 1123 JVM y 101 Android. Los cierres de entregas y fases anteriores se conservan como antecedentes; sus totales o repeticiones no se añaden a este corte. Las suites nativas que no se repitieron aquí tampoco aumentan este número.

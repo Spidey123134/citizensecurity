@@ -17,6 +17,8 @@ import com.example.citizensecurity.data.PhoneLocationRefreshResult
 import com.example.citizensecurity.data.ReportSubmissionStore
 import com.example.citizensecurity.data.ReportPhotoStore
 import com.example.citizensecurity.data.ReportDraftCheckpointStore
+import com.example.citizensecurity.data.ReportAlertsStore
+import com.example.citizensecurity.domain.ReportAlertsRepository
 import com.example.citizensecurity.domain.ReportDraftCheckpointJournal
 import com.example.citizensecurity.domain.InvalidReportException
 import com.example.citizensecurity.domain.ReportField
@@ -47,6 +49,17 @@ class ReportTestApplication : CitizenSecurityApplication() {
         return ReportWorkspace(session, accountSession, ReportWorkspaceStorage(fixture.repository,
             fixture.repository, fixture.repository, fixture.similarLookup ?: fixture.repository,
             fixture.journal, fixture.checkpoint, fixture.photoStore), fixture::refresh, fixture::currentFix)
+    }
+
+    override fun openReportAlertsRepository(session: AccountSessionState, checkCurrent: () -> Unit): ReportAlertsRepository {
+        val fixture = testFixture ?: return super.openReportAlertsRepository(session, checkCurrent)
+        val checkScope = {
+            check(accountSession.isCurrent(session)) { "This test's captured account session has ended" }
+            checkCurrent()
+        }
+        checkScope()
+        return ReportAlertsStore(this, session.account?.id, checkAccess = checkScope,
+            filenameOverride = fixture.alertsFileNameFor(session.account?.id))
     }
 
     override val reportRepository: IdempotentReportRepository
@@ -94,6 +107,7 @@ class ReportTestFixture internal constructor(private val context: Context) {
     val journal = ReportSubmissionStore(context, journalName)
     val photoStore = ReportPhotoStore(context, "photos_ui_$identity")
     val checkpoint = ReportDraftCheckpointStore(context, "draft_ui_$identity.json")
+    fun alertsFileNameFor(ownerAccountId: String?) = "report_alerts_test_${identity}_${ownerAccountId ?: "academic"}.json"
     var similarLookup: SimilarReportRepository? = null
     @Volatile private var published: DeviceLocationFix? = null
     @Volatile var refreshCalls: Int = 0
