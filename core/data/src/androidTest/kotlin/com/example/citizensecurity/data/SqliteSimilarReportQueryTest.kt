@@ -240,7 +240,7 @@ class SqliteSimilarReportQueryTest {
         assertEquals(first, result.matches.single().report)
         assertEquals(photo, result.matches.single().report.photo)
         assertEquals(before, repository.list())
-        rawDatabase { assertEquals(3, it.version) }
+        rawDatabase { assertEquals(4, it.version) }
         repository.close()
         val reopened = repository(databaseName)
         assertEquals(result, reopened.findSimilar(query()))

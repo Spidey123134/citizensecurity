@@ -66,11 +66,12 @@ internal class ReportDatabase(context: Context, databaseName: String?) :
             """.trimIndent(),
         )
         db.execSQL(ReportHistorySql.CREATE_TABLE)
+        db.execSQL(ReportActivitySql.CREATE_INDEX)
     }
 
     /** Additive upgrades preserve every row; unknown earlier history is never reconstructed. */
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion !in 1..2 || newVersion != VERSION) {
+        if (oldVersion !in 1..3 || newVersion != VERSION) {
             throw SQLiteException(
                 "No hay una migración de reportes de la versión $oldVersion a $newVersion.",
             )
@@ -80,7 +81,8 @@ internal class ReportDatabase(context: Context, databaseName: String?) :
         if (oldVersion == 1) {
             PHOTO_COLUMNS.forEach { declaration -> db.execSQL("ALTER TABLE reports ADD COLUMN $declaration") }
         }
-        db.execSQL(ReportHistorySql.CREATE_TABLE)
+        if (oldVersion < 3) db.execSQL(ReportHistorySql.CREATE_TABLE)
+        db.execSQL(ReportActivitySql.CREATE_INDEX)
     }
 
     override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -90,7 +92,7 @@ internal class ReportDatabase(context: Context, databaseName: String?) :
     }
 
     private companion object {
-        const val VERSION = 3
+        const val VERSION = 4
         val PHOTO_COLUMNS = listOf(
             """
             photo_id TEXT CHECK (photo_id IS NULL OR (

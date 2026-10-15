@@ -1,5 +1,13 @@
 # CITIZENSECURITY
 
+## Desarrollo Unreleased — fase 35: actividad real de reportes
+
+Desde **Inicio → Actividad de reportes** se consultan guardados y cambios de estado del espacio actual. **Toda la actividad** incluye creaciones reales; **Cambios de estado** muestra únicamente transiciones registradas. Cada evento abre su folio; páginas de 50, anterior/siguiente, actualización desde el inicio y recuperación de errores conservan sesión y consulta al girar.
+
+La base de reportes migra aditivamente a esquema 4 para añadir el índice de actividad, conservando fotos, folios e historial. Los históricos sin eventos permanecen sin actividad inventada. El guardado local se distingue de un cambio posterior y de una recepción institucional. [Fase 35](docs/FASE_35.md) · [Validación](docs/VALIDACION.md).
+
+Este código prepara el consumidor de cambios de **4.7 Notificaciones**; los avisos Android y sus preferencias son el siguiente alcance. La asignación administrativa sigue pendiente. **19/28 = 67.9%** conserva los criterios del PDF. La descarga oficial siguiente corresponde al corte 0.6.1/fases 29–34; este avance se mantiene Unreleased.
+
 ## Entrega oficial 0.6.1
 
 **14 de octubre de 2026 · Android 0.6.1 / código 29.** La entrega agrupa **fases 29–34**: ficha PDF revisada para compartir desde un folio, hasta cinco contactos manuales por cuenta, Ayuda inmediata sin login/GPS, atajos del icono y mosaico voluntario de Ajustes rápidos. El reporte permite **tomar una foto con la cámara o elegirla de la galería**; cancelar/fallar conserva la fotografía anterior y los campos. La base durable de cambios de estado queda incluida sin activar un panel administrativo o conceder roles.

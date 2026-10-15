@@ -25,6 +25,10 @@ import com.example.citizensecurity.domain.ReportValidator
 import com.example.citizensecurity.domain.ReportHistoryRepository
 import com.example.citizensecurity.domain.ReportHistoryQuery
 import com.example.citizensecurity.domain.ReportHistoryPage
+import com.example.citizensecurity.domain.ReportActivityEntry
+import com.example.citizensecurity.domain.ReportActivityPage
+import com.example.citizensecurity.domain.ReportActivityQuery
+import com.example.citizensecurity.domain.ReportActivityRepository
 import com.example.citizensecurity.domain.ReportStatusRepository
 import com.example.citizensecurity.domain.ReportStatusChangeCommand
 import com.example.citizensecurity.domain.ReportStatusChangeReceipt
@@ -67,7 +71,7 @@ class SqliteReportRepository(
     private val authorAccountId: String? = null,
     private val statusAuthority: (ReportStatusChangeCommand) -> String = { throw ReportStatusPermissionDeniedException() },
 ) : IdempotentReportRepository, ReportMapRepository, SimilarReportRepository, ReportListPageRepository,
-    ReportHistoryRepository, ReportStatusRepository, Closeable {
+    ReportHistoryRepository, ReportActivityRepository, ReportStatusRepository, Closeable {
 
     private val lock = Any()
     private val validator = ReportValidator()
@@ -177,6 +181,24 @@ class SqliteReportRepository(
         } finally { database.endTransaction() }
     }
 
+    /** One bounded read of recorded activity. The captured workspace supplies account access. */
+    override suspend fun readActivity(query: ReportActivityQuery): ReportActivityPage = withOpenRepository {
+        val database = databaseForRead()
+        ensureActive()
+        val entries = database.rawQuery(ReportActivitySql.page(query), ReportActivitySql.pageArguments(query)).use { cursor ->
+            buildList {
+                while (cursor.moveToNext()) {
+                    ensureActive()
+                    add(ReportActivityEntry(cursor.getString(cursor.getColumnIndexOrThrow("report_id")),
+                        IncidentType.valueOf(cursor.getString(cursor.getColumnIndexOrThrow("incident_type"))),
+                        cursor.toHistoryEvent()))
+                }
+            }
+        }
+        ensureActive()
+        ReportActivityPage(entries.take(query.limit), entries.size > query.limit)
+    }
+
     /** Denied before opening storage by default; the app exposes no administrative authority. */
     override suspend fun changeStatus(command: ReportStatusChangeCommand): ReportStatusEvent =
         changeStatusWithActor(command, null, {})
@@ -254,7 +276,7 @@ class SqliteReportRepository(
             if (expectedActor != null && actor != expectedActor) throw ReportStatusPermissionDeniedException()
             ensureActive()
             val receipt = if (databaseFile == null) {
-                // A previously opened in-memory helper already owns schema 3; never create it here.
+                // A previously opened in-memory helper already owns the current schema; never create it here.
                 if (!databaseWasOpened) null else readStatusChangeReceipt(databaseForRead(), command, actor)
             } else if (!databaseFile.exists()) null else {
                 check(databaseFile.isFile) { "La base local no es un archivo válido." }
@@ -264,7 +286,7 @@ class SqliteReportRepository(
                         throw android.database.sqlite.SQLiteDatabaseCorruptException(
                             "La base local contiene datos dañados. No se ha eliminado ni recreado.")
                     }).use { database ->
-                    check(database.version == 3) { "La recuperación requiere el esquema de historial existente." }
+                    check(database.version in 3..4) { "La recuperación requiere el esquema de historial existente." }
                     ensureActive(); checkCurrent(); requireSameAuthority(command, actor); ensureActive()
                     readStatusChangeReceipt(database, command, actor)
                 }

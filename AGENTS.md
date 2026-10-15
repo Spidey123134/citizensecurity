@@ -1,5 +1,19 @@
 # Trabajo del equipo
 
+## Alcance vigente — fase 35: actividad de reportes, Unreleased
+
+Después de cerrar 0.6.1, el usuario pidió continuar las fases del PDF. La fase 35 compone **Actividad de reportes** desde Inicio: eventos reales CREATED/STATUS_CHANGED del workspace capturado, filtros Todos/Cambios, páginas de 50, entrada al folio e historial. CREATED significa guardado local; no es cambio posterior o recepción institucional. No asignar roles: administración permanece pendiente y escritura denegada por defecto. No notificaciones Android, marcas leído/no leído, GPS, cambios de estado o envío al abrir esta pantalla. **19/28 = 67.9% permanece**.
+
+ReportActivityRepository se captura del repositorio original, con autorización/cancelación antes y después. SQL JOIN filtra antes de LIMIT+1, orden exclusivo por segundos/nanosegundos/operationId, sin OFFSET o list()/N+1. Una página y hasta 50 posiciones anteriores en memoria; sin persistir resultados. Cambiar filtro/actualizar reinicia, giro/volver conserva consulta; retry repite query exacta. Generaciones/identidad impiden resultados/gestos obsoletos y el folio exige Ready vigente. Scroll compara identidad de solicitud también al recibir Ready, porque StateFlow puede confluir Loading y una actualización con valores iguales.
+
+**Reportes esquema 4**, migración aditiva desde 1–3 que añade únicamente el índice global de actividad además de las migraciones históricas necesarias. Conservar reportes, fotos e historial, sin inventar eventos antiguos; cuentas esquema 1. La recuperación por recibo admite esquema 3/4 por conexión de solo lectura sin migrar/reparar/crear. Rechazar esquemas futuros y conservar corrupción. Validación y resultados del corte en docs/VALIDACION.md y docs/FASE_35.md.
+
+Cierre fase 35: **1224 distintos/66 nuevos**, 1123 JVM (179 dominio/119 datos/825 app) y 101 Android (88 datos/13 app), cero fallos/errores/omitidos finales. Lint app 0errores/22avisos por variante, datos 0. Corregido scroll detectado por test nativo al confluir Loading/Ready; los dos fallos iniciales (scroll y assertion de prefijo) quedan como intentos, no aprobaciones extra. Emulador propio API37 cerrado tras pases finales; sin prueba física o notificación Android. Recibo ignorado activity35-test-proof.json, logs activity35-data-native y activity35-ui-final.
+
+Actualizar código validado en GitHub/main sigue autorizado. Código **Unreleased**, Android **0.6.1 / código 29**; la APK oficial 0.6.1 agrupa fases 29–34 y conserva su checksum. No publicar otra APK/tag/Release o incrementar versión por continuar esta fase. Solo emulador propio aislado para validación interna; no instalar/borrar datos en el teléfono. Los bloques inferiores son antecedentes.
+
+## Antecedente — entrega 0.6.1
+
 ## Entrega autorizada 0.6.1 — fases 29–34
 
 El usuario pidió **terminar cámara, hacer una fase más y subir al GitHub como Release 0.6.1**. Autoriza esta entrega concreta con código en main, tag/Release/APK y checksum; sustituye para este corte la restricción de solo código Unreleased. Android **0.6.1 / código 29**, misma firma académica/datos/esquemas y login/loading. No instalar/borrar datos del teléfono sin instrucción. Las preferencias históricas inferiores conservan su contexto.

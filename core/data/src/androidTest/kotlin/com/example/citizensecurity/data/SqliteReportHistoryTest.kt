@@ -81,7 +81,7 @@ class SqliteReportHistoryTest {
             assertEquals(1L, event.sequence)
             assertFalse(repository.readHistory(ReportHistoryQuery(id))!!.completeFromCreation)
         }
-        raw(databaseName) { assertEquals(3, it.version) }
+        raw(databaseName) { assertEquals(4, it.version) }
     }
     @Test fun failedMigrationFromTwoPreservesRowsVersionAndExistingTable(): Unit = runBlocking {
         val databaseName = name()

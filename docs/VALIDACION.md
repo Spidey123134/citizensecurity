@@ -1,5 +1,34 @@
 # Validación y comprobaciones del proyecto
 
+## Actividad real de reportes — fase 35, Unreleased · 14 de octubre de 2026
+
+**1224 casos distintos aprobados en este corte, con 66 definiciones nuevas; cero fallos, errores u omitidos finales.** Son 1123 JVM y 101 Android. Los cierres de entregas y fases anteriores se conservan como antecedentes; sus totales o repeticiones no se añaden a este corte. Las suites nativas que no se repitieron aquí tampoco aumentan este número.
+
+| Suite ejecutada | Aprobados | Nuevos |
+| --- | ---: | ---: |
+| Dominio JVM | 179 | 10 contrato/cursor/página |
+| Datos JVM / SQLite del host | 119 | 8 SQL productivo y migración |
+| App JVM | 825 | 27 modelo y 4 guardas del lector por sesión |
+| Datos Android | 88 | 12 actividad/migración; 76 regresiones |
+| App Android | 13 | 5 actividad; 8 Inicio |
+| **Total distinto** | **1224** | **66** |
+
+Los ocho escenarios del host ejecutan las mismas sentencias SQL productivas: orden de segundos/nanosegundos/UUID, cursor exclusivo, filtro antes de limitar, históricos sin inventar eventos, lectura sin alterar filas, particiones, índice y límite+1. El temporal del verificador se resuelve dentro del directorio temporal y se comprueba antes de retirar únicamente sus archivos.
+
+Los doce nativos nuevos confirman creación/cambio transaccionales y su tipo/actor/motivo reales, paginación global, lectura sin tocar reloj o datos, migración 3→4 con fotografía e historial intactos, legacy sin eventos, rollback de migración fallida, aislamiento con el mismo folio en dos bases, recibos 3/4 leídos sin migrar/escribir, valores numéricos inválidos sin normalizar, cancelación y repositorio cerrado sin crear una base ausente. Se repitieron las suites afectadas de historial, recuperación por recibo, fotos/migraciones, cuentas/aislamiento y consulta de similares: seis clases, 88 casos distintos. Los actores autorizados se suministran exclusivamente dentro de los tests; el producto conserva denegación predeterminada y asignación pendiente.
+
+El modelo verifica consulta sin IO en el constructor, una página de 50 y máximo 50 posiciones anteriores, cambio de filtro, actualización desde el inicio, giro/retorno sin nueva lectura innecesaria, error y reintento exacto, cancelación, respuestas tardías, query/entrada por identidad y sesión revocada. El alias capturado comprueba permiso/cancelación antes y después de leer; no hace list()/N+1, GPS o cambio de estado.
+
+Los cinco recorridos de actividad Android comprueban acceso desde Inicio/vacío honesto, filtro de transiciones con un cambio realmente confirmado por SQLite, conservación del estado de creación aunque el folio tenga uno posterior, apertura de su ficha, 52 eventos en páginas de 50/2, giro/cursor, cambio A→B→A sin mezclar eventos y actualización de una primera página equivalente. Las ocho regresiones de Inicio conservan navegación, sesión, lectura de diarios, orientación/letra grande y cero solicitudes GPS por abrir estas rutas.
+
+**Corrección detectada en Android:** el scroll dependía de observar Loading; una consulta rápida podía confluir directamente a Ready y dejar los eventos nuevos fuera de la vista. Ahora compara la identidad de solicitud al cambiar el estado, incluso con valores de filtro/cursor iguales. La prueba que añadió otro guardado desde el pie de la lista confirma que actualizar muestra ese evento arriba. El primer pase tuvo también una assertion del harness que comparaba un prefijo como texto completo: se corrigió usando substring explícito. El error inicial de compilación estaba en los argumentos posicionales de ReportLocation del test, sustituidos por nombres. Logs iniciales preservados; los 13 recorridos finales aprobaron sobre el código corregido.
+
+Kotlin debug/release, ensamblado interno de producto/tests y JVM aprobados. **Lint: app cero errores y 22 advertencias por variante; datos cero incidencias.** Reportes **esquema 4** mediante índice aditivo, cuentas **esquema 1**. Los datos antiguos se conservan; los reportes sin historial no reciben eventos fabricados. El orden global usa fecha registrada/operación; la secuencia por folio sigue siendo la autoridad de su cronología cuando el reloj retrocede.
+
+Emulador propio de solo lectura **API 37**, sin instalar o borrar nada en el teléfono. No acredita ejecución nativa API 26, muerte completa del proceso, un nuevo GPS físico, recepción policial o notificaciones Android. Esta fase no incluye leído/no leído ni permisos/preferencias de avisos. **19/28 = 67.9% permanece**: el consumidor visible no sustituye entrega de notificaciones o seguimiento administrativo autorizado.
+
+Recibo local ignorado `.gradle/validacion/activity35-test-proof.json`; XML JVM y logs `activity35-verified-build`, `activity35-scroll-build`, `activity35-data-native` y `activity35-ui-final`. Android mantiene **0.6.1 / código 29**; código Unreleased, sin otra APK/tag/Release publicada. La APK oficial v0.6.1 conserva SHA-256 `7395a049aee8cf92324ac31f3c4e08453fb639bcf5103fc8eaa48484302815f1`. [Fase 35](FASE_35.md) · [Plan](PLAN_DEL_PROYECTO.md) · [Avance](AVANCE.md).
+
 ## Cierre de entrega 0.6.1 — fases 29–34 · 14 de octubre de 2026
 
 **1237 casos distintos aprobados en los recibos de este cierre; cero fallos, errores u omitidos finales.** Son 1074 JVM y 163 Android. Hay **307 definiciones nuevas frente a la entrega 0.6.0**, incluidas las **33 de la fase 34** (28 JVM y cinco Android). Los cortes históricos siguientes y sus repeticiones no se suman a este total.
