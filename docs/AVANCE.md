@@ -1,5 +1,7 @@
 # Avance del plan del proyecto
 
+**Fase 37 / E06, Unreleased:** mensaje revisado desde un folio para un contacto, ubicación voluntaria y composición SMS por segundo gesto, sin envío automático. **20/28 = 71.4% permanece**: amplía utilidad sin sumar criterios del PDF. [Fase 37](FASE_37.md) · [Validación](VALIDACION.md).
+
 **Fase 36, Unreleased:** preferencia de avisos por cuenta, permiso de Android por gesto y revisión manual de cambios registrados desde Actividad. Resumen general y registro durable de operaciones aceptadas; sin datos privados en el aviso. [Fase 36](FASE_36.md) · [Validación](VALIDACION.md).
 
 **Entrega 0.6.1 — 14 de octubre de 2026 · código Android 29:** fases 29–34 agrupadas, con cámara/galería, ficha PDF, contactos, Ayuda inmediata/atajos y mosaico de Ajustes rápidos. Amplían utilidad y la fotografía ya construida, por lo que **19/28 = 67.9%** conserva los mismos criterios y nueve pendientes. [Entrega](ENTREGA_0_6_1.md) · [Pruebas y límites](VALIDACION.md). Administración y asignación siguen pendientes.
@@ -20,7 +22,7 @@
 
 Faltan **8 criterios originales**: uno de seguimiento, cuatro administrativos y tres de notificaciones. La asignación administrativa sigue pendiente por decisión del usuario; no existe un panel productivo de cambios ni roles reales. Los cambios autorizados exclusivamente dentro de pruebas comprueban la integración, sin conceder permisos a una cuenta del producto. Las comprobaciones se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
 
-La APK oficial **0.6.1** contiene fases 29–34 y conserva su cierre de 1237 casos distintos. Las fases 35/36 se mantienen como código **Unreleased**; no se incorporan a esa descarga por actualizar main. Los resultados de cada corte están separados en [Validación](VALIDACION.md), sin sumar repeticiones. Las nativas API 37 no acreditan ejecución física, muerte completa del proceso o recepción institucional.
+La APK oficial **0.6.1** contiene fases 29–34 y conserva su cierre de 1237 casos distintos. Las fases 35–37 se mantienen como código **Unreleased**; no se incorporan a esa descarga por actualizar main. Los resultados de cada corte están separados en [Validación](VALIDACION.md), sin sumar repeticiones. Las nativas API 37 no acreditan ejecución física, muerte completa del proceso o recepción institucional.
 
 [Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Plan](PLAN_DEL_PROYECTO.md) · [Fases](FASES.md) · [Release 0.6.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1). Android **0.6.1 / código 29**, reportes esquema 4 y cuentas 1. Los bloques siguientes conservan sus cifras y pendientes históricos; sus marcas Unreleased describen aquella preparación.
 

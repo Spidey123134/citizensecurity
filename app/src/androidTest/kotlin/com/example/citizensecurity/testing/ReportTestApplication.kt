@@ -2,6 +2,7 @@ package com.example.citizensecurity.testing
 
 import android.Manifest
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.ParcelFileDescriptor
@@ -18,12 +19,15 @@ import com.example.citizensecurity.data.ReportSubmissionStore
 import com.example.citizensecurity.data.ReportPhotoStore
 import com.example.citizensecurity.data.ReportDraftCheckpointStore
 import com.example.citizensecurity.data.ReportAlertsStore
+import com.example.citizensecurity.data.TrustedContactsStore
 import com.example.citizensecurity.domain.ReportAlertsRepository
+import com.example.citizensecurity.domain.TrustedContactsRepository
 import com.example.citizensecurity.domain.ReportDraftCheckpointJournal
 import com.example.citizensecurity.domain.InvalidReportException
 import com.example.citizensecurity.domain.ReportField
 import com.example.citizensecurity.domain.ValidationErrors
 import java.io.IOException
+import java.io.File
 import com.example.citizensecurity.data.SqliteReportRepository
 import com.example.citizensecurity.domain.DeviceLocationFix
 import com.example.citizensecurity.domain.IdempotentReportRepository
@@ -60,6 +64,16 @@ class ReportTestApplication : CitizenSecurityApplication() {
         checkScope()
         return ReportAlertsStore(this, session.account?.id, checkAccess = checkScope,
             filenameOverride = fixture.alertsFileNameFor(session.account?.id))
+    }
+
+    override fun openTrustedContactsRepository(session: AccountSessionState, checkCurrent: () -> Unit): TrustedContactsRepository {
+        val fixture = testFixture ?: return super.openTrustedContactsRepository(session, checkCurrent)
+        val checkScope = {
+            check(accountSession.isCurrent(session)) { "This test's captured account session has ended" }
+            checkCurrent()
+        }
+        checkScope()
+        return TrustedContactsStore(fixture.contactsContext, session.account?.id, checkScope)
     }
 
     override val reportRepository: IdempotentReportRepository
@@ -108,6 +122,17 @@ class ReportTestFixture internal constructor(private val context: Context) {
     val photoStore = ReportPhotoStore(context, "photos_ui_$identity")
     val checkpoint = ReportDraftCheckpointStore(context, "draft_ui_$identity.json")
     fun alertsFileNameFor(ownerAccountId: String?) = "report_alerts_test_${identity}_${ownerAccountId ?: "academic"}.json"
+    /** Retains the real owner file names without touching this emulator's other contact stores. */
+    val contactsContext: Context by lazy {
+        val parent = context.filesDir.canonicalFile
+        val directory = File(parent, "trusted_contacts_ui_$identity").canonicalFile
+        check(directory.parentFile == parent) { "Contact fixture escaped its private parent" }
+        check(directory.isDirectory || directory.mkdir()) { "Cannot create the owned contact fixture" }
+        object : ContextWrapper(context) {
+            override fun getApplicationContext(): Context = this
+            override fun getFilesDir(): File = directory
+        }
+    }
     var similarLookup: SimilarReportRepository? = null
     @Volatile private var published: DeviceLocationFix? = null
     @Volatile var refreshCalls: Int = 0

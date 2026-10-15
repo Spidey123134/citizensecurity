@@ -1,5 +1,17 @@
 # Trabajo del equipo
 
+## Alcance vigente — fase 37: mensaje revisado para un contacto, Unreleased
+
+Continuar las fases permite concretar E06 del catálogo de utilidad: desde un folio guardado, elegir un contacto manual vigente del mismo espacio, revisar texto y decidir si incluir referencia/punto (inicialmente apagado), y abrir la composición SMS con otro gesto. No enviar mensajes, pedir permisos SMS/agenda/GPS, adjuntar archivos o afirmar recepción. La ficha PDF conserva su recorrido propio. Avisar en revisión que la app de mensajes puede omitir el texto y que el operador puede cobrar su envío.
+
+Releer reporte/contactos al preparar y antes de abrir; cambios desde la revisión exigen otra preparación. Acciones por identidad, single flight, sesión capturada y Activity RESUMED en el último instante. No cuerpo/teléfono en Intent interno, Bundle/SavedState, notificaciones o logs. Giro/retorno no abre automáticamente, cancelación/respuesta tardía no autoriza compartir. Validar filas leídas y Unicode/tamaño sin truncar descripción. Reutilizar contactos mediante factory por sesión; sin migraciones o cambios de datos.
+
+20/28 = 71.4% permanece: E06 amplía utilidad, no completa los ocho pendientes del PDF. Asignación administrativa pendiente y escritura denegada por defecto. Código validado en GitHub/main autorizado; Android 0.6.1/código 29, sin otra APK/tag/Release o instalación/borrado en teléfono. Validación interna en emulador propio permitido. Los bloques inferiores son antecedentes.
+
+Cierre fase 37: 1231 distintos/37 nuevos, 1209 JVM (197 dominio/127 datos/885 app) y 22 Android (5 UI/3 Intent nuevos y 14 regresiones PDF/contactos/marcador). Cero fallos/errores/omitidos; lint app 0 errores/22 avisos por variante, datos 0. Emulador propio API37 cerrado; SMS interceptados, ninguno enviado. Giro, contacto cambiado, cuenta revocada, corrupción y alta de contacto en Ayuda real comprobados. Sin prueba física, proceso muerto, API26 o aceptación de operador. Recibo ignorado message37-test-proof.json; APK oficial 0.6.1/checksum conservados.
+
+## Antecedente — fase 36
+
 ## Alcance vigente — fase 36: avisos de cambios, Unreleased
 
 El usuario pidió continuar después de la fase 35. Conectar avisos Android optativos por cuenta desde Actividad: permiso por gesto, preferencia inicialmente desactivada y revisión manual de STATUS_CHANGED confirmados. Abrir no pide permiso ni publica; CREATED no genera aviso. No revisión en segundo plano, servidor o datos ficticios. La asignación administrativa continúa pendiente y la escritura denegada por defecto.

@@ -77,6 +77,7 @@ fun ReportsScreen(
     history: ReportHistoryViewModel? = null,
     evidence: ReportEvidenceViewModel? = null,
     onShareEvidence: (ReportEvidenceState.Ready, () -> Boolean) -> Unit = { _, _ -> },
+    onMessage: ((String) -> Unit)? = null,
 ) {
     val queryState by query.state.collectAsStateWithLifecycle()
     val pageState by pages.state.collectAsStateWithLifecycle()
@@ -204,7 +205,7 @@ fun ReportsScreen(
                 when (val state = queryState) {
                     is ReportQueryState.Found -> {
                         if (state.report.id == detailFolio) {
-                            item { ReportDetail(state.report, searchZone, onMap, history, evidence, onShareEvidence) {
+                            item { ReportDetail(state.report, searchZone, onMap, history, evidence, onShareEvidence, onMessage) {
                                 detailFolio == state.report.id && query.state.value === state
                             } }
                         } else {
@@ -411,6 +412,7 @@ private fun ReportCard(report: Report, zone: ZoneId, enabled: Boolean, onSelect:
 @Composable
 private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit, history: ReportHistoryViewModel?,
     evidence: ReportEvidenceViewModel?, onShareEvidence: (ReportEvidenceState.Ready, () -> Boolean) -> Unit,
+    onMessage: ((String) -> Unit)?,
     isCurrent: () -> Boolean) {
     val context = LocalContext.current
     var copied by remember(report.id) { mutableStateOf(false) }
@@ -432,6 +434,10 @@ private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit, 
             DetailField("Estado local", statusLabel(report.status))
             if (history != null) ReportHistoryContent(report, zone, history, isCurrent)
             DetailField("Descripción", report.description, "report_description")
+            if (onMessage != null) OutlinedButton(onClick = { if (isCurrent()) onMessage(report.id) },
+                modifier = Modifier.fillMaxWidth().testTag("report_detail_message")) {
+                Text("Preparar mensaje para un contacto")
+            }
             if (evidence != null) ReportEvidenceContent(report, zone, evidence, isCurrent, onShareEvidence)
             com.example.citizensecurity.report.ReportPhotoContent(report.photo, tagPrefix = "report_photo")
             DetailField("Fecha del incidente", formatReportTime(report.occurredAt, zone))

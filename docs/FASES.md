@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Fase 37 — mensaje revisado para un contacto, Unreleased
+
+E06 permite preparar texto desde un folio, elegir un contacto vigente y revisar la ubicación opcional antes de abrir Mensajes SMS. Relectura antes de compartir, cambio de destinatario/reporte exige otra revisión, giro sin nueva apertura y datos conservados. Ayuda comparte la fábrica de contactos; volver de guardar uno actualiza la lista sin elegirlo automáticamente. No envía mensajes ni adjunta la ficha PDF. [Alcance y límites](FASE_37.md) · [Validación](VALIDACION.md).
+
+**20/28 = 71.4% permanece**, mejora adicional al PDF. Asignación administrativa pendiente; Android 0.6.1/código 29 y APK oficial conservados.
+
 ## Fase 36 — preferencias y avisos de cambios, Unreleased
 
 Desde Actividad se activa voluntariamente el permiso y la preferencia por acceso. Revisar cambios consulta transiciones reales y prepara un único aviso general de Android, sin datos privados. Registro durable por dueño, deduplicación, revisión acotada con continuación y recuperación explícita ante incertidumbre. Sin revisión en segundo plano ni administración habilitada. [Alcance y límites](FASE_36.md) · [Validación](VALIDACION.md) · [Avance vigente](AVANCE.md).

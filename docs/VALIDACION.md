@@ -1,5 +1,27 @@
 # Validación y comprobaciones del proyecto
 
+## Mensaje revisado para un contacto — fase 37, Unreleased · 15 de octubre de 2026
+
+**1231 casos distintos aprobados, 37 definiciones nuevas; cero fallos, errores u omitidos.** Se ejecutan 1209 JVM y 22 Android. No se suman otras suites nativas o repeticiones de cortes anteriores.
+
+| Suite ejecutada | Aprobados | Nuevos |
+| --- | ---: | ---: |
+| Dominio JVM | 197 | 10 composición/validación |
+| Datos JVM / SQLite del host | 127 | 0; regresión |
+| App JVM | 885 | 19 coordinación y vigencia |
+| App Android | 22 | 5 interfaz y 3 contrato Intent; 14 regresiones |
+| **Total distinto** | **1231** | **37** |
+
+Dominio verifica texto completo sin truncar, destinatario fuera del cuerpo, ubicación/referencia omitidas por defecto, inclusión explícita con coordenadas y URL, fechas con zona/offset/nanosegundos, Unicode máximo, identidad y rechazo de datos inválidos. El modelo comprueba selección por identidad, relectura antes de preparar y abrir, cambio/eliminación del contacto o reporte, revisión de contactos concurrente, doble gesto, Activity anterior al giro, aplicación ausente y reintento explícito, revocación después del último gate, cancelación, respuestas no cooperativas y corrupción sin listas inventadas. No modifica reportes o contactos.
+
+Los cinco recorridos Android usan SQLite y AtomicFile privados de cada fixture/cuenta: ruta real desde el detalle; destinatario y cuerpo exactos con/sin ubicación; giro antes y después de abrir sin nueva composición; contacto modificado después de revisar; cambio de cuenta sin mezclar datos; archivo vacío/corrupto conservado; y guardar un contacto desde **Ayuda real** para regresar a la lista actualizada sin selección o envío automáticos. Los tres contratos nativos comprueban `ACTION_SENDTO`, un único `smsto` normalizado y `sms_body`, sin archivos, extras privados o permisos de URI. **Todas las aperturas SMS se interceptan antes de otra aplicación; no se envía ningún mensaje.** No se acredita funcionamiento físico de una app de mensajes, aceptación por un operador o recepción.
+
+Las 14 regresiones corresponden a ficha PDF (6), contactos (5) y marcador (3), sobre la fuente final. Compilación Kotlin debug/release, ensamblados internos y JVM aprobados; **lint app 0 errores/22 avisos por variante, datos sin incidencias**. Emulador propio de solo lectura **API 37**, cerrado tras los pases; sin instalar/borrar datos del teléfono, nueva prueba GPS física, muerte completa del proceso o ejecución API 26. La sesión/almacén capturados no se sustituyen al cambiar de cuenta y el mensaje no se conserva en estado restaurable.
+
+**20/28 = 71.4% permanece:** E06 es una mejora adicional de utilidad, no otro criterio de notificaciones del PDF. Reportes esquema 4, cuentas 1 y archivos de contactos existentes conservados, sin migración. Asignación administrativa pendiente. Recibo ignorado `.gradle/validacion/message37-test-proof.json`, XML JVM y logs `message37-build`, `message37-native-build`, `message37-final-build`, `message37-ui-native` y `message37-regression-native`.
+
+Android sigue en **0.6.1/código 29**, código Unreleased, sin nueva APK/tag/Release publicada. APK oficial archivada conservada: SHA-256 `7395a049aee8cf92324ac31f3c4e08453fb639bcf5103fc8eaa48484302815f1`. [Fase 37](FASE_37.md) · [Mejoras E06](MEJORAS_UTILES.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
 ## Preferencias y avisos de cambios — fase 36, Unreleased · 15 de octubre de 2026
 
 **1223 casos distintos aprobados en este corte, 87 definiciones nuevas; cero fallos, errores u omitidos finales.** Son 1180 JVM y 43 Android. Se ejecutaron las suites JVM completas y las nativas afectadas; las otras suites nativas del cierre anterior no se repitieron ni se suman a este corte. Un total menor que el de otra fase no elimina sus pruebas ni convierte aquellas ejecuciones en casos nuevos.

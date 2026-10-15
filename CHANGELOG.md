@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Fase 37 / E06: preparar un mensaje desde un folio, elegir contacto del mismo acceso, revisar destinatario/texto y abrir Mensajes SMS mediante un segundo gesto. Referencia/punto inicialmente omitidos; inclusión voluntaria con coordenadas y enlace al mapa. La ficha PDF, con foto elegida, conserva su recorrido separado.
+- Relectura del reporte y contactos al preparar/abrir, rechazo de cambios posteriores a la revisión y una sola apertura por gesto vigente. Guardar un contacto desde Ayuda y regresar actualiza la elección sin seleccionar o preparar automáticamente.
+- Composición sin permisos SMS/agenda/GPS, archivos adjuntos o envío automático. Errores, corrupción, giro, cambio de cuenta y cancelación conservan los datos y requieren una decisión nueva. Abrir una app no acredita envío; el operador puede cobrarlo.
+- Fase 37 validada: 1231 casos distintos/37 nuevos, sin fallos/errores/omitidos; aperturas SMS interceptadas, sin mensajes enviados. Lint sin errores; 20/28 = 71.4% permanece y la APK oficial 0.6.1 conserva su corte.
 - Fase 36: avisos locales optativos desde Actividad, preferencia por cuenta y permiso de Android solicitado únicamente al activar. Apertura sin diálogo, consulta manual de cambios, estado del canal y acceso a Ajustes.
 - Resumen silencioso con texto general y entrada normal inmutable, sin folios, ubicación, fotografías o cuenta en su contenido. Solo STATUS_CHANGED confirmados; guardar un reporte no genera un aviso de cambio.
 - Registro privado por dueño con CAS/AtomicFile y límite de 4096 operaciones; revisión en páginas de 50, hasta 500 eventos por gesto y continuación explícita. No se recortan recibos ni se sobrescribe corrupción con vacío. Desactivar conserva el registro y cancela el resumen propio.
@@ -12,7 +16,7 @@
 - Resultados y navegación vinculados a su sesión, página y solicitud. Corregido el desplazamiento al actualizar una consulta con valores iguales: los eventos nuevos aparecen desde arriba aunque Loading/Ready se resuelvan rápidamente.
 - No se inventan eventos para reportes antiguos; guardar y cambiar estado son eventos distintos. La fase 35 aporta la fuente que consume la fase 36; asignación administrativa pendiente.
 
-[Fase 35](docs/FASE_35.md) · [Fase 36](docs/FASE_36.md) · [Avance](docs/AVANCE.md) · [Validación](docs/VALIDACION.md). Código Unreleased; la APK oficial 0.6.1 conserva su entrega anterior.
+[Fase 35](docs/FASE_35.md) · [Fase 36](docs/FASE_36.md) · [Fase 37](docs/FASE_37.md) · [Avance](docs/AVANCE.md) · [Validación](docs/VALIDACION.md). Código Unreleased; la APK oficial 0.6.1 conserva su entrega anterior.
 
 ## [0.6.1] — 2026-10-14
 
