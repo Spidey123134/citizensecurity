@@ -2,12 +2,17 @@
 
 ## [Unreleased]
 
+- Fase 36: avisos locales optativos desde Actividad, preferencia por cuenta y permiso de Android solicitado únicamente al activar. Apertura sin diálogo, consulta manual de cambios, estado del canal y acceso a Ajustes.
+- Resumen silencioso con texto general y entrada normal inmutable, sin folios, ubicación, fotografías o cuenta en su contenido. Solo STATUS_CHANGED confirmados; guardar un reporte no genera un aviso de cambio.
+- Registro privado por dueño con CAS/AtomicFile y límite de 4096 operaciones; revisión en páginas de 50, hasta 500 eventos por gesto y continuación explícita. No se recortan recibos ni se sobrescribe corrupción con vacío. Desactivar conserva el registro y cancela el resumen propio.
+- Conflictos o cancelaciones después de publicar retiran únicamente su intento: una respuesta antigua no puede cancelar un resumen más reciente. Sin entrega en segundo plano, cambios administrativos habilitados ni otra APK/Release.
+- Fase 36 validada: 1223 casos distintos, 87 nuevos, cero fallos/errores/omitidos finales. Lint app sin errores/22 avisos por variante y datos sin incidencias. Avance 20/28 = 71.4% por permisos/preferencias, conservando los pendientes del recorrido autorizado.
 - Fase 35: **Actividad de reportes** desde Inicio, con creaciones y cambios reales del espacio vigente, filtros Todos/Cambios y acceso al folio. Páginas de 50 eventos, navegación anterior/siguiente, actualización desde el inicio y reintento exacto.
 - Consulta global en SQLite con filtro antes del límite y cursor exclusivo por segundos/nanosegundos/operación. Índice aditivo de esquema 4; conservación de reportes, fotos e historial y recibos compatibles con 3/4 sin migrar al recuperar.
 - Resultados y navegación vinculados a su sesión, página y solicitud. Corregido el desplazamiento al actualizar una consulta con valores iguales: los eventos nuevos aparecen desde arriba aunque Loading/Ready se resuelvan rápidamente.
-- No se inventan eventos para reportes antiguos; guardar y cambiar estado son eventos distintos. Es un consumidor de actividad, con notificaciones Android y permisos/preferencias pendientes. Asignación administrativa y 19/28 = 67.9% conservados.
+- No se inventan eventos para reportes antiguos; guardar y cambiar estado son eventos distintos. La fase 35 aporta la fuente que consume la fase 36; asignación administrativa pendiente.
 
-[Fase 35](docs/FASE_35.md) · [Validación](docs/VALIDACION.md). Código Unreleased; la APK oficial 0.6.1 conserva su entrega anterior.
+[Fase 35](docs/FASE_35.md) · [Fase 36](docs/FASE_36.md) · [Avance](docs/AVANCE.md) · [Validación](docs/VALIDACION.md). Código Unreleased; la APK oficial 0.6.1 conserva su entrega anterior.
 
 ## [0.6.1] — 2026-10-14
 

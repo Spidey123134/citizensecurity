@@ -37,7 +37,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun ReportActivityScreen(model: ReportActivityViewModel,
-    onOpen: (ReportActivityEntry) -> Unit, onClose: () -> Unit) {
+    onOpen: (ReportActivityEntry) -> Unit, onClose: () -> Unit, onAlerts: () -> Unit = {}) {
     val state = model.state.collectAsStateWithLifecycle().value
     val workspace = LocalReportWorkspace.current
     val zone = remember { ZoneId.systemDefault() }
@@ -70,6 +70,8 @@ internal fun ReportActivityScreen(model: ReportActivityViewModel,
             item {
                 Text("Actividad de reportes", style = MaterialTheme.typography.headlineSmall)
                 Text("Guardados y cambios registrados en este teléfono. No confirma recepción o atención por una autoridad.")
+                OutlinedButton(onClick = { action(onAlerts) }, modifier = Modifier.fillMaxWidth()
+                    .testTag("activity_alerts")) { Text("Avisos de cambios de estado") }
             }
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {

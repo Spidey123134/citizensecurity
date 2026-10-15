@@ -1,5 +1,19 @@
 # Trabajo del equipo
 
+## Alcance vigente — fase 36: avisos de cambios, Unreleased
+
+El usuario pidió continuar después de la fase 35. Conectar avisos Android optativos por cuenta desde Actividad: permiso por gesto, preferencia inicialmente desactivada y revisión manual de STATUS_CHANGED confirmados. Abrir no pide permiso ni publica; CREATED no genera aviso. No revisión en segundo plano, servidor o datos ficticios. La asignación administrativa continúa pendiente y la escritura denegada por defecto.
+
+Resumen silencioso y genérico sin datos del reporte, PendingIntent inmutable hacia Splash, cancelación del resumen propio al cambiar identidad/iniciar proceso/desactivar. Preferencias y operaciones aceptadas en archivo privado por dueño, CAS/AtomicFile, 256 KiB/4096 IDs; páginas de 50 y 500 eventos por gesto con continuación explícita. Registrar IDs después de notify aceptado, sin afirmar lectura/recepción oficial o entrega exactamente una vez. Fallos o cancelación inciertos exigen releer; nunca reemplazar corrupción por vacío o recortar IDs.
+
+Código validado en GitHub/main sigue autorizado. Android 0.6.1/código 29; no otra APK/tag/Release ni instalación/borrado en teléfono por continuar. Ensamblados internos y emulador propio aislado para comprobar. Los bloques inferiores son antecedentes.
+
+Cierre fase 36: 1223 distintos/87 nuevos, 1180 JVM (187 dominio/127 datos/866 app) y 43 Android (16 datos/27 app); cero fallos/errores/omitidos finales. Lint app 0 errores/22 avisos por variante, datos 0. Diálogos de denegación/concesión, retorno Ajustes y bloqueo real de canal comprobados API37. No simular bloqueo global con AppOps: en este sistema no equivalía al permiso/canal. Visibilidad de canal es controlada por sistema (NO_OVERRIDE permitido); la notificación exige SECRET. UI de permiso se ejecuta primero con POST_NOTIFICATIONS denegado, sin revocar durante instrumentación. Datos de actores solo fixtures, sin roles productivos. Recibo ignorado alerts36-test-proof.json y detalle en docs/VALIDACION.md.
+
+20/28 = 71.4% acredita solo permisos/preferencias de 4.7. Los otros tres hitos de avisos esperan el recorrido productivo autorizado; seguimiento y cuatro administrativos siguen pendientes. Un fallo/CAS/cancelación tras publicación retira solo su ticket, respetando resúmenes posteriores; nunca recorta IDs. APK oficial 0.6.1/checksum conservados. Sin aceptación física, API26, muerte completa del proceso o entrega en segundo plano.
+
+## Antecedente — fase 35
+
 ## Alcance vigente — fase 35: actividad de reportes, Unreleased
 
 Después de cerrar 0.6.1, el usuario pidió continuar las fases del PDF. La fase 35 compone **Actividad de reportes** desde Inicio: eventos reales CREATED/STATUS_CHANGED del workspace capturado, filtros Todos/Cambios, páginas de 50, entrada al folio e historial. CREATED significa guardado local; no es cambio posterior o recepción institucional. No asignar roles: administración permanece pendiente y escritura denegada por defecto. No notificaciones Android, marcas leído/no leído, GPS, cambios de estado o envío al abrir esta pantalla. **19/28 = 67.9% permanece**.

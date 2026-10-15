@@ -1,12 +1,12 @@
 # Avance del plan del proyecto
 
-**Fase 35, Unreleased:** centro de actividad con eventos reales, filtros y acceso al folio; lectura paginada y migración de índice que conserva los registros previos. Es el consumidor que prepara los avisos de cambios del PDF, sin entrega Android o administración activada. **19/28 = 67.9%** conserva los mismos criterios; no se acredita una notificación recibida por mostrar el historial. [Fase 35](FASE_35.md) · [Validación](VALIDACION.md).
+**Fase 36, Unreleased:** preferencia de avisos por cuenta, permiso de Android por gesto y revisión manual de cambios registrados desde Actividad. Resumen general y registro durable de operaciones aceptadas; sin datos privados en el aviso. [Fase 36](FASE_36.md) · [Validación](VALIDACION.md).
 
 **Entrega 0.6.1 — 14 de octubre de 2026 · código Android 29:** fases 29–34 agrupadas, con cámara/galería, ficha PDF, contactos, Ayuda inmediata/atajos y mosaico de Ajustes rápidos. Amplían utilidad y la fotografía ya construida, por lo que **19/28 = 67.9%** conserva los mismos criterios y nueve pendientes. [Entrega](ENTREGA_0_6_1.md) · [Pruebas y límites](VALIDACION.md). Administración y asignación siguen pendientes.
 
-## Avance vigente — 14 de octubre de 2026
+## Avance vigente — 15 de octubre de 2026
 
-**19/28 = 67.9% de construcción**, mismos criterios y pesos del PDF/cliente. Fases 29/30 aportan ficha PDF/contactos, fase 32 la ruta rápida de Ayuda, fase 33 cámara y fase 34 Ajustes rápidos; E01–E04/E10 están incluidos en 0.6.1 según [Mejoras útiles](MEJORAS_UTILES.md). La fase 31 aporta diario/recibo durables para el cambio de estado. Ninguna de estas bases o extensiones completa el recorrido administrativo pendiente por sí sola.
+**20/28 = 71.4% de construcción**, mismos criterios y pesos del PDF/cliente. Se completa únicamente **permisos y preferencias** de 4.7: denegar/conceder realmente en Android, activar/desactivar, persistir y separar por cuenta. El consumidor manual y su aviso nativo están implementados; los otros tres criterios de notificaciones conservan el pendiente del recorrido productivo con cambios autorizados. Las extensiones E01–E04/E10 incluidas en 0.6.1 amplían utilidad sin sumar criterios ya completos.
 
 | Punto original | Construidos | Pendientes |
 |---|---|---|
@@ -16,13 +16,13 @@
 | 4.4 Consulta | 3/4 | 1: seguimiento de cambios mediante recorrido autorizado |
 | 4.5 Mapas | 4/4 | 0 |
 | 4.6 Administración | 0/4 | 4: consulta, cambio, roles/permisos, historial administrativo |
-| 4.7 Notificaciones | 0/4 | 4: eventos, entrega, permisos/preferencias, recorrido probado |
+| 4.7 Notificaciones | 1/4 | 3: eventos y entrega en el recorrido autorizado, recorrido completo probado |
 
-Faltan **9 criterios originales**. La asignación administrativa sigue pendiente por decisión del usuario; no existe un panel productivo de cambios ni roles reales. El cierre **0.6.1 aprobó 1237 casos distintos, 307 definiciones nuevas frente a 0.6.0**, separado de la aceptación física del usuario. Las comprobaciones se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
+Faltan **8 criterios originales**: uno de seguimiento, cuatro administrativos y tres de notificaciones. La asignación administrativa sigue pendiente por decisión del usuario; no existe un panel productivo de cambios ni roles reales. Los cambios autorizados exclusivamente dentro de pruebas comprueban la integración, sin conceder permisos a una cuenta del producto. Las comprobaciones se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
 
-El cierre agrupado contiene **1074 JVM** (169 dominio, 111 datos, 794 app) y **163 Android** (65 datos, 98 app), sin fallos/errores/omitidos finales. Los recibos JVM intactos de dominio/datos pertenecen a la misma sesión y la app se comprobó sobre la fuente final. Lint app cero errores/22 avisos por variante y datos sin incidencias. Las nativas se ejecutan en API 37; no acreditan cámara física, muerte completa del proceso, instalación como actualización o ejecución física API 26.
+La APK oficial **0.6.1** contiene fases 29–34 y conserva su cierre de 1237 casos distintos. Las fases 35/36 se mantienen como código **Unreleased**; no se incorporan a esa descarga por actualizar main. Los resultados de cada corte están separados en [Validación](VALIDACION.md), sin sumar repeticiones. Las nativas API 37 no acreditan ejecución física, muerte completa del proceso o recepción institucional.
 
-[Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Plan](PLAN_DEL_PROYECTO.md) · [Fases 29–34](FASES.md) · [Release 0.6.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1). Android **0.6.1 / código 29**, misma firma/esquemas y nueve pendientes originales. Los bloques siguientes conservan sus cifras y pendientes históricos; sus marcas Unreleased describen aquella preparación.
+[Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Plan](PLAN_DEL_PROYECTO.md) · [Fases](FASES.md) · [Release 0.6.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1). Android **0.6.1 / código 29**, reportes esquema 4 y cuentas 1. Los bloques siguientes conservan sus cifras y pendientes históricos; sus marcas Unreleased describen aquella preparación.
 
 ## Antecedente — entrega 0.6.0
 
@@ -258,9 +258,9 @@ Una pantalla visual cuenta solo como preparación visual; una lógica probada cu
 | 4.4 Consulta | Lectura por folio; lista y permanencia; reportes propios por usuario; seguimiento de estados | Folio, lista/permanencia y espacio de cuenta de fase 26; historial de lectura de fase 27 ejecutado en Android en 0.6.0. Fase 31 prepara recuperación durable; falta el recorrido autorizado de cambios, su composición productiva y aceptación | 3/4 · 75% de construcción |
 | 4.5 Mapas | Contrato de selección y confirmación; SDK configurado; mapa por zonas y marcadores; flujo visual integrado y probado | Contrato, SDK, zonas/marcadores y flujo visual integrado en 0.5.3: guardado/folio, mapa nativo con calles y pines SQLite, filtros/límite y pin→detalle. La validación nativa usa una fuente de teléfono controlada; la aceptación manual física posterior se acredita por separado en 4.3 | 4/4 · 100% de construcción |
 | 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Fase 27 prepara servicio protegido e historial de lectura; fase 31 prepara diario/recibo durables. Asignación pendiente y sin composición administrativa productiva; ningún hito acreditado | 0/4 · 0% |
-| 4.7 Notificaciones | Eventos de cambios; entrega de avisos; permisos y preferencias; flujo completo probado | Ninguno | 0/4 · 0% |
+| 4.7 Notificaciones | Eventos de cambios; entrega de avisos; permisos y preferencias; flujo completo probado | Permisos y preferencias por cuenta de fase 36, con denegación/concesión reales de Android y persistencia comprobadas. Consumidor manual implementado; los otros tres criterios esperan el recorrido productivo autorizado | 1/4 · 25% |
 
-**Avance actual estimado: 19/28 = 67.9% de construcción.** Cuentas/reportes propios e historial de lectura ya tuvieron comprobación Android en 0.6.0. Asignación administrativa, recorrido autorizado de seguimiento y notificaciones continúan pendientes. La recuperación durable de fase 31 y las extensiones E01–E09 no cambian el denominador. Fotografías y aceptación manual GPS anteriores conservan sus hitos/límites. Publicar y repetir pruebas no suman puntos. No declara servidor/sincronización, seguridad de producción o veracidad de incidentes.
+**Avance actual estimado: 20/28 = 71.4% de construcción.** Fase 36 añade el criterio original de permisos/preferencias, sin cambiar el denominador. Cuentas/reportes propios e historial de lectura tuvieron comprobación Android en 0.6.0. Asignación administrativa, seguimiento autorizado y tres criterios de notificaciones continúan pendientes; no se acreditan con eventos de prueba. Fotografías y aceptación manual GPS conservan sus hitos/límites. Publicar y repetir pruebas no suman puntos. No declara servidor/sincronización, seguridad de producción o veracidad de incidentes.
 
 ## Antecedentes de cálculo y evidencia
 
