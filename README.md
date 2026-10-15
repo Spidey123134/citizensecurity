@@ -1,5 +1,11 @@
 # CITIZENSECURITY
 
+## Desarrollo Unreleased — fase 37: mensaje para un contacto
+
+Desde el detalle de un folio, **Preparar mensaje para un contacto** permite elegir un contacto guardado, decidir si se incluye referencia/punto (inicialmente desmarcado) y revisar el texto completo. Otro gesto abre **Mensajes SMS**; el envío se confirma allí. Si cambian el reporte o los contactos, se exige revisar nuevamente. Se puede guardar un contacto desde Ayuda y regresar a la misma pantalla.
+
+Sin GPS nuevo o archivos adjuntos; la ficha PDF conserva su acceso separado. El operador puede cobrar el SMS y abrir la composición no confirma entrega. [Fase 37](docs/FASE_37.md) · [Mejoras útiles E06](docs/MEJORAS_UTILES.md). **20/28 = 71.4%** permanece: es una ampliación de utilidad. Código Unreleased; la descarga oficial sigue en **0.6.1**.
+
 ## Desarrollo Unreleased — fases 35 y 36: actividad y avisos
 
 Desde **Inicio → Actividad de reportes** se consultan guardados y cambios de estado del espacio actual. **Toda la actividad** incluye creaciones reales; **Cambios de estado** muestra únicamente transiciones registradas. Cada evento abre su folio; páginas de 50, anterior/siguiente, actualización desde el inicio y recuperación de errores conservan sesión y consulta al girar.

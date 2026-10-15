@@ -11,7 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import com.example.citizensecurity.account.LocalReportWorkspace
 import com.example.citizensecurity.account.ReportWorkspaceActivity
-import com.example.citizensecurity.data.TrustedContactsStore
+import com.example.citizensecurity.CitizenSecurityApplication
 import com.example.citizensecurity.domain.TrustedContact
 import com.example.citizensecurity.preview.PreviewTheme
 
@@ -23,7 +23,8 @@ class HelpContactsActivity : ReportWorkspaceActivity() {
         super.onCreate(savedInstanceState)
         if (!hasReportWorkspace) return
         val workspace = reportWorkspace
-        val store = TrustedContactsStore(this, workspace.session.account?.id, workspace::checkActive)
+        val store = (application as CitizenSecurityApplication).openTrustedContactsRepository(
+            workspace.session, workspace::checkActive)
         contacts = ViewModelProvider(this, HelpContactsViewModel.factory(store, workspace::checkActive))[
             HelpContactsViewModel::class.java]
         setContent {

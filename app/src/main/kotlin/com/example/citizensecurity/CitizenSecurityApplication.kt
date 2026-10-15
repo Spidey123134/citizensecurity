@@ -40,6 +40,8 @@ import com.example.citizensecurity.report.ReportViewModel
 import com.example.citizensecurity.alerts.AndroidReportAlertsPublisher
 import com.example.citizensecurity.data.ReportAlertsStore
 import com.example.citizensecurity.domain.ReportAlertsRepository
+import com.example.citizensecurity.data.TrustedContactsStore
+import com.example.citizensecurity.domain.TrustedContactsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -69,6 +71,15 @@ open class CitizenSecurityApplication : Application() {
         }
         checkScope()
         return ReportAlertsStore(this, session.account?.id, checkAccess = checkScope)
+    }
+
+    open fun openTrustedContactsRepository(session: AccountSessionState, checkCurrent: () -> Unit): TrustedContactsRepository {
+        val checkScope = {
+            check(accountSession.isCurrent(session)) { "La sesión de estos contactos terminó." }
+            checkCurrent()
+        }
+        checkScope()
+        return TrustedContactsStore(this, session.account?.id, checkScope)
     }
 
     /** Every Activity captures its own owner and GPS evidence before creating any report model. */

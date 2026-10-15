@@ -42,6 +42,12 @@ class ReportsActivity : ReportWorkspaceActivity() {
                         history = history,
                         evidence = evidence,
                         onShareEvidence = { ready, isCurrent -> shareEvidence(evidence, exporter, ready, isCurrent) },
+                        onMessage = { folio ->
+                            if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && ensureReportWorkspaceCurrent()) {
+                                startReportActivity(Intent(this, com.example.citizensecurity.message.ReportMessageActivity::class.java)
+                                    .putExtra(EXTRA_FOLIO, folio))
+                            }
+                        },
                         initialFolio = intent.getStringExtra(EXTRA_FOLIO),
                         onClose = ::finish,
                         onMap = { folio ->
