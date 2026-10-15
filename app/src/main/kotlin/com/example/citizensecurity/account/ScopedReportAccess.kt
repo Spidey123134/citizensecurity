@@ -27,6 +27,7 @@ class ScopedReportAccess(
     ) : this(repo, list, map, similar, submission, checkpoint, repo as? ReportHistoryRepository, checkAccess)
 
     private val checkpointStore = checkpoint
+    private val activityReader = repo as? ReportActivityRepository
     val reportRepository: IdempotentReportRepository = object : IdempotentReportRepository {
         override suspend fun create(draft: NewReport): Report = checked { repo.create(draft) }
         override suspend fun createOnce(requestId: String, draft: NewReport): Report =
@@ -50,6 +51,9 @@ class ScopedReportAccess(
     }
     val reportHistoryRepository = ReportHistoryRepository { query ->
         checked { checkNotNull(history) { "El historial no está disponible en este espacio." }.readHistory(query) }
+    }
+    val reportActivityRepository = ReportActivityRepository { query ->
+        checked { checkNotNull(activityReader) { "La actividad no está disponible en este espacio." }.readActivity(query) }
     }
 
     private suspend fun <T> checked(action: suspend () -> T): T {

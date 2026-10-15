@@ -41,6 +41,8 @@ El avance sigue en **19/28**, con nueve criterios pendientes: uno de seguimiento
 
 Para cerrar seguimiento después harán falta un actor/permiso acordados, un recorrido visible autorizado y recuperación del recibo comprobada. Las notificaciones deberán corresponder a eventos reales y preferencias del usuario. El catálogo E01–E10 complementa esos trabajos y no permite contarlos como completos por añadir accesos, documentación o pruebas.
 
+La **[fase 35](FASE_35.md), implementada y validada Unreleased**, retoma el PDF con un centro de actividad paginado del espacio vigente: Toda la actividad y Cambios de estado. La creación se identifica como guardado en este teléfono; el filtro de cambios muestra únicamente transiciones realmente registradas. Es parte de Consulta y la base del consumidor de eventos de 4.7, **no una nueva mejora E11**. Entrega de notificaciones Android, preferencias y leído/no leído quedan para su siguiente alcance, con asignación administrativa pendiente. El cierre aprobó 1224 casos distintos/66 nuevos; el porcentaje conserva su matriz vigente.
+
 ## Cómo comprobar el beneficio
 
 Las primeras comprobaciones se hacen con datos aislados: abrir ayuda sin cuenta ni GPS; cancelar el marcador sin llamada; preparar una ficha larga y leer todas sus páginas; omitir ubicación/foto y comprobar el contenido; cambiar de cuenta y verificar que contactos/folios privados no se mezclen. Las pruebas de intents no llaman a emergencias ni confirman atención. La aceptación con un teléfono/launcher concreto se registra por separado de la prueba automatizada.

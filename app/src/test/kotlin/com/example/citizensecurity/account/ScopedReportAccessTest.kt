@@ -10,7 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
-/** All thirteen delegated entries must reject a revoked lease before and after an operation. */
+/** Every delegated entry must reject a revoked lease before and after an operation. */
 @RunWith(Parameterized::class)
 class ScopedReportAccessEntryTest(private val operation: String) {
     @Test fun revokedBeforeEntryDoesNotTouchDelegate() = runTest {
@@ -30,11 +30,34 @@ class ScopedReportAccessEntryTest(private val operation: String) {
     companion object {
         @JvmStatic @Parameterized.Parameters(name = "{0}")
         fun operations() = listOf("create", "createOnce", "find", "list", "page", "map", "similar",
-            "submissionRead", "submissionWrite", "submissionClear", "checkpointRead", "checkpointWrite", "markSubmitted")
+            "submissionRead", "submissionWrite", "submissionClear", "checkpointRead", "checkpointWrite", "markSubmitted", "activity")
     }
 }
 
 class ScopedReportAccessTest {
+    @Test fun activityUsesTheCapturedDelegateAndExactQueryWithoutListingReports() = runTest {
+        val fixture = ScopedAccessFixture()
+        val query = ReportActivityQuery(ReportActivityFilter.STATUS_CHANGES)
+        assertTrue(fixture.access.reportActivityRepository.readActivity(query).entries.isEmpty())
+        assertSame(query, fixture.receivedQuery)
+        assertEquals("activity", fixture.lastCall)
+        assertEquals(1, fixture.calls)
+        assertEquals(2, fixture.accessChecks)
+    }
+
+    @Test fun delayedActivityIsDiscardedWhenItsCapturedSessionIsRevoked() = runTest {
+        val fixture = ScopedAccessFixture()
+        val entered = CompletableDeferred<Unit>()
+        val release = CompletableDeferred<Unit>()
+        fixture.onCall = { entered.complete(Unit); release.await() }
+        val pending = async { expectRevoked { fixture.access.reportActivityRepository.readActivity(ReportActivityQuery()) } }
+        entered.await()
+        fixture.allowed = false
+        release.complete(Unit)
+        pending.await()
+        assertEquals("activity", fixture.lastCall)
+        assertEquals(1, fixture.calls)
+    }
     @Test fun delayedReadIsDiscardedAfterRevocationWithoutRetargetingToAnotherOwner() = runTest {
         val fixture = ScopedAccessFixture()
         val entered = CompletableDeferred<Unit>()
@@ -134,7 +157,11 @@ private class ScopedAccessFixture {
     val similarPage = SimilarReportPage(emptyList(), false)
 
     private suspend fun entered(name: String) { calls++; lastCall = name; onCall() }
-    private val repository = object : IdempotentReportRepository {
+    private val repository = object : IdempotentReportRepository, ReportActivityRepository {
+        override suspend fun readActivity(query: ReportActivityQuery): ReportActivityPage {
+            entered("activity"); receivedQuery = query
+            return ReportActivityPage(emptyList(), false)
+        }
         override suspend fun create(draft: NewReport): Report { entered("create"); receivedDraft = draft; return report }
         override suspend fun createOnce(requestId: String, draft: NewReport): Report {
             entered("createOnce"); this@ScopedAccessFixture.requestId = requestId; receivedDraft = draft; return report
@@ -177,6 +204,7 @@ private class ScopedAccessFixture {
             "checkpointRead" -> access.reportDraftCheckpointJournal.read()
             "checkpointWrite" -> access.reportDraftCheckpointJournal.write(checkpoint, null, null)
             "markSubmitted" -> access.reportDraftCheckpointJournal.markSubmitted(checkpoint.id, folio)
+            "activity" -> access.reportActivityRepository.readActivity(ReportActivityQuery())
             else -> error("Unknown test entry.")
         }
     }

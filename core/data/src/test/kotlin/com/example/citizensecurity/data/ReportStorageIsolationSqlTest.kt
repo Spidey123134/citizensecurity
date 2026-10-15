@@ -38,6 +38,7 @@ class ReportStorageIsolationSqlTest {
                 appendLine(list.arguments.joinToString("\t"))
                 appendLine("SELECT id, description FROM reports WHERE ${map.selection} ORDER BY $REPORT_LIST_PAGE_ORDER LIMIT ${mapQuery.limit + 1}")
                 appendLine(map.arguments.joinToString("\t"))
+                appendLine(ReportActivitySql.CREATE_INDEX)
             })
             val process = ProcessBuilder(python, script.toString(), input.toString(), schemaSource().toString(), mode)
                 .redirectErrorStream(true).start()

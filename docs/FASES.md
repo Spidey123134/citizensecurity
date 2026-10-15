@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Fase 35 — actividad de reportes, Unreleased
+
+Centro visible desde Inicio para consultar creaciones y cambios realmente registrados, filtrar transiciones y abrir el folio. Fuente única SQL paginada, una página de 50 y hasta 50 posiciones anteriores; reintento, giro y sesión revocada comprobados en el cierre. Migración aditiva del índice a esquema 4, fotos/historial conservados y recibos 3/4 de solo lectura. [Alcance y límites](FASE_35.md) · [Validación](VALIDACION.md).
+
+Retoma 4.4/4.7 sin activar administración o presentar un guardado como cambio/recepción. Avisos Android y preferencias continúan pendientes; **19/28 = 67.9% permanece**. La APK oficial 0.6.1 incluye fases 29–34, y el código nuevo se mantiene Unreleased.
+
 ## Entrega agrupada 0.6.1 — fases 29–34
 
 **14 de octubre de 2026 · Android 0.6.1 / código 29**, entrega solicitada expresamente con APK/Release. Agrupa los siguientes recorridos y la base protegida del PDF:

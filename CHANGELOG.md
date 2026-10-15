@@ -2,7 +2,12 @@
 
 ## [Unreleased]
 
-Sin incrementos adicionales pendientes de entrega en este cierre.
+- Fase 35: **Actividad de reportes** desde Inicio, con creaciones y cambios reales del espacio vigente, filtros Todos/Cambios y acceso al folio. Páginas de 50 eventos, navegación anterior/siguiente, actualización desde el inicio y reintento exacto.
+- Consulta global en SQLite con filtro antes del límite y cursor exclusivo por segundos/nanosegundos/operación. Índice aditivo de esquema 4; conservación de reportes, fotos e historial y recibos compatibles con 3/4 sin migrar al recuperar.
+- Resultados y navegación vinculados a su sesión, página y solicitud. Corregido el desplazamiento al actualizar una consulta con valores iguales: los eventos nuevos aparecen desde arriba aunque Loading/Ready se resuelvan rápidamente.
+- No se inventan eventos para reportes antiguos; guardar y cambiar estado son eventos distintos. Es un consumidor de actividad, con notificaciones Android y permisos/preferencias pendientes. Asignación administrativa y 19/28 = 67.9% conservados.
+
+[Fase 35](docs/FASE_35.md) · [Validación](docs/VALIDACION.md). Código Unreleased; la APK oficial 0.6.1 conserva su entrega anterior.
 
 ## [0.6.1] — 2026-10-14
 

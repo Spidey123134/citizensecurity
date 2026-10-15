@@ -4,6 +4,8 @@
 
 ## Plan vigente — 14 de octubre de 2026
 
+**[Fase 35](FASE_35.md) implementada y validada, Unreleased:** consulta paginada de creaciones y cambios registrados, desde el espacio vigente, con acceso al folio. El filtro de cambios conserva el requisito original de 4.7. Cierre de 1224 casos distintos/66 nuevos en [Validación](VALIDACION.md); permanece 19/28. La próxima fase prepara entrega de avisos Android, permisos y preferencias, sin inventar cambios ni asignar administrador.
+
 Se mantienen los siete requisitos **4.1–4.7 del PDF/cliente** y sus 28 criterios. Las mejoras pedidas después por el usuario tienen registro separado **E01–E10** en [Mejoras útiles](MEJORAS_UTILES.md), con origen, prioridad, estado y aceptación. Ficha PDF, contactos, acceso rápido y cámara amplían la utilidad, sin convertir una llamada o documento local en recepción institucional ni aumentar el porcentaje del plan original.
 
 | Requisito original | Situación vigente | Siguiente condición para completarlo | Construcción |
@@ -14,7 +16,7 @@ Se mantienen los siete requisitos **4.1–4.7 del PDF/cliente** y sus 28 criteri
 | **4.4 Consulta** | Folio/lista/reportes propios, búsqueda y paginación restaurable; historial real consultable desde el detalle. | Cerrar el seguimiento de cambios mediante un recorrido autorizado visible y recuperación del resultado. La fase 31 prepara el diario/recibo; faltan actor/permiso acordados y composición productiva. | **3/4** |
 | **4.5 Mapas** | MapLibre/OpenFreeMap con calles, punto elegido, zonas y marcadores de SQLite, filtros y lista de la misma muestra; flujo integrado comprobado. | Mantener fuente/cobertura y avisos de muestra limitada. Datos externos verificados E09 sigue propuesta independiente. | **4/4** |
 | **4.6 Administración** | Servicio protegido e historial preparados; fase 31 añade recuperación durable. Asignación administrativa pendiente, escritura denegada por defecto y sin controles administrativos productivos. | Consulta administrativa, cambio autorizado, roles/permisos comprobados e historial administrativo completo. `admin/admin` conserva acceso académico. | **0/4** |
-| **4.7 Notificaciones** | No hay entrega de avisos de cambios implementada. Abrir el marcador/selector de compartir no cumple este requisito. | Eventos reales, entrega, permisos/preferencias y recorrido probado. | **0/4** |
+| **4.7 Notificaciones** | No hay entrega de avisos de cambios implementada. La fase 35 prepara un centro que consulta creaciones/cambios reales; un recibo de guardado local no es una transición ni una notificación de Android. | Eventos de cambios, entrega, permisos/preferencias y recorrido completo probado. | **0/4** |
 
 **19/28 = 67.9%**, nueve criterios pendientes: uno de seguimiento, cuatro administrativos y cuatro de notificaciones. [Avance](AVANCE.md) conserva los mismos pesos y la diferencia entre construcción, prueba automatizada y aceptación del usuario.
 
@@ -24,7 +26,8 @@ Se mantienen los siete requisitos **4.1–4.7 del PDF/cliente** y sus 28 criteri
 | [Fase 32](FASE_32.md) / E03 | Ayuda inmediata pública y atajos Android | Abrir ayuda desde el icono sin login/GPS ni datos privados; llamada y fijado del acceso por gestos explícitos, petición fuera del hilo UI | Incluida en 0.6.1; nativas API 37 sin llamadas ni aprobación de un icono fijado real. Compatibilidad física por launcher/modelo pendiente |
 | [Fase 33](FASE_33.md) / E10 | Captura de cámara además de galería | Foto completa normalizada, revisión antes de guardar y fotografía anterior conservada ante cancelación/fallo | Incluida en 0.6.1; protocolo controlado con provider/almacenamiento real y regresiones de galería, cámara física pendiente |
 | [Fase 34](FASE_34.md) / E04 | Mosaico voluntario de Ajustes rápidos | Alta explícita y apertura de la misma ayuda pública por toque/desbloqueo, sin llamada automática | Incluida en 0.6.1; 28 JVM y cinco Android validados. Aceptación física por fabricante y API 26 pendientes |
-| Siguiente alcance del PDF | Seguimiento/administración autorizados | Definir actor/permiso y conectar un recorrido con diario/recibo durables antes de las notificaciones | Asignación pendiente por decisión del usuario; sin formulario ficticio |
+| [Fase 35](FASE_35.md) | Centro de actividad de reportes, Toda la actividad/Cambios de estado | Consultar eventos reales con paginación y abrir su folio desde el mismo espacio; creaciones y transiciones diferenciadas | Implementada/validada, Unreleased: 1224 casos distintos, 66 nuevos; aceptación física separada. Prepara el consumidor, sin avisos Android o asignación administrativa |
+| Alcance pendiente del PDF | Seguimiento/administración autorizados y notificaciones de cambios | Definir actor/permiso y conectar su recorrido con diario/recibo durables; completar entrega y preferencias de avisos | Asignación pendiente por decisión del usuario; sin formulario ficticio ni cambio del criterio original |
 
 Las fases 29/30 implementan E01 ficha PDF y E02 contactos; fase 32 E03 ayuda/atajos, fase 33 E10 cámara y fase 34 E04 mosaico: **incluidas en 0.6.1**. E05 guía por fabricante, E06 mensaje revisado, E07 varias fotos, E08 institución y E09 datos por zona conservan sus estados de guía/propuesta en el catálogo. La configuración de un botón físico depende del modelo: abrir la app normal puede mostrar splash/login. La guía Motorola corresponde al Edge 50 Fusion, sin configurar/probar físicamente su gesto. No se intercepta el botón de encendido ni se modifica el SOS del sistema.
 

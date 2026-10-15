@@ -31,7 +31,7 @@ class ReportHistorySqlTest {
             val blocks = listOf(ReportHistorySql.CREATE_TABLE, ReportHistorySql.INSERT, ReportHistorySql.HEAD,
                 ReportHistorySql.FIND_OPERATION, ReportHistorySql.CAS_UPDATE,
                 ReportHistorySql.page(ReportHistoryQuery(ID, limit = 2)),
-                ReportHistorySql.page(ReportHistoryQuery(ID, 3, 2)))
+                ReportHistorySql.page(ReportHistoryQuery(ID, 3, 2)), ReportActivitySql.CREATE_INDEX)
             blocks.forEachIndexed { index, sql -> Files.writeString(directory.resolve("statement$index.sql"), sql) }
             val process = ProcessBuilder(python, script.toString(), schemaSource().toString(), mode)
                 .redirectErrorStream(true).start()

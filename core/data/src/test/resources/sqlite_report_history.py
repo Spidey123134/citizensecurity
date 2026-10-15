@@ -13,12 +13,12 @@ assert len(base) == 2 and "db.execSQL(ReportHistorySql.CREATE_TABLE)" in on_crea
 photos = re.findall(r'"""(.*?)"""\.trimIndent\(\)', source.split("val PHOTO_COLUMNS = listOf(", 1)[1], re.S)
 assert len(photos) == 5
 version = int(re.search(r"const val VERSION = (\d+)", source).group(1))
-assert version == 3
+assert version == 4
 legacy_sql = re.sub(r'\$\{PHOTO_COLUMNS\.joinToString\([^}]*\)\}\s*,', "", base[0])
 current_sql = re.sub(r'\$\{PHOTO_COLUMNS\.joinToString\([^}]*\)\}', ",\n".join(photos), base[0])
 assert "${" not in legacy_sql and "${" not in current_sql
-create, insert, head, operation, cas, first_page, older_page = [
-    (directory / f"statement{i}.sql").read_text(encoding="utf-8") for i in range(7)
+create, insert, head, operation, cas, first_page, older_page, activity_index = [
+    (directory / f"statement{i}.sql").read_text(encoding="utf-8") for i in range(8)
 ]
 identity = "00000000-0000-0000-0000-000000000001"
 actor = "00000000-0000-0000-0000-000000000002"
@@ -29,11 +29,14 @@ def connection(name="main"):
     db.execute("PRAGMA foreign_keys = ON")
     return db
 
-def prepare(db, old_version=3):
+def prepare(db, old_version=None):
+    old_version = version if old_version is None else old_version
     db.execute(legacy_sql if old_version == 1 else current_sql)
     db.execute(base[1])
-    if old_version == 3:
+    if old_version >= 3:
         db.execute(create)
+    if old_version >= 4:
+        db.execute(activity_index)
     db.execute(f"PRAGMA user_version = {old_version}")
 
 def report(db, report_id=identity, status="REPORTED", photo=False):
@@ -91,7 +94,8 @@ with connection() as db:
             if mode == "migrationRollback":
                 db.execute("CREATE TABLE report_status_events (preserve TEXT)")
             db.execute(create)
-            db.execute("PRAGMA user_version = 3")
+            db.execute(activity_index)
+            db.execute(f"PRAGMA user_version = {version}")
         if mode == "migrationRollback":
             before_schema = db.execute("SELECT * FROM sqlite_master ORDER BY name").fetchall()
             try:
@@ -108,7 +112,7 @@ with connection() as db:
             assert after == ([row + (None,) * 5 for row in before] if old_version == 1 else before)
             assert head_row(db) == ("ATTENDED", 0, 0)
             assert db.execute(first_page, (identity, 3)).fetchall() == []
-            assert db.execute("PRAGMA user_version").fetchone()[0] == 3
+            assert db.execute("PRAGMA user_version").fetchone()[0] == version
     else:
         prepare(db)
         if mode == "creation":

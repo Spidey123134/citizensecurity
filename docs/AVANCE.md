@@ -1,5 +1,7 @@
 # Avance del plan del proyecto
 
+**Fase 35, Unreleased:** centro de actividad con eventos reales, filtros y acceso al folio; lectura paginada y migración de índice que conserva los registros previos. Es el consumidor que prepara los avisos de cambios del PDF, sin entrega Android o administración activada. **19/28 = 67.9%** conserva los mismos criterios; no se acredita una notificación recibida por mostrar el historial. [Fase 35](FASE_35.md) · [Validación](VALIDACION.md).
+
 **Entrega 0.6.1 — 14 de octubre de 2026 · código Android 29:** fases 29–34 agrupadas, con cámara/galería, ficha PDF, contactos, Ayuda inmediata/atajos y mosaico de Ajustes rápidos. Amplían utilidad y la fotografía ya construida, por lo que **19/28 = 67.9%** conserva los mismos criterios y nueve pendientes. [Entrega](ENTREGA_0_6_1.md) · [Pruebas y límites](VALIDACION.md). Administración y asignación siguen pendientes.
 
 ## Avance vigente — 14 de octubre de 2026

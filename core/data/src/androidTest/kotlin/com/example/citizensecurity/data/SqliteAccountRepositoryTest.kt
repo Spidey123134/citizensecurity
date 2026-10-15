@@ -180,7 +180,7 @@ class SqliteAccountRepositoryTest {
                 SqliteAccountRepository(context, accountsName).use { it.register("ana", password) }
                 SqliteReportRepository(context, reportsName).use { assertEquals(report, it.findById(report.id)) }
                 SQLiteDatabase.openDatabase(context.getDatabasePath(reportsName).path, null, SQLiteDatabase.OPEN_READONLY).use {
-                    assertEquals(3, it.version)
+                    assertEquals(4, it.version)
                 }
             } finally {
                 check(reportsName.matches(Regex("citizensecurity_accounts_test_[0-9a-f-]{36}_reports\\.db")))

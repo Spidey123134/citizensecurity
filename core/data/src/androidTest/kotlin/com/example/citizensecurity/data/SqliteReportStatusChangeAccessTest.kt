@@ -116,7 +116,7 @@ class SqliteReportStatusChangeAccessTest {
             assertTrue(recovered.matches(request))
         }
         assertArrayEquals(bytes, context.getDatabasePath(name).readBytes())
-        raw(name) { assertEquals(3, it.version) }
+        raw(name) { assertEquals(4, it.version) }
     }
     @Test fun missingOperationInExistingSchemaDoesNotMutateAnyRows() = runBlocking {
         val name = name(); repository(name).use { it.createOnce(id, draft()) }

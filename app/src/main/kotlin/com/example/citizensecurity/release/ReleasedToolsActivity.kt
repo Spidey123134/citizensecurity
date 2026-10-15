@@ -43,6 +43,9 @@ class ReleasedToolsActivity : ReportWorkspaceActivity() {
         findViewById<Button>(R.id.tools_reports).setOnClickListener {
             startReportActivity(Intent(this, ReportsActivity::class.java))
         }
+        findViewById<Button>(R.id.home_activity).setOnClickListener {
+            startReportActivity(Intent(this, com.example.citizensecurity.reports.ReportActivityActivity::class.java))
+        }
         findViewById<Button>(R.id.tools_reports_map).setOnClickListener {
             startReportActivity(Intent(this, ReportsMapActivity::class.java))
         }

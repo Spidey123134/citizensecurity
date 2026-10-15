@@ -10,7 +10,9 @@ import com.example.citizensecurity.domain.ReportStatusPermissionDeniedException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
-/** Captured owner/actor binding. Neither its scope nor a journal grants a role. */
+/** Captured owner/actor binding. Neither its scope nor a journal grants a role.
+ * Receipt lookup accepts existing history schema 3/4 through a read-only connection, without upgrade.
+ */
 class SqliteReportStatusChangeAccess(
     override val scope: ReportStatusChangeScope,
     private val repository: SqliteReportRepository,
