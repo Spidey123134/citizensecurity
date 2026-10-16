@@ -1,50 +1,81 @@
-# Borrador local para probar la próxima actualización
+# Probar CitizenSecurity 0.6.2
 
-**Guía local, sin publicar · 15 de octubre de 2026.** La Release se pospuso para continuar trabajando en la app. La numeración **0.6.2 / código Android 30 es tentativa** y corresponde al candidato interno guardado en `.gradle/validacion/citizensecurity-0.6.2-academico.apk`; no hay descarga pública de esa versión. Esta guía conserva los pasos para una futura prueba cuando se autorice la entrega o instalación.
+**16 de octubre de 2026 · Android 0.6.2 / código 30 · entrega acumulada en preparación.** Esta guía recorre **todas las fases 35–42**, incluidas las que quedaron Unreleased. Usa únicamente la APK final **citizensecurity-0.6.2-academico.apk** de la [Release 0.6.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.2) cuando se confirme su publicación, con el checksum adjunto. El candidato interno antiguo de solo 35–37 conserva otro hash y no es esta entrega.
 
-El candidato archivado mide **55,302,267 bytes** y su SHA-256 es `ee75a653fc468153d062747bfeca5727104a236d29dcf876bacd6494162d3b2f`. Ese hash solo identifica el archivo interno preparado; deberá revisarse si cambia el binario. Usa únicamente la APK del producto CitizenSecurity que se indique en la futura entrega.
+APK final: **56,200,431 bytes**, SHA-256 `114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4`. [Cambios, identidad y límites](ENTREGA_0_6_2.md).
 
 ## Actualizar conservando lo anterior
 
-1. Antes de actualizar, anota un folio que ya tengas y recuerda con qué cuenta o acceso académico lo guardaste.
-2. Abre la APK y acepta **Actualizar** encima de la instalación actual. **No desinstales ni borres datos.** Si Android rechaza la firma o la actualización, conserva la app anterior y revisa qué APK descargaste.
-3. Abre la app, ingresa si lo solicita y consulta el folio anterior desde el mismo acceso. Comprueba campos, fotografía e historial que ya existían. Una cuenta distinta mantiene su propio espacio; `admin/admin` y Desarrollador usan el académico sin permisos administrativos.
+1. Anota un folio que ya tengas y recuerda con qué cuenta o acceso académico lo guardaste.
+2. Abre la APK y acepta **Actualizar** encima de la instalación actual. **No desinstales ni borres datos.** Si Android rechaza firma o actualización, conserva la app anterior y revisa el archivo.
+3. Abre la app, ingresa si lo solicita y consulta el folio anterior desde el mismo acceso. Comprueba campos, fotografía e historial previos. Otra cuenta mantiene su propio espacio; admin/admin y Desarrollador usan el académico sin permisos administrativos.
 
-La guía describe una aceptación física futura; no acredita una actualización en tu teléfono. Durante la preparación se aprobaron dos etapas de actualización en emulador, de 0.6.1 al candidato 0.6.2, y se conservaron los datos de prueba. La validación nativa final del candidato sigue pendiente. El estado y sus límites están en el [borrador de entrega](ENTREGA_0_6_2.md); [Validación](VALIDACION.md) conserva el historial de las fases.
+Esta guía permite registrar una aceptación física nueva; no afirma que ya se haya ejecutado en tu teléfono. La actualización de la oficial 0.6.1 al binario final 0.6.2 aprobó sus dos etapas en emulador propio API 37, conservando datos/foto/contactos antes de migrar y verificándolos después. Esa evidencia se registra por separado en [Validación](VALIDACION.md).
+
+## Revisar el borrador y su fotografía
+
+1. Desde Inicio abre **Reportar** y prepara un reporte con información de prueba que no exponga a otras personas.
+2. Adjunta una foto vertical desde galería o cámara y abre **Revisar borrador**.
+3. Comprueba datos, lugar y fotografía separados, imagen completa ajustada a su marco y texto/acciones sin solapamientos. Desplázate hasta el final; puedes probar también un tamaño de letra mayor.
+4. Volver a editar conserva campos y foto. Revisar por sí solo no guarda; el guardado requiere su acción y los controles vigentes de ubicación/posibles repetidos.
+
+Este paso comprueba legibilidad. Para foto, PDF, contactos y accesos de ayuda conservados puedes seguir también la [guía 0.6.1](PROBAR_0_6_1.md).
 
 ## Consultar la actividad real
 
-1. En Inicio, abre **Actividad de reportes**. **Toda la actividad** muestra guardados y cambios que estén registrados en este acceso.
-2. Abre una entrada con **Abrir reporte** y comprueba que corresponde a su folio. Un guardado se identifica como **Guardado en este teléfono**: no confirma envío o recepción institucional.
-3. Prueba **Cambios de estado**. Si no existen cambios, debe mostrar el resultado vacío correspondiente. La asignación administrativa sigue pendiente; no necesitas un cambio ficticio ni permisos especiales para comprobar esta pantalla.
-4. Si hay más de 50 eventos, usa **Eventos anteriores** y **Página anterior**. **Actualizar desde el inicio** regresa a la primera página y comprueba cambios nuevos. Los reportes antiguos sin eventos conservan sus datos aunque no aparezca una creación inventada en esta lista.
+1. En Inicio abre **Actividad de reportes**. **Toda la actividad** muestra guardados y cambios registrados en este acceso.
+2. Pulsa **Abrir reporte** y comprueba su folio. **Guardado en este teléfono** identifica una creación local, sin confirmar envío institucional.
+3. Selecciona **Cambios de estado**. Si aún no hiciste cambios autorizados, el resultado vacío es correcto; no debe inventarlos.
+4. Con más de 50 eventos usa **Eventos anteriores** y **Página anterior**. **Actualizar desde el inicio** vuelve al primer tramo. Los reportes antiguos sin eventos conservan sus datos aunque no aparezca una creación inventada.
 
-## Activar y comprobar los avisos
+## Activar la administración de tu cuenta local
 
-1. Desde Actividad, pulsa **Avisos de cambios de estado**. Entrar debe consultar el estado sin pedir permiso o publicar un aviso automáticamente. La preferencia empieza desactivada para un acceso nuevo.
-2. Pulsa **Activar avisos**. En Android 13 o posterior puede aparecer el permiso del sistema. Si lo deniegas, la preferencia debe permanecer desactivada. Puedes usar **Ajustes de avisos de Android** para revisar un bloqueo; al regresar se comprueba su estado actual.
-3. Con la preferencia activada y Android permitido, pulsa **Revisar cambios**. Solo los cambios de estado confirmados pueden producir el resumen general. Un reporte recién guardado, por sí solo, no produce un aviso de cambio. Si no hay cambios, el resultado vacío es correcto.
-4. Si aparece **Seguir revisando cambios**, úsalo para continuar. Cada gesto revisa un tramo limitado; el resultado de un tramo no significa que se recorrió todo el historial.
-5. Si hay un aviso, comprueba que su texto es general y no contiene folio, descripción, contacto, foto o ubicación. Al tocarlo debe abrirse la entrada normal de la app. Repetir la revisión no debe acumular avisos para las mismas operaciones registradas.
-6. Pulsa **Desactivar avisos**. Debe retirar el resumen propio conservando los reportes y el registro de operaciones ya comprobadas. La preferencia corresponde al acceso actual; cambiar de cuenta no debe mostrar sus datos en la siguiente.
+La asignación administra **solo el espacio de admin_local en ese teléfono**, no otras cuentas o instalaciones. Las contraseñas no se sincronizan. [Guía completa](ADMINISTRADOR_LOCAL.md).
 
-La revisión se realiza **manualmente desde esta pantalla**, sin push o revisión en segundo plano. Android puede ocultar o bloquear un aviso. La aceptación de su solicitud no acredita que una persona lo vio, ni recepción de un reporte por una autoridad. En el producto sigue pendiente la asignación de quien pueda cambiar estados; no se habilita desde `admin/admin`.
+1. En el login abre **Crear cuenta**, registra **admin_local** con contraseña propia de **15–128 caracteres** e ingresa. Si ya existe, usa su contraseña actual. No hay contraseña administrativa predeterminada; admin/admin conserva su acceso académico.
+2. En Inicio abre **Administración local**. En la primera asignación pulsa **Confirmar propietario con Android** y completa PIN, patrón o contraseña en la pantalla del sistema. Cancelar no activa permisos.
+3. Al regresar pulsa **Activar administración local** dentro de los dos minutos desde que iniciaste la confirmación. Volver de Android no basta. Una asignación comprobada no requiere repetir el alta para cada cambio.
+4. Abre **Consultar reportes** y comprueba filtros tipo/estado/prioridad, actualización, páginas y folio completo. Solo verás reportes de esta cuenta. Para probar un cambio necesitas un reporte guardado en ese mismo espacio.
+
+Si falta bloqueo seguro, configúralo tú desde los ajustes antes de pedir la confirmación. No publiques contraseña ni PIN. Ante un archivo incierto/corrupto, conserva el mensaje para revisión; no borres datos ni reinstales para superar el error.
+
+## Cambiar un estado y comprobar su historial
+
+1. En la consulta administrativa abre un folio y pulsa **Preparar cambio de estado**.
+2. Pulsa **Comprobar solicitudes pendientes**. Es una lectura; si existe una solicitud previa, resuélvela antes de preparar otra.
+3. Con diario vacío comprobado pulsa **Consultar estado actual**. Comprueba folio, descripción, estado y revisión.
+4. Escribe un motivo de **5–500 caracteres válidos**, sin controles ni espacios exteriores, y pulsa **Revisar cambio antes de confirmar**. Lee motivo y transición: todavía no se guarda.
+5. Pulsa **Confirmar y guardar cambio local**. Comprueba recibo y evento del historial con actor, fecha, motivo, secuencia y operación. Solo avanza un paso: **Reportado → En revisión → Atendido → Cerrado**. Cerrado no ofrece otro avance.
+6. Abre **Ver actividad de esta cuenta** desde el recibo y comprueba su cambio. Volver o navegar no reconoce la solicitud. Usa **Entendido: cerrar esta solicitud** para reconocerla y poder preparar otra.
+
+Ante interrupción, **Recuperar resultado de esta solicitud** busca el mismo recibo sin repetir el cambio. Si ofrece **Reintentar la misma solicitud**, conserva su UUID/cuerpo. No prepares otra solicitud para resolver la incertidumbre anterior. Una revisión cambiada exige consultar y revisar de nuevo. Atendido/Cerrado organizan datos locales y no confirman intervención oficial.
+
+## Activar y comprobar los avisos del cambio
+
+1. Desde Actividad, o desde el recibo con **Revisar avisos de cambios**, abre Avisos. Entrar no debe pedir permiso, reconocer el recibo o publicar automáticamente.
+2. Pulsa **Activar avisos**. Android 13 o posterior puede pedir permiso; denegarlo mantiene la preferencia desactivada. **Ajustes de avisos de Android** permite revisar un bloqueo; al volver se comprueba su estado actual.
+3. Con preferencia y Android permitidos pulsa **Revisar cambios**. Solo las transiciones confirmadas producen el resumen general. Una creación nueva no es un cambio para avisar; sin transiciones, vacío es correcto.
+4. Si ofrece **Seguir revisando cambios**, continúa explícitamente. Cada gesto recorre hasta 500 eventos en páginas de 50; no significa que ya examinó todo el historial.
+5. Comprueba un aviso general, sin cuenta, folio, descripción, contacto, motivo, foto o ubicación. Tocarlo abre la entrada normal. Otra revisión no debe avisar de operaciones registradas como aceptadas.
+6. **Desactivar avisos** retira el resumen y conserva reportes/IDs. Cambia de cuenta: no deben aparecer datos o preferencias privadas de la anterior.
+
+La revisión es manual desde esta pantalla; no hay push ni revisión en segundo plano. Android puede bloquear u ocultar un aviso y aceptar su solicitud no prueba lectura. Reconocer el recibo administrativo y revisar avisos son decisiones separadas.
 
 ## Preparar un mensaje para una persona
 
-1. En **Reportes guardados**, abre un folio y pulsa **Preparar mensaje para un contacto**.
-2. Elige un contacto de ese mismo acceso. Si no tienes uno, abre **Administrar contactos de confianza**, agrega un contacto propio y vuelve; la app debe leer la lista actualizada sin elegir destinatario automáticamente.
-3. Revisa la opción de incluir **referencia y punto guardados**: comienza desmarcada y no obtiene un GPS nuevo. Aunque esté desmarcada, la descripción puede contener lugares o datos que tú escribiste; revisa todo el texto antes de compartirlo.
-4. Pulsa **Revisar mensaje** y comprueba nombre, número, folio y texto completo. Si cambió el contacto o el reporte, debe pedir preparar de nuevo en lugar de usar una revisión antigua.
-5. Pulsa **Abrir Mensajes SMS**. Comprueba destinatario y contenido en la aplicación que se abra. **Para comprobar solo la composición, vuelve sin pulsar Enviar.** El operador puede cobrar el envío; algunas aplicaciones pueden omitir el texto y tendrás que revisarlo allí.
-6. Regresa o gira el teléfono: no debe abrirse otra composición automáticamente. Si falta una aplicación compatible, el mensaje de error debe permitir volver a decidir sin perder el reporte.
+1. Abre un folio en **Reportes guardados** y pulsa **Preparar mensaje para un contacto**.
+2. Elige un contacto del mismo acceso. Si falta, abre **Administrar contactos de confianza**, guarda uno propio y vuelve: debe releer la lista sin elegir destinatario automáticamente.
+3. Incluir **referencia y punto guardados** comienza desmarcado y no obtiene GPS nuevo. Revisa también descripción: puede contener datos que escribiste aunque no incluyas ubicación.
+4. Pulsa **Revisar mensaje** y comprueba nombre, teléfono, folio y texto completo. Un contacto/reporte cambiado exige otra preparación.
+5. Pulsa **Abrir Mensajes SMS** y revisa contenido/destinatario en la aplicación que se abra. **Para probar solo la composición, vuelve sin pulsar Enviar.** El operador puede cobrar y algunas aplicaciones pueden omitir el texto.
+6. Regresa o gira: no debe abrir otra composición automáticamente. Sin aplicación compatible, debe explicar el error y permitir otra decisión.
 
-Abrir la composición no envía desde CitizenSecurity ni acredita recepción. Esta opción no adjunta fotografía o PDF; **Preparar ficha PDF** sigue disponible por separado en el detalle del reporte.
+CitizenSecurity no envía automáticamente ni acredita recepción. Este mensaje no adjunta foto/PDF; **Preparar ficha PDF** conserva su recorrido independiente.
 
 ## Registrar el resultado
 
-Anota modelo, versión de Android, conservación del folio anterior, actividad visible, decisión del permiso y resultado de abrir/cancelar la composición. Indica si solo comprobaste el texto o si decidiste enviar un mensaje por tu cuenta; no lo registres como envío o recepción verificados cuando solo se abrió Mensajes. Si aparece un error, conserva su texto sin exponer datos personales.
+Anota modelo, Android, folio anterior conservado, lectura de foto, cuenta, activación administrativa, transición/recibo/historial, actividad, permiso de avisos y apertura/cancelación SMS. No expongas datos personales. Distingue abrir de enviar/leer y aceptar el punto GPS de guardar un reporte con folio.
 
-El avance original es **20/28 = 71.4%**. La asignación administrativa, el seguimiento autorizado y parte del recorrido productivo de avisos siguen pendientes. Para cámara, galería, PDF, contactos y accesos de ayuda conservados, también puedes seguir la [guía 0.6.1](PROBAR_0_6_1.md).
+**28/28 = 100% de construcción funcional local** del plan original. La guía registra aceptación física adicional, separada de seguridad de producción, integración institucional y pruebas de todos los teléfonos.
 
-[Borrador de entrega y candidato interno](ENTREGA_0_6_2.md) · [Validación](VALIDACION.md) · [Avance](AVANCE.md)
+[Entrega y checksum](ENTREGA_0_6_2.md) · [Administración local](ADMINISTRADOR_LOCAL.md) · [Validación](VALIDACION.md) · [Avance](AVANCE.md)

@@ -12,6 +12,9 @@ import com.example.citizensecurity.domain.ReportLocation
 import com.example.citizensecurity.domain.ReportMapRepository
 import com.example.citizensecurity.domain.ReportPhoto
 import com.example.citizensecurity.domain.ReportSubmissionJournal
+import com.example.citizensecurity.domain.ReportAdministrationPolicy
+import com.example.citizensecurity.domain.ReportStatusChangeAccess
+import com.example.citizensecurity.domain.ReportStatusChangeScope
 import com.example.citizensecurity.domain.SimilarReportRepository
 import com.example.citizensecurity.maps.IncidentLocationViewModel
 import java.util.concurrent.atomic.AtomicBoolean
@@ -31,6 +34,7 @@ class ReportWorkspaceStorage(
     val checkpointJournal: ReportDraftCheckpointJournal,
     val photoStore: ReportPhotoStore,
     val release: () -> Unit = {},
+    val statusChangeAccess: ((ReportStatusChangeScope, ReportAdministrationPolicy) -> ReportStatusChangeAccess)? = null,
 )
 
 /** One immutable owner for the whole Activity/model lifetime; no dynamic account lookups. */
@@ -43,6 +47,7 @@ class ReportWorkspace(
 ) {
     private val closed = AtomicBoolean(false)
     private val release = storage.release
+    private val statusChangeAccess = storage.statusChangeAccess
     val photoStore = storage.photoStore
     private val access = ScopedReportAccess(storage.repository, storage.listPageRepository,
         storage.mapRepository, storage.similarRepository, storage.submissionJournal,
@@ -55,6 +60,20 @@ class ReportWorkspace(
     val checkpointJournal = access.reportDraftCheckpointJournal
     val historyRepository = access.reportHistoryRepository
     val activityRepository = access.reportActivityRepository
+
+    /** Factory only: the binding checks authority on IO before entering this captured source. */
+    internal fun createStatusChangeAccess(scope: ReportStatusChangeScope, policy: ReportAdministrationPolicy): ReportStatusChangeAccess {
+        checkActive()
+        val accountId = session.account?.id ?: throw com.example.citizensecurity.domain.ReportStatusPermissionDeniedException()
+        if (scope != ReportStatusChangeScope(accountId, accountId)) {
+            throw com.example.citizensecurity.domain.ReportStatusPermissionDeniedException()
+        }
+        val factory = statusChangeAccess ?: throw com.example.citizensecurity.domain.ReportStatusPermissionDeniedException()
+        return factory(scope, policy).also {
+            checkActive()
+            if (it.scope != scope) throw com.example.citizensecurity.domain.ReportStatusPermissionDeniedException()
+        }
+    }
 
     fun checkActive() {
         check(!closed.get() && sessions.isCurrent(session)) {

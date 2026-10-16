@@ -55,6 +55,7 @@ import java.time.format.DateTimeFormatter
 internal fun AdministrationConsultationScreen(
     model: AdministrationConsultationViewModel,
     onClose: () -> Unit,
+    onChangeStatus: ((String?) -> Unit)? = null,
 ) {
     val state = model.state.collectAsStateWithLifecycle().value
     val list = rememberLazyListState()
@@ -111,6 +112,12 @@ internal fun AdministrationConsultationScreen(
                         modifier = Modifier.testTag("admin_consult_denied").semantics { liveRegion = LiveRegionMode.Polite })
                 }
             } else {
+                if (onChangeStatus != null) item {
+                    OutlinedButton(onClick = { action { onChangeStatus(null) } },
+                        modifier = Modifier.fillMaxWidth().testTag("admin_consult_recover_change")) {
+                        Text("Comprobar cambio pendiente")
+                    }
+                }
                 val browsing = state !is AdministrationConsultationState.ReadyReport &&
                     request !is AdministrationReportRequest
                 if (browsing && state !is AdministrationConsultationState.Idle) {
@@ -188,6 +195,12 @@ internal fun AdministrationConsultationScreen(
                     }
                     is AdministrationConsultationState.ReadyReport -> {
                         item { ConsultationDetail(state.report, zone) }
+                        if (onChangeStatus != null && state.report.status != ReportStatus.CLOSED) item {
+                            Button(onClick = { action { onChangeStatus(state.report.id) } },
+                                modifier = Modifier.fillMaxWidth().testTag("admin_consult_change_status")) {
+                                Text("Preparar cambio de estado")
+                            }
+                        }
                         consultationHistory(state.history, state.report, zone)
                         item {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

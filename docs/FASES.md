@@ -1,5 +1,33 @@
 # Fases de CITIZENSECURITY
 
+## Entrega acumulada 0.6.2 — fases 35–42
+
+**16 de octubre de 2026 · Android 0.6.2 / código 30 · publicación en preparación.** Se agrupan **las ocho fases posteriores a 0.6.1**, no únicamente las dos últimas: [35, Actividad](FASE_35.md), [36, avisos manuales](FASE_36.md), [37, mensaje a contacto](FASE_37.md), [38, permisos](FASE_38.md), [39, fotografía y sesión](FASE_39.md), [40, alta y consulta administrativa](FASE_40.md), [41, cambio e historial](FASE_41.md) y [42, recorrido de avisos sobre cambios reales](FASE_42.md).
+
+El corte completa **28/28 = 100% de construcción funcional local del PDF**. La aceptación física completa, API 26/fabricantes y seguridad/integración de producción conservan sus pruebas propias; no se incluyen en ese porcentaje. [Entrega y binario final](ENTREGA_0_6_2.md) · [Pasos para probar](PROBAR_0_6_2.md) · [Validación](VALIDACION.md).
+
+Los apartados inferiores son **históricos de cada fase**: sus marcas Unreleased y referencias a la oficial 0.6.1 describen aquel momento. Las fases 35–42 se incorporan a esta entrega acumulada; el candidato anterior de solo 35–37 queda archivado por separado.
+
+## Fase 42 — cambio confirmado, actividad y avisos, local validada
+
+Completa **4.7 Notificaciones** con las transiciones autorizadas de fase 41. Desde el recibo confirmado se puede abrir **Ver actividad de esta cuenta** o **Revisar avisos de cambios**, sin reconocer el pendiente o pasar el cuerpo del cambio por extras; conserva el sello interno de sesión. La apertura no activa la preferencia, pide permiso, revisa eventos ni publica; cada decisión conserva su gesto propio.
+
+El consumidor manual consulta cambios reales de SQLite y conserva los UUID aceptados por Android con CAS, deduplicación y límites. El resumen no contiene la identidad o datos del incidente. Desactivar cancela el resumen y conserva sus IDs. El almacén rechaza `.new`/`.bak` inciertos sin restaurarlos o borrarlos. [Recorrido y alcance](FASE_42.md) · [Guía](ADMINISTRADOR_LOCAL.md).
+
+**16 de octubre de 2026 · 28/28 = 100% de construcción funcional local.** Notificaciones alcanza **4/4**: eventos reales autorizados, entrega del aviso y recorrido integrado comprobados, además de los permisos/preferencias existentes. Quedan cero criterios funcionales locales pendientes.
+
+**1431 casos distintos aprobados/14 nuevos**, sin fallos/errores/omitidos finales: 1379 JVM —205 recibos intactos de dominio reutilizados, 148 datos y 1026 app ejecutados— y 52 Android API 37 ejecutados. Lint sin errores/22 avisos existentes por variante de app; datos sin incidencias. [Desglose y límites](VALIDACION.md).
+
+El cierre es de construcción funcional **local** del plan; la aceptación física completa, la entrega y la seguridad de producción institucional se registran aparte. Código local, sin actualizar GitHub/main o PR #30, ni publicar APK/tag/Release; oficial **0.6.1** conservada. Las fases inferiores mantienen sus cifras históricas.
+
+## Fase 41 — cambio de estado e historial administrativo, local validada
+
+Continúa **4.4 Consulta y 4.6 Administración**: desde un folio, comprobar pendientes, leer revisión/estado, escribir un motivo válido de 5–500 caracteres, revisar y confirmar con otro gesto. Solo avances consecutivos **Reportado → En revisión → Atendido → Cerrado**. El recibo y el historial conservan actor por UUID, fecha, motivo, secuencia y operación; son estados locales, sin acreditar atención oficial.
+
+Recuperar lee diario y recibo; reintentar conserva cuerpo y UUID completos, y reconocer exige un gesto. La relectura de un rechazo puede mostrar un recibo confirmado tardío. Sesión, permisos, revisión, primer plano y bloqueo se comprueban antes de guardar; giro y navegación no escriben. [Recorrido y límites](FASE_41.md) · [Guía](ADMINISTRADOR_LOCAL.md).
+
+**25/28 = 89.3%**: Consulta y Administración alcanzan **4/4**, con tres criterios pendientes de Notificaciones. **1488 casos distintos aprobados/103 nuevos**, sin fallos finales; 1379 JVM y 109 Android, con lectura/rol/diario/SQLite reales y tres avances visibles. Lint sin errores; [desglose y límites](VALIDACION.md). Corte **local**, sin actualizar GitHub/main o el [PR #30 de fase 40](https://github.com/Spidey123134/citizensecurity/pull/30), ni publicar APK/tag/Release. Oficial **0.6.1**. Los siguientes bloques conservan los antecedentes.
+
 ## Fase 40 — administración local y consulta protegida, Unreleased
 
 Cuenta elegida **`admin_local`**, con registro y contraseña propia; confirmación nativa del propietario, segundo gesto de activación y asignación única por UUID. Consulta visible de su espacio local con filtros, folio e historial de 50 por página; permiso/sesión vigentes, respuestas tardías descartadas y reintento exacto. [Guía para el equipo](ADMINISTRADOR_LOCAL.md) · [Alcance, criterios y validación](FASE_40.md).

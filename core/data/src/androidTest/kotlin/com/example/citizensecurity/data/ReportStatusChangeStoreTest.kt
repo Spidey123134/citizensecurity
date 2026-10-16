@@ -1,12 +1,14 @@
 package com.example.citizensecurity.data
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.citizensecurity.domain.*
 import java.io.File
 import java.io.IOException
+import java.nio.file.Files
 import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.CountDownLatch
@@ -23,6 +25,7 @@ import org.junit.runner.RunWith
 class ReportStatusChangeStoreTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private val scopes = mutableListOf<ReportStatusChangeScope>()
+    private val extraOwnedFiles = mutableListOf<File>()
     private fun scope(owner: String? = UUID.randomUUID().toString(), actor: String = UUID.randomUUID().toString()) =
         ReportStatusChangeScope(owner, actor).also(scopes::add)
     private fun request(scope: ReportStatusChangeScope) = ReportStatusChangeRequest(scope,
@@ -30,10 +33,13 @@ class ReportStatusChangeStoreTest {
             ReportStatus.REPORTED, ReportStatus.IN_REVIEW, "Revisión local del café 🌼"), Instant.parse("2026-10-14T01:02:03.123456789Z"))
     private fun store(scope: ReportStatusChangeScope, guard: () -> Unit = {}) = ReportStatusChangeStore(context, scope, guard)
     private fun file(scope: ReportStatusChangeScope) = File(context.filesDir, ReportStatusChangeStore.fileName(scope))
-    @After fun cleanOnlyOwnedFiles() { scopes.forEach { scope ->
-        val base = file(scope)
-        listOf(base, File(base.path + ".bak"), File(base.path + ".new")).forEach { it.delete() }
-    } }
+    @After fun cleanOnlyOwnedFiles() {
+        extraOwnedFiles.asReversed().forEach { it.delete() }
+        scopes.forEach { scope ->
+            val base = file(scope)
+            listOf(base, File(base.path + ".bak"), File(base.path + ".new")).forEach { it.delete() }
+        }
+    }
 
     @Test fun readingEmptyJournalDoesNotCreateFilesOrDatabase() = runBlocking {
         val scope = scope(); val databases = context.databaseList().toSet()
@@ -92,17 +98,170 @@ class ReportStatusChangeStoreTest {
         expect<IOException> { store(a).retain(request(a)) }
         assertArrayEquals(bytes, file(a).readBytes())
     }
-    @Test fun atomicBackupRestoresLastCompleteBodyInsteadOfPartialBase() = runBlocking {
+    @Test fun backupAndPartialBaseAreUncertainAndNeitherIsRestoredOrRemoved() = runBlocking {
         val scope = scope(); val expected = request(scope); store(scope).retain(expected)
-        assertTrue(file(scope).renameTo(File(file(scope).path + ".bak")))
+        val backup = File(file(scope).path + ".bak")
+        assertTrue(file(scope).renameTo(backup))
         file(scope).writeText("partial")
-        assertEquals(expected, store(scope).read())
+        val backupBytes = backup.readBytes()
+        assertBlockedWithoutEnteringWriter(scope, expected)
+        assertEquals("partial", file(scope).readText())
+        assertArrayEquals(backupBytes, backup.readBytes())
     }
     @Test fun backupAloneIsPendingAndCannotBeOverwrittenByAnotherOperation() = runBlocking {
         val scope = scope(); val expected = request(scope); store(scope).retain(expected)
-        assertTrue(file(scope).renameTo(File(file(scope).path + ".bak")))
-        expect<IllegalStateException> { store(scope).retain(request(scope)) }
-        assertEquals(expected, store(scope).read())
+        val backup = File(file(scope).path + ".bak")
+        assertTrue(file(scope).renameTo(backup))
+        val bytes = backup.readBytes()
+        assertBlockedWithoutEnteringWriter(scope, expected)
+        assertFalse(file(scope).exists())
+        assertArrayEquals(bytes, backup.readBytes())
+    }
+
+    @Test fun stagingAloneIsNeverTreatedAsAnEmptyJournalEvenWhenItContainsACompleteRequest() = runBlocking {
+        listOf(false, true).forEach { complete ->
+            val scope = scope(); val pending = request(scope)
+            val bytes = if (complete) ReportStatusChangeCodec.encode(pending) else "partial".toByteArray()
+            val staging = File(file(scope).path + ".new").apply { writeBytes(bytes) }
+            assertBlockedWithoutEnteringWriter(scope, pending)
+            assertFalse(file(scope).exists())
+            assertArrayEquals(bytes, staging.readBytes())
+        }
+    }
+
+    @Test fun completeBaseWithStagingIsNotReadClearedOrReplaced() = runBlocking {
+        val scope = scope(); val pending = request(scope); store(scope).retain(pending)
+        val baseBytes = file(scope).readBytes()
+        val stagingBytes = "unconfirmed write".toByteArray()
+        val staging = File(file(scope).path + ".new").apply { writeBytes(stagingBytes) }
+        assertBlockedWithoutEnteringWriter(scope, pending)
+        assertArrayEquals(baseBytes, file(scope).readBytes())
+        assertArrayEquals(stagingBytes, staging.readBytes())
+    }
+
+    @Test fun bothSidecarsArePreservedAlongWithTheExactBase() = runBlocking {
+        val scope = scope(); val pending = request(scope); store(scope).retain(pending)
+        val baseBytes = file(scope).readBytes()
+        val backup = File(file(scope).path + ".bak").apply { writeText("old unknown request") }
+        val staging = File(file(scope).path + ".new").apply { writeText("new unknown request") }
+        assertBlockedWithoutEnteringWriter(scope, pending)
+        assertArrayEquals(baseBytes, file(scope).readBytes())
+        assertEquals("old unknown request", backup.readText())
+        assertEquals("new unknown request", staging.readText())
+    }
+
+    @Test fun symlinkAtBaseOrEitherSidecarNeverFollowsOrModifiesItsTarget() = runBlocking {
+        listOf("", ".new", ".bak").forEach { suffix ->
+            val scope = scope(); val pending = request(scope)
+            val target = File.createTempFile("status_target_", ".txt", context.cacheDir).also(extraOwnedFiles::add)
+            val bytes = "outside the journal".toByteArray()
+            target.writeBytes(bytes)
+            val link = File(file(scope).path + suffix)
+            Files.createSymbolicLink(link.toPath(), target.toPath())
+            assertBlockedWithoutEnteringWriter(scope, pending)
+            assertTrue(Files.isSymbolicLink(link.toPath()))
+            assertArrayEquals(bytes, target.readBytes())
+        }
+    }
+
+    @Test fun danglingSymlinksAreUncertainRatherThanAbsent() = runBlocking {
+        listOf("", ".new", ".bak").forEach { suffix ->
+            val scope = scope(); val pending = request(scope)
+            val target = File(context.cacheDir, "missing_status_${UUID.randomUUID()}")
+            val link = File(file(scope).path + suffix)
+            Files.createSymbolicLink(link.toPath(), target.toPath())
+            assertBlockedWithoutEnteringWriter(scope, pending)
+            assertTrue(Files.isSymbolicLink(link.toPath()))
+            assertFalse(target.exists())
+        }
+    }
+
+    @Test fun directoryAtBaseOrSidecarIsNeverRecursivelyDeletedOrTreatedAsMissing() = runBlocking {
+        listOf("", ".new", ".bak").forEach { suffix ->
+            val scope = scope(); val pending = request(scope)
+            val directory = File(file(scope).path + suffix).apply { check(mkdir()) }
+            val child = File(directory, "owned_fixture.txt").apply { writeText("keep this file") }
+                .also(extraOwnedFiles::add)
+            assertBlockedWithoutEnteringWriter(scope, pending)
+            assertTrue(directory.isDirectory)
+            assertEquals("keep this file", child.readText())
+        }
+    }
+
+    @Test fun symlinkAsPrivateDirectoryIsRejectedWithoutTouchingTheDestination() = runBlocking {
+        val scope = scope(); val pending = request(scope)
+        val target = File(context.cacheDir, "status_directory_${UUID.randomUUID()}").apply { check(mkdir()) }
+            .also(extraOwnedFiles::add)
+        val sentinel = File(target, "sentinel.txt").apply { writeText("keep private directory") }
+            .also(extraOwnedFiles::add)
+        val link = File(context.cacheDir, "status_directory_link_${UUID.randomUUID()}").also(extraOwnedFiles::add)
+        Files.createSymbolicLink(link.toPath(), target.toPath())
+        val wrapped = object : ContextWrapper(context) {
+            override fun getApplicationContext(): Context = this
+            override fun getFilesDir(): File = link
+        }
+        val bound = ReportStatusChangeStore(wrapped, scope, {})
+        expect<IOException> { bound.read() }
+        expect<IOException> { bound.retain(pending) }
+        expect<IOException> { bound.clear(pending) }
+        var entered = false
+        expect<IOException> { bound.exclusive { entered = true } }
+        assertFalse(entered)
+        assertTrue(Files.isSymbolicLink(link.toPath()))
+        assertEquals("keep private directory", sentinel.readText())
+        assertFalse(File(target, ReportStatusChangeStore.fileName(scope)).exists())
+    }
+
+    @Test fun sidecarAppearingAtClearGuardIsPreservedAndPreventsDeletingTheBase() = runBlocking {
+        val scope = scope(); val pending = request(scope); store(scope).retain(pending)
+        val bytes = file(scope).readBytes()
+        val staging = File(file(scope).path + ".new")
+        var checks = 0
+        val bound = store(scope) { if (++checks == 2) staging.writeText("unknown write during guard") }
+        expect<IOException> { bound.clear(pending) }
+        assertArrayEquals(bytes, file(scope).readBytes())
+        assertEquals("unknown write during guard", staging.readText())
+    }
+
+    @Test fun sidecarAppearingAtReadGuardIsPreservedAndDoesNotReturnAStaleBody() = runBlocking {
+        val scope = scope(); val pending = request(scope); store(scope).retain(pending)
+        val bytes = file(scope).readBytes()
+        val backup = File(file(scope).path + ".bak")
+        var checks = 0
+        val bound = store(scope) { if (++checks == 2) backup.writeText("unknown backup during guard") }
+        expect<IOException> { bound.read() }
+        assertArrayEquals(bytes, file(scope).readBytes())
+        assertEquals("unknown backup during guard", backup.readText())
+    }
+
+    @Test fun replacedAtomicOutputLinkAtCommitGuardIsPreservedRatherThanCleanedAsOurWrite() = runBlocking {
+        val scope = scope(); val pending = request(scope)
+        val target = File.createTempFile("status_foreign_", ".txt", context.cacheDir).also(extraOwnedFiles::add)
+            .apply { writeText("keep foreign contents") }
+        val staging = File(file(scope).path + ".new")
+        var replaced: File? = null
+        var checks = 0
+        val guarded = store(scope) {
+            if (++checks == 3) {
+                // Older AtomicFile writes the base directly; newer versions write .new.
+                val currentOutput = if (staging.exists()) staging else file(scope)
+                check(currentOutput.delete())
+                Files.createSymbolicLink(currentOutput.toPath(), target.toPath())
+                replaced = currentOutput
+            }
+        }
+        expect<IOException> { guarded.retain(pending) }
+        assertTrue(Files.isSymbolicLink(checkNotNull(replaced).toPath()))
+        assertEquals("keep foreign contents", target.readText())
+        expect<IOException> { store(scope).read() }
+    }
+
+    @Test fun malformedJournalCannotEnterAnExclusiveBackendBlock() = runBlocking {
+        val scope = scope(); val bytes = "not a verified journal".toByteArray(); file(scope).writeBytes(bytes)
+        var writerEntered = false
+        expect<IOException> { store(scope).exclusive { writerEntered = true } }
+        assertFalse(writerEntered)
+        assertArrayEquals(bytes, file(scope).readBytes())
     }
     @Test fun exactClearIsIdempotentAndRemovesOnlyItsOwnedJournal() = runBlocking {
         val a = scope(); val b = scope(); val request = request(a); val second = request(b)
@@ -175,6 +334,15 @@ class ReportStatusChangeStoreTest {
         writer.join(); follower.join()
         assertEquals(1, followerEntered.get())
     }
+    private suspend fun assertBlockedWithoutEnteringWriter(scope: ReportStatusChangeScope, request: ReportStatusChangeRequest) {
+        expect<IOException> { store(scope).read() }
+        expect<IOException> { store(scope).retain(request) }
+        expect<IOException> { store(scope).clear(request) }
+        var entered = false
+        expect<IOException> { store(scope).exclusive { entered = true } }
+        assertFalse(entered)
+    }
+
     private suspend inline fun <reified T : Throwable> expect(noinline action: suspend () -> Any?) {
         try { action(); fail("Expected ${T::class.java.simpleName}") }
         catch (error: Throwable) { if (error !is T) throw error }

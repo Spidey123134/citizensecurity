@@ -235,8 +235,8 @@ class SqliteReportRepository(
                     event.toStatus != command.targetStatus || event.reason != command.reason || event.actorAccountId != actor
                 ) throw ReportStatusOperationConflictException()
                 ensureActive()
-                checkCurrent()
                 requireSameAuthority(command, actor)
+                checkCurrent()
                 ensureActive()
                 database.setTransactionSuccessful()
                 return@withOpenRepository event
@@ -257,8 +257,8 @@ class SqliteReportRepository(
             if (changed != 1) throw ReportStatusConflictException()
             insertHistoryEvent(database, command.reportId, event)
             ensureActive()
-            checkCurrent()
             requireSameAuthority(command, actor)
+            checkCurrent()
             ensureActive()
             database.setTransactionSuccessful()
             event

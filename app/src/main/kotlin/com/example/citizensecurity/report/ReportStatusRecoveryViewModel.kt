@@ -11,6 +11,10 @@ import com.example.citizensecurity.domain.ReportStatusChangeCommand
 import com.example.citizensecurity.domain.ReportStatusChangeJournal
 import com.example.citizensecurity.domain.ReportStatusChangeReceipt
 import com.example.citizensecurity.domain.ReportStatusChangeRequest
+import com.example.citizensecurity.domain.ReportStatusConflictException
+import com.example.citizensecurity.domain.ReportStatusNotFoundException
+import com.example.citizensecurity.domain.ReportStatusPermissionDeniedException
+import com.example.citizensecurity.domain.ReportAdministrationPermissionDeniedException
 import java.time.Clock
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
@@ -30,6 +34,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 sealed interface ReportStatusRecoveryState {
+    data object Closed : ReportStatusRecoveryState
     data object AwaitingRecovery : ReportStatusRecoveryState
     class Recovering(val retained: ReportStatusChangeRequest?) : ReportStatusRecoveryState
     data object Ready : ReportStatusRecoveryState
@@ -41,12 +46,19 @@ sealed interface ReportStatusRecoveryState {
         val message: String,
     ) : ReportStatusRecoveryState
     class Confirmed(val request: ReportStatusChangeRequest, val receipt: ReportStatusChangeReceipt) : ReportStatusRecoveryState
+    class Rejected(
+        val request: ReportStatusChangeRequest,
+        val reason: ReportStatusRejectionReason,
+        val message: String,
+    ) : ReportStatusRecoveryState
     class Error(val retained: ReportStatusChangeRequest?, val message: String) : ReportStatusRecoveryState
 }
 
+enum class ReportStatusRejectionReason { CONFLICT, NOT_FOUND }
+
 /**
- * Durable coordination prepared for a future authorized administrative flow. It is not composed
- * into the application. Constructing a model neither reads storage nor changes a report.
+ * Durable coordination for the explicitly authorized administrative flow.
+ * Constructing a model neither reads storage nor changes a report.
  * Every recovery, retry and acknowledgement is a separate gesture with a live captured access.
  */
 class ReportStatusRecoveryViewModel(
@@ -55,21 +67,73 @@ class ReportStatusRecoveryViewModel(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val clock: Clock = Clock.systemUTC(),
     private val operationId: () -> String = { UUID.randomUUID().toString() },
+    private val checkSession: () -> Unit = {},
 ) : ViewModel() {
     private val scope = access.scope
     private val mutableState = MutableStateFlow<ReportStatusRecoveryState>(ReportStatusRecoveryState.AwaitingRecovery)
     val state: StateFlow<ReportStatusRecoveryState> = mutableState.asStateFlow()
     private val generation = AtomicLong()
+    private val closed = AtomicBoolean()
     private val writerStarted = AtomicBoolean()
     private var pending: Job? = null
     @Volatile private var retained: ReportStatusChangeRequest? = null
     private var emptyVerified = false
     private var mayRetainMissing = false
     @Volatile private var acknowledgement: ReportStatusChangeReceipt? = null
+    // A definitive exception is process-local evidence, never reconstructed from a missing receipt.
+    @Volatile private var rejected: Rejection? = null
+    @Volatile private var rejectedAcknowledgement: Rejection? = null
+
+    /**
+     * Checks the pure captured session immediately and schedules authority IO without blocking UI.
+     * While that check owns the single-flight slot, gestures cannot begin another operation.
+     * A running operation already rechecks authority around each IO boundary.
+     */
+    fun checkAccess(): Boolean {
+        if (closed.get() || !viewModelScope.isActive) return false
+        try {
+            checkSession()
+            check(access.scope == scope)
+        } catch (_: Exception) {
+            close()
+            return false
+        }
+        if (pending != null) return true
+        val token = generation.incrementAndGet()
+        val job = viewModelScope.launch(start = CoroutineStart.LAZY) {
+            try {
+                withContext(dispatcher) { checkpoint(token) }
+                publicationCheckpoint(token)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
+                ensureActive()
+                if (token == generation.get()) retireIfRevoked(token, failure)
+            }
+        }
+        pending = job
+        job.invokeOnCompletion { if (pending === job) pending = null }
+        job.start()
+        return true
+    }
+
+    /** Discards visible private data, without clearing the durable request or releasing a writer's lease. */
+    fun close() {
+        if (!closed.compareAndSet(false, true)) return
+        generation.incrementAndGet()
+        emptyVerified = false
+        mayRetainMissing = false
+        retained = null
+        acknowledgement = null
+        rejected = null
+        rejectedAcknowledgement = null
+        mutableState.value = ReportStatusRecoveryState.Closed
+        pending?.cancel()
+    }
 
     /** Reads the journal and then an exact receipt. Never creates, changes or clears anything. */
-    fun recover(): Boolean {
-        if (!canBegin()) return false
+    fun recover(expected: ReportStatusRecoveryState? = null): Boolean {
+        if (!canBegin() || (expected != null && mutableState.value !== expected)) return false
         emptyVerified = false
         mayRetainMissing = false
         val local = retained
@@ -87,6 +151,13 @@ class ReportStatusRecoveryViewModel(
                         if (actual != expected) throw RecoveryMismatch()
                         Outcome.Empty
                     }
+                    saved == null && rejectedAcknowledgement != null -> {
+                        val proof = checkNotNull(rejectedAcknowledgement)
+                        if (local != proof.request) throw RecoveryMismatch()
+                        val receipt = readReceipt(proof.request, token)
+                        // A late receipt is evidence of a commit, even after a rejected clear.
+                        if (receipt == null) Outcome.Empty else Outcome.Confirmed(proof.request, receipt)
+                    }
                     saved == null && !writerStarted.get() -> Outcome.MissingBeforeWriter(checkNotNull(local))
                     saved == null -> throw RecoveryMismatch()
                     saved.scope != scope || (local != null && saved != local) -> throw RecoveryMismatch()
@@ -98,7 +169,11 @@ class ReportStatusRecoveryViewModel(
                             writerStarted.set(true)
                         }
                         val receipt = readReceipt(saved, token)
-                        if (receipt == null) Outcome.Retained(saved) else Outcome.Confirmed(saved, receipt)
+                        when {
+                            receipt != null -> Outcome.Confirmed(saved, receipt)
+                            rejected?.request == saved -> Outcome.Rejected(checkNotNull(rejected))
+                            else -> Outcome.Retained(saved)
+                        }
                     }
                 }
             }
@@ -115,7 +190,7 @@ class ReportStatusRecoveryViewModel(
     ): Boolean {
         if (!canBegin() || !emptyVerified || retained != null) return false
         val request = try {
-            access.checkCurrent()
+            checkSession()
             check(access.scope == scope)
             ReportStatusChangeRequest(
                 scope,
@@ -123,15 +198,18 @@ class ReportStatusRecoveryViewModel(
                 clock.instant(),
             )
         } catch (_: IllegalArgumentException) {
-            mutableState.value = ReportStatusRecoveryState.Invalid(INVALID_MESSAGE)
+            if (!sessionCurrent()) close() else mutableState.value = ReportStatusRecoveryState.Invalid(INVALID_MESSAGE)
             return false
-        } catch (_: Exception) {
+        } catch (failure: Exception) {
             emptyVerified = false
-            mutableState.value = ReportStatusRecoveryState.Error(null, RECOVERY_MESSAGE)
+            if (failure.isPermissionDenial() || !sessionCurrent()) close()
+            else mutableState.value = ReportStatusRecoveryState.Error(null, RECOVERY_MESSAGE)
             return false
         }
         retained = request
         acknowledgement = null
+        rejected = null
+        rejectedAcknowledgement = null
         writerStarted.set(false)
         emptyVerified = false
         // The empty read authorizes retaining this body, not replacing a concurrent body.
@@ -140,16 +218,17 @@ class ReportStatusRecoveryViewModel(
     }
 
     /** Reuses all fields, including UUID, scope and requestedAt; an uncertain result needs recovery. */
-    fun retry(): Boolean {
+    fun retry(expected: ReportStatusRecoveryState.Pending? = null): Boolean {
         if (!canBegin()) return false
         val state = mutableState.value as? ReportStatusRecoveryState.Pending ?: return false
+        if (expected != null && state !== expected) return false
         if (state.requiresRecovery || state.request !== retained) return false
         return write(state.request)
     }
 
     /** A cancelled backend may still commit. The pending job and shared lease stay reserved. */
     fun cancel(): Boolean {
-        if (!viewModelScope.isActive) return false
+        if (closed.get() || !viewModelScope.isActive) return false
         val job = pending ?: return false
         generation.incrementAndGet()
         emptyVerified = false
@@ -162,22 +241,52 @@ class ReportStatusRecoveryViewModel(
     }
 
     /** Clears only after re-reading the complete same request and the complete same confirmed event. */
-    fun acknowledgeConfirmed(): Boolean {
+    fun acknowledgeConfirmed(expected: ReportStatusRecoveryState.Confirmed? = null): Boolean {
         if (!canBegin()) return false
         val confirmed = mutableState.value as? ReportStatusRecoveryState.Confirmed ?: return false
+        if (expected != null && confirmed !== expected) return false
         if (confirmed.request !== retained) return false
         return begin(ReportStatusRecoveryState.Working(confirmed.request, acknowledging = true)) { token ->
             journal.exclusive {
                 checkpoint(token)
                 val saved = journal.read()
                 checkpoint(token)
-                if (saved != confirmed.request) throw RecoveryMismatch()
+                val rejectedWasRetired = saved == null && rejectedAcknowledgement?.request == confirmed.request
+                if (saved != confirmed.request && !rejectedWasRetired) throw RecoveryMismatch()
                 val receipt = readReceipt(confirmed.request, token)
                 if (receipt != confirmed.receipt) throw RecoveryMismatch()
                 checkpoint(token)
                 // Only this live explicit gesture can later resolve a lost clear acknowledgement.
                 acknowledgement = confirmed.receipt
-                journal.clear(confirmed.request)
+                if (saved != null) journal.clear(confirmed.request)
+                checkpoint(token)
+                Outcome.Empty
+            }
+        }
+    }
+
+    /**
+     * A separate gesture retires a known rejected command. Rechecking the exact journal and receipt
+     * under the shared lease is read only; this path never calls change, retry or generates a UUID.
+     * The definitive exception proof is required in memory, not inferred from receipt absence.
+     */
+    fun acknowledgeRejected(expected: ReportStatusRecoveryState.Rejected? = null): Boolean {
+        if (!canBegin()) return false
+        val visible = mutableState.value as? ReportStatusRecoveryState.Rejected ?: return false
+        if (expected != null && visible !== expected) return false
+        val proof = rejected ?: return false
+        if (visible.request !== retained || proof.request != visible.request || proof.reason != visible.reason) return false
+        return begin(ReportStatusRecoveryState.Working(visible.request, acknowledging = true)) { token ->
+            journal.exclusive {
+                checkpoint(token)
+                val saved = journal.read()
+                checkpoint(token)
+                if (saved != proof.request) throw RecoveryMismatch()
+                val receipt = readReceipt(proof.request, token)
+                if (receipt != null) return@exclusive Outcome.Confirmed(proof.request, receipt)
+                checkpoint(token)
+                rejectedAcknowledgement = proof
+                journal.clear(proof.request)
                 checkpoint(token)
                 Outcome.Empty
             }
@@ -205,13 +314,33 @@ class ReportStatusRecoveryViewModel(
                 if (existing != null) return@exclusive Outcome.Confirmed(request, existing)
                 checkpoint(token)
                 writerStarted.set(true)
-                val event = access.change(request)
+                val event = try {
+                    access.change(request)
+                } catch (_: ReportStatusConflictException) {
+                    return@exclusive verifyRejection(request, ReportStatusRejectionReason.CONFLICT, token)
+                } catch (_: ReportStatusNotFoundException) {
+                    return@exclusive verifyRejection(request, ReportStatusRejectionReason.NOT_FOUND, token)
+                }
                 checkpoint(token)
                 val receipt = ReportStatusChangeReceipt(request.command.reportId, event)
                 if (!receipt.matches(request)) throw RecoveryMismatch()
                 Outcome.Confirmed(request, receipt)
             }
         }
+    }
+
+    private suspend fun verifyRejection(
+        request: ReportStatusChangeRequest,
+        reason: ReportStatusRejectionReason,
+        token: Long,
+    ): Outcome {
+        checkpoint(token)
+        if (journal.read() != request) throw RecoveryMismatch()
+        checkpoint(token)
+        // Even a typed error cannot hide a completed transaction. A fresh matching receipt wins.
+        val receipt = readReceipt(request, token)
+        return if (receipt != null) Outcome.Confirmed(request, receipt)
+        else Outcome.Rejected(Rejection(request, reason))
     }
 
     private suspend fun readReceipt(request: ReportStatusChangeRequest, token: Long): ReportStatusChangeReceipt? {
@@ -224,13 +353,20 @@ class ReportStatusRecoveryViewModel(
     }
 
     private suspend fun checkpoint(token: Long) {
-        currentCoroutineContext().ensureActive()
-        if (token != generation.get()) throw CancellationException("Solicitud retirada")
+        publicationCheckpoint(token)
         access.checkCurrent()
+        publicationCheckpoint(token)
+    }
+
+    /** Main-safe session stamp only; authority files are read exclusively on dispatcher. */
+    private suspend fun publicationCheckpoint(token: Long) {
+        currentCoroutineContext().ensureActive()
+        if (closed.get() || token != generation.get()) throw CancellationException("Solicitud retirada")
+        checkSession()
         check(access.scope == scope)
     }
 
-    private fun canBegin() = viewModelScope.isActive && pending == null
+    private fun canBegin() = !closed.get() && viewModelScope.isActive && pending == null
 
     private fun begin(
         working: ReportStatusRecoveryState,
@@ -239,14 +375,14 @@ class ReportStatusRecoveryViewModel(
         val token = generation.incrementAndGet()
         val job = viewModelScope.launch(start = CoroutineStart.LAZY) {
             try {
-                val outcome = withContext(dispatcher) { block(token) }
-                checkpoint(token)
+                val outcome = withContext(dispatcher) { block(token).also { checkpoint(token) } }
+                publicationCheckpoint(token)
                 if (token == generation.get()) publish(outcome)
             } catch (cancelled: CancellationException) {
                 throw cancelled
-            } catch (_: Exception) {
+            } catch (failure: Exception) {
                 ensureActive()
-                if (token == generation.get()) {
+                if (token == generation.get() && !retireIfRevoked(token, failure)) {
                     emptyVerified = false
                     mayRetainMissing = false
                     mutableState.value = retained?.let {
@@ -272,11 +408,45 @@ class ReportStatusRecoveryViewModel(
         return true
     }
 
+    /** Unknown journal/SQL failures may retain a body only after checking live authority on IO. */
+    private suspend fun retireIfRevoked(token: Long, failure: Exception): Boolean {
+        if (failure.isPermissionDenial() || !sessionCurrent()) {
+            close()
+            return true
+        }
+        try {
+            withContext(dispatcher) { checkpoint(token) }
+            publicationCheckpoint(token)
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (recheck: Exception) {
+            if (recheck.isPermissionDenial() || !sessionCurrent()) {
+                close()
+                return true
+            }
+            // A paused/locked window is transient. Preserve uncertainty while the captured session
+            // remains live; only a later explicit recovery can resolve the durable command.
+        }
+        return false
+    }
+
+    private fun sessionCurrent(): Boolean = try {
+        checkSession()
+        access.scope == scope
+    } catch (cancelled: CancellationException) {
+        throw cancelled
+    } catch (_: Exception) { false }
+
+    private fun Exception.isPermissionDenial(): Boolean =
+        this is ReportStatusPermissionDeniedException || this is ReportAdministrationPermissionDeniedException
+
     private fun publish(outcome: Outcome) {
         when (outcome) {
             Outcome.Empty -> {
                 retained = null
                 acknowledgement = null
+                rejected = null
+                rejectedAcknowledgement = null
                 writerStarted.set(false)
                 mayRetainMissing = false
                 emptyVerified = true
@@ -295,8 +465,22 @@ class ReportStatusRecoveryViewModel(
             }
             is Outcome.Confirmed -> {
                 retained = outcome.request
+                rejected = null
+                if (rejectedAcknowledgement?.request != outcome.request) rejectedAcknowledgement = null
                 writerStarted.set(true)
                 mutableState.value = ReportStatusRecoveryState.Confirmed(outcome.request, outcome.receipt)
+            }
+            is Outcome.Rejected -> {
+                retained = outcome.proof.request
+                rejected = outcome.proof
+                writerStarted.set(true)
+                mutableState.value = ReportStatusRecoveryState.Rejected(
+                    outcome.proof.request, outcome.proof.reason,
+                    when (outcome.proof.reason) {
+                        ReportStatusRejectionReason.CONFLICT -> CONFLICT_MESSAGE
+                        ReportStatusRejectionReason.NOT_FOUND -> NOT_FOUND_MESSAGE
+                    },
+                )
             }
         }
     }
@@ -306,7 +490,10 @@ class ReportStatusRecoveryViewModel(
         class MissingBeforeWriter(val request: ReportStatusChangeRequest) : Outcome
         class Retained(val request: ReportStatusChangeRequest) : Outcome
         class Confirmed(val request: ReportStatusChangeRequest, val receipt: ReportStatusChangeReceipt) : Outcome
+        class Rejected(val proof: Rejection) : Outcome
     }
+
+    private data class Rejection(val request: ReportStatusChangeRequest, val reason: ReportStatusRejectionReason)
 
     private class RecoveryMismatch : IllegalStateException()
 
@@ -317,14 +504,19 @@ class ReportStatusRecoveryViewModel(
             "No se pudo verificar el resultado. Conservamos la solicitud; recupera su recibo antes de continuar."
         private const val RETRY_MESSAGE =
             "La solicitud conserva su identidad y aún no tiene un recibo verificado. Puedes reintentar el mismo cambio."
+        private const val CONFLICT_MESSAGE =
+            "El reporte cambió antes de aplicar esta solicitud. Cierra la solicitud rechazada y consulta de nuevo su estado."
+        private const val NOT_FOUND_MESSAGE =
+            "Ese folio no existe en este espacio. Cierra la solicitud rechazada antes de preparar otro cambio."
 
         fun factory(
             journal: ReportStatusChangeJournal,
             access: ReportStatusChangeAccess,
             dispatcher: CoroutineDispatcher = Dispatchers.IO,
             clock: Clock = Clock.systemUTC(),
+            checkSession: () -> Unit = {},
         ): ViewModelProvider.Factory = viewModelFactory {
-            initializer { ReportStatusRecoveryViewModel(journal, access, dispatcher, clock) }
+            initializer { ReportStatusRecoveryViewModel(journal, access, dispatcher, clock, checkSession = checkSession) }
         }
     }
 }

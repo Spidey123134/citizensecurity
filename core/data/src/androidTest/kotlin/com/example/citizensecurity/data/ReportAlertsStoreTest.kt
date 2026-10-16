@@ -128,7 +128,128 @@ class ReportAlertsStoreTest {
         val pending = File(base.path + ".new").apply { writeText("unconfirmed") }
         expect<IOException> { store().read() }
         expect<IOException> { store().setEnabled(true, null) }
+        expect<IOException> { store().recordPresented(setOf(id(1)), null) }
         assertEquals("unconfirmed", pending.readText()); assertFalse(base.exists())
+    }
+    @Test fun baseAndNewRemainUntouchedInsteadOfDiscardingAnUnconfirmedWriteOnRead() = runBlocking {
+        val enabled = store().setEnabled(true, null)
+        val current = store().recordPresented(setOf(id(1), id(2)), enabled.revision)
+        val before = base.readBytes()
+        val pending = File(base.path + ".new").apply { writeText("unconfirmed") }
+        expect<IOException> { store().read() }
+        expect<IOException> { store().setEnabled(false, current.revision) }
+        expect<IOException> { store().recordPresented(setOf(id(3)), current.revision) }
+        assertArrayEquals(before, base.readBytes()); assertEquals("unconfirmed", pending.readText())
+    }
+    @Test fun staleBackupCannotRevertEnabledPreferenceOrForgetAlreadyPresentedOperations() = runBlocking {
+        val old = store().setEnabled(true, null)
+        val oldBytes = base.readBytes()
+        val presented = store().recordPresented(setOf(id(1), id(2)), old.revision)
+        val disabled = store().setEnabled(false, presented.revision)
+        val currentBytes = base.readBytes()
+        val backup = File(base.path + ".bak").apply { writeBytes(oldBytes) }
+        expect<IOException> { store().read() }
+        expect<IOException> { store().setEnabled(true, disabled.revision) }
+        expect<IOException> { store().recordPresented(setOf(id(3)), disabled.revision) }
+        assertArrayEquals(currentBytes, base.readBytes()); assertArrayEquals(oldBytes, backup.readBytes())
+    }
+    @Test fun backupAloneIsNeitherRestoredNorTreatedAsAWritableMissingPreference() = runBlocking {
+        val saved = store().recordPresented(setOf(id(1)), null)
+        val before = base.readBytes()
+        val backup = File(base.path + ".bak")
+        assertTrue(base.renameTo(backup))
+        expect<IOException> { store().read() }
+        expect<IOException> { store().setEnabled(true, saved.revision) }
+        expect<IOException> { store().setEnabled(false, null) }
+        expect<IOException> { store().recordPresented(setOf(id(2)), null) }
+        assertFalse(base.exists()); assertArrayEquals(before, backup.readBytes())
+        assertEquals(listOf(backup.name), directory.list()!!.toList())
+    }
+    @Test fun directoriesAtAnyPreferencePathArePreservedAndNeverTreatedAsMissing() = runBlocking {
+        listOf(base, File(base.path + ".bak"), File(base.path + ".new")).forEach { folder ->
+            assertTrue(folder.mkdir())
+            val sentinel = File(folder, "sentinel").apply { writeText("Keep directory data") }
+            expect<IOException> { store().read() }
+            expect<IOException> { store().setEnabled(true, null) }
+            expect<IOException> { store().recordPresented(setOf(id(1)), null) }
+            assertEquals("Keep directory data", sentinel.readText())
+            assertTrue(sentinel.delete()); assertTrue(folder.delete())
+        }
+    }
+    @Test fun symlinkPrivateDirectoryIsRejectedWithoutTouchingItsTarget() = runBlocking {
+        val target = File(directory, "direct").apply { assertTrue(mkdir()) }
+        val sentinel = File(target, ReportAlertsStore.fileName(owner)).apply { writeText("Keep target") }
+        val link = File(directory, "linked")
+        Os.symlink(target.path, link.path); links += link
+        val redirected = object : ContextWrapper(app) {
+            override fun getApplicationContext(): Context = this
+            override fun getFilesDir(): File = link
+        }
+        val store = ReportAlertsStore(redirected, owner)
+        expect<IOException> { store.read() }
+        expect<IOException> { store.setEnabled(true, null) }
+        assertEquals("Keep target", sentinel.readText())
+        assertTrue(java.nio.file.Files.isSymbolicLink(link.toPath()))
+    }
+    @Test fun fileInPlaceOfPrivateDirectoryIsRejectedWithoutCreatingOrReplacingAnything() = runBlocking {
+        val path = File(directory, "not_a_folder").apply { writeText("Preserve private-path file") }
+        val redirected = object : ContextWrapper(app) {
+            override fun getApplicationContext(): Context = this
+            override fun getFilesDir(): File = path
+        }
+        val store = ReportAlertsStore(redirected, owner)
+        expect<IOException> { store.read() }
+        expect<IOException> { store.setEnabled(true, null) }
+        assertEquals("Preserve private-path file", path.readText())
+    }
+    @Test fun danglingLinksAtEveryPreferencePathCannotBeReplacedByAnEmptyPreference() = runBlocking {
+        val absent = File(directory, "absent_target")
+        listOf(base, File(base.path + ".bak"), File(base.path + ".new")).forEach { link ->
+            Os.symlink(absent.path, link.path); links += link
+            expect<IOException> { store().read() }
+            expect<IOException> { store().setEnabled(true, null) }
+            assertTrue(java.nio.file.Files.isSymbolicLink(link.toPath())); assertFalse(absent.exists())
+            assertTrue(link.delete()); links.remove(link)
+        }
+    }
+    @Test fun foreignBackupAppearingDuringWriteIsNotDeletedOrRestoredByRollback() = runBlocking {
+        val previous = store().recordPresented(setOf(id(1)), null)
+        val before = base.readBytes()
+        val backup = File(base.path + ".bak")
+        var checks = 0
+        val guarded = store { if (++checks == 5) backup.writeText("Foreign backup: preserve") }
+        expect<IOException> { guarded.setEnabled(true, previous.revision) }
+        assertArrayEquals(before, base.readBytes()); assertEquals("Foreign backup: preserve", backup.readText())
+        assertTrue(File(base.path + ".new").isFile)
+        expect<IOException> { store().read() }
+    }
+    @Test fun replacedStagingLinkIsNotFollowedOrDeletedByRollback() = runBlocking {
+        val previous = store().recordPresented(setOf(id(1)), null)
+        val before = base.readBytes()
+        val sentinel = File(directory, "sentinel.json").apply { writeText("Do not follow or delete") }
+        val staging = File(base.path + ".new")
+        var checks = 0
+        val guarded = store {
+            if (++checks == 5) {
+                assertTrue(staging.delete())
+                Os.symlink(sentinel.path, staging.path); links += staging
+            }
+        }
+        expect<IOException> { guarded.setEnabled(true, previous.revision) }
+        assertArrayEquals(before, base.readBytes()); assertEquals("Do not follow or delete", sentinel.readText())
+        assertTrue(java.nio.file.Files.isSymbolicLink(staging.toPath()))
+    }
+    @Test fun sidecarAppearingInTheFinalAccessCheckIsPreservedAndBlocksASettledReceipt() = runBlocking {
+        val previous = store().recordPresented(setOf(id(1)), null)
+        val backup = File(base.path + ".bak")
+        var checks = 0
+        val guarded = store { if (++checks == 7) backup.writeText("Uncertain after commit") }
+        expect<IOException> { guarded.setEnabled(true, previous.revision) }
+        assertEquals(7, checks)
+        val committed = ReportAlertsCodec.decode(base.readText())
+        assertTrue(committed.enabled); assertEquals(setOf(id(1)), committed.presented)
+        assertEquals("Uncertain after commit", backup.readText())
+        expect<IOException> { store().read() }
     }
     @Test fun guardDeniedBeforeAccessCreatesNoFileAndBeforeCommitKeepsThePriorOne() = runBlocking {
         expect<IllegalStateException> { store { error("Revoked") }.read() }

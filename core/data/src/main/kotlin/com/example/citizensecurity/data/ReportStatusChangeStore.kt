@@ -1,13 +1,19 @@
 package com.example.citizensecurity.data
 
 import android.content.Context
+import android.system.Os
 import android.util.AtomicFile
 import com.example.citizensecurity.domain.ReportStatusChangeJournal
 import com.example.citizensecurity.domain.ReportStatusChangeRequest
 import com.example.citizensecurity.domain.ReportStatusChangeScope
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.nio.ByteBuffer
+import java.nio.file.Files
+import java.nio.file.LinkOption
+import java.nio.file.StandardOpenOption
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -25,19 +31,18 @@ class ReportStatusChangeStore(
     private val checkAccess: () -> Unit,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ReportStatusChangeJournal {
-    private val file: AtomicFile
-    private val coordination: Coordination
-
-    init {
-        val base = File(context.applicationContext.filesDir, fileName(scope))
-        file = AtomicFile(base)
-        coordination = locks.getOrPut(base.canonicalPath) { Coordination() }
-    }
+    private val context = context.applicationContext
+    private val filename = fileName(scope)
 
     override suspend fun read(): ReportStatusChangeRequest? = withContext(ioDispatcher) {
+        val paths = paths()
+        val coordination = coordination(paths)
         synchronized(coordination.fileLock) {
             ensureActive(); checkAccess(); ensureActive()
-            readLocked().also { ensureActive(); checkAccess(); ensureActive() }
+            readLocked(paths).also {
+                ensureActive(); checkAccess(); ensureActive()
+                checkPaths(paths); requireNoSidecars(paths)
+            }
         }
     }
 
@@ -45,27 +50,38 @@ class ReportStatusChangeStore(
         requireScope(request)
         val bytes = ReportStatusChangeCodec.encode(request)
         withContext(ioDispatcher) {
+            val paths = paths()
+            val coordination = coordination(paths)
             synchronized(coordination.fileLock) {
                 ensureActive(); checkAccess(); ensureActive()
-                val previous = readLocked()
+                val previous = readLocked(paths)
                 if (previous != null) {
                     check(previous == request) { "Hay otra solicitud pendiente; recupera su resultado antes de reemplazarla." }
                     ensureActive(); checkAccess(); ensureActive()
+                    checkPaths(paths); requireNoSidecars(paths)
                     return@synchronized
                 }
                 ensureActive(); checkAccess(); ensureActive()
-                val output = file.startWrite()
+                checkPaths(paths); requireNoSidecars(paths)
+                val output = paths.atomic.startWrite()
+                var committed = false
                 try {
                     output.write(bytes)
                     ensureActive(); checkAccess(); ensureActive()
-                    file.finishWrite(output)
-                } catch (failure: Exception) {
-                    file.failWrite(output)
+                    checkPaths(paths)
+                    paths.atomic.finishWrite(output)
+                    committed = true
+                } catch (failure: Throwable) {
+                    if (!committed) rollbackOwnedWrite(paths, output)
                     throw failure
                 }
                 // AtomicFile may log a failed rename without throwing. Confirm the whole body.
-                check(readLocked() == request) { "No se pudo confirmar la solicitud de cambio de estado." }
+                val receipt = readBytesLocked(paths)
+                check(receipt != null && receipt.contentEquals(bytes) && decode(receipt) == request) {
+                    "No se pudo confirmar la solicitud de cambio de estado."
+                }
                 ensureActive(); checkAccess(); ensureActive()
+                checkPaths(paths); requireNoSidecars(paths)
             }
         }
     }
@@ -73,30 +89,42 @@ class ReportStatusChangeStore(
     override suspend fun clear(expected: ReportStatusChangeRequest): Unit {
         requireScope(expected)
         withContext(ioDispatcher) {
+            val paths = paths()
+            val coordination = coordination(paths)
             synchronized(coordination.fileLock) {
                 ensureActive(); checkAccess(); ensureActive()
-                val previous = readLocked()
+                val previous = readLocked(paths)
                 if (previous == null) {
                     ensureActive(); checkAccess(); ensureActive()
+                    checkPaths(paths); requireNoSidecars(paths)
                     return@synchronized
                 }
                 check(previous == expected) { "La solicitud pendiente cambió y no puede retirarse." }
                 ensureActive(); checkAccess(); ensureActive()
-                file.delete()
-                check(!file.baseFile.exists() && !backup().exists() && !staging().exists()) {
-                    "No se pudo retirar la solicitud confirmada."
-                }
+                checkPaths(paths); requireNoSidecars(paths)
+                // Unlink only this exact base; AtomicFile.delete would also remove unknown sidecars.
+                Files.delete(paths.atomic.baseFile.toPath())
+                check(readBytesLocked(paths) == null) { "No se pudo retirar la solicitud confirmada." }
                 ensureActive(); checkAccess(); ensureActive()
+                checkPaths(paths); requireNoSidecars(paths)
             }
         }
     }
 
-    override suspend fun <T> exclusive(block: suspend () -> T): T = coordination.workflow.withLock {
-        // Structured children are joined before releasing this lease. A cancelled caller cannot
-        // let another recovery race a blocking/non-cooperative backend that is still executing.
-        coroutineScope {
-            ensureActive(); checkAccess(); ensureActive()
-            block().also { ensureActive(); checkAccess(); ensureActive() }
+    override suspend fun <T> exclusive(block: suspend () -> T): T = withContext(ioDispatcher) {
+        val paths = paths()
+        val coordination = coordination(paths)
+        coordination.workflow.withLock {
+            // Structured children are joined before releasing this lease. A cancelled caller cannot
+            // let another recovery race a blocking/non-cooperative backend that is still executing.
+            coroutineScope {
+                ensureActive(); checkAccess(); ensureActive()
+                synchronized(coordination.fileLock) { readLocked(paths) }
+                block().also {
+                    ensureActive(); checkAccess(); ensureActive()
+                    synchronized(coordination.fileLock) { readLocked(paths) }
+                }
+            }
         }
     }
 
@@ -104,23 +132,36 @@ class ReportStatusChangeStore(
         require(request.scope == scope) { "La solicitud pertenece a otro espacio o actor." }
     }
 
-    private fun readLocked(): ReportStatusChangeRequest? {
-        if (!file.baseFile.exists() && !backup().exists()) return null
+    private fun readLocked(paths: Paths): ReportStatusChangeRequest? = readBytesLocked(paths)?.let(::decode)
+
+    private fun decode(bytes: ByteArray): ReportStatusChangeRequest = try {
+        ReportStatusChangeCodec.decode(bytes).also(::requireScope)
+    } catch (failure: Exception) {
+        throw IOException("No se pudo recuperar el cambio pendiente; el archivo se conserva.", failure)
+    }
+
+    /** Never use AtomicFile.openRead: it can restore .bak and delete .new while merely recovering. */
+    private fun readBytesLocked(paths: Paths): ByteArray? {
+        checkPaths(paths)
+        requireNoSidecars(paths)
+        val base = paths.atomic.baseFile
+        if (!Files.exists(base.toPath(), LinkOption.NOFOLLOW_LINKS)) return null
         try {
-            val bytes = file.openRead().use { input ->
+            return Files.newByteChannel(base.toPath(), StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS).use { input ->
                 val output = ByteArrayOutputStream()
-                val buffer = ByteArray(4_096)
+                val buffer = ByteBuffer.allocate(1_024)
                 while (true) {
+                    buffer.clear()
                     val count = input.read(buffer)
                     if (count < 0) break
-                    if (output.size() + count > ReportStatusChangeCodec.MAX_BYTES) {
+                    if (count > ReportStatusChangeCodec.MAX_BYTES - output.size()) {
                         throw IOException("La solicitud supera el tamaño permitido.")
                     }
-                    output.write(buffer, 0, count)
+                    output.write(buffer.array(), 0, count)
                 }
+                checkPaths(paths); requireNoSidecars(paths)
                 output.toByteArray()
             }
-            return ReportStatusChangeCodec.decode(bytes).also(::requireScope)
         } catch (cancelled: CancellationException) {
             throw cancelled
         } catch (failure: Exception) {
@@ -128,8 +169,52 @@ class ReportStatusChangeStore(
         }
     }
 
-    private fun backup() = File(file.baseFile.path + ".bak")
-    private fun staging() = File(file.baseFile.path + ".new")
+    private fun paths(): Paths {
+        val privateDirectory = context.filesDir
+        if (Files.isSymbolicLink(privateDirectory.toPath())) throw IOException("El espacio privado no es una carpeta directa.")
+        val parent = privateDirectory.canonicalFile
+        if (!parent.isDirectory) throw IOException("No se encontró el espacio privado del cambio.")
+        return Paths(parent, AtomicFile(File(parent, filename))).also(::checkPaths)
+    }
+
+    private fun checkPaths(paths: Paths) {
+        if (Files.isSymbolicLink(paths.parent.toPath()) || !paths.parent.isDirectory ||
+            paths.parent.canonicalFile != paths.parent.absoluteFile) {
+            throw IOException("El espacio privado del cambio no es válido.")
+        }
+        paths.files.forEach { file ->
+            if (Files.isSymbolicLink(file.toPath()) || file.canonicalFile != file.absoluteFile ||
+                file.parentFile != paths.parent ||
+                (Files.exists(file.toPath(), LinkOption.NOFOLLOW_LINKS) && !Files.isRegularFile(file.toPath(), LinkOption.NOFOLLOW_LINKS))) {
+                throw IOException("El archivo de cambio no pertenece al espacio privado.")
+            }
+        }
+    }
+
+    private fun requireNoSidecars(paths: Paths) {
+        if (paths.files.drop(1).any { Files.exists(it.toPath(), LinkOption.NOFOLLOW_LINKS) }) {
+            throw IOException("Hay un cambio sin confirmar; sus archivos se conservan.")
+        }
+    }
+
+    /** Roll back only the file actually opened by this write, never a replaced link or sidecar. */
+    private fun rollbackOwnedWrite(paths: Paths, output: FileOutputStream) {
+        try {
+            checkPaths(paths)
+            val opened = Os.fstat(output.fd)
+            val existing = paths.files.filter { Files.exists(it.toPath(), LinkOption.NOFOLLOW_LINKS) }
+            val owned = existing.singleOrNull()?.let { file ->
+                val actual = Os.lstat(file.path)
+                actual.st_dev == opened.st_dev && actual.st_ino == opened.st_ino
+            } == true
+            if (owned) paths.atomic.failWrite(output) else output.close()
+        } catch (_: Exception) { runCatching { output.close() } }
+    }
+
+    private fun coordination(paths: Paths): Coordination = locks.getOrPut(paths.atomic.baseFile.absolutePath) { Coordination() }
+    private data class Paths(val parent: File, val atomic: AtomicFile) {
+        val files = listOf(atomic.baseFile, File(atomic.baseFile.path + ".new"), File(atomic.baseFile.path + ".bak"))
+    }
 
     private class Coordination {
         val fileLock = Any()

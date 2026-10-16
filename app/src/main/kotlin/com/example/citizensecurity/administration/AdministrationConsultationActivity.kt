@@ -1,16 +1,23 @@
 package com.example.citizensecurity.administration
 
 import android.os.Bundle
+import android.content.Intent
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Text
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Lifecycle
 import com.example.citizensecurity.CitizenSecurityApplication
 import com.example.citizensecurity.account.ReportWorkspaceActivity
+import com.example.citizensecurity.account.ReportWorkspaceActivityBinding
 import com.example.citizensecurity.preview.PreviewTheme
 
 /** Private route. Every reading checks the installation grant and original session on IO. */
 class AdministrationConsultationActivity : ReportWorkspaceActivity() {
     private var model: AdministrationConsultationViewModel? = null
+    private val change = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (hasReportWorkspace) model?.let { query -> query.refresh(query.state.value) }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!hasReportWorkspace) return
@@ -22,7 +29,13 @@ class AdministrationConsultationActivity : ReportWorkspaceActivity() {
         val query = ViewModelProvider(this, AdministrationConsultationViewModel.factory(
             binding, reportWorkspace::checkActive))[AdministrationConsultationViewModel::class.java]
         model = query
-        setContent { PreviewTheme { AdministrationConsultationScreen(query, ::finish) } }
+        setContent { PreviewTheme { AdministrationConsultationScreen(query, ::finish) { reportId ->
+            if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && ensureReportWorkspaceCurrent()) {
+                change.launch(ReportWorkspaceActivityBinding.stamp(Intent(this, AdministrationStatusChangeActivity::class.java).apply {
+                    reportId?.let { putExtra(AdministrationStatusChangeActivity.EXTRA_REPORT_ID, it) }
+                }, reportWorkspace.session))
+            }
+        } } }
     }
 
     override fun onResume() {
