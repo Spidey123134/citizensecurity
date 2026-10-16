@@ -1,5 +1,9 @@
 # Avance del plan del proyecto
 
+**Fase 38, Unreleased local:** base de consulta administrativa acotada y política explícita con `READ_REPORTS` separado de `CHANGE_STATUS`. Captura fuentes/dueño/actor, autoriza antes de abrirlas y revalida vigencia/cancelación al consultar; escritura y recibos exigen permiso de cambio, también antes del commit. [Fase 38](FASE_38.md), con validación todavía por registrar.
+
+**20/28 = 71.4% permanece**, mismos ocho criterios pendientes: no se completa administración por añadir contratos o controles internos. La asignación y la interfaz administrativa siguen pendientes; `admin/admin` conserva acceso académico. Fase 38 queda local sin push/tag/Release. El usuario pospuso la publicación y se guardaron candidato y borradores 0.6.2/código 30 con numeración tentativa; la APK oficial **0.6.1** conserva su entrega.
+
 **Fase 37 / E06, Unreleased:** mensaje revisado desde un folio para un contacto, ubicación voluntaria y composición SMS por segundo gesto, sin envío automático. **20/28 = 71.4% permanece**: amplía utilidad sin sumar criterios del PDF. [Fase 37](FASE_37.md) · [Validación](VALIDACION.md).
 
 **Fase 36, Unreleased:** preferencia de avisos por cuenta, permiso de Android por gesto y revisión manual de cambios registrados desde Actividad. Resumen general y registro durable de operaciones aceptadas; sin datos privados en el aviso. [Fase 36](FASE_36.md) · [Validación](VALIDACION.md).

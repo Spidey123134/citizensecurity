@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Fase 38 — permisos y consulta administrativa, Unreleased local
+
+Separa `READ_REPORTS` de `CHANGE_STATUS`, sin permisos implícitos por iniciar sesión. El lector administrativo captura dueño/actor y fuentes para consultar folio, lista paginada e historial; autoriza antes de abrirlas y comprueba revocación/cancelación antes de devolver resultados. El escritor exige permiso de cambio también antes del commit, y la recuperación de recibos permanece bajo esa capacidad. **1267 casos distintos aprobados/25 nuevos**. [Alcance y validación](FASE_38.md).
+
+La asignación y el panel administrativo siguen pendientes; `admin/admin` conserva acceso académico. **20/28 = 71.4% permanece**, sin acreditar otro criterio por preparar esta base. Trabajo local sin push/tag/Release; la preparación 0.6.2/código 30 queda guardada como candidato y borradores tentativos. La APK oficial continúa en **0.6.1**.
+
 ## Fase 37 — mensaje revisado para un contacto, Unreleased
 
 E06 permite preparar texto desde un folio, elegir un contacto vigente y revisar la ubicación opcional antes de abrir Mensajes SMS. Relectura antes de compartir, cambio de destinatario/reporte exige otra revisión, giro sin nueva apertura y datos conservados. Ayuda comparte la fábrica de contactos; volver de guardar uno actualiza la lista sin elegirlo automáticamente. No envía mensajes ni adjunta la ficha PDF. [Alcance y límites](FASE_37.md) · [Validación](VALIDACION.md).

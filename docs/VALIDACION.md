@@ -1,5 +1,33 @@
 # Validación y comprobaciones del proyecto
 
+## Permisos y consulta administrativa — fase 38, desarrollo local · 15 de octubre de 2026
+
+**1267 casos distintos aprobados, 25 definiciones nuevas; cero fallos, errores u omitidos.** Se ejecutaron los tres grupos JVM y las suites Android indicadas, sobre la fuente final de esta fase:
+
+| Suite ejecutada | Aprobados | Nuevos |
+| --- | ---: | ---: |
+| Dominio JVM | 200 | 3 política/alcance |
+| Datos JVM / SQLite del host | 141 | 14 lector autorizado |
+| App JVM | 885 | 0; regresión |
+| Datos Android API 37 | 41 | 8 política/SQLite; 33 regresiones |
+| **Total distinto** | **1267** | **25** |
+
+El lector administrativo comprueba `READ_REPORTS` antes de inicializar fuentes diferidas, antes de consultar y antes de devolver resultados. Se prueban permiso denegado sin proveedor/base abierta, alcance dueño/actor distinto, vigencia al abrir/paginar, revocación durante cada lectura suspendida, cancelación previa/durante proveedor/lector no cooperativo, errores conservados, folio/historial incorrectos y límites de página. Los permisos de consulta y cambio son independientes; un login, el alcance o un diario no otorgan ninguno.
+
+Las ocho pruebas Android nuevas usan SQLite real en archivos aleatorios propios: lectura de folio/lista/historial sin modificar bytes, rechazo de lectura/escritura por capacidad incorrecta, fuentes de otro alcance rechazadas, política que recibe el dueño/actor exactos, reversión de estado/evento si se revoca antes del commit y recuperación explícita del mismo recibo si se revoca después. Solo los fixtures tienen autoridad de cambio. Las 33 regresiones corresponden a `SqliteReportStatusChangeAccessTest` (21) y `SqliteReportActivityTest` (12), incluyendo compatibilidad del guard anterior, recibos, corrupción y migración. No se conceden roles al producto.
+
+Compilación Kotlin debug/release y ensamblado interno de la APK de pruebas de datos correctos. **Lint app: 0 errores/22 avisos existentes por variante; datos: sin incidencias.** Emulador propio de solo lectura API 37, cerrado después de los pases. Sin interfaz administrativa productiva, prueba física, API 26, muerte completa del proceso o recepción institucional acreditadas. La factory futura debe capturar un único workspace confiable: declarar un `scope` no demuestra por sí solo la pertenencia física de los delegates.
+
+Recibo ignorado `.gradle/validacion/admin38-test-proof.json`, XML JVM y logs `admin38-build.log` / `admin38-data-native.log`. Los tres grupos JVM se ejecutaron en este corte; no se suman resultados de fases anteriores. **20/28 = 71.4% permanece**, con asignación administrativa y ocho criterios originales pendientes. [Fase 38](FASE_38.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
+### Preparación de entrega guardada, publicación pospuesta
+
+Por instrucción posterior del usuario, la preparación 0.6.2/código 30 se conserva **localmente y con numeración tentativa**, sin push/tag/Release ni subida de APK. El commit local `0351545` conserva notas, guía y prueba de actualización; [borrador](ENTREGA_0_6_2.md). La APK oficial sigue siendo 0.6.1 y mantiene su SHA-256 `7395a049aee8cf92324ac31f3c4e08453fb639bcf5103fc8eaa48484302815f1`.
+
+El candidato interno de fases 35–37 mide 55 302 267 bytes, SHA-256 `ee75a653fc468153d062747bfeca5727104a236d29dcf876bacd6494162d3b2f`, con el mismo paquete/firma académica. Se aprobaron **dos etapas distintas** sobre una instalación real en emulador: sembrar datos privados de prueba en la APK oficial 0.6.1 y verificarlos tras `install -r` del candidato 0.6.2. Reporte, contacto y fotografía conservaron sus bytes antes de abrir/migrar; el esquema pasó de 3 a 4 preservando campos, actor, evento y fotografía. Logs `release062-upgrade-seed.log` / `release062-upgrade-verify.log`; no se suman a las 1267 pruebas de fase 38.
+
+La preparación pasó compilación/lint; sus 1209 recibos JVM previos estaban intactos y se reutilizaron en ese corte. Las 139 pruebas nativas propuestas para la aceptación agrupada de esa entrega **no se ejecutaron** antes de posponerla. El candidato **precede a fase 38**: no publicarlo como si incorporara este avance. La próxima entrega requiere preparar y validar su binario final, actualizar notas/hash y contar únicamente las pruebas que correspondan a esa fuente. No se actualizó ni borró el teléfono del usuario.
+
 ## Mensaje revisado para un contacto — fase 37, Unreleased · 15 de octubre de 2026
 
 **1231 casos distintos aprobados, 37 definiciones nuevas; cero fallos, errores u omitidos.** Se ejecutan 1209 JVM y 22 Android. No se suman otras suites nativas o repeticiones de cortes anteriores.

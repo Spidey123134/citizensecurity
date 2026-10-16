@@ -7,6 +7,10 @@ import com.example.citizensecurity.domain.ReportStatusChangeScope
 import com.example.citizensecurity.domain.ReportStatusEvent
 import com.example.citizensecurity.domain.ReportStatusOperationConflictException
 import com.example.citizensecurity.domain.ReportStatusPermissionDeniedException
+import com.example.citizensecurity.domain.DenyAllReportAdministrationPolicy
+import com.example.citizensecurity.domain.ReportAdministrationPermission
+import com.example.citizensecurity.domain.ReportAdministrationPermissionDeniedException
+import com.example.citizensecurity.domain.ReportAdministrationPolicy
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 
@@ -16,9 +20,20 @@ import kotlinx.coroutines.ensureActive
 class SqliteReportStatusChangeAccess(
     override val scope: ReportStatusChangeScope,
     private val repository: SqliteReportRepository,
-    private val checkAccess: () -> Unit = { throw ReportStatusPermissionDeniedException() },
+    private val policy: ReportAdministrationPolicy = DenyAllReportAdministrationPolicy,
 ) : ReportStatusChangeAccess {
-    override fun checkCurrent() = checkAccess()
+    /** Compatibility for existing captured guards, which already authorize a status change. */
+    constructor(scope: ReportStatusChangeScope, repository: SqliteReportRepository, checkAccess: () -> Unit) :
+        this(scope, repository, ReportAdministrationPolicy { _, _ -> checkAccess() })
+
+    override fun checkCurrent() {
+        try {
+            policy.check(scope, ReportAdministrationPermission.CHANGE_STATUS)
+        } catch (_: ReportAdministrationPermissionDeniedException) {
+            // Preserve the existing writer/recovery permission contract; denial is definitive.
+            throw ReportStatusPermissionDeniedException()
+        }
+    }
 
     override suspend fun change(request: ReportStatusChangeRequest): ReportStatusEvent {
         checkRequest(request)

@@ -1,8 +1,14 @@
 # Plan del proyecto
 
+## Continuación local — fase 38 y publicación pospuesta
+
+La [fase 38](FASE_38.md) continúa **4.6 Administración** con capacidades independientes `READ_REPORTS` y `CHANGE_STATUS`: consulta acotada por folio/lista/historial, fuentes y dueño/actor capturados, apertura tras autorizar y revalidación ante revocación/cancelación. Escritura y recibos de cambio requieren la capacidad de cambiar; se revalida también antes del commit. La asignación y composición de la interfaz administrativa siguen pendientes, con denegación por defecto y `admin/admin` académico.
+
+**20/28 = 71.4% permanece**; esta base no completa otro criterio. El trabajo de fase 38 es local, sin push, tag o Release. El usuario pospuso la entrega: candidato y borradores 0.6.2/código 30 se conservan con numeración tentativa; la APK oficial **0.6.1** mantiene su corte. Las cifras y versiones de los bloques anteriores de desarrollo se conservan como antecedentes.
+
 **Entrega oficial 0.6.1 — 14 de octubre de 2026 · código Android 29:** fases 29–34 agrupadas con ficha PDF, contactos, recuperación durable, Ayuda/atajos, cámara además de galería y mosaico de Ajustes rápidos. La publicación de APK/Release fue solicitada expresamente. [Entrega](ENTREGA_0_6_1.md) · [Validación](VALIDACION.md). **19/28 = 67.9% permanece**; asignación administrativa pendiente y mismos nueve criterios originales por completar.
 
-## Plan vigente — 15 de octubre de 2026
+## Antecedente — fases 35–37, 15 de octubre de 2026
 
 **[Fase 37](FASE_37.md) / E06, Unreleased:** concreta el mensaje para un contacto desde un folio, revisión de destinatario/texto/ubicación voluntaria y apertura de SMS por gesto separado. Reutiliza contactos y conserva datos; no envía automáticamente ni activa administración. **20/28 = 71.4% permanece** por tratarse de una mejora de utilidad adicional al PDF.
 

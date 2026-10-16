@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Fase 38, trabajo local: política administrativa explícita con capacidades independientes `READ_REPORTS` y `CHANGE_STATUS`, denegadas por defecto. Lectura administrativa por folio/lista paginada/historial sobre fuentes capturadas, con apertura diferida hasta autorizar y controles de vigencia/cancelación antes y después de consultar.
+- El escritor y la recuperación de recibos requieren `CHANGE_STATUS`; el permiso se vuelve a comprobar dentro de la transacción antes del commit. Consultar no concede escritura, y tener permiso de cambio no concede consulta administrativa general. Asignación y panel pendientes; `admin/admin` sigue académico. [Fase 38](docs/FASE_38.md): 1267 casos distintos aprobados/25 nuevos, sin fallos/errores/omitidos; **20/28 = 71.4% permanece**.
+- Publicación pospuesta por el usuario: candidato y notas 0.6.2/código 30 conservados localmente, con numeración tentativa para la próxima entrega. Este avance no realiza push, tag, Release ni publicación de APK; la entrega oficial **0.6.1** mantiene su archivo.
 - Fase 37 / E06: preparar un mensaje desde un folio, elegir contacto del mismo acceso, revisar destinatario/texto y abrir Mensajes SMS mediante un segundo gesto. Referencia/punto inicialmente omitidos; inclusión voluntaria con coordenadas y enlace al mapa. La ficha PDF, con foto elegida, conserva su recorrido separado.
 - Relectura del reporte y contactos al preparar/abrir, rechazo de cambios posteriores a la revisión y una sola apertura por gesto vigente. Guardar un contacto desde Ayuda y regresar actualiza la elección sin seleccionar o preparar automáticamente.
 - Composición sin permisos SMS/agenda/GPS, archivos adjuntos o envío automático. Errores, corrupción, giro, cambio de cuenta y cancelación conservan los datos y requieren una decisión nueva. Abrir una app no acredita envío; el operador puede cobrarlo.

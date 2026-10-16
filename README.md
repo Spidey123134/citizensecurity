@@ -1,5 +1,11 @@
 # CITIZENSECURITY
 
+## Desarrollo local Unreleased — fase 38: permisos administrativos separados
+
+La base administrativa distingue **consultar reportes (`READ_REPORTS`)** de **cambiar estados (`CHANGE_STATUS`)**. La consulta por folio, lista paginada e historial usa dueño/actor y fuentes capturados, abre sus fuentes solo después de autorizar y vuelve a comprobar vigencia, permiso y cancelación al terminar. El escritor exige el permiso de cambio también dentro de la transacción antes del commit; consultar no autoriza modificar ni recuperar un recibo de cambio. [Fase 38](docs/FASE_38.md).
+
+La asignación administrativa y su interfaz siguen pendientes: `admin/admin` conserva acceso académico. **20/28 = 71.4% permanece.** Este avance queda local, sin push, tag o Release. La preparación 0.6.2/código 30, su candidato y sus notas se guardan como borradores locales con numeración tentativa; la APK oficial sigue siendo **0.6.1**.
+
 ## Desarrollo Unreleased — fase 37: mensaje para un contacto
 
 Desde el detalle de un folio, **Preparar mensaje para un contacto** permite elegir un contacto guardado, decidir si se incluye referencia/punto (inicialmente desmarcado) y revisar el texto completo. Otro gesto abre **Mensajes SMS**; el envío se confirma allí. Si cambian el reporte o los contactos, se exige revisar nuevamente. Se puede guardar un contacto desde Ayuda y regresar a la misma pantalla.
