@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Fase 39 — borrador y vinculación administrativa, Unreleased local
+
+Ordena la revisión en tarjetas de datos, lugar y fotografía; la imagen completa se ajusta a un marco de 240 dp para evitar solapamientos, sin modificar el archivo o el guardado. Continúa 4.6 del PDF vinculando la política administrativa al espacio/sesión capturados: revocación al salir, incluso al volver con la misma cuenta, y comprobación de vigencia antes/después de autorizar. [Alcance, pruebas y límites](FASE_39.md).
+
+Consulta y cambio conservan permisos separados, denegados por defecto. Asignación y panel pendientes; `admin/admin` académico. **20/28 = 71.4% permanece**. Trabajo local sin push/tag/Release; APK oficial **0.6.1** y candidato archivado anterior a fases 38/39.
+
 ## Fase 38 — permisos y consulta administrativa, Unreleased local
 
 Separa `READ_REPORTS` de `CHANGE_STATUS`, sin permisos implícitos por iniciar sesión. El lector administrativo captura dueño/actor y fuentes para consultar folio, lista paginada e historial; autoriza antes de abrirlas y comprueba revocación/cancelación antes de devolver resultados. El escritor exige permiso de cambio también antes del commit, y la recuperación de recibos permanece bajo esa capacidad. **1267 casos distintos aprobados/25 nuevos**. [Alcance y validación](FASE_38.md).

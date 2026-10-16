@@ -1,5 +1,11 @@
 # CITIZENSECURITY
 
+## Desarrollo local Unreleased — fase 39: borrador y sesión administrativa
+
+La revisión del borrador separa datos, lugar y fotografía en tarjetas legibles. La imagen completa se ajusta a un marco de 240 dp para que una foto vertical no invada el texto o las acciones; el archivo y el guardado conservan su funcionamiento. [Fase 39](docs/FASE_39.md).
+
+Continúa 4.6 del PDF al ligar la consulta administrativa al espacio y la sesión capturados: salir e ingresar otra vez con la misma cuenta invalida el acceso anterior. Consulta/cambio mantienen permisos separados y denegados por defecto; asignación y panel pendientes, con `admin/admin` académico. **20/28 = 71.4% permanece**. Trabajo local, sin push ni publicación; la APK oficial sigue en **0.6.1** y el candidato 0.6.2 archivado precede a las fases 38/39.
+
 ## Desarrollo local Unreleased — fase 38: permisos administrativos separados
 
 La base administrativa distingue **consultar reportes (`READ_REPORTS`)** de **cambiar estados (`CHANGE_STATUS`)**. La consulta por folio, lista paginada e historial usa dueño/actor y fuentes capturados, abre sus fuentes solo después de autorizar y vuelve a comprobar vigencia, permiso y cancelación al terminar. El escritor exige el permiso de cambio también dentro de la transacción antes del commit; consultar no autoriza modificar ni recuperar un recibo de cambio. [Fase 38](docs/FASE_38.md).

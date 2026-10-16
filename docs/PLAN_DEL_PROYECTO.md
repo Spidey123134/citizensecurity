@@ -1,5 +1,11 @@
 # Plan del proyecto
 
+## Continuación local — fase 39
+
+La [fase 39](FASE_39.md) corrige la lectura del borrador con foto y continúa **4.6 Administración**: liga las capacidades de fase 38 al espacio y sesión capturados, sin seguir una sesión nueva cuando termina una operación. Salir y volver a entrar con la misma cuenta revoca el acceso anterior; consulta/cambio conservan permisos separados y denegados por defecto. La asignación y el recorrido administrativo visible siguen pendientes, con `admin/admin` académico.
+
+**20/28 = 71.4% permanece**: ni la corrección de un recorrido ya construido ni esta base interna completan otro criterio. Se trabaja localmente, sin push, tag, Release o APK publicada. La descarga oficial sigue en **0.6.1**; el candidato y los borradores 0.6.2/código 30 archivados preceden a las fases 38/39 y deberán actualizarse para la futura entrega solicitada.
+
 ## Continuación local — fase 38 y publicación pospuesta
 
 La [fase 38](FASE_38.md) continúa **4.6 Administración** con capacidades independientes `READ_REPORTS` y `CHANGE_STATUS`: consulta acotada por folio/lista/historial, fuentes y dueño/actor capturados, apertura tras autorizar y revalidación ante revocación/cancelación. Escritura y recibos de cambio requieren la capacidad de cambiar; se revalida también antes del commit. La asignación y composición de la interfaz administrativa siguen pendientes, con denegación por defecto y `admin/admin` académico.
@@ -37,6 +43,8 @@ Se mantienen los siete requisitos **4.1–4.7 del PDF/cliente** y sus 28 criteri
 | [Fase 35](FASE_35.md) | Centro de actividad de reportes, Toda la actividad/Cambios de estado | Consultar eventos reales con paginación y abrir su folio desde el mismo espacio; creaciones y transiciones diferenciadas | Implementada/validada, Unreleased: 1224 casos distintos, 66 nuevos; aceptación física separada. Prepara el consumidor, sin avisos Android o asignación administrativa |
 | [Fase 36](FASE_36.md) | Preferencias y avisos locales de cambios | Activar voluntariamente, revisar cambios manualmente y mostrar un resumen general sin datos privados; conservar IDs aceptados por cuenta | Código Unreleased; permiso real, persistencia, aislamiento y aviso nativo comprobados. Sin entrega en segundo plano ni administración habilitada |
 | [Fase 37](FASE_37.md) / E06 | Mensaje revisado para un contacto de confianza | Elegir contacto, revisar texto/ubicación opcional y abrir la composición SMS; cambios posteriores exigen preparar otra vez | Código Unreleased; sin adjuntos o envío automático. No modifica el porcentaje del PDF |
+| [Fase 38](FASE_38.md) | Capacidades administrativas independientes y consulta acotada | Distinguir consulta de cambio, capturar fuentes/dueño/actor y revalidar autorización antes de entregar o confirmar | Local Unreleased; base validada, asignación e interfaz pendientes |
+| [Fase 39](FASE_39.md) | Revisión legible y vinculación administrativa a la sesión | Contener la foto en su tarjeta y conservar fuentes del espacio original, revocadas al cerrar sesión | Local Unreleased; sin asignar permisos o completar otro criterio. Pruebas y límites en la fase |
 | Alcance pendiente del PDF | Seguimiento/administración autorizados y notificaciones de cambios | Definir actor/permiso y conectar su recorrido con diario/recibo durables; completar entrega y preferencias de avisos | Asignación pendiente por decisión del usuario; sin formulario ficticio ni cambio del criterio original |
 
 Las fases 29/30 implementan E01 ficha PDF y E02 contactos; fase 32 E03 ayuda/atajos, fase 33 E10 cámara y fase 34 E04 mosaico: **incluidas en 0.6.1**. E06 mensaje revisado tiene implementación validada Unreleased en fase 37. E05 guía por fabricante, E07 varias fotos, E08 institución y E09 datos por zona conservan sus estados de guía/propuesta en el catálogo. La configuración de un botón físico depende del modelo: abrir la app normal puede mostrar splash/login. La guía Motorola corresponde al Edge 50 Fusion, sin configurar/probar físicamente su gesto. No se intercepta el botón de encendido ni se modifica el SOS del sistema.

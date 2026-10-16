@@ -1,6 +1,14 @@
 # Trabajo del equipo
 
-## Alcance vigente — fase 38 y publicación pospuesta
+## Alcance vigente — legibilidad del borrador y fase 39, local
+
+El usuario pidió acomodar las imágenes adjuntas al revisar el borrador porque se juntaban con el texto, y después continuar el PDF. Corregir presentación sin alterar archivos/fotos, guardado o GPS: marco acotado con Fit y clipping, secciones legibles de datos/lugar/foto, texto completo y scroll. Reutilizar el caso Android de galería con fotografía vertical y capturas; no añadir tests que solo comparen espaciado.
+
+Continuar 4.6 con fase 39: binding de administración al ReportWorkspace original y sesión exacta, dueño/actor derivados de cuenta real, política denegada por defecto. Académico no recibe permisos. Separar READ_REPORTS/CHANGE_STATUS; revalidar sesión antes/después de una autoridad potencialmente bloqueante para rechazar logout/login de la misma cuenta, cierre o dueño distinto. No asignar roles ni añadir un panel vacío. Preservar login/loading, archivos/esquemas y 20/28 = 71.4%; sin push/tag/Release/APK publicada. La candidata archivada es anterior a estos cambios y no se presenta como entrega actual.
+
+Cierre fase 39: 1265 distintos/25 nuevos, 907 JVM app ejecutados y 341 recibos intactos dominio/datos reutilizados; Android 17 (6 foto/4 revisión/4 aislamiento/3 factory nuevos). Caso foto vertical 480x960 repetido con letra130% sin sumarlo otra vez, valor restaurado y emulador propio API37 cerrado. Comparación visual anterior/corregida confirma la foto fuera de su caja en el binario previo y contenida en el actual. Cero fallos/errores/omitidos finales; lint app 0 errores/22 avisos existentes por variante, datos 0. Sin prueba física, proceso muerto, API26, administración asignada o publicación. Recibo ignorado review39-test-proof.json, logs/capturas review39-* y docs/VALIDACION.md. Los intentos de compilación inicial y baseline conservan sus fallos de arnés, no son aprobaciones extra.
+
+## Antecedente — fase 38 y publicación pospuesta
 
 El usuario pospuso expresamente la publicación: «mejor sigue chambeando en la app lo del release luego pero guardalo para cuando subamos siguiente release». Conservar la preparación local 0.6.2/código 30, APK candidata, comprobación de actualización y borradores de entrega. No crear tag/Release, subir APK ni integrar la preparación de entrega por la autorización anterior. La última APK oficial continúa siendo 0.6.1. La numeración preparada es tentativa hasta la siguiente instrucción de publicar.
 

@@ -1,6 +1,10 @@
 # Avance del plan del proyecto
 
-**Fase 38, Unreleased local:** base de consulta administrativa acotada y política explícita con `READ_REPORTS` separado de `CHANGE_STATUS`. Captura fuentes/dueño/actor, autoriza antes de abrirlas y revalida vigencia/cancelación al consultar; escritura y recibos exigen permiso de cambio, también antes del commit. [Fase 38](FASE_38.md), con validación todavía por registrar.
+**Fase 39, Unreleased local:** revisión del borrador con tarjetas de datos/lugar/foto y marco de 240 dp que contiene la imagen completa. Continúa 4.6 ligando la consulta administrativa al espacio y sesión capturados, revocados al salir incluso si se ingresa de nuevo con la misma cuenta. Permisos separados y denegados por defecto; asignación/panel pendientes. [Alcance, pruebas y límites](FASE_39.md).
+
+**20/28 = 71.4% permanece**: el arreglo visual y la base de sesión no completan otro criterio del PDF. Sin push, tag o publicación; APK oficial **0.6.1**. El candidato 0.6.2 archivado es anterior a las fases 38/39 y requerirá actualizarse en la próxima entrega autorizada.
+
+**Fase 38, Unreleased local:** base de consulta administrativa acotada y política explícita con `READ_REPORTS` separado de `CHANGE_STATUS`. Captura fuentes/dueño/actor, autoriza antes de abrirlas y revalida vigencia/cancelación al consultar; escritura y recibos exigen permiso de cambio, también antes del commit. [Fase 38](FASE_38.md), con validación registrada.
 
 **20/28 = 71.4% permanece**, mismos ocho criterios pendientes: no se completa administración por añadir contratos o controles internos. La asignación y la interfaz administrativa siguen pendientes; `admin/admin` conserva acceso académico. Fase 38 queda local sin push/tag/Release. El usuario pospuso la publicación y se guardaron candidato y borradores 0.6.2/código 30 con numeración tentativa; la APK oficial **0.6.1** conserva su entrega.
 

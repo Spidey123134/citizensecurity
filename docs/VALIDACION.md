@@ -1,5 +1,29 @@
 # Validación y comprobaciones del proyecto
 
+## Revisión legible y permisos ligados a sesión — fase 39, local · 15 de octubre de 2026
+
+**1265 casos distintos aprobados, 25 definiciones nuevas; cero fallos, errores u omitidos finales.** Los resultados de este corte se distinguen de las suites nativas ejecutadas en fase 38:
+
+| Suite | Aprobados | Nuevos | Procedencia |
+| --- | ---: | ---: | --- |
+| Dominio JVM | 200 | 0 | Recibos intactos reutilizados; fuente sin cambios desde fase 38 |
+| Datos JVM / SQLite del host | 141 | 0 | Recibos intactos reutilizados; fuente sin cambios desde fase 38 |
+| App JVM | 907 | 22 | Ejecutados sobre la fuente final |
+| App Android API 37 | 17 | 3 | Foto 6, revisión 4, aislamiento 4 y fábrica administrativa 3 |
+| **Total distinto** | **1265** | **25** | Sin sumar repeticiones ni cierres anteriores |
+
+Se reprodujo visualmente el fallo de una foto vertical **480 × 960** en la candidata archivada anterior: el bitmap cubría tipo, fecha y lugar al exceder el espacio asignado. La fuente final usa un marco limitado, proporción conservada y clipping, y separa datos/lugar/foto. El caso existente de galería real conserva giro, cancelación, copia privada después de quitar la fuente, guardado e imagen del detalle; ahora comprueba también que fecha/referencia/coordenadas sean accesibles en revisión. Los otros cinco recorridos de fotografía mantienen la fuente horizontal y comprueban corrupción, borrador durable, reintento y folios confirmados. Las cuatro regresiones de revisión comprueban campos completos, corrección, giro y ausencia de guardado/GPS automático.
+
+El mismo caso de galería se repitió con **font_scale 1.3**, aprobado y revisado visualmente. No cuenta como otra definición ni incrementa el total. Se restauró el valor previo 1.0. Capturas ignoradas `review39-before-portrait.png`, `review39-after-portrait.png`, `review39-after-date.png`, `review39-after-location.png` y `review39-large-font-portrait.png`; los tres campos y la foto ya caben en la misma vista corregida, por eso algunas capturas coinciden. No hay prueba específica de foto cuadrada ni aceptación física.
+
+Los 22 JVM nuevos usan sesiones locales reales y comprueban permisos separados, dueño/actor exactos, denegación sin lector, consulta suspendida/no cooperativa, cancelación y revocación mientras una autoridad bloquea en otro hilo. Las tres nativas usan la fábrica pública con `ReportWorkspace` y SQLite reales: denegación sin crear base de cuenta o académica, rechazo académico incluso con política permisiva del fixture, lectura privada A/B y revocación por cambio/reingreso/cierre sin seguir otro espacio. Las concesiones existen solo en los fixtures. El binding no asigna roles ni crea un escritor o panel administrativo; la integración visible continúa pendiente.
+
+Compilación Kotlin debug/release y ensamblados internos correctos; **lint app 0 errores/22 avisos existentes por variante, datos sin incidencias**. Emulador propio de solo lectura API37 cerrado; no se instaló ni borró nada del teléfono del usuario. Sin ejecución API26, muerte completa del proceso, cámara física, nueva aceptación GPS o administración institucional. El porcentaje conserva **20/28 = 71.4%** y ocho criterios originales pendientes. [Fase 39](FASE_39.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
+Recibo ignorado `.gradle/validacion/review39-test-proof.json`; logs `review39-final-build.log`, `review39-final-native-build.log`, `review39-native-final.log` y `review39-photo-large-font.log`. El primer build falló por resolver `account` nullable del receptor en el fixture JVM: se corrigió a `this@Fixture.account`. El primer intento sobre el binario previo capturó el solape y después falló por exigir coincidencia completa de texto donde correspondía `substring = true`; se corrigió el arnés antes del pase final. Ambos intentos se conservan en `review39-build.log` / `review39-photo-before.log`, sin acreditarlos como aprobados.
+
+Todo permanece local y la publicación sigue pospuesta. La candidata archivada de preparación 0.6.2/código30 mantiene su hash y **no contiene las fases 38/39**. La APK usada en QA es interna y distinta; deberá prepararse y validarse la entrega final al recibir la siguiente instrucción de publicar. La APK oficial 0.6.1 y sus assets conservan su identidad.
+
 ## Permisos y consulta administrativa — fase 38, desarrollo local · 15 de octubre de 2026
 
 **1267 casos distintos aprobados, 25 definiciones nuevas; cero fallos, errores u omitidos.** Se ejecutaron los tres grupos JVM y las suites Android indicadas, sobre la fuente final de esta fase:
