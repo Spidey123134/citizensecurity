@@ -1,5 +1,13 @@
 # Fases de CITIZENSECURITY
 
+## Entrega acumulada 0.6.2 — fases 35–42
+
+**16 de octubre de 2026 · Android 0.6.2 / código 30 · publicación en preparación.** Se agrupan **las ocho fases posteriores a 0.6.1**, no únicamente las dos últimas: [35, Actividad](FASE_35.md), [36, avisos manuales](FASE_36.md), [37, mensaje a contacto](FASE_37.md), [38, permisos](FASE_38.md), [39, fotografía y sesión](FASE_39.md), [40, alta y consulta administrativa](FASE_40.md), [41, cambio e historial](FASE_41.md) y [42, recorrido de avisos sobre cambios reales](FASE_42.md).
+
+El corte completa **28/28 = 100% de construcción funcional local del PDF**. La aceptación física completa, API 26/fabricantes y seguridad/integración de producción conservan sus pruebas propias; no se incluyen en ese porcentaje. [Entrega y binario final](ENTREGA_0_6_2.md) · [Pasos para probar](PROBAR_0_6_2.md) · [Validación](VALIDACION.md).
+
+Los apartados inferiores son **históricos de cada fase**: sus marcas Unreleased y referencias a la oficial 0.6.1 describen aquel momento. Las fases 35–42 se incorporan a esta entrega acumulada; el candidato anterior de solo 35–37 queda archivado por separado.
+
 ## Fase 42 — cambio confirmado, actividad y avisos, local validada
 
 Completa **4.7 Notificaciones** con las transiciones autorizadas de fase 41. Desde el recibo confirmado se puede abrir **Ver actividad de esta cuenta** o **Revisar avisos de cambios**, sin reconocer el pendiente o pasar el cuerpo del cambio por extras; conserva el sello interno de sesión. La apertura no activa la preferencia, pide permiso, revisa eventos ni publica; cada decisión conserva su gesto propio.

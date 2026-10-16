@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+Sin fases posteriores al corte 0.6.2 preparadas para esta entrega.
+
+## [0.6.2] — 2026-10-16 · entrega acumulada en preparación
+
+- Agrupa **todas las fases 35–42 posteriores a la oficial 0.6.1**, incluidas las que quedaron Unreleased o solo locales. Android **0.6.2 / código 30**; APK final y checksum propios, distintos del candidato antiguo de fases 35–37.
+- **Fase 35:** Actividad de reportes real, filtros de creaciones/cambios, páginas de 50 y acceso al folio; migración aditiva al esquema 4 sin inventar eventos históricos.
+- **Fase 36:** avisos voluntarios por cuenta, permiso/canal Android y revisión manual; resumen general sin datos privados, registro durable y deduplicación por operación.
+- **Fase 37 / E06:** mensaje a un contacto del mismo espacio, ubicación voluntaria, revisión del texto y segundo gesto para abrir SMS. El usuario decide enviar; el operador puede cobrar.
+- **Fases 38–39:** permisos de consulta y cambio independientes, sesión/espacio capturados y revocación; revisión del borrador con tarjetas separadas y fotografía completa contenida para evitar solapamientos.
+- **Fase 40:** cuenta `admin_local` registrada con contraseña propia, confirmación nativa del propietario y segundo gesto para asignar; consulta protegida con filtros, folio e historial. `admin/admin` mantiene acceso académico; solo se administra el espacio propio de esa instalación.
+- **Fase 41:** avances consecutivos Reportado → En revisión → Atendido → Cerrado, motivo revisado, confirmación, actor/fecha/secuencia reales y diario durable. Recuperación por lectura, reintento con el mismo UUID y reconocimiento explícito del recibo.
+- **Fase 42:** del recibo se abren Actividad y Avisos por gestos independientes, sin activar ni publicar automáticamente; integración comprobada con cambios autorizados reales. Lecturas inciertas de archivos `.new`/`.bak` conservan preferencias e IDs y bloquean sin restaurar o limpiar.
+- **28/28 = 100% de construcción funcional local**, separado de aceptación física final, producción e integración institucional. Fase 42: **1431 casos distintos**, cero fallos/errores/omitidos finales; 1379 JVM —205 reutilizados intactos, 1174 ejecutados— y 52 Android ejecutados. Los cortes anteriores conservan sus propios resultados y no se suman entre sí. [Entrega y límites](docs/ENTREGA_0_6_2.md) · [Prueba en teléfono](docs/PROBAR_0_6_2.md) · [Validación](docs/VALIDACION.md).
+
+### Antecedentes de preparación de 0.6.2
+
+Las secciones siguientes conservan las decisiones y cifras de sus respectivos cortes. Sus referencias a Unreleased, publicación pendiente o APK oficial 0.6.1 son históricas; el alcance de esta entrega acumulada es fases 35–42.
+
 ### Fase 42 — desarrollo local validado
 
 - El recibo de cambio confirmado incorpora **Ver actividad de esta cuenta** y **Revisar avisos de cambios** mediante gestos independientes. Las rutas conservan el workspace/sesión y no llevan datos privados del reporte en extras, reconocen la solicitud, revisan eventos o activan avisos automáticamente.

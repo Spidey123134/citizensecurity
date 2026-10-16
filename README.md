@@ -1,5 +1,17 @@
 # CITIZENSECURITY
 
+## Entrega acumulada 0.6.2 — fases 35–42
+
+**16 de octubre de 2026 · Android 0.6.2 / código 30 · publicación en preparación.** Esta entrega reúne **todo el desarrollo posterior a la oficial 0.6.1: fases 35, 36, 37, 38, 39, 40, 41 y 42**. Incluye Actividad de reportes, avisos voluntarios con revisión manual, mensaje revisado para un contacto, corrección de las fotografías del borrador y administración local con consulta, cambios de estado e historial reales. Las mejoras anteriores de cámara/galería, PDF, contactos, ayuda, GPS y mapa siguen incluidas.
+
+**`admin_local` se registra con una contraseña propia de 15–128 caracteres**. La primera asignación requiere el bloqueo nativo de Android y otro gesto para activar; después permite consultar y cambiar estados del espacio de esa cuenta en ese teléfono. `admin/admin` conserva acceso académico. Los estados avanzan **Reportado → En revisión → Atendido → Cerrado** con motivo, revisión, confirmación y recuperación del mismo recibo si se interrumpe. [Guía de administración](docs/ADMINISTRADOR_LOCAL.md).
+
+**28/28 = 100% de construcción funcional local del plan original.** La aceptación física completa y la seguridad/integración de producción se comprueban aparte; un estado o aviso no confirma intervención de una autoridad. El corte final de fase 42 acredita **1431 casos distintos**, con 1379 JVM —205 recibos intactos reutilizados y 1174 ejecutados— y 52 Android API 37 ejecutados; no se suman los totales de fases anteriores como pruebas distintas de la entrega. [Validación](docs/VALIDACION.md).
+
+[Cambios completos de 0.6.2](docs/ENTREGA_0_6_2.md) · [Pasos para probar](docs/PROBAR_0_6_2.md) · [Release 0.6.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.2). Para actualizar, usa la APK de CitizenSecurity de esa entrega **encima de la instalación anterior, sin desinstalar ni borrar datos**. La publicación se confirma en GitHub; el candidato interno antiguo de solo fases 35–37 queda separado del binario final.
+
+Los bloques siguientes conservan el estado y las cifras **históricos** de cada corte. Sus marcas **Unreleased**, referencias a 0.6.1 como oficial o restricciones de publicación describen el momento en que se trabajaron; las **fases 35–42 se agrupan ahora en 0.6.2** por solicitud expresa del usuario.
+
 ## Desarrollo local Unreleased — fase 42: del cambio confirmado a sus avisos
 
 El recibo administrativo ofrece **Ver actividad de esta cuenta** y **Revisar avisos de cambios**. Cada botón abre la pantalla correspondiente del mismo espacio; conserva el sello interno de sesión y no transmite el motivo, el folio o el cuerpo del cambio en el Intent. No reconoce la solicitud pendiente ni activa avisos o revisa eventos al entrar. Puedes volver al recibo para cerrarlo mediante su acción propia. [Recorrido de fase 42](docs/FASE_42.md) · [Guía para el equipo](docs/ADMINISTRADOR_LOCAL.md).

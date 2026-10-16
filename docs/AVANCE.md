@@ -1,5 +1,15 @@
 # Avance del plan del proyecto
 
+## Corte de entrega 0.6.2 — fases 35–42 acumuladas
+
+**16 de octubre de 2026 · Android 0.6.2 / código 30 · publicación en preparación.** La entrega reúne **todas las fases posteriores a la oficial 0.6.1: 35–42**. Actividad, avisos manuales, mensaje a contactos, legibilidad del borrador y administración local con consulta/cambio/historial quedan en un mismo corte. [Entrega](ENTREGA_0_6_2.md) · [Guía de prueba](PROBAR_0_6_2.md).
+
+**28/28 = 100% de construcción funcional local**, conservando los 28 criterios y sus pesos. Cada requisito 4.1–4.7 está en 4/4. Las mejoras E01–E10 tienen registro propio y no inflan ese porcentaje. Fase 42 cierra con 1431 casos distintos —1379 JVM, 52 Android—, sin sumar los totales de otras fases como pruebas adicionales de esta entrega. [Validación y procedencia](VALIDACION.md).
+
+La aceptación física completa, pruebas de fabricantes/API 26, seguridad de producción y una integración institucional requieren evidencias separadas. Un cambio de estado o aviso Android no acredita atención oficial. La publicación de la entrega se confirma en GitHub; los párrafos inferiores mantienen **los estados, versiones y resultados históricos** de cada fase, incluidos los que entonces eran Unreleased.
+
+## Antecedentes de construcción por fase
+
 **Fase 42, desarrollo local validado el 16 de octubre de 2026:** del recibo de cambio confirmado se abren **Ver actividad de esta cuenta** y **Revisar avisos de cambios**, sin reconocer la solicitud, transportar el cuerpo del cambio en extras o iniciar una revisión/publicación; las rutas conservan el sello de sesión. Avisos mantiene activación voluntaria por cuenta, permiso/canal y revisión manual de los eventos reales guardados en SQLite; el resumen general deduplica por UUID de operación. El endurecimiento del almacén conserva `.new`/`.bak` pendientes sin restaurar o limpiar. [Alcance](FASE_42.md) · [Guía](ADMINISTRADOR_LOCAL.md).
 
 **28/28 = 100% de construcción funcional local**, con **4.7 Notificaciones en 4/4** al comprobar eventos de cambios autorizados, entrega del resumen y recorrido integrado. Quedan cero criterios funcionales locales pendientes del plan.
@@ -48,9 +58,9 @@ Corte local, sin push, cambios a main, actualización del [PR #30 de fase 40](ht
 
 Quedan **0 criterios funcionales locales** pendientes. La cuenta elegida es `admin_local`; su activación requiere la credencial nativa del propietario y un segundo gesto en ese teléfono. Consulta, cambio y avisos tienen un recorrido integrado comprobado en emulador, limitado al propio espacio. La aceptación física completa y preparación de la entrega permanecen separadas; no se afirma que ya se activó en el teléfono del usuario o hubo atención de una autoridad. Las comprobaciones se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
 
-La APK oficial **0.6.1** contiene fases 29–34 y conserva su cierre de 1237 casos distintos. Las fases 35–42 se mantienen como código **Unreleased**; no se incorporan a esa descarga por subir una rama o un PR en borrador. Las fases 41/42 permanecen locales y no actualizan el PR de fase 40. Los resultados de cada corte están separados en [Validación](VALIDACION.md), sin sumar repeticiones. Las nativas API 37 no acreditan ejecución física, muerte completa del proceso o recepción institucional.
+La entrega acumulada **0.6.2 / código 30**, en preparación por solicitud de publicar, reúne las fases **35–42**; no modifica el archivo histórico 0.6.1, que conserva sus fases 29–34 y su cierre de 1237 casos distintos. El binario final se identifica en [Entrega 0.6.2](ENTREGA_0_6_2.md), con firma académica conservada y actualización 0.6.1 → 0.6.2 comprobada en dos etapas del emulador API 37. Los resultados de cada corte están separados en [Validación](VALIDACION.md), sin sumar repeticiones. Las nativas API 37 no acreditan ejecución física, muerte completa del proceso o recepción institucional.
 
-[Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Plan](PLAN_DEL_PROYECTO.md) · [Fases](FASES.md) · [Release 0.6.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1). Android **0.6.1 / código 29**, reportes esquema 4 y cuentas 1. Los bloques siguientes conservan sus cifras y pendientes históricos; sus marcas Unreleased describen aquella preparación.
+[Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Plan](PLAN_DEL_PROYECTO.md) · [Fases](FASES.md) · [Entrega 0.6.2](ENTREGA_0_6_2.md). Android **0.6.2 / código 30** preparado para publicar; reportes esquema 4 y cuentas 1. Los bloques siguientes conservan sus cifras y pendientes históricos; sus marcas Unreleased describen aquella preparación.
 
 ## Antecedente — entrega 0.6.0
 

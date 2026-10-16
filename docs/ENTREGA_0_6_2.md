@@ -1,44 +1,58 @@
-# Borrador local de entrega 0.6.2
+# Entrega acumulada 0.6.2
 
-**Borrador local, sin publicar · 15 de octubre de 2026.** La publicación se pospuso por instrucción del usuario para continuar trabajando en la app. **0.6.2 / código Android 30 es una numeración tentativa** del candidato preparado; se revisará al autorizar la siguiente Release. Este documento conserva las notas y comprobaciones disponibles, sin anunciar una entrega oficial ni una descarga pública.
+**16 de octubre de 2026 · Android 0.6.2 / código 30 · publicación en preparación.** Esta entrega agrupa **todas las fases 35–42 posteriores a la oficial 0.6.1**, incluidas las que habían quedado Unreleased o solo locales. La petición de publicar reemplaza el aplazamiento anterior; las fases no se entregan como ocho APK separadas. [Guía para probar](PROBAR_0_6_2.md) · [Release 0.6.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.2).
 
-El candidato agrupa las fases **35–37**, añadidas después de la entrega 0.6.1: actividad de reportes, preferencias y avisos locales de cambios, y preparación de un mensaje para un contacto. Conserva el paquete, la firma académica, los datos y el login/loading existentes. [Guía local para una futura prueba](PROBAR_0_6_2.md).
+Conserva paquete, certificado académico, datos, cuentas y el login/loading del compañero. Las funciones anteriores de reportes con cámara/galería, mapa con calles, punto/GPS a 5 km, posibles repetidos a 200 m/±2 h, ficha PDF, contactos y accesos de ayuda siguen incluidas. Los estados y avisos describen información de este teléfono: no acreditan envío o atención institucional.
 
-## Cambios respecto a 0.6.1
+## Todos los cambios desde 0.6.1
 
-- **Actividad de reportes:** desde Inicio se consultan guardados y cambios efectivamente registrados, con filtros, páginas de 50 eventos y acceso al folio. Actualizar comienza desde la primera página; no se inventa historial para los reportes antiguos.
-- **Avisos voluntarios por acceso:** desde Actividad se activa la preferencia y se solicita el permiso de Android cuando corresponda. **Revisar cambios** busca cambios de estado y presenta un resumen general, sin información privada del incidente. La revisión es manual dentro de esa pantalla; no hay avisos push ni revisión en segundo plano. Guardar un reporte nuevo no se presenta como cambio posterior y no genera este aviso.
-- **Mensaje para un contacto:** desde un folio guardado se elige un contacto, se decide si incluir referencia y punto —opción inicialmente desactivada— y se revisan destinatario y texto. **Abrir Mensajes SMS** abre la composición en otra aplicación; el usuario decide enviar allí. El operador puede cobrar y algunas aplicaciones pueden omitir el texto. La ficha PDF conserva su acceso separado; este mensaje no adjunta archivos.
+| Fase | Cambio incluido en 0.6.2 |
+|---|---|
+| [35](FASE_35.md) | **Actividad de reportes:** creaciones y cambios realmente registrados, filtro de cambios, páginas de 50 y acceso al folio. Actualizar vuelve al inicio; los históricos conservan sus datos sin inventarles eventos. |
+| [36](FASE_36.md) | **Avisos voluntarios por cuenta:** permiso/canal de Android, preferencia inicialmente desactivada, revisión manual y resumen general sin datos privados. Registro durable por operación para evitar repetir avisos aceptados. |
+| [37](FASE_37.md) / E06 | **Mensaje revisado para un contacto:** destinatario del mismo espacio, ubicación inicialmente omitida, texto completo y otro gesto para abrir SMS. El usuario decide enviar allí; el operador puede cobrar. La ficha PDF conserva su acceso propio. |
+| [38](FASE_38.md) | **Permisos separados:** consultar y cambiar son capacidades independientes, denegadas por defecto, comprobadas antes/después de lecturas y dentro de la transacción antes de confirmar un cambio. |
+| [39](FASE_39.md) | **Borrador legible y sesión protegida:** tarjetas de datos, lugar y foto; imagen completa contenida en un marco de 240 dp. Consulta administrativa ligada al espacio y sesión capturados; salir invalida el acceso anterior incluso si vuelve la misma cuenta. |
+| [40](FASE_40.md) | **Administración local real:** registro de admin_local con contraseña propia, confirmación nativa del propietario y segundo gesto de asignación. Consulta de su espacio con filtros, folio e historial paginado. |
+| [41](FASE_41.md) | **Cambios con motivo e historial:** Reportado → En revisión → Atendido → Cerrado, un paso por solicitud, revisión y confirmación separadas. Actor, fecha, motivo, secuencia y operación durables; recuperar consulta el mismo recibo y reintentar conserva el mismo UUID. |
+| [42](FASE_42.md) | **Del cambio confirmado a Actividad y Avisos:** accesos independientes que conservan el pendiente. Integración del cambio autorizado real, evento SQLite, revisión manual y resumen Android. Archivos inciertos .new/.bak se conservan y bloquean sin restaurar o limpiar preferencias/IDs. |
 
-La base de reportes pasa de **esquema 3 a 4** mediante una migración aditiva que conserva reportes, fotografías e historial y añade un índice de actividad. Las cuentas mantienen esquema 1. Las preferencias de avisos se guardan por cuenta; el acceso académico conserva su propio espacio local. Desactivar avisos no borra los identificadores de cambios ya registrados ni los reportes.
+## Administración, actividad y avisos
 
-Los avisos consumen únicamente cambios de estado confirmados. **La asignación administrativa continúa pendiente y la escritura sigue denegada por defecto**; `admin/admin` conserva acceso académico. Por ello, un teléfono que solo tenga eventos de guardado puede mostrar actividad y ninguna notificación de cambios. La app no añade cambios ficticios para llenar esa lista.
+**admin_local no se crea automáticamente.** Se registra con la interfaz existente y contraseña elegida por su dueño, de **15–128 caracteres**. La primera asignación requiere confirmar PIN/patrón/contraseña en la pantalla nativa de Android y, al regresar, pulsar **Activar administración local** dentro de su vigencia. No se publica una contraseña predeterminada. **admin/admin conserva acceso académico**, sin permisos administrativos. [Guía completa](ADMINISTRADOR_LOCAL.md).
 
-Los datos siguen locales. Abrir Mensajes SMS o recibir la aceptación de una notificación por Android no demuestra envío, lectura, recepción policial ni atención. El radio GPS de **5 km** y el aviso de posibles repetidos de **200 m/±2 h** se conservan. La cámara, ficha PDF, contactos y accesos de ayuda de 0.6.1 siguen incluidos.
+La asignación administra **solo el espacio de esa cuenta en esa instalación**; no accede a otras cuentas o teléfonos. Cada cambio exige motivo de **5–500 caracteres**, revisión y segundo gesto. Las interrupciones conservan la solicitud; recuperar busca el recibo sin repetir el cambio, y reconocerlo exige su acción propia. **Atendido/Cerrado no confirman atención de una autoridad.**
 
-## Candidato interno archivado
+Desde el recibo puedes abrir Actividad o Avisos. Esa navegación no reconoce el recibo, activa avisos o revisa/publica cambios automáticamente. Para un resumen se requieren preferencia de esa cuenta, permiso/canal de Android y **Revisar cambios**. Guardar un reporte genera su creación, pero por sí solo no es un cambio de estado para avisar.
 
-- Archivo local: `.gradle/validacion/citizensecurity-0.6.2-academico.apk`.
-- Tamaño: **55,302,267 bytes**.
-- SHA-256: `ee75a653fc468153d062747bfeca5727104a236d29dcf876bacd6494162d3b2f`.
-- La APK permanece como candidato interno; no hay un archivo de esta versión publicado en una Release. El checksum público se preparará para el binario definitivo cuando corresponda publicar.
-- Paquete: `com.example.citizensecurity`; minSdk 26 / targetSdk 37.
-- Firma v2; certificado SHA-256: `0a4006a1d2ef2ad02a0dad7c51b55c0ba5ffcd096a226eed6456326b2fed3ebd`.
+La revisión es **manual dentro de la app**, en páginas de 50 y hasta 500 eventos por gesto; si queda recorrido ofrece continuar. El registro conserva hasta 4096 identificadores en un archivo acotado. Desactivar retira el resumen propio y conserva los IDs aceptados. No hay revisión en segundo plano, push o sincronización. La aceptación por Android no prueba lectura o recepción institucional.
 
-Cuando se autorice probar una actualización, debe instalarse encima de la app anterior, **sin desinstalar ni borrar datos**. Si Android la rechaza, conservar la instalación y revisar el archivo; no sustituir la conservación de datos por una reinstalación. Los archivos publicados de 0.6.1 mantienen su identidad histórica. Los datos anteriores de tamaño y hash identifican únicamente este candidato; cualquier compilación posterior deberá volver a comprobarse.
+## Binario final y conservación de datos
 
-## Validación y límites
+- APK final: **citizensecurity-0.6.2-academico.apk**, preparada para adjuntarse a la Release junto con **SHA256SUMS-0.6.2.txt**.
+- Tamaño: **56,200,431 bytes**.
+- SHA-256: `114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4`.
+- Paquete: `com.example.citizensecurity`; minSdk **26**, targetSdk **37**.
+- Certificado SHA-256: `0a4006a1d2ef2ad02a0dad7c51b55c0ba5ffcd096a226eed6456326b2fed3ebd`, el mismo de la oficial 0.6.1.
 
-La compilación y lint completados durante la preparación resultaron correctos. Se conservan recibos anteriores intactos de **1,209 pruebas JVM**: 197 de dominio, 127 de datos y 885 de app. Son resultados previos reutilizados, no una nueva ejecución completa atribuida a este borrador.
+Instala **encima de la app anterior, sin desinstalar ni borrar datos**. Si Android la rechaza, conserva la instalación y revisa el archivo. La base de reportes migra aditivamente de **esquema 3 a 4**, conservando reportes, fotografías e historial; las cuentas mantienen esquema 1.
 
-La aceptación de actualización se ejecutó en **dos etapas satisfactorias en emulador**: `seed061` preparó datos bajo la APK 0.6.1 oficial y `verify062` comprobó su conservación después de instalar este candidato encima. Se contrastaron los bytes de base de datos, contactos y fotografía antes de abrir el repositorio actualizado; después se comprobó la migración del esquema 3 al 4 y la recuperación de esos datos.
+La actualización **0.6.1 → esta APK final 0.6.2** se comprobó en emulador propio API 37 mediante instalación encima de la anterior: **seed061, 1 caso aprobado; verify062, 1 caso aprobado**. Antes de migrar se contrastaron los bytes de base de datos, contactos y fotografía; después se comprobó esquema 3 → 4, integridad de SQLite y recuperación de reporte, historial, contactos y foto. El emulador se cerró; no se instaló o alteró el teléfono físico. Recibos locales: `.gradle/validacion/release062-final/upgrade-seed.log` y `upgrade-verify.log`. Esta comprobación usa el archivo final y es distinta de la prueba histórica del candidato de solo fases 35–37. [Validación](VALIDACION.md).
 
-**La validación final del candidato no está cerrada.** Las 139 pruebas nativas planificadas para el binario 0.6.2 siguen pendientes de ejecución final; no se incluyen como pruebas aprobadas ni se declara un total final de la futura entrega.
+**Antecedente archivado, separado del archivo final:** el candidato interno antiguo de solo fases 35–37, conservado en .gradle/validacion/citizensecurity-0.6.2-academico.apk, mide 55,302,267 bytes y tiene SHA-256 `ee75a653fc468153d062747bfeca5727104a236d29dcf876bacd6494162d3b2f`. No identifica la entrega acumulada. El binario final se prepara en .gradle/validacion/release062-final/; el archivo antiguo se conserva y no se publica como si incluyera fases 38–42.
 
-El historial de validaciones de las fases está en [Validación](VALIDACION.md). Los recibos locales de las dos etapas de actualización se conservan en `.gradle/validacion/release062-upgrade-seed.log` y `.gradle/validacion/release062-upgrade-verify.log`. Las pruebas de composición SMS están diseñadas para interceptar la apertura antes de otra aplicación: **no se envían mensajes de prueba**. Los cambios de estado de los recorridos automatizados se limitan al entorno de pruebas; no conceden un rol al producto.
+## Validación y avance del plan
 
-La prueba física anterior del punto GPS se conserva como antecedente; este borrador no atribuye otra comprobación física de GPS, cámara, SMS o recepción de avisos. Las ejecuciones en emulador no acreditan funcionamiento en todos los fabricantes, muerte completa del proceso ni entrega exactamente una vez. La aceptación física de una futura actualización se registrará por separado con la [guía de prueba](PROBAR_0_6_2.md).
+El corte final de **fase 42** acredita **1431 casos distintos aprobados, 14 nuevos**, cero fallos/errores/omitidos finales:
 
-**Avance del PDF: 20/28 = 71.4%.** Frente a 0.6.1 se acredita el criterio de permisos y preferencias de avisos. Quedan ocho criterios: seguimiento autorizado, administración y el recorrido productivo restante de notificaciones. El mensaje a contactos amplía utilidad sin crear criterios nuevos.
+- **1379 JVM:** 205 recibos intactos de dominio reutilizados sin cambios, 148 de datos y 1026 de app ejecutados en ese corte.
+- **52 Android API 37 ejecutados:** 26 de almacenamiento de avisos —10 nuevos—, cuatro de integración nueva sobre cambio autorizado/rol/diario/SQLite reales, cuatro de avisos, diez de publicador y ocho de cambios administrativos.
+- Lint app sin errores y con **22 avisos existentes por variante**; datos sin incidencias.
 
-[Actividad](FASE_35.md) · [Avisos](FASE_36.md) · [Mensaje a contactos](FASE_37.md) · [Avance](AVANCE.md) · [Entrega anterior](ENTREGA_0_6_1.md)
+Las fases anteriores conservan evidencias propias. Fase 41 aprobó 1488 casos distintos de un conjunto diferente; **no se suman 1431 y 1488 ni las repeticiones de cada fase** para inventar un total de Release. Compilación, identidad del APK y actualización tienen recibos separados. [Desglose completo](VALIDACION.md).
+
+Permiso nativo y denegación/concesión, canal Android, deduplicación, aislamiento, PIN nativo del emulador y cambios reales se probaron en cortes documentados. Los SMS de pruebas se interceptaron: no se enviaron mensajes. Estas ejecuciones API 37 no acreditan otra prueba de cámara/GPS físicos, aceptación completa en teléfono, API 26, fabricantes o muerte completa del proceso.
+
+**Avance: 28/28 = 100% de construcción funcional local del plan original**, con cada requisito 4.1–4.7 en 4/4. Quedan cero criterios funcionales locales de ese denominador; aceptación física completa, seguridad de producción e integración institucional se comprueban aparte. E01–E10 amplían utilidad sin aumentar el porcentaje del PDF.
+
+[Plan](PLAN_DEL_PROYECTO.md) · [Avance](AVANCE.md) · [Fases](FASES.md) · [Guía para probar](PROBAR_0_6_2.md) · [Entrega anterior](ENTREGA_0_6_1.md)

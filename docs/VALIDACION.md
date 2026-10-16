@@ -1,5 +1,17 @@
 # Validación y comprobaciones del proyecto
 
+## Entrega acumulada 0.6.2 — comprobación final · 16 de octubre de 2026
+
+La entrega preparada agrupa **todas las fases35–42** desde la oficial0.6.1. La APK final tiene **56.200.431 bytes**, paquete `com.example.citizensecurity`, versión0.6.2/código30, min26/target37 y SHA-256 `114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4`. Es exactamente el binario probado al cierre de fase42: se reutilizan por identidad esos1431 casos distintos (1379JVM, incluidos205 recibos de dominio intactos reutilizados, y52Android), con cero fallos, errores u omitidos finales. No se suman los cortes1431 y1488 ni se anuncian1431 ejecuciones nuevas de esta preparación.
+
+`apksigner verify --print-certs` confirma firma válida y certificado SHA-256 `0a4006a1d2ef2ad02a0dad7c51b55c0ba5ffcd096a226eed6456326b2fed3ebd`, igual a la oficial0.6.1. Se conserva la firma académica de debug; no es una firma de producción nueva. La identidad de paquete/versión está corroborada por PackageManager durante la actualización. La herramienta antigua `aapt dump badging` alcanza esos campos pero falla al resolver un recurso de icono API37; su salida parcial no se presenta como una comprobación íntegra de recursos.
+
+Se ejecutaron además **dos invocaciones de aceptación de actualización**, ambas `OK (1 test)`: instalar oficial0.6.1, crear un fixture privado nuevo con nonce, y actualizar con `adb install -r` a esta APK final. Antes de abrir cualquier repositorio nuevo se verificaron los SHA de base SQLite, contactos y foto; después, migración3→4, `PRAGMA integrity_check=ok`, mismo reporte/campos/autor/historial de creación, revisión de contactos y foto legible. Sin desinstalar, limpiar datos o reutilizar el candidato antiguo. El fixture usa APIs productivas existentes en0.6.1 y queda limitado al emulador propio de solo lectura API37, cerrado al terminar; no acredita cámara/GPS físico nuevos ni migración de todas las instalaciones posibles.
+
+Evidencia ignorada bajo `.gradle/validacion/release062-final/`: `upgrade-build-quoted.log`, `upgrade-seed.log`, `upgrade-verify.log`, nonce, APK final y `SHA256SUMS-0.6.2.txt`. El primer intento del build manual falló por el argumento PowerShell `-P` sin comillas y se conserva en `upgrade-build.log`; el argumento literal corregido compiló correctamente. No fue un fallo del producto y no cuenta como aprobado. El anterior candidato0.6.2 de fases35–37 y sus pruebas se conservan con identidad distinta. La prueba manual de actualización permanece local, fuera del conjunto público por necesitar dos APK y selección/nonce explícitos.
+
+**28/28=100% de construcción funcional local**; no acredita aceptación física completa, API26/fabricantes, muerte completa del proceso, servidor ni recepción institucional. Las secciones inferiores son los cortes históricos de cada fase; sus marcas «sin publicar» describen aquel momento. La publicación solicitada ahora se confirma únicamente mediante la Release/activos de GitHub, no por ensamblar una APK local.
+
 ## Avisos a partir de cambios autorizados reales — fase 42 · 16 de octubre de 2026
 
 **1431 casos distintos aprobados, 14 definiciones nuevas; cero fallos, errores u omitidos.** Se ejecutan las suites afectadas y sus regresiones. El total de este corte no suma otros cierres; ser menor que los 1488 de fase41 refleja las suites seleccionadas, sin retirar pruebas anteriores.

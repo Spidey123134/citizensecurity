@@ -1,5 +1,7 @@
 # Administración local: cuenta y uso
 
+**Entrega acumulada 0.6.2 / código Android 30, en preparación — 16 de octubre de 2026.** Los recorridos de esta guía, desarrollados en fases 40–42, se incluyen en el mismo corte que todas las fases 35–42 posteriores a 0.6.1. Usa la APK final de esa entrega. [Cambios y archivo](ENTREGA_0_6_2.md) · [Pasos de prueba](PROBAR_0_6_2.md). Las referencias inferiores a desarrollo local, PR #30 o APK oficial 0.6.1 conservan el momento histórico de cada validación; no describen el alcance final de 0.6.2.
+
 **16 de octubre de 2026 · ampliación local de fase 42, validada.** Desde el recibo de un cambio confirmado se puede abrir su actividad y el panel de avisos. El alta y el cambio de estado conservan los pasos de fases 40/41 descritos debajo; esta ampliación todavía no está en la APK oficial **0.6.1** ni actualiza el PR #30 de fase 40.
 
 ## Del recibo a la actividad y los avisos
@@ -33,7 +35,7 @@ No subas contraseñas ni el PIN a GitHub, issues, capturas o archivos del proyec
 
 ## Activar por primera vez
 
-1. Usa una compilación que incluya la fase 40. La APK oficial **0.6.1** todavía no contiene este recorrido.
+1. Usa **0.6.2 / código 30**, que incluye fases 40–42. **0.6.1** conserva su contenido anterior y no contiene este recorrido.
 2. En el login, entra a **Crear cuenta**, registra `admin_local` con la contraseña que elijas e inicia sesión con ella. Si ya existe en ese teléfono, utiliza su contraseña actual.
 3. En **Inicio**, abre **Administración local**. El acceso aparece para `admin_local`; verlo no significa que ya tenga permisos.
 4. Pulsa **Confirmar propietario con Android**. Completa el bloqueo del dispositivo en la pantalla nativa de Android. Si no hay PIN, patrón o contraseña configurados, configura uno desde los ajustes del teléfono y vuelve a comprobar. Cancelar conserva la configuración sin activar permisos.
@@ -63,7 +65,7 @@ El acceso es académico y local: no convierte la cuenta en una identidad policia
 
 ## Cambiar un estado local
 
-Este recorrido requiere una compilación que incluya fase 41; no aparece en la APK oficial 0.6.1 ni se añade a ella al editar esta guía.
+Este recorrido se incluye en **0.6.2**, junto con fases 35–42; no aparece en la APK histórica 0.6.1.
 
 1. En la consulta administrativa abre un folio y pulsa **Preparar cambio de estado**. Para comprobar una operación anterior también puedes usar **Comprobar cambio pendiente**, sin seleccionar un folio nuevo.
 2. Pulsa **Comprobar solicitudes pendientes**. La app lee el diario y busca su recibo; esta acción no cambia estados. Si hay una operación por resolver, resuélvela antes de preparar otra.

@@ -1,5 +1,11 @@
 # Trabajo del equipo
 
+## Alcance vigente — entrega acumulada 0.6.2 · 16 de octubre de 2026
+
+El usuario pidió «Haz la release» y aclaró «No solo esas fases, hicimos muchas unreleased». Preparar y publicar la entrega completa desde la última oficial 0.6.1: fases 35–42 y sus correcciones, no solo las dos últimas. Esta petición autoriza integrar el código final en main mediante PR, tag v0.6.2, Release oficial y APK/checksum/notas. Sustituye las restricciones de publicación de los cortes históricos inferiores. Preservar las entregas anteriores, el candidato antiguo archivado y los datos; no instalar ni borrar datos del teléfono físico.
+
+Versión 0.6.2/código 30. El binario final contiene todo el código hasta fase42 y conserva paquete y certificado académico de 0.6.1. SHA-256 114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4, 56.200.431 bytes. No confundirlo con el candidato antiguo de fases35–37. Validación final reutiliza el corte1431 de fase42 por identidad exacta del binario y añade dos invocaciones de actualización real 0.6.1→0.6.2 en emulador propio API37: conservación de bytes antes de abrir repositorios, migración3→4 e integridad/reportes/foto/contactos/historial. No sumar los cortes históricos. 28/28=100% de construcción funcional local; aceptación física completa y producción/institución siguen fuera de esa cifra. Publicar únicamente tras comprobar fuente, firma, APK y acceso autenticado; no afirmar publicación antes de verificarla.
+
 ## Alcance vigente — fase 42: avisos sobre cambios reales
 
 El usuario pidió seguir tras la validación de fase41. Completar la composición local de4.7: desde un recibo confirmado, abrir Actividad o Avisos por gestos separados. Los destinos reciben solo el sello del workspace, sin folio/motivo/actor/operación nuevos en Intent. Navegar no reconoce el recibo, borra el diario, activa preferencias, pide permisos o publica. Activar y revisar siguen siendo gestos distintos; el consentimiento se limita a ese acceso, con permiso nativo y canal vigentes. El resumen Android continúa genérico, sin datos privados, inmutable y sin atribuir lectura/recepción institucional. No cambiar login/loading, servidor ni trabajo en segundo plano.
