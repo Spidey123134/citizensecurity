@@ -52,7 +52,7 @@ class ReportPhotoUiTest {
     }
 
     @Test fun actualPickerCopySurvivesRotationCancellationSaveAndSourceRemoval() {
-        val source = insertSource()
+        val source = insertSource(width = 480, height = 960)
         launchDraft()
         prepareFields()
         ui.onNodeWithTag("choose_photo").performScrollTo().performClick()
@@ -66,7 +66,7 @@ class ReportPhotoUiTest {
         awaitPhoto()
         val photo = draftPhoto()!!
         assertEquals(480, photo.width)
-        assertEquals(240, photo.height)
+        assertEquals(960, photo.height)
         ui.onNodeWithTag("draft_photo_image").performScrollTo().assertExists()
         capture("release054-fotografia.png")
         scenario!!.recreate()
@@ -81,7 +81,19 @@ class ReportPhotoUiTest {
         assertEquals(1, context.contentResolver.delete(source, null, null))
         media.remove(source)
         fixture.photoStore.check(photo)
-        reviewAndSave()
+        reviewAndSave {
+            ui.waitUntil(10_000) { ui.onAllNodesWithTag("review_photo_image").fetchSemanticsNodes().isNotEmpty() }
+            ui.onNodeWithTag("review_photo_image").performScrollTo().assertIsDisplayed()
+            capture("report-review-portrait-photo.png")
+            ui.onNodeWithTag("review_occurred_at").performScrollTo().assertIsDisplayed()
+                .assertTextContains("Zona horaria:", substring = true)
+            capture("report-review-portrait-date.png")
+            ui.onNodeWithTag("review_reference").performScrollTo().assertIsDisplayed()
+                .assertTextEquals("Parque de prueba")
+            ui.onNodeWithTag("review_latitude").performScrollTo().assertIsDisplayed()
+            ui.onNodeWithTag("review_longitude").performScrollTo().assertIsDisplayed()
+            capture("report-review-portrait-location.png")
+        }
         val saved = savedReport()
         assertEquals(photo, saved.photo)
         assertEquals(1, runBlocking { fixture.repository.list().size })
@@ -307,9 +319,10 @@ class ReportPhotoUiTest {
         context.filesDir.listFiles()!!.single { it.name.startsWith("photos_ui_") && File(it, "${photo.id}.jpg").exists() }
             .resolve("${photo.id}.jpg")
 
-    private fun reviewAndSave() {
+    private fun reviewAndSave(beforeSave: () -> Unit = {}) {
         fixture.publishFreshFix()
         ui.onNodeWithTag("review_draft").performScrollTo().performClick()
+        beforeSave()
         ui.onNodeWithTag("save_report").performScrollTo().assertIsEnabled().performClick()
         ui.waitUntil(15_000) {
             var saved = false
@@ -322,7 +335,7 @@ class ReportPhotoUiTest {
         scenario!!.onActivity { saved = (it.submissionModel.state.value as ReportSubmissionState.Saved).report }
         return saved!!
     }
-    private fun insertSource(): Uri {
+    private fun insertSource(width: Int = 480, height: Int = 240): Uri {
         val values = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "citizensecurity-test-${System.nanoTime()}.jpg")
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
@@ -333,7 +346,7 @@ class ReportPhotoUiTest {
         }
         val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)!!
         media.add(uri)
-        val bitmap = Bitmap.createBitmap(480, 240, Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         canvas.drawColor(Color.rgb(232, 239, 255))
         val paint = Paint().apply { color = Color.rgb(57, 69, 190); textSize = 28f; isAntiAlias = true }

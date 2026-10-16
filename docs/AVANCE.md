@@ -1,30 +1,66 @@
 # Avance del plan del proyecto
 
+## Corte de entrega 0.6.2 — fases 35–42 acumuladas
+
+**16 de octubre de 2026 · Android 0.6.2 / código 30 · publicación en preparación.** La entrega reúne **todas las fases posteriores a la oficial 0.6.1: 35–42**. Actividad, avisos manuales, mensaje a contactos, legibilidad del borrador y administración local con consulta/cambio/historial quedan en un mismo corte. [Entrega](ENTREGA_0_6_2.md) · [Guía de prueba](PROBAR_0_6_2.md).
+
+**28/28 = 100% de construcción funcional local**, conservando los 28 criterios y sus pesos. Cada requisito 4.1–4.7 está en 4/4. Las mejoras E01–E10 tienen registro propio y no inflan ese porcentaje. Fase 42 cierra con 1431 casos distintos —1379 JVM, 52 Android—, sin sumar los totales de otras fases como pruebas adicionales de esta entrega. [Validación y procedencia](VALIDACION.md).
+
+La aceptación física completa, pruebas de fabricantes/API 26, seguridad de producción y una integración institucional requieren evidencias separadas. Un cambio de estado o aviso Android no acredita atención oficial. La publicación de la entrega se confirma en GitHub; los párrafos inferiores mantienen **los estados, versiones y resultados históricos** de cada fase, incluidos los que entonces eran Unreleased.
+
+## Antecedentes de construcción por fase
+
+**Fase 42, desarrollo local validado el 16 de octubre de 2026:** del recibo de cambio confirmado se abren **Ver actividad de esta cuenta** y **Revisar avisos de cambios**, sin reconocer la solicitud, transportar el cuerpo del cambio en extras o iniciar una revisión/publicación; las rutas conservan el sello de sesión. Avisos mantiene activación voluntaria por cuenta, permiso/canal y revisión manual de los eventos reales guardados en SQLite; el resumen general deduplica por UUID de operación. El endurecimiento del almacén conserva `.new`/`.bak` pendientes sin restaurar o limpiar. [Alcance](FASE_42.md) · [Guía](ADMINISTRADOR_LOCAL.md).
+
+**28/28 = 100% de construcción funcional local**, con **4.7 Notificaciones en 4/4** al comprobar eventos de cambios autorizados, entrega del resumen y recorrido integrado. Quedan cero criterios funcionales locales pendientes del plan.
+
+**1431 casos distintos aprobados/14 nuevos**, sin fallos/errores/omitidos finales: 1379 JVM —205 recibos intactos de dominio reutilizados, 148 datos y 1026 app ejecutados— y 52 Android API 37 ejecutados. Lint sin errores/22 avisos existentes por variante de app; datos sin incidencias. [Desglose y límites](VALIDACION.md).
+
+El cierre se refiere exclusivamente a **construcción funcional local del plan**. La aceptación física completa, preparación de la entrega, seguridad de producción e integración institucional conservan sus alcances propios; no se atribuyen por completar criterios o ejecutar pruebas. Código local, sin actualizar GitHub/main o PR #30 y sin publicar APK/tag/Release. La oficial 0.6.1 mantiene su corte. Los párrafos inferiores conservan sus cifras históricas y las matrices vigentes reflejan fase 42.
+
+**Fase 41, desarrollo local validado:** seguimiento administrativo con lectura de estado/revisión, motivo de 5–500 caracteres, revisión y confirmación separadas. Transiciones consecutivas, actor por UUID, fecha, motivo y secuencia reales; estados de este teléfono sin acreditar atención de una institución. Recuperación por lectura y reintento de la solicitud exacta, reconocimientos explícitos y protección de sesión/permisos/primer plano. [Alcance](FASE_41.md) · [Guía](ADMINISTRADOR_LOCAL.md).
+
+**25/28 = 89.3%**, con seguimiento de **4.4 (4/4)** y cambio/historial de **4.6 (4/4)** completados mediante el recorrido integrado. **1488 casos distintos aprobados/103 nuevos**, sin fallos finales: 1379 JVM y 109 Android. Los tres pendientes de **4.7** requieren la siguiente integración de avisos sobre cambios reales; no se suman definiciones, repeticiones o publicaciones como criterios.
+
+Corte local, sin push, cambios a main, actualización del [PR #30 de fase 40](https://github.com/Spidey123134/citizensecurity/pull/30), APK, tag o Release. La oficial **0.6.1** conserva su entrega. Los párrafos de fases anteriores mantienen sus cifras históricas; las matrices vigentes reflejan fase 41.
+
+**Fase 40, Unreleased:** cuenta elegida **`admin_local`**, sin contraseña predeterminada, con alta por confirmación nativa del propietario y segundo gesto. Consulta protegida del espacio de esa cuenta: filtros, folio, detalle e historial por páginas de 50. [Guía de uso](ADMINISTRADOR_LOCAL.md) · [Alcance y validación](FASE_40.md).
+
+**22/28 = 78.6%**, con **4.6 Administración en 2/4**: consulta visible y roles/permisos reales. Quedan seis criterios: cambio e historial administrativo completo, seguimiento de 4.4 y los otros tres de 4.7. **1360 casos distintos aprobados/76 nuevos**, sin fallos; incluye confirmación nativa con PIN real en emulador API 37 y consulta de la propia cuenta. Código y guía preparados para `development/administracion-local` y un PR en borrador de GitHub; sin integrar main, APK, tag o Release. La descarga oficial **0.6.1** conserva su corte y el candidato 0.6.2 archivado es anterior a fases 38–40. Este párrafo conserva las cifras históricas de fase 40; las matrices vigentes se actualizan al cierre de fase 41.
+
+**Fase 39, Unreleased local:** revisión del borrador con tarjetas de datos/lugar/foto y marco de 240 dp que contiene la imagen completa. Continúa 4.6 ligando la consulta administrativa al espacio y sesión capturados, revocados al salir incluso si se ingresa de nuevo con la misma cuenta. Permisos separados y denegados por defecto; asignación/panel pendientes. [Alcance, pruebas y límites](FASE_39.md).
+
+**20/28 = 71.4% permanece**: el arreglo visual y la base de sesión no completan otro criterio del PDF. Sin push, tag o publicación; APK oficial **0.6.1**. El candidato 0.6.2 archivado es anterior a las fases 38/39 y requerirá actualizarse en la próxima entrega autorizada.
+
+**Fase 38, Unreleased local:** base de consulta administrativa acotada y política explícita con `READ_REPORTS` separado de `CHANGE_STATUS`. Captura fuentes/dueño/actor, autoriza antes de abrirlas y revalida vigencia/cancelación al consultar; escritura y recibos exigen permiso de cambio, también antes del commit. [Fase 38](FASE_38.md), con validación registrada.
+
+**20/28 = 71.4% permanece**, mismos ocho criterios pendientes: no se completa administración por añadir contratos o controles internos. La asignación y la interfaz administrativa siguen pendientes; `admin/admin` conserva acceso académico. Fase 38 queda local sin push/tag/Release. El usuario pospuso la publicación y se guardaron candidato y borradores 0.6.2/código 30 con numeración tentativa; la APK oficial **0.6.1** conserva su entrega.
+
 **Fase 37 / E06, Unreleased:** mensaje revisado desde un folio para un contacto, ubicación voluntaria y composición SMS por segundo gesto, sin envío automático. **20/28 = 71.4% permanece**: amplía utilidad sin sumar criterios del PDF. [Fase 37](FASE_37.md) · [Validación](VALIDACION.md).
 
 **Fase 36, Unreleased:** preferencia de avisos por cuenta, permiso de Android por gesto y revisión manual de cambios registrados desde Actividad. Resumen general y registro durable de operaciones aceptadas; sin datos privados en el aviso. [Fase 36](FASE_36.md) · [Validación](VALIDACION.md).
 
 **Entrega 0.6.1 — 14 de octubre de 2026 · código Android 29:** fases 29–34 agrupadas, con cámara/galería, ficha PDF, contactos, Ayuda inmediata/atajos y mosaico de Ajustes rápidos. Amplían utilidad y la fotografía ya construida, por lo que **19/28 = 67.9%** conserva los mismos criterios y nueve pendientes. [Entrega](ENTREGA_0_6_1.md) · [Pruebas y límites](VALIDACION.md). Administración y asignación siguen pendientes.
 
-## Avance vigente — 15 de octubre de 2026
+## Avance vigente — 16 de octubre de 2026
 
-**20/28 = 71.4% de construcción**, mismos criterios y pesos del PDF/cliente. Se completa únicamente **permisos y preferencias** de 4.7: denegar/conceder realmente en Android, activar/desactivar, persistir y separar por cuenta. El consumidor manual y su aviso nativo están implementados; los otros tres criterios de notificaciones conservan el pendiente del recorrido productivo con cambios autorizados. Las extensiones E01–E04/E10 incluidas en 0.6.1 amplían utilidad sin sumar criterios ya completos.
+**28/28 = 100% de construcción funcional local**, mismos criterios y pesos del PDF/cliente. La fase 42 completa **4.7 Notificaciones** al comprobar avisos manuales sobre los eventos reales del escritor autorizado de fase 41. Se conservan seguimiento/cambio/historial administrativo de fase 41, alta/consulta/roles de fase 40 y permisos/preferencias de fase 36. Las extensiones E01–E04/E10 incluidas en 0.6.1 amplían utilidad sin sumar criterios ya completos.
 
 | Punto original | Construidos | Pendientes |
 |---|---|---|
 | 4.1 Usuarios | 4/4 | 0 |
 | 4.2 Reportes | 4/4 | 0 |
 | 4.3 Geolocalización | 4/4 | 0 |
-| 4.4 Consulta | 3/4 | 1: seguimiento de cambios mediante recorrido autorizado |
+| 4.4 Consulta | 4/4 | 0 |
 | 4.5 Mapas | 4/4 | 0 |
-| 4.6 Administración | 0/4 | 4: consulta, cambio, roles/permisos, historial administrativo |
-| 4.7 Notificaciones | 1/4 | 3: eventos y entrega en el recorrido autorizado, recorrido completo probado |
+| 4.6 Administración | 4/4 | 0 |
+| 4.7 Notificaciones | 4/4 | 0 |
 
-Faltan **8 criterios originales**: uno de seguimiento, cuatro administrativos y tres de notificaciones. La asignación administrativa sigue pendiente por decisión del usuario; no existe un panel productivo de cambios ni roles reales. Los cambios autorizados exclusivamente dentro de pruebas comprueban la integración, sin conceder permisos a una cuenta del producto. Las comprobaciones se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
+Quedan **0 criterios funcionales locales** pendientes. La cuenta elegida es `admin_local`; su activación requiere la credencial nativa del propietario y un segundo gesto en ese teléfono. Consulta, cambio y avisos tienen un recorrido integrado comprobado en emulador, limitado al propio espacio. La aceptación física completa y preparación de la entrega permanecen separadas; no se afirma que ya se activó en el teléfono del usuario o hubo atención de una autoridad. Las comprobaciones se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
 
-La APK oficial **0.6.1** contiene fases 29–34 y conserva su cierre de 1237 casos distintos. Las fases 35–37 se mantienen como código **Unreleased**; no se incorporan a esa descarga por actualizar main. Los resultados de cada corte están separados en [Validación](VALIDACION.md), sin sumar repeticiones. Las nativas API 37 no acreditan ejecución física, muerte completa del proceso o recepción institucional.
+La entrega acumulada **0.6.2 / código 30**, en preparación por solicitud de publicar, reúne las fases **35–42**; no modifica el archivo histórico 0.6.1, que conserva sus fases 29–34 y su cierre de 1237 casos distintos. El binario final se identifica en [Entrega 0.6.2](ENTREGA_0_6_2.md), con firma académica conservada y actualización 0.6.1 → 0.6.2 comprobada en dos etapas del emulador API 37. Los resultados de cada corte están separados en [Validación](VALIDACION.md), sin sumar repeticiones. Las nativas API 37 no acreditan ejecución física, muerte completa del proceso o recepción institucional.
 
-[Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Plan](PLAN_DEL_PROYECTO.md) · [Fases](FASES.md) · [Release 0.6.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1). Android **0.6.1 / código 29**, reportes esquema 4 y cuentas 1. Los bloques siguientes conservan sus cifras y pendientes históricos; sus marcas Unreleased describen aquella preparación.
+[Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Plan](PLAN_DEL_PROYECTO.md) · [Fases](FASES.md) · [Entrega 0.6.2](ENTREGA_0_6_2.md). Android **0.6.2 / código 30** preparado para publicar; reportes esquema 4 y cuentas 1. Los bloques siguientes conservan sus cifras y pendientes históricos; sus marcas Unreleased describen aquella preparación.
 
 ## Antecedente — entrega 0.6.0
 
@@ -257,12 +293,12 @@ Una pantalla visual cuenta solo como preparación visual; una lógica probada cu
 | 4.1 Usuarios | Pantalla de acceso; creación de cuentas; verificación real de acceso; identidad y aislamiento de datos | Pantalla del compañero; cuentas de fase 25; separación por UUID de fase 26. Recorrido Android ejecutado en 0.6.0, sin servidor | 4/4 · 100% de construcción local |
 | 4.2 Reportes | Modelo y validación; persistencia local técnica; formulario con guardado real autorizado; fotografías | Modelo/validación, persistencia técnica, formulario autorizado y fotografías con copia privada/migración probadas en 0.5.4 | 4/4 · 100% de construcción |
 | 4.3 Geolocalización | Par de coordenadas validado y conservado; captura del dispositivo; permisos y estados GPS; flujo GPS probado | Coordenadas, captura física previa y permisos/estados comprobados. El 11 de octubre de 2026 el usuario confirmó manualmente localización del punto, aceptación dentro del radio y pin visible; versión APK no especificada, sin logs, medidas o guardado físico nuevo | 4/4 · 100% de construcción |
-| 4.4 Consulta | Lectura por folio; lista y permanencia; reportes propios por usuario; seguimiento de estados | Folio, lista/permanencia y espacio de cuenta de fase 26; historial de lectura de fase 27 ejecutado en Android en 0.6.0. Fase 31 prepara recuperación durable; falta el recorrido autorizado de cambios, su composición productiva y aceptación | 3/4 · 75% de construcción |
+| 4.4 Consulta | Lectura por folio; lista y permanencia; reportes propios por usuario; seguimiento de estados | Folio, lista/permanencia y espacio de cuenta de fase 26; historial de fase 27. Fase 41 compone seguimiento visible con cambios autorizados, revisión y recuperación del recibo comprobados en Android con SQLite/diario reales | 4/4 · 100% de construcción local |
 | 4.5 Mapas | Contrato de selección y confirmación; SDK configurado; mapa por zonas y marcadores; flujo visual integrado y probado | Contrato, SDK, zonas/marcadores y flujo visual integrado en 0.5.3: guardado/folio, mapa nativo con calles y pines SQLite, filtros/límite y pin→detalle. La validación nativa usa una fuente de teléfono controlada; la aceptación manual física posterior se acredita por separado en 4.3 | 4/4 · 100% de construcción |
-| 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Fase 27 prepara servicio protegido e historial de lectura; fase 31 prepara diario/recibo durables. Asignación pendiente y sin composición administrativa productiva; ningún hito acreditado | 0/4 · 0% |
-| 4.7 Notificaciones | Eventos de cambios; entrega de avisos; permisos y preferencias; flujo completo probado | Permisos y preferencias por cuenta de fase 36, con denegación/concesión reales de Android y persistencia comprobadas. Consumidor manual implementado; los otros tres criterios esperan el recorrido productivo autorizado | 1/4 · 25% |
+| 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Fase 40: alta/consulta y permisos por UUID/sesión. Fase 41: cambios consecutivos visibles con motivo revisado, confirmación separada, recuperación exacta e historial con actor/fecha/secuencia, comprobados en Android | 4/4 · 100% de construcción local |
+| 4.7 Notificaciones | Eventos de cambios; entrega de avisos; permisos y preferencias; flujo completo probado | Fase 36: permiso/preferencias por cuenta y persistencia. Fase 42: cambios autorizados reales de fase 41, evento SQL, revisión manual, resumen Android y deduplicación por operación comprobados en el recorrido nativo; desactivar conserva IDs y navegar conserva el pendiente administrativo | 4/4 · 100% de construcción funcional local |
 
-**Avance actual estimado: 20/28 = 71.4% de construcción.** Fase 36 añade el criterio original de permisos/preferencias, sin cambiar el denominador. Cuentas/reportes propios e historial de lectura tuvieron comprobación Android en 0.6.0. Asignación administrativa, seguimiento autorizado y tres criterios de notificaciones continúan pendientes; no se acreditan con eventos de prueba. Fotografías y aceptación manual GPS conservan sus hitos/límites. Publicar y repetir pruebas no suman puntos. No declara servidor/sincronización, seguridad de producción o veracidad de incidentes.
+**Avance actual: 28/28 = 100% de construcción funcional local.** La fase 42 cierra eventos, entrega de avisos y recorrido integrado; las fases 40/41 conservan administración y seguimiento, y fase 36 permisos/preferencias. Quedan cero criterios funcionales locales pendientes; aceptación física completa y preparación de la entrega se comprueban aparte. Fotografías y aceptación manual GPS conservan sus hitos/límites. Publicar y repetir pruebas no suman puntos. No declara servidor/sincronización, seguridad de producción, recepción institucional o veracidad de incidentes.
 
 ## Antecedentes de cálculo y evidencia
 

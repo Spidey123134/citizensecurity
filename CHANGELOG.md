@@ -2,6 +2,58 @@
 
 ## [Unreleased]
 
+Sin fases posteriores al corte 0.6.2 preparadas para esta entrega.
+
+## [0.6.2] — 2026-10-16 · entrega acumulada en preparación
+
+- Agrupa **todas las fases 35–42 posteriores a la oficial 0.6.1**, incluidas las que quedaron Unreleased o solo locales. Android **0.6.2 / código 30**; APK final y checksum propios, distintos del candidato antiguo de fases 35–37.
+- **Fase 35:** Actividad de reportes real, filtros de creaciones/cambios, páginas de 50 y acceso al folio; migración aditiva al esquema 4 sin inventar eventos históricos.
+- **Fase 36:** avisos voluntarios por cuenta, permiso/canal Android y revisión manual; resumen general sin datos privados, registro durable y deduplicación por operación.
+- **Fase 37 / E06:** mensaje a un contacto del mismo espacio, ubicación voluntaria, revisión del texto y segundo gesto para abrir SMS. El usuario decide enviar; el operador puede cobrar.
+- **Fases 38–39:** permisos de consulta y cambio independientes, sesión/espacio capturados y revocación; revisión del borrador con tarjetas separadas y fotografía completa contenida para evitar solapamientos.
+- **Fase 40:** cuenta `admin_local` registrada con contraseña propia, confirmación nativa del propietario y segundo gesto para asignar; consulta protegida con filtros, folio e historial. `admin/admin` mantiene acceso académico; solo se administra el espacio propio de esa instalación.
+- **Fase 41:** avances consecutivos Reportado → En revisión → Atendido → Cerrado, motivo revisado, confirmación, actor/fecha/secuencia reales y diario durable. Recuperación por lectura, reintento con el mismo UUID y reconocimiento explícito del recibo.
+- **Fase 42:** del recibo se abren Actividad y Avisos por gestos independientes, sin activar ni publicar automáticamente; integración comprobada con cambios autorizados reales. Lecturas inciertas de archivos `.new`/`.bak` conservan preferencias e IDs y bloquean sin restaurar o limpiar.
+- **28/28 = 100% de construcción funcional local**, separado de aceptación física final, producción e integración institucional. Fase 42: **1431 casos distintos**, cero fallos/errores/omitidos finales; 1379 JVM —205 reutilizados intactos, 1174 ejecutados— y 52 Android ejecutados. Los cortes anteriores conservan sus propios resultados y no se suman entre sí. [Entrega y límites](docs/ENTREGA_0_6_2.md) · [Prueba en teléfono](docs/PROBAR_0_6_2.md) · [Validación](docs/VALIDACION.md).
+
+### Antecedentes de preparación de 0.6.2
+
+Las secciones siguientes conservan las decisiones y cifras de sus respectivos cortes. Sus referencias a Unreleased, publicación pendiente o APK oficial 0.6.1 son históricas; el alcance de esta entrega acumulada es fases 35–42.
+
+### Fase 42 — desarrollo local validado
+
+- El recibo de cambio confirmado incorpora **Ver actividad de esta cuenta** y **Revisar avisos de cambios** mediante gestos independientes. Las rutas conservan el workspace/sesión y no llevan datos privados del reporte en extras, reconocen la solicitud, revisan eventos o activan avisos automáticamente.
+- Recorrido integrado entre cambio autorizado real, evento SQLite, revisión manual y resumen general de Android. Se conservan preferencia por cuenta, permiso/canal, registro por UUID de operación después de la aceptación y deduplicación; desactivar conserva los IDs aceptados.
+- Lecturas de avisos con `.new` o `.bak` pendientes bloqueadas sin restaurar respaldos, limpiar residuos o reemplazar el registro. Archivos, preferencias e IDs conservados en las pruebas nativas de almacenamiento.
+- **28/28 = 100% de construcción funcional local**, con Notificaciones **4/4** y cero criterios funcionales locales pendientes. Aceptación física completa, entrega y seguridad de producción conservan su alcance separado.
+- **1431 casos distintos aprobados/14 nuevos**, cero fallos/errores/omitidos finales: 1379 JVM —205 recibos intactos de dominio reutilizados, 148 datos y 1026 app ejecutados— y 52 Android ejecutados. Lint app sin errores/22 avisos existentes por variante; datos sin incidencias. No se suman las ejecuciones de cortes anteriores.
+- Trabajo local sin actualizar GitHub/main o PR #30, publicar APK/tag/Release o cambiar la descarga oficial 0.6.1. [Fase 42](docs/FASE_42.md) · [Guía](docs/ADMINISTRADOR_LOCAL.md) · [Validación](docs/VALIDACION.md).
+
+### Fase 41 — desarrollo local validado
+
+- Cambio de estado desde un folio administrativo: consulta de revisión real, motivo válido de 5–500 caracteres, revisión explícita y segundo gesto de confirmación. Avance consecutivo Reportado → En revisión → Atendido → Cerrado; sin saltos ni cambios desde Cerrado.
+- Recibo con folio, UUID del actor, fecha/zona, motivo, secuencia y operación; evento permanente en el historial local. Atendido/Cerrado no acreditan intervención de una autoridad.
+- Comprobación de pendientes antes de preparar otra solicitud; recuperación por lectura y reintento explícito del cuerpo completo con el mismo UUID. Reconocer el resultado verifica solicitud/evento exactos; cerrar un rechazo definitivo vuelve a buscar el recibo y muestra Confirmado si apareció uno coincidente.
+- Relectura coherente de estado/secuencia al revisar y confirmar; un cambio concurrente exige revisar otra vez. Permisos en IO y antes del commit, sesión capturada y ventana activa retenida al girar. Revocación retira datos; cancelar no autoriza otra solicitud y la incertidumbre conserva la identidad.
+- Diario con rechazo conservador de `.new` y `.bak` pendientes: leer no restaura respaldos, reemplaza archivos ni limpia residuos desconocidos. La cancelación tras un lector no cooperativo se comprueba antes de continuar otras lecturas.
+- **25/28 = 89.3%**, Consulta y Administración **4/4**; restan tres criterios de Notificaciones. **1488 casos distintos aprobados/103 nuevos**, cero fallos/errores/omitidos finales: 1379 JVM y 109 Android. Lint app sin errores/22 avisos existentes por variante; datos sin incidencias. [Fase 41](docs/FASE_41.md) · [Guía](docs/ADMINISTRADOR_LOCAL.md) · [Validación](docs/VALIDACION.md).
+- Corte local sin push, cambios a main, actualización del [PR #30 de fase 40](https://github.com/Spidey123134/citizensecurity/pull/30), APK, tag o Release. Oficial 0.6.1 y candidato anterior archivado conservados.
+
+### Antecedente — fase 40
+
+- Fase 40: cuenta elegida `admin_local`, registrada normalmente con contraseña propia de 15 a 128 caracteres, sin credenciales predeterminadas o publicadas. Alta local por confirmación nativa del propietario y segundo gesto, con plazo de 120 segundos, UUID y recibo exacto; sin reemplazar asignaciones o reparar corrupción. `admin/admin` sigue académico.
+- Consulta administrativa visible del espacio de esa cuenta: lista y filtros de tipo/estado/prioridad, folio completo, detalle e historial de 50 por página. Sesión y permiso comprobados al leer; revocación limpia resultados y los gestos/respuestas anteriores no actúan sobre otra consulta. Cambio de estado e historial administrativo completo pendientes para la fase siguiente. [Guía](docs/ADMINISTRADOR_LOCAL.md) · [Fase 40](docs/FASE_40.md).
+- Fase 40 validada: **1360 casos distintos aprobados/76 nuevos**, sin fallos; 1304 JVM y 56 Android. Confirmación nativa con PIN real en emulador API 37 y consulta del espacio de la propia cuenta. **22/28 = 78.6%**, Administración **2/4** por consulta y roles/permisos; quedan seis criterios de seguimiento, cambio/historial administrativo y notificaciones. [Validación](docs/VALIDACION.md).
+- Código y guía preparados para la rama `development/administracion-local` y un PR en borrador revisable en GitHub, sin integrar main ni publicar APK, tag o Release; la subida todavía debe confirmarse. La APK oficial sigue en 0.6.1; el candidato 0.6.2 archivado es anterior a fases 38–40 y deberá prepararse otra vez.
+
+### Antecedentes de este desarrollo
+
+- Fase 39, trabajo local: revisión del borrador en tarjetas de datos, lugar y fotografía; marco fijo de 240 dp con imagen completa ajustada y dibujo contenido. Evita que una foto vertical invada otros bloques, sin alterar el archivo, el guardado o el GPS.
+- Vinculación administrativa al espacio y sesión capturados, con revalidación antes/después de la política y revocación al salir, incluso si se vuelve a entrar con la misma cuenta. `READ_REPORTS` y `CHANGE_STATUS` siguen separados y denegados por defecto; acceso académico sin permisos administrativos. [Fase 39](docs/FASE_39.md). **20/28 = 71.4% permanece**; sin push, tag, Release o APK publicada. El candidato archivado precede a las fases 38/39.
+- Fase 39 validada: 1265 casos distintos aprobados/25 nuevos; 907 JVM app ejecutados, 341 recibos intactos reutilizados y 17 Android. Foto vertical real del selector, comparación visual y repetición con letra al 130% sin solape. Cero fallos/errores/omitidos finales; lint sin errores y con 22 avisos existentes por variante.
+- Fase 38, trabajo local: política administrativa explícita con capacidades independientes `READ_REPORTS` y `CHANGE_STATUS`, denegadas por defecto. Lectura administrativa por folio/lista paginada/historial sobre fuentes capturadas, con apertura diferida hasta autorizar y controles de vigencia/cancelación antes y después de consultar.
+- El escritor y la recuperación de recibos requieren `CHANGE_STATUS`; el permiso se vuelve a comprobar dentro de la transacción antes del commit. Consultar no concede escritura, y tener permiso de cambio no concede consulta administrativa general. Asignación y panel pendientes; `admin/admin` sigue académico. [Fase 38](docs/FASE_38.md): 1267 casos distintos aprobados/25 nuevos, sin fallos/errores/omitidos; **20/28 = 71.4% permanece**.
+- Publicación pospuesta por el usuario: candidato y notas 0.6.2/código 30 conservados localmente, con numeración tentativa para la próxima entrega. Este avance no realiza push, tag, Release ni publicación de APK; la entrega oficial **0.6.1** mantiene su archivo.
 - Fase 37 / E06: preparar un mensaje desde un folio, elegir contacto del mismo acceso, revisar destinatario/texto y abrir Mensajes SMS mediante un segundo gesto. Referencia/punto inicialmente omitidos; inclusión voluntaria con coordenadas y enlace al mapa. La ficha PDF, con foto elegida, conserva su recorrido separado.
 - Relectura del reporte y contactos al preparar/abrir, rechazo de cambios posteriores a la revisión y una sola apertura por gesto vigente. Guardar un contacto desde Ayuda y regresar actualiza la elección sin seleccionar o preparar automáticamente.
 - Composición sin permisos SMS/agenda/GPS, archivos adjuntos o envío automático. Errores, corrupción, giro, cambio de cuenta y cancelación conservan los datos y requieren una decisión nueva. Abrir una app no acredita envío; el operador puede cobrarlo.

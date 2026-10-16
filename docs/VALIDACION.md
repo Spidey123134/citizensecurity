@@ -1,5 +1,148 @@
 # Validación y comprobaciones del proyecto
 
+## Entrega acumulada 0.6.2 — comprobación final · 16 de octubre de 2026
+
+La entrega preparada agrupa **todas las fases35–42** desde la oficial0.6.1. La APK final tiene **56.200.431 bytes**, paquete `com.example.citizensecurity`, versión0.6.2/código30, min26/target37 y SHA-256 `114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4`. Es exactamente el binario probado al cierre de fase42: se reutilizan por identidad esos1431 casos distintos (1379JVM, incluidos205 recibos de dominio intactos reutilizados, y52Android), con cero fallos, errores u omitidos finales. No se suman los cortes1431 y1488 ni se anuncian1431 ejecuciones nuevas de esta preparación.
+
+`apksigner verify --print-certs` confirma firma válida y certificado SHA-256 `0a4006a1d2ef2ad02a0dad7c51b55c0ba5ffcd096a226eed6456326b2fed3ebd`, igual a la oficial0.6.1. Se conserva la firma académica de debug; no es una firma de producción nueva. La identidad de paquete/versión está corroborada por PackageManager durante la actualización. La herramienta antigua `aapt dump badging` alcanza esos campos pero falla al resolver un recurso de icono API37; su salida parcial no se presenta como una comprobación íntegra de recursos.
+
+Se ejecutaron además **dos invocaciones de aceptación de actualización**, ambas `OK (1 test)`: instalar oficial0.6.1, crear un fixture privado nuevo con nonce, y actualizar con `adb install -r` a esta APK final. Antes de abrir cualquier repositorio nuevo se verificaron los SHA de base SQLite, contactos y foto; después, migración3→4, `PRAGMA integrity_check=ok`, mismo reporte/campos/autor/historial de creación, revisión de contactos y foto legible. Sin desinstalar, limpiar datos o reutilizar el candidato antiguo. El fixture usa APIs productivas existentes en0.6.1 y queda limitado al emulador propio de solo lectura API37, cerrado al terminar; no acredita cámara/GPS físico nuevos ni migración de todas las instalaciones posibles.
+
+Evidencia ignorada bajo `.gradle/validacion/release062-final/`: `upgrade-build-quoted.log`, `upgrade-seed.log`, `upgrade-verify.log`, nonce, APK final y `SHA256SUMS-0.6.2.txt`. El primer intento del build manual falló por el argumento PowerShell `-P` sin comillas y se conserva en `upgrade-build.log`; el argumento literal corregido compiló correctamente. No fue un fallo del producto y no cuenta como aprobado. El anterior candidato0.6.2 de fases35–37 y sus pruebas se conservan con identidad distinta. La prueba manual de actualización permanece local, fuera del conjunto público por necesitar dos APK y selección/nonce explícitos.
+
+**28/28=100% de construcción funcional local**; no acredita aceptación física completa, API26/fabricantes, muerte completa del proceso, servidor ni recepción institucional. Las secciones inferiores son los cortes históricos de cada fase; sus marcas «sin publicar» describen aquel momento. La publicación solicitada ahora se confirma únicamente mediante la Release/activos de GitHub, no por ensamblar una APK local.
+
+## Avisos a partir de cambios autorizados reales — fase 42 · 16 de octubre de 2026
+
+**1431 casos distintos aprobados, 14 definiciones nuevas; cero fallos, errores u omitidos.** Se ejecutan las suites afectadas y sus regresiones. El total de este corte no suma otros cierres; ser menor que los 1488 de fase41 refleja las suites seleccionadas, sin retirar pruebas anteriores.
+
+| Suite | Distintos aprobados | Nuevos | Procedencia |
+| --- | ---: | ---: | --- |
+| Dominio JVM | 205 | 0 | Recibos intactos reutilizados; dominio sin cambios |
+| Datos JVM / SQLite del host | 148 | 0 | Ejecutados sobre la fuente final |
+| App JVM | 1026 | 0 | Ejecutados sobre la fuente final |
+| Datos Android API37 | 26 | 10 | Almacén de avisos, CAS, archivos pendientes y rutas |
+| App Android API37 | 26 | 4 | Integración real4, avisos4, publicador10 y cambio de estado8 |
+| **Total distinto** | **1431** | **14** | **1379 JVM y 52 Android** |
+
+Las cuatro pruebas nuevas registran y autentican una cuenta local real, asignan el rol únicamente en el directorio del fixture y crean un reporte en SQLite. El cambio se prepara, revisa y confirma mediante la pantalla productiva de fase41; la operación del evento SQL coincide con la solicitud y su recibo. Desde ese recibo se abre Actividad, se verifica el evento y se vuelve a la misma solicitud; abrir Avisos después no crea preferencias, solicita permiso o publica automáticamente.
+
+La concesión real del permiso de Android se completa por su diálogo nativo. Activarlo conserva el registro de presentaciones vacío hasta el gesto de revisión. Revisar usa el UUID real del evento SQL y Android mantiene un único resumen con texto genérico, visibilidad SECRET y PendingIntent inmutable; folio, motivo, actor, operación, descripción y coordenadas no aparecen en los extras de la notificación. Otra revisión y un giro conservan los mismos IDs y no repiten el aviso. Volver al recibo mantiene diario/evento intactos; desactivar retira el resumen propio y conserva los IDs. Una segunda cuenta registrada sin rol no adopta los eventos, preferencias o permisos administrativos de la primera; el cambio de sesión retira el resumen anterior.
+
+El caso de preferencias corruptas conserva sus bytes y presenta error tanto al entrar como al recargar. Solo el fixture restaura sus propios bytes para continuar la prueba: restaurarlo no publica automáticamente, y otra revisión explícita sí puede procesar el cambio real. Esto no introduce una reparación o reset en el producto. Las 26 pruebas de datos incluyen diez nuevas que conservan `.new`/`.bak` con o sin base, rechazan directorios/enlaces y detectan la sustitución del staging o un sidecar ajeno durante la escritura. Lectura NOFOLLOW sin `AtomicFile.openRead`, comprobación del descriptor/inode y recibo completo evitan retroceder silenciosamente la preferencia o sus IDs. CAS, límite de 256KiB/4096 operaciones y copia de sets antes del dispatcher siguen comprobados.
+
+Las regresiones añaden cuatro recorridos de avisos con denegación/concesión nativas, diez del publicador y ocho del cambio administrativo. Comprueban la creación excluida de los avisos de cambios, bloqueo real del canal desde Ajustes, salida por Splash/login, fill-in ignorado, cancelación solo del intento propio y protección de sesiones/recibos. Entre las dos instrumentaciones terminadas se revocó POST_NOTIFICATIONS y retiraron sus flags de usuario mediante adb, exclusivamente en el emulador propio, para repetir el diálogo Deny/Allow; no se revocó durante una prueba ni en un teléfono físico. La nueva integración se ejecutó primero con el permiso inicialmente denegado. No se cambió ningún PIN.
+
+Compilación Kotlin debug/release, ensamblados internos y suites correctos; **lint app 0 errores/22 avisos existentes por variante, datos sin incidencias**. Logs ignorados `alerts42-build.log`, `alerts42-data-native.log`, `alerts42-integration-native.log`, `alerts42-ui-regression-native.log` y `alerts42-routes-publisher-native.log`. Recibo verificable: `.gradle/validacion/alerts42-test-proof.json`. El APK de QA tiene SHA-256 `114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4`; es material interno, no una nueva descarga oficial. Emulador API37 de solo lectura cerrado; no instalación en teléfono, aceptación física completa nueva, ejecución API26 o muerte completa del proceso acreditadas.
+
+**28/28 = 100% de construcción funcional local de los criterios originales.** Se cierran eventos de cambios, entrega local autorizada y recorrido integrado de4.7, conservando permiso/preferencias ya acreditados. Android aceptar el resumen no demuestra lectura ni recepción o atención institucional. El cierre no acredita seguridad de producción, servidor, sincronización o integración policial; esos alcances y la aceptación física final se mantienen separados. Código/documentación permanecen locales: PR30/main, APK oficial0.6.1 y candidato archivado0.6.2 intactos, sin nueva subida de APK/tag/Release. [Fase42](FASE_42.md) · [Guía](ADMINISTRADOR_LOCAL.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
+## Cambio de estado y seguimiento administrativo local — fase 41 · 15 de octubre de 2026
+
+**1488 casos distintos aprobados, 103 definiciones nuevas; cero fallos, errores u omitidos finales.** Son 1379 JVM y 109 Android. Se separan los recibos reutilizados, los grupos ejecutados y las repeticiones sin sumarlas de nuevo.
+
+| Suite | Distintos aprobados | Nuevos | Procedencia |
+| --- | ---: | ---: | --- |
+| Dominio JVM | 205 | 0 | Recibos intactos de fase40 reutilizados; solo cambió un comentario del contrato |
+| Datos JVM / SQLite del host | 148 | 0 | Ejecutados en el build final de datos |
+| App JVM | 1026 | 75 | Ejecutados tras el ajuste final de privacidad: recuperación25, preparación33 y binding17 nuevos |
+| Datos Android API37 | 72 | 11 | Diario30, acceso de cambios21, historial13 y permisos8 |
+| App Android API37 | 37 | 17 | Cambio visible8, binding escritor9, regresiones de alta5/Inicio8/aislamiento4/binding lector3 |
+| **Total distinto** | **1488** | **103** | Sin sumar repeticiones o cierres históricos |
+
+Los 35 casos iniciales de app pasaron. Después del ajuste de privacidad se ejecutaron de nuevo las dos suites afectadas: **17 aprobados**, con 15 definiciones ya presentes y dos añadidas. La unión contiene 37 casos, no52; los otros 20 recibos de regresiones corresponden al pase previo de este mismo corte, sobre rutas no alteradas por ese ajuste. Los 72 de datos no se repitieron después: su código ya era el final. La app final usa el mismo SQLite capturado del workspace y un archivo de rol real; no se simula el recibo de escritura.
+
+Los ocho recorridos visibles comprueban entrada desde la consulta, estado sin escritura al abrir/revisar/girar, confirmación explícita, retorno al historial actualizado, los tres avances consecutivos y bloqueo de un paso después de Cerrado. También comprueban recuperación del recibo desde una ventana/modelo nuevos sin otra transición, solicitud retenida que requiere el mismo UUID al reintentar, revisión obsoleta que exige otra preparación, rechazo definitivo que conserva su solicitud hasta reconocerla y rol corrupto que retira la revisión sin reparar archivos o escribir. Motivo, actor UUID, fecha y secuencia proceden de SQLite. Abrir estas rutas no inicia GPS.
+
+El binding del escritor comprueba construcción sin autoridad/IO en Main, permisos de lectura sin escritura, dueño/actor y binding exactos, sesión revocada aunque se reingrese con el mismo UUID, cancelación y respuestas tardías. Los casos Android usan autorización real, diario reabierto y recibo SQLite; una fachada permisiva no elude la autoridad independiente del repositorio. Un guard niega el último hook dentro de la transacción y comprueba que estado/evento se revierten. El control de primer plano/desbloqueo se ejecuta después de la última lectura de autoridad; una Activity antigua no autoriza la nueva ventana.
+
+El diario prueba **11 casos nuevos** de `.new`/`.bak`, enlaces, rutas/carpetas, archivo sustituido, guardas concurrentes y corrupción antes del backend. Dos casos anteriores de backup cambiaron intencionalmente: ahora exigen error y bytes intactos, en lugar de restauración automática. Leer no utiliza `AtomicFile.openRead`, no convierte sidecars en ausencia ni los retira. El rollback actúa únicamente sobre el archivo abierto por esa escritura; reconocer una operación no borra eventos o datos del reporte.
+
+La última auditoría detectó que una denegación durante Working podía dejar el cuerpo visible como Pending hasta salir. La recuperación ahora cierra el estado visible sin retirar la solicitud durable cuando pierde permiso o sesión; errores inciertos revalidan autoridad en IO antes de mostrar un pendiente. Rol ilegible se trata como denegación, mientras una pausa temporal de la ventana conserva la posibilidad de recuperar. Las ocho pruebas JVM añadidas en ese ajuste cubren denegación antes/después del commit, relectura del mismo recibo con otro modelo, sello retirado, error de diario y primer plano temporal; se mantienen las comprobaciones de cuerpo exacto y exclusión del escritor.
+
+Compilación Kotlin debug/release, ensamblados internos y lint correctos: **app 0 errores/22 avisos existentes por variante; datos sin incidencias**. El primer build falló por resolver la cuenta nullable del receptor de un fixture; se corrigió la referencia al dueño. El segundo detectó una lectura no cooperativa que seguía consultando historial después de cancelar: se añadió `ensureActive` tras cada suspensión, conservando la assertion estricta. Se preservan ambos intentos en `admin41-build.log` y `admin41-app-build.log`; solo los pases finales cuentan como aprobados. Builds finales: `admin41-final-build.log` y `admin41-security-final-build.log`. Nativas: `admin41-data-native-final.log`, `admin41-app-native-final.log` y `admin41-status-native-final.log`. Recibo verificable ignorado: `.gradle/validacion/admin41-test-proof.json`.
+
+Las regresiones de fase40 completaron/cancelaron el PIN real del emulador, retiraron su PIN de prueba y restauraron el ajuste previo. No se cambió el bloqueo ni se instaló nada en el teléfono del usuario. El emulador propio de solo lectura API37 se utiliza para estas pruebas; no se acredita cámara/GPS físicos nuevos, ejecución API26, muerte completa del proceso o recepción institucional. La recuperación integrada prueba ventanas/modelos nuevos y giro; eso no equivale a matar el proceso completo.
+
+**25/28 = 89.3% de construcción**: se cierran seguimiento de4.4 y cambio de estado/historial de4.6. Restan tres criterios de notificaciones: su integración visible con eventos, entrega y comprobación del recorrido completo. Los estados son organización local de la cuenta, sin afirmar atención de una autoridad. Todo el corte permanece **local**: PR30, rama pública, main, APK oficial0.6.1 y candidato archivado0.6.2 anteriores se conservan. No hay nueva APK/tag/Release publicada. [Fase41](FASE_41.md) · [Guía administrativa](ADMINISTRADOR_LOCAL.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
+## Alta local y consulta administrativa — fase 40 · 15 de octubre de 2026
+
+**1360 casos distintos aprobados, 76 definiciones nuevas; cero fallos, errores u omitidos finales.** Se ejecutaron los tres grupos JVM y las suites nativas indicadas; no se suman los cierres anteriores ni las repeticiones.
+
+| Suite | Aprobados | Nuevos | Alcance |
+| --- | ---: | ---: | --- |
+| Dominio JVM | 205 | 5 | Asignación por UUID y alcance dueño/actor |
+| Datos JVM / SQLite del host | 148 | 7 | Codec estricto y regresiones |
+| App JVM | 951 | 44 | Alta 16 y consulta 28; regresiones |
+| Datos Android API37 | 36 | 15 | Almacén privado 15; transacciones/recibos 21 |
+| App Android API37 | 20 | 5 | Alta/consulta 5; Inicio 8, aislamiento 4, binding 3 |
+| **Total distinto** | **1360** | **76** | **1304 JVM y 56 Android** |
+
+El alta usa una cuenta registrada realmente en SQLite aislado. Los recorridos nativos establecen un PIN aleatorio solo en el emulador propio, abren la pantalla de credencial de Android y completan o cancelan su teclado real. No se inyecta `RESULT_OK`. Regresar de Android conserva la asignación ausente: hace falta el segundo gesto visible, con sesión y prueba vigentes. Giro conserva la coordinación. Ambos casos retiran únicamente su PIN de prueba y restauran el ajuste previo de bloqueo; el emulador de solo lectura quedó cerrado. No se cambió el bloqueo ni se instaló nada en el teléfono del usuario.
+
+La consulta integrada usa reportes, cuentas e historial SQLite reales: filtros, folio, detalle, páginas, giro y retirada de datos ante pérdida de autorización. Otras cuentas, otro UUID con el mismo nombre y `admin/admin` no reciben permisos. El almacén comprueba primera asignación, idempotencia exacta, conflictos, corrupción, sidecars inciertos, enlaces, sesiones revocadas y recibos sin crear archivos por una lectura. Las pruebas de modelo añaden caducidad monotónica, doble gesto, resultados tardíos/no cooperativos, cancelación, reintento exacto y coherencia de reporte/historial. El alcance productivo es el espacio propio de `admin_local` en esa instalación.
+
+El primer intento nativo tuvo **2 fallos de 5**: el arnés buscaba un `EditText`, pero Android17 utiliza un teclado PIN de SystemUI. Se corrigió el selector y la pulsación del teclado; las 20 pruebas finales pasaron. Se conserva `admin40-ui-native.log`, sin contar ese intento como aprobado. Los logs finales son `admin40-data-native.log` y `admin40-app-native-final.log`.
+
+Compilación Kotlin debug/release, ensamblados internos y lint correctos: **app 0 errores/22 avisos existentes por variante; datos sin incidencias**. La revisión final corrigió dos avisos nuevos: el feature de bloqueo seguro se consulta solo en API29+, conservando la comprobación de credencial y el resolvedor del sistema en API26–28; también se retiró una llamada vacía a `super.onCleared`. Después se repitieron los 951 JVM de app, compilación, ensamblado interno y ambos lint (`admin40-compat-final.log`). Los recibos nativos preceden esos dos cambios equivalentes en API37; no se acredita ejecución en API26. Los otros logs de compilación son `admin40-build.log`, `admin40-native-build.log` y `admin40-native-build-final.log`. Recibo verificable ignorado: `.gradle/validacion/admin40-test-proof.json`.
+
+**22/28 = 78.6%**: se cierran consulta administrativa visible y roles/permisos de 4.6. Restan seis criterios originales: seguimiento (1), cambios/historial administrativo completo (2) y notificaciones (3). Ver eventos existentes no acredita el recorrido de cambiar estados. No se afirma aceptación física, muerte completa del proceso, administración institucional, sincronización o atención de autoridades. [Guía de la cuenta](ADMINISTRADOR_LOCAL.md) · [Fase 40](FASE_40.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
+Se prepara código y guía para una rama y PR en borrador de GitHub, conservando main y la publicación de APK/tag/Release pospuesta. La prueba manual `ReleaseUpgradeTest` de preparación permanece local, separada del árbol compartido: requiere una instalación en dos etapas y no pertenece a la suite normal. El archivo oficial 0.6.1 y el candidato archivado 0.6.2 anterior a fases38–40 conservan sus hashes. El ensamblado de QA actual es interno y no se publica como entrega.
+
+## Revisión legible y permisos ligados a sesión — fase 39, local · 15 de octubre de 2026
+
+**1265 casos distintos aprobados, 25 definiciones nuevas; cero fallos, errores u omitidos finales.** Los resultados de este corte se distinguen de las suites nativas ejecutadas en fase 38:
+
+| Suite | Aprobados | Nuevos | Procedencia |
+| --- | ---: | ---: | --- |
+| Dominio JVM | 200 | 0 | Recibos intactos reutilizados; fuente sin cambios desde fase 38 |
+| Datos JVM / SQLite del host | 141 | 0 | Recibos intactos reutilizados; fuente sin cambios desde fase 38 |
+| App JVM | 907 | 22 | Ejecutados sobre la fuente final |
+| App Android API 37 | 17 | 3 | Foto 6, revisión 4, aislamiento 4 y fábrica administrativa 3 |
+| **Total distinto** | **1265** | **25** | Sin sumar repeticiones ni cierres anteriores |
+
+Se reprodujo visualmente el fallo de una foto vertical **480 × 960** en la candidata archivada anterior: el bitmap cubría tipo, fecha y lugar al exceder el espacio asignado. La fuente final usa un marco limitado, proporción conservada y clipping, y separa datos/lugar/foto. El caso existente de galería real conserva giro, cancelación, copia privada después de quitar la fuente, guardado e imagen del detalle; ahora comprueba también que fecha/referencia/coordenadas sean accesibles en revisión. Los otros cinco recorridos de fotografía mantienen la fuente horizontal y comprueban corrupción, borrador durable, reintento y folios confirmados. Las cuatro regresiones de revisión comprueban campos completos, corrección, giro y ausencia de guardado/GPS automático.
+
+El mismo caso de galería se repitió con **font_scale 1.3**, aprobado y revisado visualmente. No cuenta como otra definición ni incrementa el total. Se restauró el valor previo 1.0. Capturas ignoradas `review39-before-portrait.png`, `review39-after-portrait.png`, `review39-after-date.png`, `review39-after-location.png` y `review39-large-font-portrait.png`; los tres campos y la foto ya caben en la misma vista corregida, por eso algunas capturas coinciden. No hay prueba específica de foto cuadrada ni aceptación física.
+
+Los 22 JVM nuevos usan sesiones locales reales y comprueban permisos separados, dueño/actor exactos, denegación sin lector, consulta suspendida/no cooperativa, cancelación y revocación mientras una autoridad bloquea en otro hilo. Las tres nativas usan la fábrica pública con `ReportWorkspace` y SQLite reales: denegación sin crear base de cuenta o académica, rechazo académico incluso con política permisiva del fixture, lectura privada A/B y revocación por cambio/reingreso/cierre sin seguir otro espacio. Las concesiones existen solo en los fixtures. El binding no asigna roles ni crea un escritor o panel administrativo; la integración visible continúa pendiente.
+
+Compilación Kotlin debug/release y ensamblados internos correctos; **lint app 0 errores/22 avisos existentes por variante, datos sin incidencias**. Emulador propio de solo lectura API37 cerrado; no se instaló ni borró nada del teléfono del usuario. Sin ejecución API26, muerte completa del proceso, cámara física, nueva aceptación GPS o administración institucional. El porcentaje conserva **20/28 = 71.4%** y ocho criterios originales pendientes. [Fase 39](FASE_39.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
+Recibo ignorado `.gradle/validacion/review39-test-proof.json`; logs `review39-final-build.log`, `review39-final-native-build.log`, `review39-native-final.log` y `review39-photo-large-font.log`. El primer build falló por resolver `account` nullable del receptor en el fixture JVM: se corrigió a `this@Fixture.account`. El primer intento sobre el binario previo capturó el solape y después falló por exigir coincidencia completa de texto donde correspondía `substring = true`; se corrigió el arnés antes del pase final. Ambos intentos se conservan en `review39-build.log` / `review39-photo-before.log`, sin acreditarlos como aprobados.
+
+Todo permanece local y la publicación sigue pospuesta. La candidata archivada de preparación 0.6.2/código30 mantiene su hash y **no contiene las fases 38/39**. La APK usada en QA es interna y distinta; deberá prepararse y validarse la entrega final al recibir la siguiente instrucción de publicar. La APK oficial 0.6.1 y sus assets conservan su identidad.
+
+## Permisos y consulta administrativa — fase 38, desarrollo local · 15 de octubre de 2026
+
+**1267 casos distintos aprobados, 25 definiciones nuevas; cero fallos, errores u omitidos.** Se ejecutaron los tres grupos JVM y las suites Android indicadas, sobre la fuente final de esta fase:
+
+| Suite ejecutada | Aprobados | Nuevos |
+| --- | ---: | ---: |
+| Dominio JVM | 200 | 3 política/alcance |
+| Datos JVM / SQLite del host | 141 | 14 lector autorizado |
+| App JVM | 885 | 0; regresión |
+| Datos Android API 37 | 41 | 8 política/SQLite; 33 regresiones |
+| **Total distinto** | **1267** | **25** |
+
+El lector administrativo comprueba `READ_REPORTS` antes de inicializar fuentes diferidas, antes de consultar y antes de devolver resultados. Se prueban permiso denegado sin proveedor/base abierta, alcance dueño/actor distinto, vigencia al abrir/paginar, revocación durante cada lectura suspendida, cancelación previa/durante proveedor/lector no cooperativo, errores conservados, folio/historial incorrectos y límites de página. Los permisos de consulta y cambio son independientes; un login, el alcance o un diario no otorgan ninguno.
+
+Las ocho pruebas Android nuevas usan SQLite real en archivos aleatorios propios: lectura de folio/lista/historial sin modificar bytes, rechazo de lectura/escritura por capacidad incorrecta, fuentes de otro alcance rechazadas, política que recibe el dueño/actor exactos, reversión de estado/evento si se revoca antes del commit y recuperación explícita del mismo recibo si se revoca después. Solo los fixtures tienen autoridad de cambio. Las 33 regresiones corresponden a `SqliteReportStatusChangeAccessTest` (21) y `SqliteReportActivityTest` (12), incluyendo compatibilidad del guard anterior, recibos, corrupción y migración. No se conceden roles al producto.
+
+Compilación Kotlin debug/release y ensamblado interno de la APK de pruebas de datos correctos. **Lint app: 0 errores/22 avisos existentes por variante; datos: sin incidencias.** Emulador propio de solo lectura API 37, cerrado después de los pases. Sin interfaz administrativa productiva, prueba física, API 26, muerte completa del proceso o recepción institucional acreditadas. La factory futura debe capturar un único workspace confiable: declarar un `scope` no demuestra por sí solo la pertenencia física de los delegates.
+
+Recibo ignorado `.gradle/validacion/admin38-test-proof.json`, XML JVM y logs `admin38-build.log` / `admin38-data-native.log`. Los tres grupos JVM se ejecutaron en este corte; no se suman resultados de fases anteriores. **20/28 = 71.4% permanece**, con asignación administrativa y ocho criterios originales pendientes. [Fase 38](FASE_38.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
+### Preparación de entrega guardada, publicación pospuesta
+
+Por instrucción posterior del usuario, la preparación 0.6.2/código 30 se conserva **localmente y con numeración tentativa**, sin push/tag/Release ni subida de APK. El commit local `0351545` conserva notas, guía y prueba de actualización; [borrador](ENTREGA_0_6_2.md). La APK oficial sigue siendo 0.6.1 y mantiene su SHA-256 `7395a049aee8cf92324ac31f3c4e08453fb639bcf5103fc8eaa48484302815f1`.
+
+El candidato interno de fases 35–37 mide 55 302 267 bytes, SHA-256 `ee75a653fc468153d062747bfeca5727104a236d29dcf876bacd6494162d3b2f`, con el mismo paquete/firma académica. Se aprobaron **dos etapas distintas** sobre una instalación real en emulador: sembrar datos privados de prueba en la APK oficial 0.6.1 y verificarlos tras `install -r` del candidato 0.6.2. Reporte, contacto y fotografía conservaron sus bytes antes de abrir/migrar; el esquema pasó de 3 a 4 preservando campos, actor, evento y fotografía. Logs `release062-upgrade-seed.log` / `release062-upgrade-verify.log`; no se suman a las 1267 pruebas de fase 38.
+
+La preparación pasó compilación/lint; sus 1209 recibos JVM previos estaban intactos y se reutilizaron en ese corte. Las 139 pruebas nativas propuestas para la aceptación agrupada de esa entrega **no se ejecutaron** antes de posponerla. El candidato **precede a fase 38**: no publicarlo como si incorporara este avance. La próxima entrega requiere preparar y validar su binario final, actualizar notas/hash y contar únicamente las pruebas que correspondan a esa fuente. No se actualizó ni borró el teléfono del usuario.
+
 ## Mensaje revisado para un contacto — fase 37, Unreleased · 15 de octubre de 2026
 
 **1231 casos distintos aprobados, 37 definiciones nuevas; cero fallos, errores u omitidos.** Se ejecutan 1209 JVM y 22 Android. No se suman otras suites nativas o repeticiones de cortes anteriores.

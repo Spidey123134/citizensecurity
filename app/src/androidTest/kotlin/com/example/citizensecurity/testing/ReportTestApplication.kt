@@ -13,6 +13,9 @@ import com.example.citizensecurity.CitizenSecurityApplication
 import com.example.citizensecurity.account.AccountSessionState
 import com.example.citizensecurity.account.ReportWorkspace
 import com.example.citizensecurity.account.ReportWorkspaceStorage
+import com.example.citizensecurity.account.ReportAdministrationBinding
+import com.example.citizensecurity.domain.ReportStatusChangeAccess
+import com.example.citizensecurity.domain.ReportStatusChangeJournal
 import com.example.citizensecurity.data.NearbySqliteReportGuard
 import com.example.citizensecurity.data.PhoneLocationRefreshResult
 import com.example.citizensecurity.data.ReportSubmissionStore
@@ -45,6 +48,14 @@ class ReportTestApplication : CitizenSecurityApplication() {
     override val accountRepository: AccountRepository
         get() = accountTestRepository ?: super.accountRepository
     @Volatile private var testFixture: ReportTestFixture? = null
+
+    override fun openLocalAdministratorStore(): com.example.citizensecurity.data.LocalAdministratorStore =
+        testFixture?.let { com.example.citizensecurity.data.LocalAdministratorStore(it.contactsContext) }
+            ?: super.openLocalAdministratorStore()
+
+    override fun openReportStatusChangeJournal(binding: ReportAdministrationBinding, access: ReportStatusChangeAccess): ReportStatusChangeJournal =
+        testFixture?.let { buildReportStatusChangeJournal({ it.contactsContext }, binding, access) }
+            ?: super.openReportStatusChangeJournal(binding, access)
 
     override fun openReportWorkspace(session: AccountSessionState): ReportWorkspace {
         val fixture = testFixture ?: return super.openReportWorkspace(session)

@@ -12,7 +12,9 @@ import com.example.citizensecurity.domain.ReportStatusConflictException
 import com.example.citizensecurity.domain.ReportStatusEvent
 import com.example.citizensecurity.domain.ReportStatusEventKind
 import com.example.citizensecurity.domain.ReportStatusNotFoundException
+import com.example.citizensecurity.domain.ReportStatusOperationConflictException
 import com.example.citizensecurity.domain.ReportStatusPermissionDeniedException
+import com.example.citizensecurity.domain.ReportAdministrationPermissionDeniedException
 import java.io.IOException
 import java.time.Clock
 import java.time.Instant
@@ -326,8 +328,8 @@ class ReportStatusRecoveryViewModelTest {
         assertTrue(journal.clears.isEmpty())
     }
 
-    @Test fun permisoRevisionYFolioAusenteNoAutorizanDescartarCuerpoPersistido() = runTest(dispatcher) {
-        listOf(ReportStatusPermissionDeniedException(), ReportStatusConflictException(), ReportStatusNotFoundException())
+    @Test fun operacionReutilizadaOIoNuncaAutorizanDescartarCuerpoPersistido() = runTest(dispatcher) {
+        listOf(ReportStatusOperationConflictException(), IOException("Incierto"))
             .forEach { failure ->
                 val journal = Journal()
                 val access = Access().apply { changeAnswer = { throw failure } }
@@ -349,6 +351,544 @@ class ReportStatusRecoveryViewModelTest {
                 assertSame(access.changes[0], access.changes[1])
                 assertTrue(journal.clears.isEmpty())
             }
+    }
+
+    @Test fun conflictoDefinitivoConservaSolicitudYExigeOtroGestoAntesDeHabilitarUnaNueva() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access(journal.events).apply { changeAnswer = { throw ReportStatusConflictException() } }
+        val model = readyModel(journal, access)
+        submit(model)
+        runCurrent()
+        val rejected = model.state.value as ReportStatusRecoveryState.Rejected
+        assertSame(journal.body, rejected.request)
+        assertEquals(ReportStatusRejectionReason.CONFLICT, rejected.reason)
+        assertEquals(listOf("read", "read", "retain", "read", "find", "change", "read", "find"), journal.events)
+        assertFalse(model.retry())
+        assertFalse(model.acknowledgeConfirmed())
+        assertFalse(submit(model))
+        assertTrue(journal.clears.isEmpty())
+        val beforeChanges = access.changes.toList()
+        assertTrue(model.acknowledgeRejected(rejected))
+        runCurrent()
+        assertSame(ReportStatusRecoveryState.Ready, model.state.value)
+        assertNull(journal.body)
+        assertEquals(listOf(rejected.request), journal.clears)
+        assertEquals(beforeChanges, access.changes)
+    }
+
+    @Test fun folioAusenteTambienEsRechazoDefinitivoSinLimpiarAutomaticamente() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access().apply { changeAnswer = { throw ReportStatusNotFoundException() } }
+        val model = readyModel(journal, access)
+        submit(model)
+        runCurrent()
+        val rejected = model.state.value as ReportStatusRecoveryState.Rejected
+        assertEquals(ReportStatusRejectionReason.NOT_FOUND, rejected.reason)
+        assertSame(rejected.request, journal.body)
+        assertTrue(journal.clears.isEmpty())
+        model.recover(rejected)
+        runCurrent()
+        assertEquals(rejected.request, (model.state.value as ReportStatusRecoveryState.Rejected).request)
+        assertEquals(1, access.changes.size)
+        assertTrue(model.acknowledgeRejected())
+        runCurrent()
+        assertNull(journal.body)
+    }
+
+    @Test fun reciboConfirmadoGanaAunqueElBackendDevuelvaUnaExceptionDeRechazoTipada() = runTest(dispatcher) {
+        listOf(ReportStatusConflictException(), ReportStatusNotFoundException()).forEach { failure ->
+            val journal = Journal()
+            val access = Access().apply {
+                changeAnswer = { saved -> receipts[OPERATION] = receipt(saved); throw failure }
+            }
+            val model = readyModel(journal, access)
+            submit(model)
+            runCurrent()
+            val confirmed = model.state.value as ReportStatusRecoveryState.Confirmed
+            assertEquals(receipt(confirmed.request), confirmed.receipt)
+            assertFalse(model.acknowledgeRejected())
+            assertSame(confirmed.request, journal.body)
+            assertTrue(journal.clears.isEmpty())
+            assertEquals(1, access.changes.size)
+        }
+    }
+
+    @Test fun rechazoConReciboAjenoOConsultaInciertaSoloPuedeRecuperarse() = runTest(dispatcher) {
+        listOf(false, true).forEach { uncertain ->
+            val journal = Journal()
+            val access = Access().apply {
+                changeAnswer = { saved ->
+                    if (uncertain) findAnswer = { throw IOException("No hay respuesta fiable") }
+                    else receipts[OPERATION] = receipt(saved).copy(reportId = OTHER)
+                    throw ReportStatusConflictException()
+                }
+            }
+            val model = readyModel(journal, access)
+            submit(model)
+            runCurrent()
+            assertTrue((model.state.value as ReportStatusRecoveryState.Pending).requiresRecovery)
+            assertFalse(model.acknowledgeRejected())
+            assertFalse(model.retry())
+            assertTrue(journal.clears.isEmpty())
+        }
+    }
+
+    @Test fun rechazoNoPuedeOcultarUnDiarioCambiadoDuranteElBackend() = runTest(dispatcher) {
+        val other = request(operationId = OTHER)
+        val journal = Journal()
+        val access = Access().apply {
+            changeAnswer = { journal.body = other; throw ReportStatusConflictException() }
+        }
+        val model = readyModel(journal, access)
+        submit(model)
+        runCurrent()
+        assertTrue((model.state.value as ReportStatusRecoveryState.Pending).requiresRecovery)
+        assertSame(other, journal.body)
+        assertFalse(model.acknowledgeRejected())
+        assertTrue(journal.clears.isEmpty())
+    }
+
+    @Test fun ackDeRechazoConReciboTardioPublicaConfirmedSinLimpiarNiRepetirCambio() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access().apply { changeAnswer = { throw ReportStatusConflictException() } }
+        val model = readyModel(journal, access)
+        submit(model)
+        runCurrent()
+        val rejected = model.state.value as ReportStatusRecoveryState.Rejected
+        access.receipts[OPERATION] = receipt(rejected.request)
+        assertTrue(model.acknowledgeRejected(rejected))
+        runCurrent()
+        val confirmed = model.state.value as ReportStatusRecoveryState.Confirmed
+        assertSame(rejected.request, confirmed.request)
+        assertEquals(receipt(rejected.request), confirmed.receipt)
+        assertSame(rejected.request, journal.body)
+        assertTrue(journal.clears.isEmpty())
+        assertEquals(1, access.changes.size)
+        assertTrue(model.acknowledgeConfirmed(confirmed))
+        runCurrent()
+        assertNull(journal.body)
+    }
+
+    @Test fun ackDeRechazoConDiarioDistintoNoRetiraNingunaSolicitud() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access().apply { changeAnswer = { throw ReportStatusConflictException() } }
+        val model = readyModel(journal, access)
+        submit(model)
+        runCurrent()
+        val rejected = model.state.value as ReportStatusRecoveryState.Rejected
+        val other = rejected.request.copy(requestedAt = NOW.plusSeconds(1))
+        journal.body = other
+        assertTrue(model.acknowledgeRejected(rejected))
+        runCurrent()
+        assertSame(other, journal.body)
+        assertTrue((model.state.value as ReportStatusRecoveryState.Pending).requiresRecovery)
+        assertTrue(journal.clears.isEmpty())
+        assertEquals(1, access.changes.size)
+    }
+
+    @Test fun revocacionAlResolverRechazoOAntesDeAckConservaSolicitudYReciboConfirmado() = runTest(dispatcher) {
+        listOf(false, true).forEach { revokeBeforeAck ->
+            val journal = Journal()
+            val access = Access().apply {
+                changeAnswer = { saved ->
+                    if (!revokeBeforeAck) {
+                        receipts[OPERATION] = receipt(saved)
+                        active = false
+                    }
+                    throw ReportStatusConflictException()
+                }
+            }
+            val model = readyModel(journal, access)
+            submit(model)
+            runCurrent()
+            val saved = checkNotNull(journal.body)
+            if (revokeBeforeAck) {
+                assertTrue(model.state.value is ReportStatusRecoveryState.Rejected)
+                access.active = false
+                assertTrue(model.acknowledgeRejected())
+                runCurrent()
+            }
+            assertTrue((model.state.value as ReportStatusRecoveryState.Pending).requiresRecovery)
+            assertSame(saved, journal.body)
+            assertTrue(journal.clears.isEmpty())
+            val newAccess = Access().apply { receipts.putAll(access.receipts) }
+            val recreated = model(journal, newAccess)
+            recreated.recover()
+            runCurrent()
+            if (revokeBeforeAck) assertTrue(recreated.state.value is ReportStatusRecoveryState.Pending)
+            else assertEquals(receipt(saved), (recreated.state.value as ReportStatusRecoveryState.Confirmed).receipt)
+        }
+    }
+
+    @Test fun revocacionDuranteLecturaDeAckRechazadoImpideClear() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access().apply { changeAnswer = { throw ReportStatusNotFoundException() } }
+        val model = readyModel(journal, access)
+        submit(model)
+        runCurrent()
+        val saved = journal.body
+        access.findAnswer = { access.active = false; null }
+        assertTrue(model.acknowledgeRejected())
+        runCurrent()
+        assertSame(saved, journal.body)
+        assertTrue(journal.clears.isEmpty())
+        assertTrue((model.state.value as ReportStatusRecoveryState.Pending).requiresRecovery)
+    }
+
+    @Test fun clearDeRechazoConfirmadoPeroRespuestaPerdidaExigeRecoveryDeSoloLectura() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access().apply { changeAnswer = { throw ReportStatusConflictException() } }
+        val model = readyModel(journal, access)
+        submit(model)
+        runCurrent()
+        journal.clearAfter = { throw IOException("Respuesta perdida") }
+        model.acknowledgeRejected()
+        runCurrent()
+        assertNull(journal.body)
+        assertTrue((model.state.value as ReportStatusRecoveryState.Pending).requiresRecovery)
+        assertFalse(model.retry())
+        val beforeFinds = access.finds.size
+        assertTrue(model.recover())
+        runCurrent()
+        assertSame(ReportStatusRecoveryState.Ready, model.state.value)
+        assertEquals(beforeFinds + 1, access.finds.size)
+        assertEquals(1, access.changes.size)
+        assertEquals(1, journal.clears.size)
+    }
+
+    @Test fun reciboTardioTrasClearRechazadoInciertoSigueVisibleYSeReconoceSinSegundoClear() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access().apply { changeAnswer = { throw ReportStatusConflictException() } }
+        val model = readyModel(journal, access)
+        submit(model)
+        runCurrent()
+        val request = (model.state.value as ReportStatusRecoveryState.Rejected).request
+        journal.clearAfter = { throw IOException("Respuesta perdida") }
+        model.acknowledgeRejected()
+        runCurrent()
+        assertNull(journal.body)
+        access.receipts[OPERATION] = receipt(request)
+        model.recover()
+        runCurrent()
+        val confirmed = model.state.value as ReportStatusRecoveryState.Confirmed
+        assertEquals(receipt(request), confirmed.receipt)
+        assertEquals(1, journal.clears.size)
+        assertTrue(model.acknowledgeConfirmed(confirmed))
+        runCurrent()
+        assertSame(ReportStatusRecoveryState.Ready, model.state.value)
+        assertEquals(1, journal.clears.size)
+        assertEquals(1, access.changes.size)
+    }
+
+    @Test fun procesoRecreadoNoReconstruyePruebaDeRechazoPorAusenciaDeRecibo() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access().apply { changeAnswer = { throw ReportStatusConflictException() } }
+        val original = readyModel(journal, access)
+        submit(original)
+        runCurrent()
+        assertTrue(original.state.value is ReportStatusRecoveryState.Rejected)
+        stores.last().clear()
+        val recreated = model(journal, access)
+        recreated.recover()
+        runCurrent()
+        assertTrue(recreated.state.value is ReportStatusRecoveryState.Pending)
+        assertFalse(recreated.acknowledgeRejected())
+        assertEquals(1, access.changes.size)
+        assertTrue(journal.clears.isEmpty())
+        // Only another explicit retry can execute the unchanged command and obtain fresh proof.
+        assertTrue(recreated.retry())
+        runCurrent()
+        assertTrue(recreated.state.value is ReportStatusRecoveryState.Rejected)
+        assertSame(access.changes[0], access.changes[1])
+    }
+
+    @Test fun gestoObsoletoDeRechazoNoConfirmaUnaPantallaPosteriorIgual() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access().apply { changeAnswer = { throw ReportStatusConflictException() } }
+        val model = readyModel(journal, access)
+        submit(model)
+        runCurrent()
+        val before = model.state.value as ReportStatusRecoveryState.Rejected
+        model.recover(before)
+        runCurrent()
+        val after = model.state.value as ReportStatusRecoveryState.Rejected
+        assertTrue(before !== after)
+        assertFalse(model.acknowledgeRejected(before))
+        assertFalse(model.recover(before))
+        assertTrue(model.acknowledgeRejected(after))
+        runCurrent()
+        assertNull(journal.body)
+    }
+
+    @Test fun checkAccessSoloConsultaAutoridadEnDispatcherYReservaSingleFlight() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access()
+        val model = model(journal, access)
+        assertTrue(model.checkAccess())
+        assertEquals(0, access.checks)
+        assertFalse(model.recover())
+        runCurrent()
+        assertTrue(access.checks > 0)
+        assertSame(ReportStatusRecoveryState.AwaitingRecovery, model.state.value)
+        access.denial = ReportStatusPermissionDeniedException()
+        assertTrue(model.checkAccess())
+        runCurrent()
+        assertSame(ReportStatusRecoveryState.Closed, model.state.value)
+        assertFalse(model.recover())
+        assertEquals(0, journal.reads)
+    }
+
+    @Test fun checkAccessConVentanaPausadaConservaElModeloHastaVolverSinConfundirloConRolRetirado() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access().apply { active = false }
+        val model = model(journal, access)
+        assertTrue(model.checkAccess())
+        runCurrent()
+        assertSame(ReportStatusRecoveryState.AwaitingRecovery, model.state.value)
+        assertEquals(0, journal.reads)
+        access.active = true
+        assertTrue(model.checkAccess())
+        runCurrent()
+        assertTrue(model.recover())
+        runCurrent()
+        assertSame(ReportStatusRecoveryState.Ready, model.state.value)
+    }
+
+    @Test fun submitNoConsultaAutoridadBloqueanteAntesDeDespacharIo() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access()
+        val model = readyModel(journal, access)
+        val priorChecks = access.checks
+        assertTrue(submit(model))
+        assertEquals(priorChecks, access.checks)
+        assertTrue(access.changes.isEmpty())
+        runCurrent()
+        assertTrue(access.checks > priorChecks)
+        assertTrue(model.state.value is ReportStatusRecoveryState.Confirmed)
+    }
+
+    @Test fun guardPuroDeSesionImpidePublicarUnCommitTrasRetirarLaSesion() = runTest(dispatcher) {
+        var sessionActive = true
+        val journal = Journal()
+        val access = Access().apply {
+            changeAnswer = { saved ->
+                receipts[OPERATION] = receipt(saved)
+                sessionActive = false
+                receipt(saved).event
+            }
+        }
+        val model = ReportStatusRecoveryViewModel(
+            journal, access, dispatcher, Clock.fixed(NOW, ZoneOffset.UTC), { OPERATION },
+            checkSession = { check(sessionActive) },
+        ).also { model -> ViewModelStore().also { it.put("guarded", model); stores += it } }
+        model.recover()
+        runCurrent()
+        submit(model)
+        runCurrent()
+        assertSame(ReportStatusRecoveryState.Closed, model.state.value)
+        assertFalse(model.checkAccess())
+        assertSame(ReportStatusRecoveryState.Closed, model.state.value)
+        assertTrue(journal.clears.isEmpty())
+        val fresh = model(journal, access)
+        fresh.recover()
+        runCurrent()
+        assertEquals(receipt(checkNotNull(journal.body)), (fresh.state.value as ReportStatusRecoveryState.Confirmed).receipt)
+    }
+
+    @Test fun closeBorraDatosVisiblesPeroConservaDiarioYLeaseDelWriterNoCooperativo() = runTest(dispatcher) {
+        val gate = CompletableDeferred<Unit>()
+        val journal = Journal()
+        val access = Access().apply {
+            changeAnswer = { saved -> withContext(NonCancellable) {
+                gate.await(); receipts[OPERATION] = receipt(saved); receipt(saved).event
+            } }
+        }
+        val model = readyModel(journal, access)
+        submit(model)
+        runCurrent()
+        val saved = journal.body
+        model.close()
+        assertSame(ReportStatusRecoveryState.Closed, model.state.value)
+        assertEquals(1, journal.activeLease)
+        assertSame(saved, journal.body)
+        assertFalse(model.recover())
+        assertFalse(model.retry())
+        assertFalse(model.acknowledgeRejected())
+        assertFalse(model.acknowledgeConfirmed())
+        assertFalse(model.cancel())
+        assertFalse(submit(model))
+        gate.complete(Unit)
+        runCurrent()
+        assertSame(ReportStatusRecoveryState.Closed, model.state.value)
+        assertEquals(0, journal.activeLease)
+        assertSame(saved, journal.body)
+        val recreated = model(journal, access)
+        recreated.recover()
+        runCurrent()
+        assertEquals(receipt(checkNotNull(saved)), (recreated.state.value as ReportStatusRecoveryState.Confirmed).receipt)
+    }
+
+    @Test fun denegacionTipadaDuranteCambioCierraSinExponerCuerpoNiRetirarLaSolicitudDurable() = runTest(dispatcher) {
+        listOf(ReportStatusPermissionDeniedException(), ReportAdministrationPermissionDeniedException()).forEach { denial ->
+            val journal = Journal()
+            val access = Access().apply { changeAnswer = { throw denial } }
+            val model = readyModel(journal, access)
+            submit(model)
+            runCurrent()
+            val saved = checkNotNull(journal.body)
+            assertSame(ReportStatusRecoveryState.Closed, model.state.value)
+            assertFalse(model.recover())
+            assertFalse(model.retry())
+            assertFalse(model.acknowledgeConfirmed())
+            assertFalse(model.acknowledgeRejected())
+            assertTrue(journal.clears.isEmpty())
+            val restored = model(journal, Access())
+            restored.recover()
+            runCurrent()
+            assertSame(saved, (restored.state.value as ReportStatusRecoveryState.Pending).request)
+            assertEquals(1, access.changes.size)
+            assertTrue(restored.retry())
+            runCurrent()
+            assertSame(saved, (restored.state.value as ReportStatusRecoveryState.Confirmed).request)
+        }
+    }
+
+    @Test fun denegacionTipadaDespuesDelCommitOcultaTodoYUnModeloNuevoRecuperaElReciboExacto() = runTest(dispatcher) {
+        listOf(ReportStatusPermissionDeniedException(), ReportAdministrationPermissionDeniedException()).forEach { denied ->
+            val journal = Journal()
+            val access = Access().apply {
+                changeAnswer = { saved ->
+                    receipts[OPERATION] = receipt(saved)
+                    denial = denied
+                    receipt(saved).event
+                }
+            }
+            val model = readyModel(journal, access)
+            submit(model)
+            runCurrent()
+            val saved = checkNotNull(journal.body)
+            assertSame(ReportStatusRecoveryState.Closed, model.state.value)
+            assertTrue(journal.clears.isEmpty())
+            assertEquals(1, access.changes.size)
+            val allowed = Access().apply { receipts.putAll(access.receipts) }
+            val restored = model(journal, allowed)
+            restored.recover()
+            runCurrent()
+            val confirmed = restored.state.value as ReportStatusRecoveryState.Confirmed
+            assertSame(saved, confirmed.request)
+            assertEquals(receipt(saved), confirmed.receipt)
+            assertTrue(allowed.changes.isEmpty())
+            assertSame(saved, journal.body)
+        }
+    }
+
+    @Test fun ioInciertoNoPublicaPendingPrivadoSiLaReconsultaDeAutoridadEsDenegada() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access().apply {
+            changeAnswer = { saved ->
+                receipts[OPERATION] = receipt(saved)
+                denial = ReportAdministrationPermissionDeniedException()
+                throw IOException("Respuesta del commit perdida")
+            }
+        }
+        val model = readyModel(journal, access)
+        submit(model)
+        runCurrent()
+        val saved = checkNotNull(journal.body)
+        assertSame(ReportStatusRecoveryState.Closed, model.state.value)
+        assertTrue(journal.clears.isEmpty())
+        val restoredAccess = Access().apply { receipts.putAll(access.receipts) }
+        val restored = model(journal, restoredAccess)
+        restored.recover()
+        runCurrent()
+        assertEquals(receipt(saved), (restored.state.value as ReportStatusRecoveryState.Confirmed).receipt)
+        assertTrue(restoredAccess.changes.isEmpty())
+    }
+
+    @Test fun ioGenericoConSelloDeSesionRetiradoCierraSinRevelarLaSolicitud() = runTest(dispatcher) {
+        var activeSession = true
+        val journal = Journal()
+        val access = Access().apply {
+            changeAnswer = { activeSession = false; throw IOException("Resultado desconocido") }
+        }
+        val model = ReportStatusRecoveryViewModel(journal, access, dispatcher, Clock.fixed(NOW, ZoneOffset.UTC),
+            { OPERATION }, checkSession = { check(activeSession) }).also { value ->
+            ViewModelStore().also { it.put("stamp", value); stores += it }
+        }
+        model.recover()
+        runCurrent()
+        submit(model)
+        runCurrent()
+        val saved = checkNotNull(journal.body)
+        assertSame(ReportStatusRecoveryState.Closed, model.state.value)
+        assertTrue(journal.clears.isEmpty())
+        val restored = model(journal, Access())
+        restored.recover()
+        runCurrent()
+        assertSame(saved, (restored.state.value as ReportStatusRecoveryState.Pending).request)
+    }
+
+    @Test fun falloDeDiarioConAutoridadVigenteReconsultaPermisoYConservaPendingSinWriter() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access()
+        val model = readyModel(journal, access)
+        var checksAtFailure = 0
+        journal.retainAfter = { checksAtFailure = access.checks; throw IOException("Recibo del diario perdido") }
+        submit(model)
+        runCurrent()
+        val pending = model.state.value as ReportStatusRecoveryState.Pending
+        assertTrue(pending.requiresRecovery)
+        assertTrue(access.checks > checksAtFailure)
+        assertSame(pending.request, journal.body)
+        assertTrue(access.changes.isEmpty())
+        assertTrue(journal.clears.isEmpty())
+        journal.retainAfter = {}
+        model.recover(pending)
+        runCurrent()
+        assertSame(pending.request, (model.state.value as ReportStatusRecoveryState.Pending).request)
+        assertTrue(access.changes.isEmpty())
+    }
+
+    @Test fun permisoRetiradoAlRecuperarCierraAunqueYaHayaLeidoElCuerpoDelDiario() = runTest(dispatcher) {
+        val saved = request()
+        val journal = Journal(saved)
+        val access = Access().apply {
+            findAnswer = { denial = ReportStatusPermissionDeniedException(); null }
+        }
+        val model = model(journal, access)
+        model.recover()
+        runCurrent()
+        assertSame(ReportStatusRecoveryState.Closed, model.state.value)
+        assertSame(saved, journal.body)
+        assertEquals(1, access.finds.size)
+        assertTrue(journal.clears.isEmpty())
+        val restored = model(journal, Access())
+        restored.recover()
+        runCurrent()
+        assertSame(saved, (restored.state.value as ReportStatusRecoveryState.Pending).request)
+    }
+
+    @Test fun ventanaNoDisponibleConSesionVigenteConservaIncertidumbreYRecuperaSinDuplicarCommit() = runTest(dispatcher) {
+        val journal = Journal()
+        val access = Access().apply {
+            changeAnswer = { saved ->
+                receipts[OPERATION] = receipt(saved)
+                active = false // An unavailable foreground window, not a typed authority denial.
+                throw IOException("Respuesta perdida al pausar")
+            }
+        }
+        val model = readyModel(journal, access)
+        submit(model)
+        runCurrent()
+        val pending = model.state.value as ReportStatusRecoveryState.Pending
+        assertTrue(pending.requiresRecovery)
+        assertSame(pending.request, journal.body)
+        assertTrue(journal.clears.isEmpty())
+        access.active = true
+        model.recover(pending)
+        runCurrent()
+        assertEquals(receipt(pending.request), (model.state.value as ReportStatusRecoveryState.Confirmed).receipt)
+        assertEquals(1, access.changes.size)
     }
 
     @Test fun retryReleeReciboAntesDeWriterYDetectaCommitQueLlegoTrasRecover() = runTest(dispatcher) {
@@ -449,7 +989,7 @@ class ReportStatusRecoveryViewModelTest {
         runCurrent()
         assertTrue(access.changes.isEmpty())
         assertTrue(access.finds.isEmpty())
-        assertTrue((model.state.value as ReportStatusRecoveryState.Pending).requiresRecovery)
+        assertSame(ReportStatusRecoveryState.Closed, model.state.value)
     }
 
     @Test fun cancelAntesDeEjecutarConservaCuerpoSinRetenerHastaRecoverYRetry() = runTest(dispatcher) {
@@ -849,6 +1389,8 @@ class ReportStatusRecoveryViewModelTest {
     private class Access(private val events: MutableList<String> = mutableListOf()) : ReportStatusChangeAccess {
         override var scope = SCOPE
         var active = true
+        var checks = 0
+        var denial: Exception? = null
         val finds = mutableListOf<ReportStatusChangeRequest>()
         val changes = mutableListOf<ReportStatusChangeRequest>()
         val receipts = mutableMapOf<String, ReportStatusChangeReceipt>()
@@ -856,7 +1398,7 @@ class ReportStatusRecoveryViewModelTest {
         var changeAnswer: suspend (ReportStatusChangeRequest) -> ReportStatusEvent = {
             receipt(it).also { received -> receipts[it.command.operationId] = received }.event
         }
-        override fun checkCurrent() { check(active) { "sesión retirada" } }
+        override fun checkCurrent() { checks++; denial?.let { throw it }; check(active) { "sesión retirada" } }
         override suspend fun findReceipt(request: ReportStatusChangeRequest): ReportStatusChangeReceipt? {
             checkCurrent()
             events += "find"

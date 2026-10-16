@@ -10,7 +10,7 @@ data class ReportStatusChangeScope(val ownerAccountId: String?, val actorAccount
     }
 }
 
-/** The complete durable intent is retained unchanged until its receipt is explicitly consumed. */
+/** The immutable intent is retained until an exact receipt or definitive rejection is explicitly consumed. */
 data class ReportStatusChangeRequest(
     val scope: ReportStatusChangeScope,
     val command: ReportStatusChangeCommand,
@@ -36,7 +36,7 @@ interface ReportStatusChangeJournal {
     suspend fun read(): ReportStatusChangeRequest?
     /** Retain only into an empty journal or when every field is exactly equal. */
     suspend fun retain(request: ReportStatusChangeRequest)
-    /** A confirmed consumer may clear only the entire expected body. */
+    /** An explicit confirmed/rejected consumer may clear only the exact body after receipt checks. */
     suspend fun clear(expected: ReportStatusChangeRequest)
     /** A shared process lease spans journal + backend work; cancellation cannot release a running writer. */
     suspend fun <T> exclusive(block: suspend () -> T): T
