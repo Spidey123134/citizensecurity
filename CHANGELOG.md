@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+- Fase 40: cuenta elegida `admin_local`, registrada normalmente con contraseña propia de 15 a 128 caracteres, sin credenciales predeterminadas o publicadas. Alta local por confirmación nativa del propietario y segundo gesto, con plazo de 120 segundos, UUID y recibo exacto; sin reemplazar asignaciones o reparar corrupción. `admin/admin` sigue académico.
+- Consulta administrativa visible del espacio de esa cuenta: lista y filtros de tipo/estado/prioridad, folio completo, detalle e historial de 50 por página. Sesión y permiso comprobados al leer; revocación limpia resultados y los gestos/respuestas anteriores no actúan sobre otra consulta. Cambio de estado e historial administrativo completo pendientes para la fase siguiente. [Guía](docs/ADMINISTRADOR_LOCAL.md) · [Fase 40](docs/FASE_40.md).
+- Fase 40 validada: **1360 casos distintos aprobados/76 nuevos**, sin fallos; 1304 JVM y 56 Android. Confirmación nativa con PIN real en emulador API 37 y consulta del espacio de la propia cuenta. **22/28 = 78.6%**, Administración **2/4** por consulta y roles/permisos; quedan seis criterios de seguimiento, cambio/historial administrativo y notificaciones. [Validación](docs/VALIDACION.md).
+- Código y guía preparados para la rama `development/administracion-local` y un PR en borrador revisable en GitHub, sin integrar main ni publicar APK, tag o Release; la subida todavía debe confirmarse. La APK oficial sigue en 0.6.1; el candidato 0.6.2 archivado es anterior a fases 38–40 y deberá prepararse otra vez.
+
+### Antecedentes de este desarrollo
+
 - Fase 39, trabajo local: revisión del borrador en tarjetas de datos, lugar y fotografía; marco fijo de 240 dp con imagen completa ajustada y dibujo contenido. Evita que una foto vertical invada otros bloques, sin alterar el archivo, el guardado o el GPS.
 - Vinculación administrativa al espacio y sesión capturados, con revalidación antes/después de la política y revocación al salir, incluso si se vuelve a entrar con la misma cuenta. `READ_REPORTS` y `CHANGE_STATUS` siguen separados y denegados por defecto; acceso académico sin permisos administrativos. [Fase 39](docs/FASE_39.md). **20/28 = 71.4% permanece**; sin push, tag, Release o APK publicada. El candidato archivado precede a las fases 38/39.
 - Fase 39 validada: 1265 casos distintos aprobados/25 nuevos; 907 JVM app ejecutados, 341 recibos intactos reutilizados y 17 Android. Foto vertical real del selector, comparación visual y repetición con letra al 130% sin solape. Cero fallos/errores/omitidos finales; lint sin errores y con 22 avisos existentes por variante.

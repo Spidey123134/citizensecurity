@@ -46,6 +46,10 @@ class ReportTestApplication : CitizenSecurityApplication() {
         get() = accountTestRepository ?: super.accountRepository
     @Volatile private var testFixture: ReportTestFixture? = null
 
+    override fun openLocalAdministratorStore(): com.example.citizensecurity.data.LocalAdministratorStore =
+        testFixture?.let { com.example.citizensecurity.data.LocalAdministratorStore(it.contactsContext) }
+            ?: super.openLocalAdministratorStore()
+
     override fun openReportWorkspace(session: AccountSessionState): ReportWorkspace {
         val fixture = testFixture ?: return super.openReportWorkspace(session)
         // Account scopes retain real named production stores. Only the phone source is controlled.

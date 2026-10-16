@@ -1,5 +1,9 @@
 # Avance del plan del proyecto
 
+**Fase 40, Unreleased:** cuenta elegida **`admin_local`**, sin contraseña predeterminada, con alta por confirmación nativa del propietario y segundo gesto. Consulta protegida del espacio de esa cuenta: filtros, folio, detalle e historial por páginas de 50. [Guía de uso](ADMINISTRADOR_LOCAL.md) · [Alcance y validación](FASE_40.md).
+
+**22/28 = 78.6%**, con **4.6 Administración en 2/4**: consulta visible y roles/permisos reales. Quedan seis criterios: cambio e historial administrativo completo, seguimiento de 4.4 y los otros tres de 4.7. **1360 casos distintos aprobados/76 nuevos**, sin fallos; incluye confirmación nativa con PIN real en emulador API 37 y consulta de la propia cuenta. Código y guía preparados para `development/administracion-local` y un PR en borrador de GitHub; sin integrar main, APK, tag o Release. La descarga oficial **0.6.1** conserva su corte y el candidato 0.6.2 archivado es anterior a fases 38–40. Los párrafos de fases anteriores conservan sus cifras históricas; las matrices de criterios reflejan el cierre actual.
+
 **Fase 39, Unreleased local:** revisión del borrador con tarjetas de datos/lugar/foto y marco de 240 dp que contiene la imagen completa. Continúa 4.6 ligando la consulta administrativa al espacio y sesión capturados, revocados al salir incluso si se ingresa de nuevo con la misma cuenta. Permisos separados y denegados por defecto; asignación/panel pendientes. [Alcance, pruebas y límites](FASE_39.md).
 
 **20/28 = 71.4% permanece**: el arreglo visual y la base de sesión no completan otro criterio del PDF. Sin push, tag o publicación; APK oficial **0.6.1**. El candidato 0.6.2 archivado es anterior a las fases 38/39 y requerirá actualizarse en la próxima entrega autorizada.
@@ -16,7 +20,7 @@
 
 ## Avance vigente — 15 de octubre de 2026
 
-**20/28 = 71.4% de construcción**, mismos criterios y pesos del PDF/cliente. Se completa únicamente **permisos y preferencias** de 4.7: denegar/conceder realmente en Android, activar/desactivar, persistir y separar por cuenta. El consumidor manual y su aviso nativo están implementados; los otros tres criterios de notificaciones conservan el pendiente del recorrido productivo con cambios autorizados. Las extensiones E01–E04/E10 incluidas en 0.6.1 amplían utilidad sin sumar criterios ya completos.
+**22/28 = 78.6% de construcción**, mismos criterios y pesos del PDF/cliente. La fase 40 completa **consulta administrativa y roles/permisos** de 4.6 mediante el alta local y su recorrido visible comprobado. Conserva el criterio de **permisos y preferencias** de 4.7, acreditado en fase 36; el consumidor manual y su aviso nativo están implementados, pero sus otros tres criterios esperan la composición visible de cambios autorizados. Las extensiones E01–E04/E10 incluidas en 0.6.1 amplían utilidad sin sumar criterios ya completos.
 
 | Punto original | Construidos | Pendientes |
 |---|---|---|
@@ -25,12 +29,12 @@
 | 4.3 Geolocalización | 4/4 | 0 |
 | 4.4 Consulta | 3/4 | 1: seguimiento de cambios mediante recorrido autorizado |
 | 4.5 Mapas | 4/4 | 0 |
-| 4.6 Administración | 0/4 | 4: consulta, cambio, roles/permisos, historial administrativo |
+| 4.6 Administración | 2/4 | 2: cambio de estado autorizado e historial administrativo completo |
 | 4.7 Notificaciones | 1/4 | 3: eventos y entrega en el recorrido autorizado, recorrido completo probado |
 
-Faltan **8 criterios originales**: uno de seguimiento, cuatro administrativos y tres de notificaciones. La asignación administrativa sigue pendiente por decisión del usuario; no existe un panel productivo de cambios ni roles reales. Los cambios autorizados exclusivamente dentro de pruebas comprueban la integración, sin conceder permisos a una cuenta del producto. Las comprobaciones se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
+Faltan **6 criterios originales**: uno de seguimiento, dos administrativos y tres de notificaciones. La cuenta local elegida es `admin_local`; su activación requiere la credencial nativa del propietario y un segundo gesto en ese teléfono. Consulta y acceso tienen un recorrido productivo integrado y comprobado en emulador, limitado a su propio espacio; no se afirma que ya se activó en el teléfono del usuario. Faltan los controles visibles de cambio de estado y su historial completo. Las comprobaciones se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
 
-La APK oficial **0.6.1** contiene fases 29–34 y conserva su cierre de 1237 casos distintos. Las fases 35–37 se mantienen como código **Unreleased**; no se incorporan a esa descarga por actualizar main. Los resultados de cada corte están separados en [Validación](VALIDACION.md), sin sumar repeticiones. Las nativas API 37 no acreditan ejecución física, muerte completa del proceso o recepción institucional.
+La APK oficial **0.6.1** contiene fases 29–34 y conserva su cierre de 1237 casos distintos. Las fases 35–40 se mantienen como código **Unreleased**; no se incorporan a esa descarga por subir una rama o un PR en borrador. Los resultados de cada corte están separados en [Validación](VALIDACION.md), sin sumar repeticiones. Las nativas API 37 no acreditan ejecución física, muerte completa del proceso o recepción institucional.
 
 [Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Plan](PLAN_DEL_PROYECTO.md) · [Fases](FASES.md) · [Release 0.6.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1). Android **0.6.1 / código 29**, reportes esquema 4 y cuentas 1. Los bloques siguientes conservan sus cifras y pendientes históricos; sus marcas Unreleased describen aquella preparación.
 
@@ -267,10 +271,10 @@ Una pantalla visual cuenta solo como preparación visual; una lógica probada cu
 | 4.3 Geolocalización | Par de coordenadas validado y conservado; captura del dispositivo; permisos y estados GPS; flujo GPS probado | Coordenadas, captura física previa y permisos/estados comprobados. El 11 de octubre de 2026 el usuario confirmó manualmente localización del punto, aceptación dentro del radio y pin visible; versión APK no especificada, sin logs, medidas o guardado físico nuevo | 4/4 · 100% de construcción |
 | 4.4 Consulta | Lectura por folio; lista y permanencia; reportes propios por usuario; seguimiento de estados | Folio, lista/permanencia y espacio de cuenta de fase 26; historial de lectura de fase 27 ejecutado en Android en 0.6.0. Fase 31 prepara recuperación durable; falta el recorrido autorizado de cambios, su composición productiva y aceptación | 3/4 · 75% de construcción |
 | 4.5 Mapas | Contrato de selección y confirmación; SDK configurado; mapa por zonas y marcadores; flujo visual integrado y probado | Contrato, SDK, zonas/marcadores y flujo visual integrado en 0.5.3: guardado/folio, mapa nativo con calles y pines SQLite, filtros/límite y pin→detalle. La validación nativa usa una fuente de teléfono controlada; la aceptación manual física posterior se acredita por separado en 4.3 | 4/4 · 100% de construcción |
-| 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Fase 27 prepara servicio protegido e historial de lectura; fase 31 prepara diario/recibo durables. Asignación pendiente y sin composición administrativa productiva; ningún hito acreditado | 0/4 · 0% |
+| 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Fase 40: alta local de `admin_local` por credencial nativa y segundo gesto, consulta visible y permisos ligados a UUID/sesión comprobados. Faltan cambio de estado visible e historial administrativo completo; fase 31 conserva diario/recibo durables | 2/4 · 50% |
 | 4.7 Notificaciones | Eventos de cambios; entrega de avisos; permisos y preferencias; flujo completo probado | Permisos y preferencias por cuenta de fase 36, con denegación/concesión reales de Android y persistencia comprobadas. Consumidor manual implementado; los otros tres criterios esperan el recorrido productivo autorizado | 1/4 · 25% |
 
-**Avance actual estimado: 20/28 = 71.4% de construcción.** Fase 36 añade el criterio original de permisos/preferencias, sin cambiar el denominador. Cuentas/reportes propios e historial de lectura tuvieron comprobación Android en 0.6.0. Asignación administrativa, seguimiento autorizado y tres criterios de notificaciones continúan pendientes; no se acreditan con eventos de prueba. Fotografías y aceptación manual GPS conservan sus hitos/límites. Publicar y repetir pruebas no suman puntos. No declara servidor/sincronización, seguridad de producción o veracidad de incidentes.
+**Avance actual estimado: 22/28 = 78.6% de construcción.** La fase 40 añade consulta administrativa y roles/permisos comprobados, sin cambiar el denominador; fase 36 conserva el criterio de permisos/preferencias. Cuentas/reportes propios e historial de lectura tuvieron comprobación Android en 0.6.0. Faltan seguimiento autorizado, cambio e historial administrativo completo y tres criterios de notificaciones: seis en total. Fotografías y aceptación manual GPS conservan sus hitos/límites. Publicar y repetir pruebas no suman puntos. No declara servidor/sincronización, seguridad de producción o veracidad de incidentes.
 
 ## Antecedentes de cálculo y evidencia
 

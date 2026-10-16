@@ -1,5 +1,30 @@
 # Validación y comprobaciones del proyecto
 
+## Alta local y consulta administrativa — fase 40 · 15 de octubre de 2026
+
+**1360 casos distintos aprobados, 76 definiciones nuevas; cero fallos, errores u omitidos finales.** Se ejecutaron los tres grupos JVM y las suites nativas indicadas; no se suman los cierres anteriores ni las repeticiones.
+
+| Suite | Aprobados | Nuevos | Alcance |
+| --- | ---: | ---: | --- |
+| Dominio JVM | 205 | 5 | Asignación por UUID y alcance dueño/actor |
+| Datos JVM / SQLite del host | 148 | 7 | Codec estricto y regresiones |
+| App JVM | 951 | 44 | Alta 16 y consulta 28; regresiones |
+| Datos Android API37 | 36 | 15 | Almacén privado 15; transacciones/recibos 21 |
+| App Android API37 | 20 | 5 | Alta/consulta 5; Inicio 8, aislamiento 4, binding 3 |
+| **Total distinto** | **1360** | **76** | **1304 JVM y 56 Android** |
+
+El alta usa una cuenta registrada realmente en SQLite aislado. Los recorridos nativos establecen un PIN aleatorio solo en el emulador propio, abren la pantalla de credencial de Android y completan o cancelan su teclado real. No se inyecta `RESULT_OK`. Regresar de Android conserva la asignación ausente: hace falta el segundo gesto visible, con sesión y prueba vigentes. Giro conserva la coordinación. Ambos casos retiran únicamente su PIN de prueba y restauran el ajuste previo de bloqueo; el emulador de solo lectura quedó cerrado. No se cambió el bloqueo ni se instaló nada en el teléfono del usuario.
+
+La consulta integrada usa reportes, cuentas e historial SQLite reales: filtros, folio, detalle, páginas, giro y retirada de datos ante pérdida de autorización. Otras cuentas, otro UUID con el mismo nombre y `admin/admin` no reciben permisos. El almacén comprueba primera asignación, idempotencia exacta, conflictos, corrupción, sidecars inciertos, enlaces, sesiones revocadas y recibos sin crear archivos por una lectura. Las pruebas de modelo añaden caducidad monotónica, doble gesto, resultados tardíos/no cooperativos, cancelación, reintento exacto y coherencia de reporte/historial. El alcance productivo es el espacio propio de `admin_local` en esa instalación.
+
+El primer intento nativo tuvo **2 fallos de 5**: el arnés buscaba un `EditText`, pero Android17 utiliza un teclado PIN de SystemUI. Se corrigió el selector y la pulsación del teclado; las 20 pruebas finales pasaron. Se conserva `admin40-ui-native.log`, sin contar ese intento como aprobado. Los logs finales son `admin40-data-native.log` y `admin40-app-native-final.log`.
+
+Compilación Kotlin debug/release, ensamblados internos y lint correctos: **app 0 errores/22 avisos existentes por variante; datos sin incidencias**. La revisión final corrigió dos avisos nuevos: el feature de bloqueo seguro se consulta solo en API29+, conservando la comprobación de credencial y el resolvedor del sistema en API26–28; también se retiró una llamada vacía a `super.onCleared`. Después se repitieron los 951 JVM de app, compilación, ensamblado interno y ambos lint (`admin40-compat-final.log`). Los recibos nativos preceden esos dos cambios equivalentes en API37; no se acredita ejecución en API26. Los otros logs de compilación son `admin40-build.log`, `admin40-native-build.log` y `admin40-native-build-final.log`. Recibo verificable ignorado: `.gradle/validacion/admin40-test-proof.json`.
+
+**22/28 = 78.6%**: se cierran consulta administrativa visible y roles/permisos de 4.6. Restan seis criterios originales: seguimiento (1), cambios/historial administrativo completo (2) y notificaciones (3). Ver eventos existentes no acredita el recorrido de cambiar estados. No se afirma aceptación física, muerte completa del proceso, administración institucional, sincronización o atención de autoridades. [Guía de la cuenta](ADMINISTRADOR_LOCAL.md) · [Fase 40](FASE_40.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
+Se prepara código y guía para una rama y PR en borrador de GitHub, conservando main y la publicación de APK/tag/Release pospuesta. La prueba manual `ReleaseUpgradeTest` de preparación permanece local, separada del árbol compartido: requiere una instalación en dos etapas y no pertenece a la suite normal. El archivo oficial 0.6.1 y el candidato archivado 0.6.2 anterior a fases38–40 conservan sus hashes. El ensamblado de QA actual es interno y no se publica como entrega.
+
 ## Revisión legible y permisos ligados a sesión — fase 39, local · 15 de octubre de 2026
 
 **1265 casos distintos aprobados, 25 definiciones nuevas; cero fallos, errores u omitidos finales.** Los resultados de este corte se distinguen de las suites nativas ejecutadas en fase 38:

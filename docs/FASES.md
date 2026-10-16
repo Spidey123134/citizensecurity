@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Fase 40 — administración local y consulta protegida, Unreleased
+
+Cuenta elegida **`admin_local`**, con registro y contraseña propia; confirmación nativa del propietario, segundo gesto de activación y asignación única por UUID. Consulta visible de su espacio local con filtros, folio e historial de 50 por página; permiso/sesión vigentes, respuestas tardías descartadas y reintento exacto. [Guía para el equipo](ADMINISTRADOR_LOCAL.md) · [Alcance, criterios y validación](FASE_40.md).
+
+**22/28 = 78.6%**, con **4.6 Administración en 2/4** por consulta y roles/permisos. Quedan seis criterios: seguimiento, cambio/historial administrativo y tres de notificaciones. **1360 casos distintos aprobados/76 nuevos**, sin fallos; incluye confirmación nativa con PIN real en emulador API 37. Código/documentación preparados para `development/administracion-local` y un PR en borrador de GitHub, sin integrar main ni publicar APK/tag/Release. `admin/admin` sigue académico; APK oficial **0.6.1**, candidato 0.6.2 anterior a fases 38–40. Los estados inferiores son antecedentes de cada corte.
+
 ## Fase 39 — borrador y vinculación administrativa, Unreleased local
 
 Ordena la revisión en tarjetas de datos, lugar y fotografía; la imagen completa se ajusta a un marco de 240 dp para evitar solapamientos, sin modificar el archivo o el guardado. Continúa 4.6 del PDF vinculando la política administrativa al espacio/sesión capturados: revocación al salir, incluso al volver con la misma cuenta, y comprobación de vigencia antes/después de autorizar. [Alcance, pruebas y límites](FASE_39.md).
