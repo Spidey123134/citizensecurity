@@ -1,5 +1,13 @@
 # CITIZENSECURITY
 
+## Desarrollo local Unreleased — fase 41: cambios de estado reales
+
+La cuenta **`admin_local` se registra en el teléfono** con su propia contraseña y requiere la asignación de fase 40; no se crea automáticamente. Desde un folio de la consulta administrativa, **Preparar cambio de estado** comprueba pendientes antes de consultar estado/revisión, escribir un motivo de 5–500 caracteres, revisar y confirmar mediante un segundo gesto. Solo permite avances consecutivos: **Reportado → En revisión → Atendido → Cerrado**.
+
+El historial conserva actor por UUID, fecha, motivo, secuencia y operación. Recuperar busca el recibo sin repetir la escritura; reintentar reutiliza la misma solicitud y cerrar el recibo exige reconocerlo. Sesión, permisos, revisión y primer plano se revalidan antes de guardar. Los estados son locales y no confirman atención institucional. [Guía actualizada](docs/ADMINISTRADOR_LOCAL.md) · [Fase 41](docs/FASE_41.md).
+
+**25/28 = 89.3%**: Consulta y Administración alcanzan **4/4**; restan tres criterios de Notificaciones. **1488 casos distintos aprobados/103 nuevos**, sin fallos finales; incluye recorrido nativo con SQLite, rol y diario reales. [Validación y límites](docs/VALIDACION.md). **Este corte permanece local**, sin actualizar GitHub/main, el [PR #30 de fase 40](https://github.com/Spidey123134/citizensecurity/pull/30) ni publicar APK/tag/Release. La descarga oficial sigue en **0.6.1**. Los bloques inferiores conservan sus cortes y cifras.
+
 ## Desarrollo Unreleased — fase 40: administración local
 
 Se eligió **`admin_local`** con autorización del usuario. Se registra en el teléfono con una contraseña propia de 15 a 128 caracteres; no hay contraseña administrativa predeterminada ni publicada. **Inicio → Administración local** confirma al propietario con el bloqueo nativo de Android y exige un segundo gesto para activar. `admin/admin` mantiene su acceso académico.

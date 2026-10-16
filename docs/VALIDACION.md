@@ -1,5 +1,34 @@
 # Validación y comprobaciones del proyecto
 
+## Cambio de estado y seguimiento administrativo local — fase 41 · 15 de octubre de 2026
+
+**1488 casos distintos aprobados, 103 definiciones nuevas; cero fallos, errores u omitidos finales.** Son 1379 JVM y 109 Android. Se separan los recibos reutilizados, los grupos ejecutados y las repeticiones sin sumarlas de nuevo.
+
+| Suite | Distintos aprobados | Nuevos | Procedencia |
+| --- | ---: | ---: | --- |
+| Dominio JVM | 205 | 0 | Recibos intactos de fase40 reutilizados; solo cambió un comentario del contrato |
+| Datos JVM / SQLite del host | 148 | 0 | Ejecutados en el build final de datos |
+| App JVM | 1026 | 75 | Ejecutados tras el ajuste final de privacidad: recuperación25, preparación33 y binding17 nuevos |
+| Datos Android API37 | 72 | 11 | Diario30, acceso de cambios21, historial13 y permisos8 |
+| App Android API37 | 37 | 17 | Cambio visible8, binding escritor9, regresiones de alta5/Inicio8/aislamiento4/binding lector3 |
+| **Total distinto** | **1488** | **103** | Sin sumar repeticiones o cierres históricos |
+
+Los 35 casos iniciales de app pasaron. Después del ajuste de privacidad se ejecutaron de nuevo las dos suites afectadas: **17 aprobados**, con 15 definiciones ya presentes y dos añadidas. La unión contiene 37 casos, no52; los otros 20 recibos de regresiones corresponden al pase previo de este mismo corte, sobre rutas no alteradas por ese ajuste. Los 72 de datos no se repitieron después: su código ya era el final. La app final usa el mismo SQLite capturado del workspace y un archivo de rol real; no se simula el recibo de escritura.
+
+Los ocho recorridos visibles comprueban entrada desde la consulta, estado sin escritura al abrir/revisar/girar, confirmación explícita, retorno al historial actualizado, los tres avances consecutivos y bloqueo de un paso después de Cerrado. También comprueban recuperación del recibo desde una ventana/modelo nuevos sin otra transición, solicitud retenida que requiere el mismo UUID al reintentar, revisión obsoleta que exige otra preparación, rechazo definitivo que conserva su solicitud hasta reconocerla y rol corrupto que retira la revisión sin reparar archivos o escribir. Motivo, actor UUID, fecha y secuencia proceden de SQLite. Abrir estas rutas no inicia GPS.
+
+El binding del escritor comprueba construcción sin autoridad/IO en Main, permisos de lectura sin escritura, dueño/actor y binding exactos, sesión revocada aunque se reingrese con el mismo UUID, cancelación y respuestas tardías. Los casos Android usan autorización real, diario reabierto y recibo SQLite; una fachada permisiva no elude la autoridad independiente del repositorio. Un guard niega el último hook dentro de la transacción y comprueba que estado/evento se revierten. El control de primer plano/desbloqueo se ejecuta después de la última lectura de autoridad; una Activity antigua no autoriza la nueva ventana.
+
+El diario prueba **11 casos nuevos** de `.new`/`.bak`, enlaces, rutas/carpetas, archivo sustituido, guardas concurrentes y corrupción antes del backend. Dos casos anteriores de backup cambiaron intencionalmente: ahora exigen error y bytes intactos, en lugar de restauración automática. Leer no utiliza `AtomicFile.openRead`, no convierte sidecars en ausencia ni los retira. El rollback actúa únicamente sobre el archivo abierto por esa escritura; reconocer una operación no borra eventos o datos del reporte.
+
+La última auditoría detectó que una denegación durante Working podía dejar el cuerpo visible como Pending hasta salir. La recuperación ahora cierra el estado visible sin retirar la solicitud durable cuando pierde permiso o sesión; errores inciertos revalidan autoridad en IO antes de mostrar un pendiente. Rol ilegible se trata como denegación, mientras una pausa temporal de la ventana conserva la posibilidad de recuperar. Las ocho pruebas JVM añadidas en ese ajuste cubren denegación antes/después del commit, relectura del mismo recibo con otro modelo, sello retirado, error de diario y primer plano temporal; se mantienen las comprobaciones de cuerpo exacto y exclusión del escritor.
+
+Compilación Kotlin debug/release, ensamblados internos y lint correctos: **app 0 errores/22 avisos existentes por variante; datos sin incidencias**. El primer build falló por resolver la cuenta nullable del receptor de un fixture; se corrigió la referencia al dueño. El segundo detectó una lectura no cooperativa que seguía consultando historial después de cancelar: se añadió `ensureActive` tras cada suspensión, conservando la assertion estricta. Se preservan ambos intentos en `admin41-build.log` y `admin41-app-build.log`; solo los pases finales cuentan como aprobados. Builds finales: `admin41-final-build.log` y `admin41-security-final-build.log`. Nativas: `admin41-data-native-final.log`, `admin41-app-native-final.log` y `admin41-status-native-final.log`. Recibo verificable ignorado: `.gradle/validacion/admin41-test-proof.json`.
+
+Las regresiones de fase40 completaron/cancelaron el PIN real del emulador, retiraron su PIN de prueba y restauraron el ajuste previo. No se cambió el bloqueo ni se instaló nada en el teléfono del usuario. El emulador propio de solo lectura API37 se utiliza para estas pruebas; no se acredita cámara/GPS físicos nuevos, ejecución API26, muerte completa del proceso o recepción institucional. La recuperación integrada prueba ventanas/modelos nuevos y giro; eso no equivale a matar el proceso completo.
+
+**25/28 = 89.3% de construcción**: se cierran seguimiento de4.4 y cambio de estado/historial de4.6. Restan tres criterios de notificaciones: su integración visible con eventos, entrega y comprobación del recorrido completo. Los estados son organización local de la cuenta, sin afirmar atención de una autoridad. Todo el corte permanece **local**: PR30, rama pública, main, APK oficial0.6.1 y candidato archivado0.6.2 anteriores se conservan. No hay nueva APK/tag/Release publicada. [Fase41](FASE_41.md) · [Guía administrativa](ADMINISTRADOR_LOCAL.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
 ## Alta local y consulta administrativa — fase 40 · 15 de octubre de 2026
 
 **1360 casos distintos aprobados, 76 definiciones nuevas; cero fallos, errores u omitidos finales.** Se ejecutaron los tres grupos JVM y las suites nativas indicadas; no se suman los cierres anteriores ni las repeticiones.

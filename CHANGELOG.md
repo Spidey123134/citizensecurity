@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+### Fase 41 — desarrollo local validado
+
+- Cambio de estado desde un folio administrativo: consulta de revisión real, motivo válido de 5–500 caracteres, revisión explícita y segundo gesto de confirmación. Avance consecutivo Reportado → En revisión → Atendido → Cerrado; sin saltos ni cambios desde Cerrado.
+- Recibo con folio, UUID del actor, fecha/zona, motivo, secuencia y operación; evento permanente en el historial local. Atendido/Cerrado no acreditan intervención de una autoridad.
+- Comprobación de pendientes antes de preparar otra solicitud; recuperación por lectura y reintento explícito del cuerpo completo con el mismo UUID. Reconocer el resultado verifica solicitud/evento exactos; cerrar un rechazo definitivo vuelve a buscar el recibo y muestra Confirmado si apareció uno coincidente.
+- Relectura coherente de estado/secuencia al revisar y confirmar; un cambio concurrente exige revisar otra vez. Permisos en IO y antes del commit, sesión capturada y ventana activa retenida al girar. Revocación retira datos; cancelar no autoriza otra solicitud y la incertidumbre conserva la identidad.
+- Diario con rechazo conservador de `.new` y `.bak` pendientes: leer no restaura respaldos, reemplaza archivos ni limpia residuos desconocidos. La cancelación tras un lector no cooperativo se comprueba antes de continuar otras lecturas.
+- **25/28 = 89.3%**, Consulta y Administración **4/4**; restan tres criterios de Notificaciones. **1488 casos distintos aprobados/103 nuevos**, cero fallos/errores/omitidos finales: 1379 JVM y 109 Android. Lint app sin errores/22 avisos existentes por variante; datos sin incidencias. [Fase 41](docs/FASE_41.md) · [Guía](docs/ADMINISTRADOR_LOCAL.md) · [Validación](docs/VALIDACION.md).
+- Corte local sin push, cambios a main, actualización del [PR #30 de fase 40](https://github.com/Spidey123134/citizensecurity/pull/30), APK, tag o Release. Oficial 0.6.1 y candidato anterior archivado conservados.
+
+### Antecedente — fase 40
+
 - Fase 40: cuenta elegida `admin_local`, registrada normalmente con contraseña propia de 15 a 128 caracteres, sin credenciales predeterminadas o publicadas. Alta local por confirmación nativa del propietario y segundo gesto, con plazo de 120 segundos, UUID y recibo exacto; sin reemplazar asignaciones o reparar corrupción. `admin/admin` sigue académico.
 - Consulta administrativa visible del espacio de esa cuenta: lista y filtros de tipo/estado/prioridad, folio completo, detalle e historial de 50 por página. Sesión y permiso comprobados al leer; revocación limpia resultados y los gestos/respuestas anteriores no actúan sobre otra consulta. Cambio de estado e historial administrativo completo pendientes para la fase siguiente. [Guía](docs/ADMINISTRADOR_LOCAL.md) · [Fase 40](docs/FASE_40.md).
 - Fase 40 validada: **1360 casos distintos aprobados/76 nuevos**, sin fallos; 1304 JVM y 56 Android. Confirmación nativa con PIN real en emulador API 37 y consulta del espacio de la propia cuenta. **22/28 = 78.6%**, Administración **2/4** por consulta y roles/permisos; quedan seis criterios de seguimiento, cambio/historial administrativo y notificaciones. [Validación](docs/VALIDACION.md).

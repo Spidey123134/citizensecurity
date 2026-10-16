@@ -1,5 +1,13 @@
 # Fases de CITIZENSECURITY
 
+## Fase 41 — cambio de estado e historial administrativo, local validada
+
+Continúa **4.4 Consulta y 4.6 Administración**: desde un folio, comprobar pendientes, leer revisión/estado, escribir un motivo válido de 5–500 caracteres, revisar y confirmar con otro gesto. Solo avances consecutivos **Reportado → En revisión → Atendido → Cerrado**. El recibo y el historial conservan actor por UUID, fecha, motivo, secuencia y operación; son estados locales, sin acreditar atención oficial.
+
+Recuperar lee diario y recibo; reintentar conserva cuerpo y UUID completos, y reconocer exige un gesto. La relectura de un rechazo puede mostrar un recibo confirmado tardío. Sesión, permisos, revisión, primer plano y bloqueo se comprueban antes de guardar; giro y navegación no escriben. [Recorrido y límites](FASE_41.md) · [Guía](ADMINISTRADOR_LOCAL.md).
+
+**25/28 = 89.3%**: Consulta y Administración alcanzan **4/4**, con tres criterios pendientes de Notificaciones. **1488 casos distintos aprobados/103 nuevos**, sin fallos finales; 1379 JVM y 109 Android, con lectura/rol/diario/SQLite reales y tres avances visibles. Lint sin errores; [desglose y límites](VALIDACION.md). Corte **local**, sin actualizar GitHub/main o el [PR #30 de fase 40](https://github.com/Spidey123134/citizensecurity/pull/30), ni publicar APK/tag/Release. Oficial **0.6.1**. Los siguientes bloques conservan los antecedentes.
+
 ## Fase 40 — administración local y consulta protegida, Unreleased
 
 Cuenta elegida **`admin_local`**, con registro y contraseña propia; confirmación nativa del propietario, segundo gesto de activación y asignación única por UUID. Consulta visible de su espacio local con filtros, folio e historial de 50 por página; permiso/sesión vigentes, respuestas tardías descartadas y reintento exacto. [Guía para el equipo](ADMINISTRADOR_LOCAL.md) · [Alcance, criterios y validación](FASE_40.md).
