@@ -2,11 +2,11 @@
 
 ## Corte de entrega 0.6.2 — fases 35–42 acumuladas
 
-**16 de octubre de 2026 · Android 0.6.2 / código 30 · publicación en preparación.** La entrega reúne **todas las fases posteriores a la oficial 0.6.1: 35–42**. Actividad, avisos manuales, mensaje a contactos, legibilidad del borrador y administración local con consulta/cambio/historial quedan en un mismo corte. [Entrega](ENTREGA_0_6_2.md) · [Guía de prueba](PROBAR_0_6_2.md).
+**16 de octubre de 2026 · Android 0.6.2 / código 30 · Release oficial publicada.** La entrega reúne **todas las fases posteriores a la oficial 0.6.1: 35–42**. Actividad, avisos manuales, mensaje a contactos, legibilidad del borrador y administración local con consulta/cambio/historial quedan en un mismo corte. [Entrega](ENTREGA_0_6_2.md) · [Guía de prueba](PROBAR_0_6_2.md).
 
 **28/28 = 100% de construcción funcional local**, conservando los 28 criterios y sus pesos. Cada requisito 4.1–4.7 está en 4/4. Las mejoras E01–E10 tienen registro propio y no inflan ese porcentaje. Fase 42 cierra con 1431 casos distintos —1379 JVM, 52 Android—, sin sumar los totales de otras fases como pruebas adicionales de esta entrega. [Validación y procedencia](VALIDACION.md).
 
-La aceptación física completa, pruebas de fabricantes/API 26, seguridad de producción y una integración institucional requieren evidencias separadas. Un cambio de estado o aviso Android no acredita atención oficial. La publicación de la entrega se confirma en GitHub; los párrafos inferiores mantienen **los estados, versiones y resultados históricos** de cada fase, incluidos los que entonces eran Unreleased.
+La aceptación física completa, pruebas de fabricantes/API 26, seguridad de producción y una integración institucional requieren evidencias separadas. Un cambio de estado o aviso Android no acredita atención oficial. La [Release 0.6.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.2) ya está publicada; los párrafos inferiores mantienen **los estados, versiones y resultados históricos** de cada fase, incluidos los que entonces eran Unreleased.
 
 ## Antecedentes de construcción por fase
 

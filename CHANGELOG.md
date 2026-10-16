@@ -4,9 +4,10 @@
 
 Sin fases posteriores al corte 0.6.2 preparadas para esta entrega.
 
-## [0.6.2] — 2026-10-16 · entrega acumulada en preparación
+## [0.6.2] — 2026-10-16 · Release oficial publicada
 
 - Agrupa **todas las fases 35–42 posteriores a la oficial 0.6.1**, incluidas las que quedaron Unreleased o solo locales. Android **0.6.2 / código 30**; APK final y checksum propios, distintos del candidato antiguo de fases 35–37.
+- [Release 0.6.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.2), [APK](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.2/citizensecurity-0.6.2-academico.apk) y [checksum SHA-256](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.2/SHA256SUMS-0.6.2.txt) publicados. La etiqueta corresponde al commit de integración `bbb8a261d10727fe106e36d34f2d76eaae4834a0`; ambos archivos descargados se contrastaron con el binario final.
 - **Fase 35:** Actividad de reportes real, filtros de creaciones/cambios, páginas de 50 y acceso al folio; migración aditiva al esquema 4 sin inventar eventos históricos.
 - **Fase 36:** avisos voluntarios por cuenta, permiso/canal Android y revisión manual; resumen general sin datos privados, registro durable y deduplicación por operación.
 - **Fase 37 / E06:** mensaje a un contacto del mismo espacio, ubicación voluntaria, revisión del texto y segundo gesto para abrir SMS. El usuario decide enviar; el operador puede cobrar.

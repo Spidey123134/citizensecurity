@@ -1,6 +1,6 @@
 # Entrega acumulada 0.6.2
 
-**16 de octubre de 2026 · Android 0.6.2 / código 30 · publicación en preparación.** Esta entrega agrupa **todas las fases 35–42 posteriores a la oficial 0.6.1**, incluidas las que habían quedado Unreleased o solo locales. La petición de publicar reemplaza el aplazamiento anterior; las fases no se entregan como ocho APK separadas. [Guía para probar](PROBAR_0_6_2.md) · [Release 0.6.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.2).
+**16 de octubre de 2026 · Android 0.6.2 / código 30 · Release oficial publicada.** Esta entrega agrupa **todas las fases 35–42 posteriores a la oficial 0.6.1**, incluidas las que habían quedado Unreleased o solo locales. La petición de publicar reemplaza el aplazamiento anterior; las fases no se entregan como ocho APK separadas. [Guía para probar](PROBAR_0_6_2.md) · [Release 0.6.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.2).
 
 Conserva paquete, certificado académico, datos, cuentas y el login/loading del compañero. Las funciones anteriores de reportes con cámara/galería, mapa con calles, punto/GPS a 5 km, posibles repetidos a 200 m/±2 h, ficha PDF, contactos y accesos de ayuda siguen incluidas. Los estados y avisos describen información de este teléfono: no acreditan envío o atención institucional.
 
@@ -29,7 +29,7 @@ La revisión es **manual dentro de la app**, en páginas de 50 y hasta 500 event
 
 ## Binario final y conservación de datos
 
-- APK final: **citizensecurity-0.6.2-academico.apk**, preparada para adjuntarse a la Release junto con **SHA256SUMS-0.6.2.txt**.
+- APK final publicada: [citizensecurity-0.6.2-academico.apk](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.2/citizensecurity-0.6.2-academico.apk), junto con [SHA256SUMS-0.6.2.txt](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.2/SHA256SUMS-0.6.2.txt). Ambos archivos descargados de GitHub se verificaron contra el binario final.
 - Tamaño: **56,200,431 bytes**.
 - SHA-256: `114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4`.
 - Paquete: `com.example.citizensecurity`; minSdk **26**, targetSdk **37**.
@@ -39,7 +39,7 @@ Instala **encima de la app anterior, sin desinstalar ni borrar datos**. Si Andro
 
 La actualización **0.6.1 → esta APK final 0.6.2** se comprobó en emulador propio API 37 mediante instalación encima de la anterior: **seed061, 1 caso aprobado; verify062, 1 caso aprobado**. Antes de migrar se contrastaron los bytes de base de datos, contactos y fotografía; después se comprobó esquema 3 → 4, integridad de SQLite y recuperación de reporte, historial, contactos y foto. El emulador se cerró; no se instaló o alteró el teléfono físico. Recibos locales: `.gradle/validacion/release062-final/upgrade-seed.log` y `upgrade-verify.log`. Esta comprobación usa el archivo final y es distinta de la prueba histórica del candidato de solo fases 35–37. [Validación](VALIDACION.md).
 
-**Antecedente archivado, separado del archivo final:** el candidato interno antiguo de solo fases 35–37, conservado en .gradle/validacion/citizensecurity-0.6.2-academico.apk, mide 55,302,267 bytes y tiene SHA-256 `ee75a653fc468153d062747bfeca5727104a236d29dcf876bacd6494162d3b2f`. No identifica la entrega acumulada. El binario final se prepara en .gradle/validacion/release062-final/; el archivo antiguo se conserva y no se publica como si incluyera fases 38–42.
+**Antecedente archivado, separado del archivo final:** el candidato interno antiguo de solo fases 35–37, conservado en .gradle/validacion/citizensecurity-0.6.2-academico.apk, mide 55,302,267 bytes y tiene SHA-256 `ee75a653fc468153d062747bfeca5727104a236d29dcf876bacd6494162d3b2f`. No identifica la entrega acumulada. El binario final se conserva en .gradle/validacion/release062-final/; el archivo antiguo se conserva y no se publica como si incluyera fases 38–42.
 
 ## Validación y avance del plan
 
