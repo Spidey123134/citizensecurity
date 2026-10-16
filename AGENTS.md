@@ -1,5 +1,19 @@
 # Trabajo del equipo
 
+## Alcance vigente — fase 38 y publicación pospuesta
+
+El usuario pospuso expresamente la publicación: «mejor sigue chambeando en la app lo del release luego pero guardalo para cuando subamos siguiente release». Conservar la preparación local 0.6.2/código 30, APK candidata, comprobación de actualización y borradores de entrega. No crear tag/Release, subir APK ni integrar la preparación de entrega por la autorización anterior. La última APK oficial continúa siendo 0.6.1. La numeración preparada es tentativa hasta la siguiente instrucción de publicar.
+
+Continuar 4.6 del PDF con fase 38: separar consulta administrativa y cambio de estado mediante una política explícita, denegada por defecto, sobre dueño/actor capturados. Revalidar sesión y permiso antes/después de IO y dentro de la transacción antes del commit. Permiso de consulta no autoriza escritura o reconocimiento de recibos de cambios. No asignar roles, añadir un botón vacío ni modificar login/loading o datos/esquemas. La asignación administrativa sigue pendiente por elección del usuario. 20/28 = 71.4% permanece hasta cerrar el recorrido autorizado; no contar bases ni pruebas como hitos.
+
+## Antecedente — preparación de entrega 0.6.2, fases 35–37 (pospuesta)
+
+El usuario pidió expresamente «sube release con lo nuevo». Publicar 0.6.2/código Android 30, agrupando Actividad, avisos manuales optativos y mensaje revisado para un contacto. Autoriza preparar/validar código y APK, integrar main, crear tag/Release y adjuntar APK/checksum. Conservar paquete/firma académica, datos e historia, login/loading, esquemas y las entregas anteriores. No instalar/borrar datos del teléfono; validación en emulador propio aislado.
+
+Asignación administrativa pendiente, escritura denegada por defecto y admin/admin académico. Avisos requieren revisión manual; no anunciar push, recepción institucional o SMS enviado. 20/28 = 71.4% conserva los ocho pendientes del PDF. Los bloques Unreleased inferiores son preparación incluida en esta entrega; su prohibición de publicar era para continuar fases sin una solicitud de Release.
+
+## Antecedente — fase 37
+
 ## Alcance vigente — fase 37: mensaje revisado para un contacto, Unreleased
 
 Continuar las fases permite concretar E06 del catálogo de utilidad: desde un folio guardado, elegir un contacto manual vigente del mismo espacio, revisar texto y decidir si incluir referencia/punto (inicialmente apagado), y abrir la composición SMS con otro gesto. No enviar mensajes, pedir permisos SMS/agenda/GPS, adjuntar archivos o afirmar recepción. La ficha PDF conserva su recorrido propio. Avisar en revisión que la app de mensajes puede omitir el texto y que el operador puede cobrar su envío.

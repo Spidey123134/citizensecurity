@@ -13,9 +13,11 @@ android {
         applicationId = "com.example.citizensecurity"
         minSdk = 26
         targetSdk = 37
-        versionCode = 29
-        versionName = "0.6.1"
-        testInstrumentationRunner = "com.example.citizensecurity.testing.ReportTestRunner"
+        versionCode = 30
+        versionName = "0.6.2"
+        // Upgrade acceptance uses the installed older Application; normal tests use fixtures.
+        testInstrumentationRunner = providers.gradleProperty("citizenSecurityTestRunner")
+            .orElse("com.example.citizensecurity.testing.ReportTestRunner").get()
     }
     buildFeatures { compose = true }
     compileOptions {
