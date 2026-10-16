@@ -1,5 +1,13 @@
 # Avance del plan del proyecto
 
+**Fase 42, desarrollo local validado el 16 de octubre de 2026:** del recibo de cambio confirmado se abren **Ver actividad de esta cuenta** y **Revisar avisos de cambios**, sin reconocer la solicitud, transportar el cuerpo del cambio en extras o iniciar una revisión/publicación; las rutas conservan el sello de sesión. Avisos mantiene activación voluntaria por cuenta, permiso/canal y revisión manual de los eventos reales guardados en SQLite; el resumen general deduplica por UUID de operación. El endurecimiento del almacén conserva `.new`/`.bak` pendientes sin restaurar o limpiar. [Alcance](FASE_42.md) · [Guía](ADMINISTRADOR_LOCAL.md).
+
+**28/28 = 100% de construcción funcional local**, con **4.7 Notificaciones en 4/4** al comprobar eventos de cambios autorizados, entrega del resumen y recorrido integrado. Quedan cero criterios funcionales locales pendientes del plan.
+
+**1431 casos distintos aprobados/14 nuevos**, sin fallos/errores/omitidos finales: 1379 JVM —205 recibos intactos de dominio reutilizados, 148 datos y 1026 app ejecutados— y 52 Android API 37 ejecutados. Lint sin errores/22 avisos existentes por variante de app; datos sin incidencias. [Desglose y límites](VALIDACION.md).
+
+El cierre se refiere exclusivamente a **construcción funcional local del plan**. La aceptación física completa, preparación de la entrega, seguridad de producción e integración institucional conservan sus alcances propios; no se atribuyen por completar criterios o ejecutar pruebas. Código local, sin actualizar GitHub/main o PR #30 y sin publicar APK/tag/Release. La oficial 0.6.1 mantiene su corte. Los párrafos inferiores conservan sus cifras históricas y las matrices vigentes reflejan fase 42.
+
 **Fase 41, desarrollo local validado:** seguimiento administrativo con lectura de estado/revisión, motivo de 5–500 caracteres, revisión y confirmación separadas. Transiciones consecutivas, actor por UUID, fecha, motivo y secuencia reales; estados de este teléfono sin acreditar atención de una institución. Recuperación por lectura y reintento de la solicitud exacta, reconocimientos explícitos y protección de sesión/permisos/primer plano. [Alcance](FASE_41.md) · [Guía](ADMINISTRADOR_LOCAL.md).
 
 **25/28 = 89.3%**, con seguimiento de **4.4 (4/4)** y cambio/historial de **4.6 (4/4)** completados mediante el recorrido integrado. **1488 casos distintos aprobados/103 nuevos**, sin fallos finales: 1379 JVM y 109 Android. Los tres pendientes de **4.7** requieren la siguiente integración de avisos sobre cambios reales; no se suman definiciones, repeticiones o publicaciones como criterios.
@@ -24,9 +32,9 @@ Corte local, sin push, cambios a main, actualización del [PR #30 de fase 40](ht
 
 **Entrega 0.6.1 — 14 de octubre de 2026 · código Android 29:** fases 29–34 agrupadas, con cámara/galería, ficha PDF, contactos, Ayuda inmediata/atajos y mosaico de Ajustes rápidos. Amplían utilidad y la fotografía ya construida, por lo que **19/28 = 67.9%** conserva los mismos criterios y nueve pendientes. [Entrega](ENTREGA_0_6_1.md) · [Pruebas y límites](VALIDACION.md). Administración y asignación siguen pendientes.
 
-## Avance vigente — 15 de octubre de 2026
+## Avance vigente — 16 de octubre de 2026
 
-**25/28 = 89.3% de construcción**, mismos criterios y pesos del PDF/cliente. La fase 41 completa **seguimiento de 4.4 y cambio/historial administrativo de 4.6** mediante el recorrido visible autorizado y su recuperación durable, con rol, SQLite y diario reales. La fase 40 conserva alta/consulta y roles locales. **4.7** mantiene permisos y preferencias de fase 36; faltan comprobar sus otros tres criterios sobre el nuevo recorrido de cambios. Las extensiones E01–E04/E10 incluidas en 0.6.1 amplían utilidad sin sumar criterios ya completos.
+**28/28 = 100% de construcción funcional local**, mismos criterios y pesos del PDF/cliente. La fase 42 completa **4.7 Notificaciones** al comprobar avisos manuales sobre los eventos reales del escritor autorizado de fase 41. Se conservan seguimiento/cambio/historial administrativo de fase 41, alta/consulta/roles de fase 40 y permisos/preferencias de fase 36. Las extensiones E01–E04/E10 incluidas en 0.6.1 amplían utilidad sin sumar criterios ya completos.
 
 | Punto original | Construidos | Pendientes |
 |---|---|---|
@@ -36,11 +44,11 @@ Corte local, sin push, cambios a main, actualización del [PR #30 de fase 40](ht
 | 4.4 Consulta | 4/4 | 0 |
 | 4.5 Mapas | 4/4 | 0 |
 | 4.6 Administración | 4/4 | 0 |
-| 4.7 Notificaciones | 1/4 | 3: eventos y entrega en el recorrido autorizado, recorrido completo probado |
+| 4.7 Notificaciones | 4/4 | 0 |
 
-Faltan **3 criterios originales de 4.7**: eventos de cambios, entrega de avisos y recorrido completo probado. La cuenta local elegida es `admin_local`; su activación requiere la credencial nativa del propietario y un segundo gesto en ese teléfono. Consulta y cambio tienen un recorrido integrado comprobado en emulador, limitado a su propio espacio; no se afirma que ya se activó en el teléfono del usuario o hubo atención de una autoridad. Las comprobaciones se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
+Quedan **0 criterios funcionales locales** pendientes. La cuenta elegida es `admin_local`; su activación requiere la credencial nativa del propietario y un segundo gesto en ese teléfono. Consulta, cambio y avisos tienen un recorrido integrado comprobado en emulador, limitado al propio espacio. La aceptación física completa y preparación de la entrega permanecen separadas; no se afirma que ya se activó en el teléfono del usuario o hubo atención de una autoridad. Las comprobaciones se registran por corte en [Validación](VALIDACION.md) y no se suman como puntos ni otra prueba física GPS.
 
-La APK oficial **0.6.1** contiene fases 29–34 y conserva su cierre de 1237 casos distintos. Las fases 35–41 se mantienen como código **Unreleased**; no se incorporan a esa descarga por subir una rama o un PR en borrador. La fase 41 permanece local y no actualiza el PR de fase 40. Los resultados de cada corte están separados en [Validación](VALIDACION.md), sin sumar repeticiones. Las nativas API 37 no acreditan ejecución física, muerte completa del proceso o recepción institucional.
+La APK oficial **0.6.1** contiene fases 29–34 y conserva su cierre de 1237 casos distintos. Las fases 35–42 se mantienen como código **Unreleased**; no se incorporan a esa descarga por subir una rama o un PR en borrador. Las fases 41/42 permanecen locales y no actualizan el PR de fase 40. Los resultados de cada corte están separados en [Validación](VALIDACION.md), sin sumar repeticiones. Las nativas API 37 no acreditan ejecución física, muerte completa del proceso o recepción institucional.
 
 [Criterios vigentes](#cómo-se-calcula--criterios-vigentes) · [Plan](PLAN_DEL_PROYECTO.md) · [Fases](FASES.md) · [Release 0.6.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1). Android **0.6.1 / código 29**, reportes esquema 4 y cuentas 1. Los bloques siguientes conservan sus cifras y pendientes históricos; sus marcas Unreleased describen aquella preparación.
 
@@ -278,9 +286,9 @@ Una pantalla visual cuenta solo como preparación visual; una lógica probada cu
 | 4.4 Consulta | Lectura por folio; lista y permanencia; reportes propios por usuario; seguimiento de estados | Folio, lista/permanencia y espacio de cuenta de fase 26; historial de fase 27. Fase 41 compone seguimiento visible con cambios autorizados, revisión y recuperación del recibo comprobados en Android con SQLite/diario reales | 4/4 · 100% de construcción local |
 | 4.5 Mapas | Contrato de selección y confirmación; SDK configurado; mapa por zonas y marcadores; flujo visual integrado y probado | Contrato, SDK, zonas/marcadores y flujo visual integrado en 0.5.3: guardado/folio, mapa nativo con calles y pines SQLite, filtros/límite y pin→detalle. La validación nativa usa una fuente de teléfono controlada; la aceptación manual física posterior se acredita por separado en 4.3 | 4/4 · 100% de construcción |
 | 4.6 Administración | Consulta administrativa; cambios de estado; roles y permisos comprobados; historial | Fase 40: alta/consulta y permisos por UUID/sesión. Fase 41: cambios consecutivos visibles con motivo revisado, confirmación separada, recuperación exacta e historial con actor/fecha/secuencia, comprobados en Android | 4/4 · 100% de construcción local |
-| 4.7 Notificaciones | Eventos de cambios; entrega de avisos; permisos y preferencias; flujo completo probado | Permisos y preferencias por cuenta de fase 36, con denegación/concesión reales de Android y persistencia comprobadas. Consumidor manual implementado; los otros tres criterios requieren integrar y probar avisos sobre los cambios autorizados visibles de fase 41 | 1/4 · 25% |
+| 4.7 Notificaciones | Eventos de cambios; entrega de avisos; permisos y preferencias; flujo completo probado | Fase 36: permiso/preferencias por cuenta y persistencia. Fase 42: cambios autorizados reales de fase 41, evento SQL, revisión manual, resumen Android y deduplicación por operación comprobados en el recorrido nativo; desactivar conserva IDs y navegar conserva el pendiente administrativo | 4/4 · 100% de construcción funcional local |
 
-**Avance actual estimado: 25/28 = 89.3% de construcción.** La fase 41 añade seguimiento autorizado, cambio de estado e historial administrativo completo; fase 40 conserva consulta/roles y fase 36 permisos/preferencias. Quedan tres criterios de Notificaciones. Fotografías y aceptación manual GPS conservan sus hitos/límites. Publicar y repetir pruebas no suman puntos. No declara servidor/sincronización, seguridad de producción, recepción institucional o veracidad de incidentes.
+**Avance actual: 28/28 = 100% de construcción funcional local.** La fase 42 cierra eventos, entrega de avisos y recorrido integrado; las fases 40/41 conservan administración y seguimiento, y fase 36 permisos/preferencias. Quedan cero criterios funcionales locales pendientes; aceptación física completa y preparación de la entrega se comprueban aparte. Fotografías y aceptación manual GPS conservan sus hitos/límites. Publicar y repetir pruebas no suman puntos. No declara servidor/sincronización, seguridad de producción, recepción institucional o veracidad de incidentes.
 
 ## Antecedentes de cálculo y evidencia
 

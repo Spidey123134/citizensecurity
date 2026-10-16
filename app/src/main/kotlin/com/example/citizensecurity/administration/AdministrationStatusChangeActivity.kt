@@ -1,6 +1,7 @@
 package com.example.citizensecurity.administration
 
 import android.app.KeyguardManager
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
@@ -13,6 +14,8 @@ import com.example.citizensecurity.account.ReportWorkspace
 import com.example.citizensecurity.account.ReportWorkspaceActivity
 import com.example.citizensecurity.preview.PreviewTheme
 import com.example.citizensecurity.report.ReportStatusRecoveryViewModel
+import com.example.citizensecurity.alerts.ReportAlertsActivity
+import com.example.citizensecurity.reports.ReportActivityActivity
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 
@@ -46,7 +49,9 @@ class AdministrationStatusChangeActivity : ReportWorkspaceActivity() {
             runCatching { UUID.fromString(it).toString() == it }.getOrDefault(false)
         }
         setContent { PreviewTheme {
-            AdministrationStatusChangeScreen(preparation, recovery, folio, { route.canApply(owner) }, ::finish)
+            AdministrationStatusChangeScreen(preparation, recovery, folio, { route.canApply(owner) }, ::finish,
+                onAlerts = { openAccountRoute(ReportAlertsActivity::class.java) },
+                onActivity = { openAccountRoute(ReportActivityActivity::class.java) })
         } }
     }
 
@@ -61,6 +66,13 @@ class AdministrationStatusChangeActivity : ReportWorkspaceActivity() {
     override fun onPause() {
         if (::route.isInitialized) route.pause(owner)
         super.onPause()
+    }
+
+    /** Destinations reread this captured account. Navigation never consumes the durable receipt. */
+    private fun openAccountRoute(destination: Class<out android.app.Activity>) {
+        if (::route.isInitialized && route.canApply(owner) && ensureReportWorkspaceCurrent()) {
+            startReportActivity(Intent(this, destination))
+        }
     }
 
     companion object { const val EXTRA_REPORT_ID = "administration.report_id" }

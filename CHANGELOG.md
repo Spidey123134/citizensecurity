@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Fase 42 — desarrollo local validado
+
+- El recibo de cambio confirmado incorpora **Ver actividad de esta cuenta** y **Revisar avisos de cambios** mediante gestos independientes. Las rutas conservan el workspace/sesión y no llevan datos privados del reporte en extras, reconocen la solicitud, revisan eventos o activan avisos automáticamente.
+- Recorrido integrado entre cambio autorizado real, evento SQLite, revisión manual y resumen general de Android. Se conservan preferencia por cuenta, permiso/canal, registro por UUID de operación después de la aceptación y deduplicación; desactivar conserva los IDs aceptados.
+- Lecturas de avisos con `.new` o `.bak` pendientes bloqueadas sin restaurar respaldos, limpiar residuos o reemplazar el registro. Archivos, preferencias e IDs conservados en las pruebas nativas de almacenamiento.
+- **28/28 = 100% de construcción funcional local**, con Notificaciones **4/4** y cero criterios funcionales locales pendientes. Aceptación física completa, entrega y seguridad de producción conservan su alcance separado.
+- **1431 casos distintos aprobados/14 nuevos**, cero fallos/errores/omitidos finales: 1379 JVM —205 recibos intactos de dominio reutilizados, 148 datos y 1026 app ejecutados— y 52 Android ejecutados. Lint app sin errores/22 avisos existentes por variante; datos sin incidencias. No se suman las ejecuciones de cortes anteriores.
+- Trabajo local sin actualizar GitHub/main o PR #30, publicar APK/tag/Release o cambiar la descarga oficial 0.6.1. [Fase 42](docs/FASE_42.md) · [Guía](docs/ADMINISTRADOR_LOCAL.md) · [Validación](docs/VALIDACION.md).
+
 ### Fase 41 — desarrollo local validado
 
 - Cambio de estado desde un folio administrativo: consulta de revisión real, motivo válido de 5–500 caracteres, revisión explícita y segundo gesto de confirmación. Avance consecutivo Reportado → En revisión → Atendido → Cerrado; sin saltos ni cambios desde Cerrado.

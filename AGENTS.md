@@ -1,6 +1,16 @@
 # Trabajo del equipo
 
-## Alcance vigente — fase 41: cambio de estado y seguimiento local
+## Alcance vigente — fase 42: avisos sobre cambios reales
+
+El usuario pidió seguir tras la validación de fase41. Completar la composición local de4.7: desde un recibo confirmado, abrir Actividad o Avisos por gestos separados. Los destinos reciben solo el sello del workspace, sin folio/motivo/actor/operación nuevos en Intent. Navegar no reconoce el recibo, borra el diario, activa preferencias, pide permisos o publica. Activar y revisar siguen siendo gestos distintos; el consentimiento se limita a ese acceso, con permiso nativo y canal vigentes. El resumen Android continúa genérico, sin datos privados, inmutable y sin atribuir lectura/recepción institucional. No cambiar login/loading, servidor ni trabajo en segundo plano.
+
+Endurecer ReportAlertsStore: una lectura no puede restaurar .bak ni retirar .new y con ello retroceder IDs/preferencias. Archivos inciertos/corruptos y enlaces se conservan con error, nunca se convierten en vacío. Mantener CAS, límites y recibos. Probar con escritura real autorizada de fase41, operationId SQLite exacto, opt-in, revisión/deduplicación, desactivar sin perder IDs y aislamiento entre cuentas. Emulador propio API37 de solo lectura; revocar permiso solo entre instrumentaciones si es necesario, nunca durante un test o en teléfono físico. Cerrar criterios y porcentaje solo tras validación final; el corte confirmado anterior es25/28=89.3. Código local, sin push/merge/tag/APK/Release ni modificar PR30/main por «sigue».
+
+Cierre fase 42: **28/28 = 100% de construcción funcional local**, 4.7 en 4/4 por la cadena real escritor autorizado → evento SQL → revisión manual → resumen aceptado por Android y recibo durable/deduplicación. No acredita aceptación física final, seguridad de producción, servidor, operación institucional o lectura del aviso. Mantener esos alcances separados del denominador original; E01–E10 no suman puntos. Próximo trabajo: aceptación completa en teléfono y correcciones de uso, antes de una entrega que el usuario solicite expresamente.
+
+Validación: **1431 casos distintos / 14 nuevos**, cero fallos, errores u omitidos. JVM 1379: dominio 205 recibos intactos reutilizados sin cambios, datos 148 y app 1026 ejecutados; Android 52: almacén 26 (10 nuevos), integración real 4 nuevos, avisos previos 4, publicador 10 y estados 8. Este corte ejecuta suites diferentes al de fase 41 y no suma sus 1488 casos. Lint app 0 errores / 22 avisos existentes por variante; datos sin incidencias. Permiso Allow nativo en la integración y Deny/Allow en regresión; revocación y flags solo entre instrumentaciones terminadas del emulador propio de solo lectura API37, cerrado al final. No teléfono, PIN, API26 o muerte completa del proceso nuevos. Recibo alerts42-test-proof.json y logs alerts42-* ignorados; docs/VALIDACION.md. QA interna SHA-256 114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4; oficial 0.6.1, candidato archivado y main/PR30 conservados. Se corrigió el SHA y desglose de app en FASE_41.md contra su recibo final, sin alterar aquel corte.
+
+## Antecedente — fase 41: cambio de estado y seguimiento local
 
 El usuario pidió continuar después del cierre de fase40. Componer el escritor real para admin_local desde la consulta, sin tocar login/loading, extender el alcance a otras cuentas o publicar una nueva entrega. Este corte es local; conservar PR30/ramas públicas, main, APK oficial y candidato archivado. No push/merge/tag/Release/APK nueva por inferirlo de «sigue».
 

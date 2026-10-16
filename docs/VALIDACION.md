@@ -1,5 +1,30 @@
 # Validación y comprobaciones del proyecto
 
+## Avisos a partir de cambios autorizados reales — fase 42 · 16 de octubre de 2026
+
+**1431 casos distintos aprobados, 14 definiciones nuevas; cero fallos, errores u omitidos.** Se ejecutan las suites afectadas y sus regresiones. El total de este corte no suma otros cierres; ser menor que los 1488 de fase41 refleja las suites seleccionadas, sin retirar pruebas anteriores.
+
+| Suite | Distintos aprobados | Nuevos | Procedencia |
+| --- | ---: | ---: | --- |
+| Dominio JVM | 205 | 0 | Recibos intactos reutilizados; dominio sin cambios |
+| Datos JVM / SQLite del host | 148 | 0 | Ejecutados sobre la fuente final |
+| App JVM | 1026 | 0 | Ejecutados sobre la fuente final |
+| Datos Android API37 | 26 | 10 | Almacén de avisos, CAS, archivos pendientes y rutas |
+| App Android API37 | 26 | 4 | Integración real4, avisos4, publicador10 y cambio de estado8 |
+| **Total distinto** | **1431** | **14** | **1379 JVM y 52 Android** |
+
+Las cuatro pruebas nuevas registran y autentican una cuenta local real, asignan el rol únicamente en el directorio del fixture y crean un reporte en SQLite. El cambio se prepara, revisa y confirma mediante la pantalla productiva de fase41; la operación del evento SQL coincide con la solicitud y su recibo. Desde ese recibo se abre Actividad, se verifica el evento y se vuelve a la misma solicitud; abrir Avisos después no crea preferencias, solicita permiso o publica automáticamente.
+
+La concesión real del permiso de Android se completa por su diálogo nativo. Activarlo conserva el registro de presentaciones vacío hasta el gesto de revisión. Revisar usa el UUID real del evento SQL y Android mantiene un único resumen con texto genérico, visibilidad SECRET y PendingIntent inmutable; folio, motivo, actor, operación, descripción y coordenadas no aparecen en los extras de la notificación. Otra revisión y un giro conservan los mismos IDs y no repiten el aviso. Volver al recibo mantiene diario/evento intactos; desactivar retira el resumen propio y conserva los IDs. Una segunda cuenta registrada sin rol no adopta los eventos, preferencias o permisos administrativos de la primera; el cambio de sesión retira el resumen anterior.
+
+El caso de preferencias corruptas conserva sus bytes y presenta error tanto al entrar como al recargar. Solo el fixture restaura sus propios bytes para continuar la prueba: restaurarlo no publica automáticamente, y otra revisión explícita sí puede procesar el cambio real. Esto no introduce una reparación o reset en el producto. Las 26 pruebas de datos incluyen diez nuevas que conservan `.new`/`.bak` con o sin base, rechazan directorios/enlaces y detectan la sustitución del staging o un sidecar ajeno durante la escritura. Lectura NOFOLLOW sin `AtomicFile.openRead`, comprobación del descriptor/inode y recibo completo evitan retroceder silenciosamente la preferencia o sus IDs. CAS, límite de 256KiB/4096 operaciones y copia de sets antes del dispatcher siguen comprobados.
+
+Las regresiones añaden cuatro recorridos de avisos con denegación/concesión nativas, diez del publicador y ocho del cambio administrativo. Comprueban la creación excluida de los avisos de cambios, bloqueo real del canal desde Ajustes, salida por Splash/login, fill-in ignorado, cancelación solo del intento propio y protección de sesiones/recibos. Entre las dos instrumentaciones terminadas se revocó POST_NOTIFICATIONS y retiraron sus flags de usuario mediante adb, exclusivamente en el emulador propio, para repetir el diálogo Deny/Allow; no se revocó durante una prueba ni en un teléfono físico. La nueva integración se ejecutó primero con el permiso inicialmente denegado. No se cambió ningún PIN.
+
+Compilación Kotlin debug/release, ensamblados internos y suites correctos; **lint app 0 errores/22 avisos existentes por variante, datos sin incidencias**. Logs ignorados `alerts42-build.log`, `alerts42-data-native.log`, `alerts42-integration-native.log`, `alerts42-ui-regression-native.log` y `alerts42-routes-publisher-native.log`. Recibo verificable: `.gradle/validacion/alerts42-test-proof.json`. El APK de QA tiene SHA-256 `114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4`; es material interno, no una nueva descarga oficial. Emulador API37 de solo lectura cerrado; no instalación en teléfono, aceptación física completa nueva, ejecución API26 o muerte completa del proceso acreditadas.
+
+**28/28 = 100% de construcción funcional local de los criterios originales.** Se cierran eventos de cambios, entrega local autorizada y recorrido integrado de4.7, conservando permiso/preferencias ya acreditados. Android aceptar el resumen no demuestra lectura ni recepción o atención institucional. El cierre no acredita seguridad de producción, servidor, sincronización o integración policial; esos alcances y la aceptación física final se mantienen separados. Código/documentación permanecen locales: PR30/main, APK oficial0.6.1 y candidato archivado0.6.2 intactos, sin nueva subida de APK/tag/Release. [Fase42](FASE_42.md) · [Guía](ADMINISTRADOR_LOCAL.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
 ## Cambio de estado y seguimiento administrativo local — fase 41 · 15 de octubre de 2026
 
 **1488 casos distintos aprobados, 103 definiciones nuevas; cero fallos, errores u omitidos finales.** Son 1379 JVM y 109 Android. Se separan los recibos reutilizados, los grupos ejecutados y las repeticiones sin sumarlas de nuevo.

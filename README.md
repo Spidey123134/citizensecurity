@@ -1,5 +1,17 @@
 # CITIZENSECURITY
 
+## Desarrollo local Unreleased — fase 42: del cambio confirmado a sus avisos
+
+El recibo administrativo ofrece **Ver actividad de esta cuenta** y **Revisar avisos de cambios**. Cada botón abre la pantalla correspondiente del mismo espacio; conserva el sello interno de sesión y no transmite el motivo, el folio o el cuerpo del cambio en el Intent. No reconoce la solicitud pendiente ni activa avisos o revisa eventos al entrar. Puedes volver al recibo para cerrarlo mediante su acción propia. [Recorrido de fase 42](docs/FASE_42.md) · [Guía para el equipo](docs/ADMINISTRADOR_LOCAL.md).
+
+Los avisos mantienen la preferencia voluntaria por cuenta, el permiso/canal de Android y **Revisar cambios** como gesto separado. Solo las transiciones reales guardadas en SQLite pueden producir el resumen general; sus UUID de operación se registran después de la aceptación de Android para evitar repetirlos. Desactivar conserva esos registros. También se refuerza la conservación de archivos de avisos con `.new` o `.bak`: una lectura no restaura ni limpia resultados inciertos.
+
+**Fase 42 validada el 16 de octubre de 2026: 28/28 = 100% de construcción funcional local del plan.** Notificaciones alcanza **4/4** al comprobar eventos de cambios autorizados, entrega del resumen y recorrido integrado. Quedan **0 criterios funcionales locales** pendientes; la aceptación física completa y la preparación de una entrega se registran aparte.
+
+**1431 casos distintos aprobados, 14 nuevos**, sin fallos/errores/omitidos finales: 1379 JVM —205 recibos intactos reutilizados y 1174 ejecutados— y 52 Android API 37 ejecutados en este corte. Lint sin errores/22 avisos existentes por variante de app; datos sin incidencias. [Desglose y límites](docs/VALIDACION.md).
+
+Este corte permanece **local**: no actualiza GitHub/main o el [PR #30 de fase 40](https://github.com/Spidey123134/citizensecurity/pull/30), ni publica APK/tag/Release. La descarga oficial **0.6.1** conserva su contenido. El cierre se refiere a construcción funcional local del plan; no acredita aceptación física final, atención institucional o seguridad de producción. Los bloques inferiores conservan los resultados de cada fase.
+
 ## Desarrollo local Unreleased — fase 41: cambios de estado reales
 
 La cuenta **`admin_local` se registra en el teléfono** con su propia contraseña y requiere la asignación de fase 40; no se crea automáticamente. Desde un folio de la consulta administrativa, **Preparar cambio de estado** comprueba pendientes antes de consultar estado/revisión, escribir un motivo de 5–500 caracteres, revisar y confirmar mediante un segundo gesto. Solo permite avances consecutivos: **Reportado → En revisión → Atendido → Cerrado**.

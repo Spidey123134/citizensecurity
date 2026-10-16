@@ -46,6 +46,8 @@ internal fun AdministrationStatusChangeScreen(
     initialReportId: String?,
     canApply: () -> Boolean,
     onClose: () -> Unit,
+    onAlerts: (() -> Unit)? = null,
+    onActivity: (() -> Unit)? = null,
 ) {
     val prepared = preparation.state.collectAsStateWithLifecycle().value
     val recovered = recovery.state.collectAsStateWithLifecycle().value
@@ -133,6 +135,20 @@ internal fun AdministrationStatusChangeScreen(
                             Text("Cuenta local que registró el cambio: ${event.actorAccountId}")
                             Text("Registro: ${statusTime(event.recordedAt, zone)} · ${zone.id}")
                             Text("Operación: ${event.operationId}", style = MaterialTheme.typography.bodySmall)
+                            onActivity?.let { open ->
+                                OutlinedButton(onClick = { action(open) },
+                                    modifier = Modifier.fillMaxWidth().testTag("admin_status_activity")) {
+                                    Text("Ver actividad de esta cuenta")
+                                }
+                            }
+                            onAlerts?.let { open ->
+                                OutlinedButton(onClick = { action(open) },
+                                    modifier = Modifier.fillMaxWidth().testTag("admin_status_alerts")) {
+                                    Text("Revisar avisos de cambios")
+                                }
+                                Text("Abrir los avisos no los activa ni publica una notificación. Allí puedes elegir la preferencia y revisar los cambios.",
+                                    style = MaterialTheme.typography.bodySmall)
+                            }
                             Button(onClick = { action { recovery.acknowledgeConfirmed(recovered) } },
                                 modifier = Modifier.fillMaxWidth().testTag("admin_status_acknowledge")) { Text("Entendido: cerrar esta solicitud") }
                             Text("Cerrar el recibo no borra el evento del historial. Después podrás consultar de nuevo el estado para preparar otro cambio.", style = MaterialTheme.typography.bodySmall)

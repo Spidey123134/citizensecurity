@@ -1,5 +1,23 @@
 # Administración local: cuenta y uso
 
+**16 de octubre de 2026 · ampliación local de fase 42, validada.** Desde el recibo de un cambio confirmado se puede abrir su actividad y el panel de avisos. El alta y el cambio de estado conservan los pasos de fases 40/41 descritos debajo; esta ampliación todavía no está en la APK oficial **0.6.1** ni actualiza el PR #30 de fase 40.
+
+## Del recibo a la actividad y los avisos
+
+1. Confirma un cambio mediante el recorrido administrativo y comprueba su recibo. Desde ahí, **Ver actividad de esta cuenta** abre los eventos del mismo espacio; **Revisar avisos de cambios** abre la configuración de avisos. Las rutas conservan el sello interno de sesión, sin llevar el motivo o el cuerpo del cambio en extras. Ninguna reconoce o borra la solicitud pendiente, revisa o publica avisos automáticamente.
+2. En Avisos, **Activar avisos** pide el permiso de Android cuando corresponde y guarda la preferencia para esa cuenta. Si el permiso o canal están bloqueados, revisa **Ajustes de avisos de Android** y vuelve a comprobar; tus eventos y reportes se conservan.
+3. Pulsa **Revisar cambios** para consultar las transiciones registradas en SQLite. El evento de un cambio ya guardado puede avisarse aunque su recibo administrativo siga pendiente de recuperar o reconocer; el aviso y ese reconocimiento son operaciones separadas. Guardar un reporte y su evento de creación no equivale a un cambio de estado para avisar. Una revisión puede examinar hasta **500 eventos** en páginas de **50**; si queda recorrido, usa **Seguir revisando cambios**.
+4. Cuando Android acepta el resumen, la app conserva los UUID de esas operaciones. Otra revisión no vuelve a avisar de los mismos cambios ya registrados. El mensaje del sistema es general: no incluye cuenta, folio, motivo, fotografía o ubicación y no confirma que se haya leído o atendido el incidente por una autoridad.
+5. **Desactivar avisos** retira el resumen y conserva el registro de operaciones aceptadas. Salir de Avisos o Actividad conserva la solicitud administrativa: vuelve al recibo y usa **Entendido: cerrar esta solicitud** cuando quieras reconocerla. Abrir una ruta, girar o regresar no sustituye ese gesto.
+
+La revisión es manual; no existe un servicio que revise cambios en segundo plano. Actividad y Avisos consultan el espacio de la sesión vigente sin recibir autoridad administrativa de los extras. Un archivo de avisos corrupto o con `.new`/`.bak` pendiente bloquea su lectura/escritura y conserva esos archivos para revisión; no borres datos ni reinstales como solución.
+
+**Fase 42 cierra 28/28 = 100% de construcción funcional local del plan**, con Notificaciones **4/4** y cero criterios funcionales locales pendientes. Se comprobaron los eventos reales, entrega del resumen y recorrido integrado sobre los cambios autorizados de fase 41.
+
+**1431 casos distintos aprobados/14 nuevos**, cero fallos/errores/omitidos finales: 1379 JVM —205 recibos intactos de dominio reutilizados, 148 datos y 1026 app ejecutados— y 52 Android API 37 ejecutados. Los 14 nuevos son 10 de almacenamiento y cuatro del recorrido integrado. Las pruebas nativas comprobaron la concesión real del permiso, el cambio con rol/diario/SQLite reales, la misma operación en el aviso, deduplicación y conservación del pendiente al navegar; las regresiones volvieron a comprobar denegación/concesión, publisher y cambio de estado. Lint app sin errores/22 avisos existentes por variante; datos sin incidencias. [Desglose y límites](VALIDACION.md).
+
+El cierre describe **construcción funcional local del plan**. La aceptación física completa, preparación de una entrega y seguridad de producción institucional conservan sus comprobaciones propias; el emulador API 37 no acredita pruebas físicas, API 26 o muerte completa del proceso. [Fase 42](FASE_42.md) · [Validación](VALIDACION.md). La siguiente sección conserva el registro del alta y los resultados de fases anteriores.
+
 **15 de octubre de 2026 · guía ampliada para fase 41, desarrollo local Unreleased validado.** Se eligió **`admin_local`** con autorización del usuario. La cuenta se registra en el teléfono y **no se crea automáticamente**. El nombre abre la configuración; los permisos se conceden después de confirmar al propietario con Android y pulsar otra vez para activar. El alta de fase 40 se conserva; una asignación ya comprobada no requiere repetir ese alta para cada cambio de estado.
 
 ## Cuenta y contraseñas

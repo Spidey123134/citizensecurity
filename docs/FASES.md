@@ -1,5 +1,17 @@
 # Fases de CITIZENSECURITY
 
+## Fase 42 — cambio confirmado, actividad y avisos, local validada
+
+Completa **4.7 Notificaciones** con las transiciones autorizadas de fase 41. Desde el recibo confirmado se puede abrir **Ver actividad de esta cuenta** o **Revisar avisos de cambios**, sin reconocer el pendiente o pasar el cuerpo del cambio por extras; conserva el sello interno de sesión. La apertura no activa la preferencia, pide permiso, revisa eventos ni publica; cada decisión conserva su gesto propio.
+
+El consumidor manual consulta cambios reales de SQLite y conserva los UUID aceptados por Android con CAS, deduplicación y límites. El resumen no contiene la identidad o datos del incidente. Desactivar cancela el resumen y conserva sus IDs. El almacén rechaza `.new`/`.bak` inciertos sin restaurarlos o borrarlos. [Recorrido y alcance](FASE_42.md) · [Guía](ADMINISTRADOR_LOCAL.md).
+
+**16 de octubre de 2026 · 28/28 = 100% de construcción funcional local.** Notificaciones alcanza **4/4**: eventos reales autorizados, entrega del aviso y recorrido integrado comprobados, además de los permisos/preferencias existentes. Quedan cero criterios funcionales locales pendientes.
+
+**1431 casos distintos aprobados/14 nuevos**, sin fallos/errores/omitidos finales: 1379 JVM —205 recibos intactos de dominio reutilizados, 148 datos y 1026 app ejecutados— y 52 Android API 37 ejecutados. Lint sin errores/22 avisos existentes por variante de app; datos sin incidencias. [Desglose y límites](VALIDACION.md).
+
+El cierre es de construcción funcional **local** del plan; la aceptación física completa, la entrega y la seguridad de producción institucional se registran aparte. Código local, sin actualizar GitHub/main o PR #30, ni publicar APK/tag/Release; oficial **0.6.1** conservada. Las fases inferiores mantienen sus cifras históricas.
+
 ## Fase 41 — cambio de estado e historial administrativo, local validada
 
 Continúa **4.4 Consulta y 4.6 Administración**: desde un folio, comprobar pendientes, leer revisión/estado, escribir un motivo válido de 5–500 caracteres, revisar y confirmar con otro gesto. Solo avances consecutivos **Reportado → En revisión → Atendido → Cerrado**. El recibo y el historial conservan actor por UUID, fecha, motivo, secuencia y operación; son estados locales, sin acreditar atención oficial.

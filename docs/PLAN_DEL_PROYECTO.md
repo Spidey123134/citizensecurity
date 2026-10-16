@@ -1,5 +1,17 @@
 # Plan del proyecto
 
+## Continuación local — fase 42 validada
+
+La [fase 42](FASE_42.md) completa **4.7 Notificaciones** mediante los cambios reales autorizados de fase 41. El recibo ofrece **Ver actividad de esta cuenta** y **Revisar avisos de cambios**; abrir cualquiera conserva la solicitud, sin reconocerla, cambiar preferencias, revisar eventos o publicar un aviso. Las rutas usan el espacio capturado y su sello de sesión; no transportan el motivo, el folio o el cuerpo del cambio en extras. [Guía del recorrido](ADMINISTRADOR_LOCAL.md).
+
+Se comprobó la cadena operación administrativa → evento SQLite → revisión manual → resumen genérico Android → registro de la misma operación y deduplicación. Se conservan permiso/canal, preferencia voluntaria por cuenta y límites 50/500/4096; desactivar retira el resumen sin retirar IDs. El almacén bloquea `.new`/`.bak` pendientes sin restaurar una copia ni limpiar residuos al leer.
+
+**16 de octubre de 2026 · 28/28 = 100% de construcción funcional local.** Los tres criterios restantes de **4.7** quedan comprobados y Notificaciones alcanza **4/4**. Quedan cero criterios funcionales locales pendientes del plan.
+
+**1431 casos distintos aprobados/14 nuevos**, sin fallos/errores/omitidos finales: 1379 JVM —205 recibos intactos de dominio reutilizados, 148 datos y 1026 app ejecutados— y 52 Android API 37 ejecutados. Lint sin errores/22 avisos existentes por variante de app; datos sin incidencias. [Desglose y límites](VALIDACION.md).
+
+El cierre no aumenta el alcance del PDF a un servidor, sincronización o atención policial. La aceptación física completa, preparación de la entrega y seguridad de producción institucional conservan sus comprobaciones propias. Este corte no actualiza GitHub/main o el PR #30, ni publica APK/tag/Release; la descarga oficial continúa en 0.6.1. Los bloques inferiores conservan sus resultados históricos; la matriz vigente refleja fase 42.
+
 ## Continuación local — fase 41 validada
 
 [Fase 41](FASE_41.md) compone el cambio de estado con la cuenta registrada `admin_local`, la asignación de fase 40 y el diario durable. Desde la consulta de un folio se comprueban pendientes, se leen estado/revisión y se prepara un motivo de 5–500 caracteres. Revisar y confirmar son gestos separados; solo avanzan **Reportado → En revisión → Atendido → Cerrado**. El historial conserva UUID del actor, fecha, motivo, secuencia y operación, sin afirmar atención institucional.
@@ -36,7 +48,7 @@ La [fase 38](FASE_38.md) continúa **4.6 Administración** con capacidades indep
 
 **[Fase 36](FASE_36.md), Unreleased:** conecta la actividad de fase 35 con permisos/preferencias por cuenta y un resumen Android de cambios registrados. La revisión es manual y explícita; guardar un reporte no dispara un aviso de cambio. **20/28 = 71.4%** acredita únicamente el criterio de permisos/preferencias; asignación administrativa y recorrido productivo autorizado pendientes. [Validación](VALIDACION.md) separa las comprobaciones de este código de la APK oficial 0.6.1.
 
-## Matriz vigente — cierre de fase 41
+## Matriz vigente — cierre de fase 42
 
 Se mantienen los siete requisitos **4.1–4.7 del PDF/cliente** y sus 28 criterios. Las mejoras pedidas después por el usuario tienen registro separado **E01–E10** en [Mejoras útiles](MEJORAS_UTILES.md), con origen, prioridad, estado y aceptación. Ficha PDF, contactos, acceso rápido y cámara amplían la utilidad, sin convertir una llamada o documento local en recepción institucional ni aumentar el porcentaje del plan original.
 
@@ -48,9 +60,9 @@ Se mantienen los siete requisitos **4.1–4.7 del PDF/cliente** y sus 28 criteri
 | **4.4 Consulta** | Folio/lista/reportes propios, búsqueda, paginación e historial; fase 41 completa el seguimiento con cambios autorizados visibles y recuperación del recibo exacto. | Construcción local completa y recorrido integrado comprobado en emulador. La aceptación física del nuevo cambio se registra por separado. | **4/4** |
 | **4.5 Mapas** | MapLibre/OpenFreeMap con calles, punto elegido, zonas y marcadores de SQLite, filtros y lista de la misma muestra; flujo integrado comprobado. | Mantener fuente/cobertura y avisos de muestra limitada. Datos externos verificados E09 sigue propuesta independiente. | **4/4** |
 | **4.6 Administración** | Alta/consulta y roles de fase 40; fase 41 conecta cambio consecutivo, motivo revisado, confirmación, recuperación durable e historial con actor/fecha/secuencia reales. | Construcción local completa y recorrido integrado comprobado, limitado al espacio de la cuenta asignada en ese teléfono. `admin/admin` conserva acceso académico. | **4/4** |
-| **4.7 Notificaciones** | Preferencia por cuenta y permiso Android comprobados. Consumidor manual de STATUS_CHANGED y resumen genérico implementados, con deduplicación durable; no hay revisión en segundo plano. | Conectar y comprobar eventos, entrega y recorrido completo de avisos sobre los cambios autorizados de fase 41. Guardar un evento o mostrar su recibo no acredita esa entrega. | **1/4** |
+| **4.7 Notificaciones** | Preferencia por cuenta, permiso/canal y revisión manual de STATUS_CHANGED. Fase 42 comprobó la cadena de cambio autorizado real, evento SQLite, resumen Android y deduplicación durable; sin revisión en segundo plano. | Construcción funcional local completa. La aceptación física final del recorrido se registra aparte y el aviso no acredita recepción institucional. | **4/4** |
 
-**25/28 = 89.3%**, tres criterios pendientes, todos de **4.7 Notificaciones: eventos de cambios, entrega de avisos y recorrido completo probado**. [Avance](AVANCE.md) conserva los mismos pesos y distingue construcción, prueba automatizada y aceptación del usuario.
+**28/28 = 100% de construcción funcional local**, con cero criterios funcionales locales pendientes. La aceptación física completa y la preparación de una entrega requieren su comprobación separada; no se acreditan servidor, recepción institucional o seguridad de producción. [Avance](AVANCE.md) conserva los mismos pesos y distingue construcción, prueba automatizada y aceptación del usuario.
 
 | Orden inmediato | Alcance | Resultado esperado | Estado |
 |---|---|---|---|
@@ -65,7 +77,8 @@ Se mantienen los siete requisitos **4.1–4.7 del PDF/cliente** y sus 28 criteri
 | [Fase 39](FASE_39.md) | Revisión legible y vinculación administrativa a la sesión | Contener la foto en su tarjeta y conservar fuentes del espacio original, revocadas al cerrar sesión | Local Unreleased; sin asignar permisos o completar otro criterio. Pruebas y límites en la fase |
 | [Fase 40](FASE_40.md) | Alta local de `admin_local` y consulta protegida | Confirmar propietario con Android, activar por segundo gesto y consultar lista/filtros/folio/historial de la propia cuenta | Unreleased validada; confirma dos hitos administrativos, 22/28 = 78.6%. Rama/PR en borrador preparados, sin integrar main o publicar otra APK |
 | [Fase 41](FASE_41.md) | Cambio de estado e historial administrativo locales | Consultar la revisión, revisar motivo y confirmar un avance consecutivo; recuperar la misma solicitud y comprobar actor, fecha y secuencia del historial | Local validada: 1488 casos distintos/103 nuevos; 25/28 = 89.3%, sin actualizar main/GitHub/Release o APK |
-| Alcance pendiente del PDF | Eventos, entrega y recorrido completo de Notificaciones | Revisar cambios reales autorizados de fase 41 y comprobar aviso, deduplicación, revocación y entrada al folio sin afirmar atención institucional | Tres criterios pendientes; permisos/preferencias ya acreditados. Sin entrega en segundo plano por este alcance |
+| [Fase 42](FASE_42.md) | Actividad y avisos desde un cambio confirmado | Revisar eventos reales autorizados de fase 41, mostrar el resumen Android y deduplicar por operación, conservando la solicitud al navegar | Local validada: 1431 casos distintos/14 nuevos; 28/28 = 100% de construcción funcional local, sin actualización de GitHub o entrega binaria |
+| Comprobaciones posteriores al cierre funcional local | Aceptación física completa y preparación de la siguiente entrega cuando se autorice | Probar los recorridos agrupados en el teléfono y validar el artefacto de distribución; separar futuras ampliaciones institucionales | Fuera de los 28 criterios construidos; sin publicación o prueba física nueva en este corte |
 
 Las fases 29/30 implementan E01 ficha PDF y E02 contactos; fase 32 E03 ayuda/atajos, fase 33 E10 cámara y fase 34 E04 mosaico: **incluidas en 0.6.1**. E06 mensaje revisado tiene implementación validada Unreleased en fase 37. E05 guía por fabricante, E07 varias fotos, E08 institución y E09 datos por zona conservan sus estados de guía/propuesta en el catálogo. La configuración de un botón físico depende del modelo: abrir la app normal puede mostrar splash/login. La guía Motorola corresponde al Edge 50 Fusion, sin configurar/probar físicamente su gesto. No se intercepta el botón de encendido ni se modifica el SOS del sistema.
 
