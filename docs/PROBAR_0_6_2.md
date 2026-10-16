@@ -1,6 +1,6 @@
 # Probar CitizenSecurity 0.6.2
 
-**16 de octubre de 2026 · Android 0.6.2 / código 30 · entrega acumulada en preparación.** Esta guía recorre **todas las fases 35–42**, incluidas las que quedaron Unreleased. Usa únicamente la APK final **citizensecurity-0.6.2-academico.apk** de la [Release 0.6.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.2) cuando se confirme su publicación, con el checksum adjunto. El candidato interno antiguo de solo 35–37 conserva otro hash y no es esta entrega.
+**16 de octubre de 2026 · Android 0.6.2 / código 30 · Release oficial publicada.** Esta guía recorre **todas las fases 35–42**, incluidas las que quedaron Unreleased. Descarga la [APK final citizensecurity-0.6.2-academico.apk](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.2/citizensecurity-0.6.2-academico.apk) y el [checksum SHA-256](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.2/SHA256SUMS-0.6.2.txt) de la [Release 0.6.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.2), ya publicados y verificados. El candidato interno antiguo de solo 35–37 conserva otro hash y no es esta entrega.
 
 APK final: **56,200,431 bytes**, SHA-256 `114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4`. [Cambios, identidad y límites](ENTREGA_0_6_2.md).
 
