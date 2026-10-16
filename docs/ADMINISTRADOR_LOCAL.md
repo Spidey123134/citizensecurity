@@ -1,6 +1,6 @@
 # Administración local: cuenta y uso
 
-**Entrega acumulada 0.6.2 / código Android 30, en preparación — 16 de octubre de 2026.** Los recorridos de esta guía, desarrollados en fases 40–42, se incluyen en el mismo corte que todas las fases 35–42 posteriores a 0.6.1. Usa la APK final de esa entrega. [Cambios y archivo](ENTREGA_0_6_2.md) · [Pasos de prueba](PROBAR_0_6_2.md). Las referencias inferiores a desarrollo local, PR #30 o APK oficial 0.6.1 conservan el momento histórico de cada validación; no describen el alcance final de 0.6.2.
+**Entrega oficial 0.6.2 / código Android 30, publicada — 16 de octubre de 2026.** Los recorridos de esta guía, desarrollados en fases 40–42, se incluyen en el mismo corte que todas las fases 35–42 posteriores a 0.6.1. Usa la APK final publicada de esa entrega. [Cambios y archivo](ENTREGA_0_6_2.md) · [Pasos de prueba](PROBAR_0_6_2.md). Las referencias inferiores a desarrollo local, PR #30 o APK oficial 0.6.1 conservan el momento histórico de cada validación; no describen el alcance final de 0.6.2.
 
 **16 de octubre de 2026 · ampliación local de fase 42, validada.** Desde el recibo de un cambio confirmado se puede abrir su actividad y el panel de avisos. El alta y el cambio de estado conservan los pasos de fases 40/41 descritos debajo; esta ampliación todavía no está en la APK oficial **0.6.1** ni actualiza el PR #30 de fase 40.
 

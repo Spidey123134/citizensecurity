@@ -2,11 +2,11 @@
 
 ## Entrega acumulada 0.6.2 — alcance vigente
 
-**16 de octubre de 2026 · Android 0.6.2 / código 30 · publicación en preparación.** Esta entrega agrupa **todas las fases 35–42 posteriores a la oficial 0.6.1**: Actividad, preferencias/avisos manuales, mensaje a contactos, permisos, fotografía legible, administración local, cambios con historial y conexión con avisos de eventos reales. [Resumen completo](ENTREGA_0_6_2.md) · [Prueba de aceptación](PROBAR_0_6_2.md).
+**16 de octubre de 2026 · Android 0.6.2 / código 30 · Release oficial publicada.** Esta entrega agrupa **todas las fases 35–42 posteriores a la oficial 0.6.1**: Actividad, preferencias/avisos manuales, mensaje a contactos, permisos, fotografía legible, administración local, cambios con historial y conexión con avisos de eventos reales. [Resumen completo](ENTREGA_0_6_2.md) · [Prueba de aceptación](PROBAR_0_6_2.md).
 
 La construcción funcional local del plan alcanza **28/28 = 100%**, con los mismos criterios del PDF y sin contar extras E01–E10 como puntos adicionales. El siguiente trabajo de aceptación física completa y correcciones de uso se registra por separado. Servidor, recepción policial y seguridad de producción institucional mantienen su alcance propio.
 
-Las secciones de continuación inferiores conservan **su estado histórico**, incluido cuándo fueron Unreleased o locales. La publicación solicitada ahora reúne fases 35–42; esas restricciones históricas no limitan la entrega acumulada. El candidato archivado de solo 35–37 no es el binario final. La matriz funcional vigente sigue siendo la de fase 42.
+Las secciones de continuación inferiores conservan **su estado histórico**, incluido cuándo fueron Unreleased o locales. La publicación oficial reúne fases 35–42; esas restricciones históricas no limitan la entrega acumulada. El candidato archivado de solo 35–37 no es el binario final. La matriz funcional vigente sigue siendo la de fase 42.
 
 ## Continuación local — fase 42 validada
 
