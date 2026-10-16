@@ -1,11 +1,14 @@
 package com.example.citizensecurity.report
 
 import android.graphics.BitmapFactory
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -63,25 +66,40 @@ internal fun ReportPhotoContent(photo: ReportPhoto?, modifier: Modifier = Modifi
             error = true
         }
     }
-    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Fotografía opcional", style = MaterialTheme.typography.titleMedium)
-        when {
-            photo == null -> Text("Sin fotografía adjunta.", Modifier.testTag("${tagPrefix}_empty"))
-            error -> {
-                Text("No se pudo abrir la copia de esta fotografía. El resto del reporte sigue disponible.",
-                    Modifier.testTag("${tagPrefix}_error"), color = MaterialTheme.colorScheme.error)
-                OutlinedButton(onClick = { attempt++ }, modifier = Modifier.testTag("${tagPrefix}_retry")) { Text("Volver a abrir fotografía") }
-            }
-            bitmap != null -> {
-                Image(bitmap!!, contentDescription = "Fotografía adjunta al reporte",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp, max = 280.dp)
-                        .aspectRatio(photo.width.toFloat() / photo.height).testTag("${tagPrefix}_image"))
-                Text("${photo.width} × ${photo.height} · copia en este teléfono", style = MaterialTheme.typography.bodySmall)
-            }
-            else -> {
-                LinearProgressIndicator(Modifier.fillMaxWidth())
-                Text("Abriendo fotografía…", Modifier.testTag("${tagPrefix}_loading"))
+    OutlinedCard(modifier.fillMaxWidth(), colors = CardDefaults.outlinedCardColors(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+    )) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(if (photo == null) "Fotografía opcional" else "Fotografía adjunta",
+                style = MaterialTheme.typography.titleMedium)
+            when {
+                photo == null -> Text("Sin fotografía adjunta.", Modifier.testTag("${tagPrefix}_empty"))
+                error -> {
+                    Text("No se pudo abrir la copia de esta fotografía. El resto del reporte sigue disponible.",
+                        Modifier.testTag("${tagPrefix}_error"), color = MaterialTheme.colorScheme.error)
+                    OutlinedButton(onClick = { attempt++ }, modifier = Modifier.testTag("${tagPrefix}_retry")) { Text("Volver a abrir fotografía") }
+                }
+                bitmap != null -> {
+                    // The frame owns the height. A portrait image must not force an aspect ratio
+                    // outside the parent's constraints and paint over the surrounding text.
+                    Surface(modifier = Modifier.fillMaxWidth().height(240.dp)
+                        .clip(MaterialTheme.shapes.small),
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        shape = MaterialTheme.shapes.small,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Image(bitmap!!, contentDescription = "Fotografía adjunta al reporte",
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier.fillMaxSize().testTag("${tagPrefix}_image"))
+                        }
+                    }
+                    Text("Imagen completa · copia en este teléfono", style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                else -> {
+                    LinearProgressIndicator(Modifier.fillMaxWidth())
+                    Text("Abriendo fotografía…", Modifier.testTag("${tagPrefix}_loading"))
+                }
             }
         }
     }

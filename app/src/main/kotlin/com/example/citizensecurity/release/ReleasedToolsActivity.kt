@@ -46,6 +46,15 @@ class ReleasedToolsActivity : ReportWorkspaceActivity() {
         findViewById<Button>(R.id.home_activity).setOnClickListener {
             startReportActivity(Intent(this, com.example.citizensecurity.reports.ReportActivityActivity::class.java))
         }
+        findViewById<Button>(R.id.home_administration).apply {
+            visibility = if (reportWorkspace.session.account?.username == "admin_local") View.VISIBLE else View.GONE
+            setOnClickListener {
+                if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && ensureReportWorkspaceCurrent()) {
+                    startReportActivity(Intent(this@ReleasedToolsActivity,
+                        com.example.citizensecurity.administration.AdministrationSetupActivity::class.java))
+                }
+            }
+        }
         findViewById<Button>(R.id.tools_reports_map).setOnClickListener {
             startReportActivity(Intent(this, ReportsMapActivity::class.java))
         }

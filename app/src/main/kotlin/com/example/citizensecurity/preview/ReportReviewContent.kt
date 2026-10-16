@@ -2,6 +2,7 @@ package com.example.citizensecurity.preview
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -54,30 +55,44 @@ internal fun ReportReviewContent(
             Text("Comprueba los datos antes de guardar. El reporte se conserva solo en este teléfono; no se envía a autoridades ni avisa a emergencias.",
                 modifier = Modifier.padding(16.dp))
         }
-        ReviewField("Tipo de incidente", types[review.type.ordinal], "review_type")
-        ReviewField("Prioridad indicada por ti", priorities[review.priority.ordinal], "review_priority")
-        ReviewField("Descripción de lo ocurrido", review.description, "review_description")
-        ReportPhotoContent(draft.photo, tagPrefix = "review_photo")
-        ReviewField("Fecha y hora del incidente", "${review.occurredAtText}\nZona horaria: ${review.timeZoneText}", "review_occurred_at")
-        HorizontalDivider()
-        Text("Lugar del incidente", style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.semantics { heading() })
-        ReviewField("Dirección o referencia", review.locationReference.ifBlank { "Sin referencia escrita." }, "review_reference")
-        if (review.latitudeText != null && review.longitudeText != null) {
-            ReviewField("Latitud del punto", review.latitudeText, "review_latitude")
-            ReviewField("Longitud del punto", review.longitudeText, "review_longitude")
-            Text("Estas coordenadas describen el incidente. Revisar los campos no renueva el GPS ni acredita cercanía actual.",
-                style = MaterialTheme.typography.bodySmall)
-        } else {
-            Text("Sin punto seleccionado en el mapa. El lugar se describe con la referencia escrita.",
-                style = MaterialTheme.typography.bodyMedium, modifier = Modifier.testTag("review_no_coordinates"))
+        ReviewSection("Datos del incidente") {
+            ReviewField("Tipo de incidente", types[review.type.ordinal], "review_type")
+            ReviewField("Prioridad indicada por ti", priorities[review.priority.ordinal], "review_priority")
+            ReviewField("Descripción de lo ocurrido", review.description, "review_description")
+            ReviewField("Fecha y hora del incidente", "${review.occurredAtText}\nZona horaria: ${review.timeZoneText}", "review_occurred_at")
         }
+        ReviewSection("Lugar del incidente") {
+            ReviewField("Dirección o referencia", review.locationReference.ifBlank { "Sin referencia escrita." }, "review_reference")
+            if (review.latitudeText != null && review.longitudeText != null) {
+                ReviewField("Latitud del punto", review.latitudeText, "review_latitude")
+                ReviewField("Longitud del punto", review.longitudeText, "review_longitude")
+                Text("Estas coordenadas describen el incidente. Revisar los campos no renueva el GPS ni acredita cercanía actual.",
+                    style = MaterialTheme.typography.bodySmall)
+            } else {
+                Text("Sin punto seleccionado en el mapa. El lugar se describe con la referencia escrita.",
+                    style = MaterialTheme.typography.bodyMedium, modifier = Modifier.testTag("review_no_coordinates"))
+            }
+        }
+        ReportPhotoContent(draft.photo, tagPrefix = "review_photo")
         HorizontalDivider()
         Button(onClick = onEdit, enabled = canEdit,
             modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp).testTag("edit_review")) {
             Text("Corregir datos")
         }
         actions()
+    }
+}
+
+@Composable
+private fun ReviewSection(title: String, content: @Composable ColumnScope.() -> Unit) {
+    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+    )) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text(title, style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.semantics { heading() })
+            content()
+        }
     }
 }
 

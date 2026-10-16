@@ -1,5 +1,25 @@
 # CITIZENSECURITY
 
+## Desarrollo Unreleased — fase 40: administración local
+
+Se eligió **`admin_local`** con autorización del usuario. Se registra en el teléfono con una contraseña propia de 15 a 128 caracteres; no hay contraseña administrativa predeterminada ni publicada. **Inicio → Administración local** confirma al propietario con el bloqueo nativo de Android y exige un segundo gesto para activar. `admin/admin` mantiene su acceso académico.
+
+La consulta protegida muestra reportes del espacio de esa cuenta, filtros de tipo/estado/prioridad, folio e historial, en páginas de 50. **22/28 = 78.6%**: Administración alcanza **2/4**, con consulta y roles/permisos comprobados. Quedan seis criterios: seguimiento, cambio e historial administrativo y tres de notificaciones. [Guía para el equipo](docs/ADMINISTRADOR_LOCAL.md) · [Fase 40](docs/FASE_40.md).
+
+**1360 casos distintos aprobados, 76 nuevos**, sin fallos; incluyen la confirmación nativa con PIN real en el emulador API 37 y la consulta de la propia cuenta. No equivale a una activación en el teléfono del usuario. Código y guía se preparan para la rama `development/administracion-local` y un PR en borrador de GitHub, sin integrar main ni publicar APK/tag/Release. La APK oficial sigue en **0.6.1**; el candidato 0.6.2 archivado precede a las fases 38–40. Los bloques siguientes conservan el alcance y las cifras de sus respectivos cortes.
+
+## Antecedente — fase 39: borrador y sesión administrativa
+
+La revisión del borrador separa datos, lugar y fotografía en tarjetas legibles. La imagen completa se ajusta a un marco de 240 dp para que una foto vertical no invada el texto o las acciones; el archivo y el guardado conservan su funcionamiento. [Fase 39](docs/FASE_39.md).
+
+Continúa 4.6 del PDF al ligar la consulta administrativa al espacio y la sesión capturados: salir e ingresar otra vez con la misma cuenta invalida el acceso anterior. Consulta/cambio mantienen permisos separados y denegados por defecto; asignación y panel pendientes, con `admin/admin` académico. **20/28 = 71.4% permanece**. Trabajo local, sin push ni publicación; la APK oficial sigue en **0.6.1** y el candidato 0.6.2 archivado precede a las fases 38/39.
+
+## Desarrollo local Unreleased — fase 38: permisos administrativos separados
+
+La base administrativa distingue **consultar reportes (`READ_REPORTS`)** de **cambiar estados (`CHANGE_STATUS`)**. La consulta por folio, lista paginada e historial usa dueño/actor y fuentes capturados, abre sus fuentes solo después de autorizar y vuelve a comprobar vigencia, permiso y cancelación al terminar. El escritor exige el permiso de cambio también dentro de la transacción antes del commit; consultar no autoriza modificar ni recuperar un recibo de cambio. [Fase 38](docs/FASE_38.md).
+
+La asignación administrativa y su interfaz siguen pendientes: `admin/admin` conserva acceso académico. **20/28 = 71.4% permanece.** Este avance queda local, sin push, tag o Release. La preparación 0.6.2/código 30, su candidato y sus notas se guardan como borradores locales con numeración tentativa; la APK oficial sigue siendo **0.6.1**.
+
 ## Desarrollo Unreleased — fase 37: mensaje para un contacto
 
 Desde el detalle de un folio, **Preparar mensaje para un contacto** permite elegir un contacto guardado, decidir si se incluye referencia/punto (inicialmente desmarcado) y revisar el texto completo. Otro gesto abre **Mensajes SMS**; el envío se confirma allí. Si cambian el reporte o los contactos, se exige revisar nuevamente. Se puede guardar un contacto desde Ayuda y regresar a la misma pantalla.

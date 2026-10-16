@@ -1,5 +1,23 @@
 # Fases de CITIZENSECURITY
 
+## Fase 40 — administración local y consulta protegida, Unreleased
+
+Cuenta elegida **`admin_local`**, con registro y contraseña propia; confirmación nativa del propietario, segundo gesto de activación y asignación única por UUID. Consulta visible de su espacio local con filtros, folio e historial de 50 por página; permiso/sesión vigentes, respuestas tardías descartadas y reintento exacto. [Guía para el equipo](ADMINISTRADOR_LOCAL.md) · [Alcance, criterios y validación](FASE_40.md).
+
+**22/28 = 78.6%**, con **4.6 Administración en 2/4** por consulta y roles/permisos. Quedan seis criterios: seguimiento, cambio/historial administrativo y tres de notificaciones. **1360 casos distintos aprobados/76 nuevos**, sin fallos; incluye confirmación nativa con PIN real en emulador API 37. Código/documentación preparados para `development/administracion-local` y un PR en borrador de GitHub, sin integrar main ni publicar APK/tag/Release. `admin/admin` sigue académico; APK oficial **0.6.1**, candidato 0.6.2 anterior a fases 38–40. Los estados inferiores son antecedentes de cada corte.
+
+## Fase 39 — borrador y vinculación administrativa, Unreleased local
+
+Ordena la revisión en tarjetas de datos, lugar y fotografía; la imagen completa se ajusta a un marco de 240 dp para evitar solapamientos, sin modificar el archivo o el guardado. Continúa 4.6 del PDF vinculando la política administrativa al espacio/sesión capturados: revocación al salir, incluso al volver con la misma cuenta, y comprobación de vigencia antes/después de autorizar. [Alcance, pruebas y límites](FASE_39.md).
+
+Consulta y cambio conservan permisos separados, denegados por defecto. Asignación y panel pendientes; `admin/admin` académico. **20/28 = 71.4% permanece**. Trabajo local sin push/tag/Release; APK oficial **0.6.1** y candidato archivado anterior a fases 38/39.
+
+## Fase 38 — permisos y consulta administrativa, Unreleased local
+
+Separa `READ_REPORTS` de `CHANGE_STATUS`, sin permisos implícitos por iniciar sesión. El lector administrativo captura dueño/actor y fuentes para consultar folio, lista paginada e historial; autoriza antes de abrirlas y comprueba revocación/cancelación antes de devolver resultados. El escritor exige permiso de cambio también antes del commit, y la recuperación de recibos permanece bajo esa capacidad. **1267 casos distintos aprobados/25 nuevos**. [Alcance y validación](FASE_38.md).
+
+La asignación y el panel administrativo siguen pendientes; `admin/admin` conserva acceso académico. **20/28 = 71.4% permanece**, sin acreditar otro criterio por preparar esta base. Trabajo local sin push/tag/Release; la preparación 0.6.2/código 30 queda guardada como candidato y borradores tentativos. La APK oficial continúa en **0.6.1**.
+
 ## Fase 37 — mensaje revisado para un contacto, Unreleased
 
 E06 permite preparar texto desde un folio, elegir un contacto vigente y revisar la ubicación opcional antes de abrir Mensajes SMS. Relectura antes de compartir, cambio de destinatario/reporte exige otra revisión, giro sin nueva apertura y datos conservados. Ayuda comparte la fábrica de contactos; volver de guardar uno actualiza la lista sin elegirlo automáticamente. No envía mensajes ni adjunta la ficha PDF. [Alcance y límites](FASE_37.md) · [Validación](VALIDACION.md).

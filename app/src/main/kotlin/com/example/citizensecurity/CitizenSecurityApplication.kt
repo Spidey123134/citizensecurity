@@ -53,6 +53,13 @@ open class CitizenSecurityApplication : Application() {
     open val accountRepository: AccountRepository by lazy { SqliteAccountRepository(this) }
     val accountSession = LocalAccountSession()
 
+    /** Installation assignment is local and is created only by the owner-confirmation flow. */
+    open fun openLocalAdministratorStore(): com.example.citizensecurity.data.LocalAdministratorStore =
+        com.example.citizensecurity.data.LocalAdministratorStore(this)
+
+    open fun openReportAdministration(workspace: ReportWorkspace): com.example.citizensecurity.account.ReportAdministrationBinding =
+        com.example.citizensecurity.account.ReportAdministrationBinding.capture(workspace, openLocalAdministratorStore().policy())
+
     override fun onCreate() {
         super.onCreate()
         // Notifications carry no private payload. Retire our own summary on a new process

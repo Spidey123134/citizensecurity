@@ -198,6 +198,17 @@
             android:textSize="14sp"
             android:textColor="#E2E8F0" />
         <Button
+            android:id="@+id/home_administration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="52dp"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            android:backgroundTint="#007F78"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
+            android:text="@string/home_administration" />
+        <Button
             android:id="@+id/tools_back"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
