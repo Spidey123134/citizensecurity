@@ -1,5 +1,11 @@
 # Plan del proyecto
 
+## Continuación local — fase 43, Unreleased
+
+El usuario pidió un recorrido guiado opcional con un icono de ayuda, como ampliación **E11**. Inicio, formulario, revisión, consulta/detalle y mapa explican su uso por pasos cortos; avanzar el tutorial no ejecuta operaciones del reporte. Las explicaciones orientativas repetidas de Inicio pasan a la guía, conservando los avisos y controles importantes. [Fase 43](FASE_43.md).
+
+Esta mejora no añade criterios al PDF: se conserva **28/28 = 100% de construcción funcional local**, con aceptación física completa registrada por separado. La versión oficial continúa en 0.6.2; el tutorial permanece local y Unreleased hasta que el usuario solicite otra publicación. La validación de esta fase se registra en [Validación](VALIDACION.md), sin sumar los cortes históricos como ejecuciones nuevas.
+
 ## Entrega acumulada 0.6.2 — alcance vigente
 
 **16 de octubre de 2026 · Android 0.6.2 / código 30 · Release oficial publicada.** Esta entrega agrupa **todas las fases 35–42 posteriores a la oficial 0.6.1**: Actividad, preferencias/avisos manuales, mensaje a contactos, permisos, fotografía legible, administración local, cambios con historial y conexión con avisos de eventos reales. [Resumen completo](ENTREGA_0_6_2.md) · [Prueba de aceptación](PROBAR_0_6_2.md).

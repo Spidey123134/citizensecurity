@@ -63,6 +63,8 @@ import com.example.citizensecurity.report.ReportHistoryState
 import com.example.citizensecurity.report.currentPagedResult
 import com.example.citizensecurity.report.parseReportSearchFilters
 import com.example.citizensecurity.report.ReportSearchFilterValidation
+import com.example.citizensecurity.tutorial.GuidedTourButton
+import com.example.citizensecurity.tutorial.TourTopic
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -191,10 +193,14 @@ fun ReportsScreen(
                     onClick = { if (detailFolio != null) leaveDetail() else onClose() },
                     modifier = Modifier.testTag("report_back_list"),
                 ) { Text(if (detailFolio != null) "Volver a los reportes" else "Volver") }
-                Text(
-                    if (detailFolio == null) "Reportes en este teléfono" else "Detalle del reporte",
-                    style = MaterialTheme.typography.headlineSmall,
-                )
+                Row(Modifier.fillMaxWidth(), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                    Text(
+                        if (detailFolio == null) "Reportes en este teléfono" else "Detalle del reporte",
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.weight(1f),
+                    )
+                    GuidedTourButton(if (detailFolio == null) TourTopic.REPORTS else TourTopic.DETAIL)
+                }
                 Spacer(Modifier.height(8.dp))
                 LocalOnlyNotice()
                 if (detailFolio == null && emptyDatabase) {

@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Fase 43 — recorrido guiado contextual, Unreleased local
+
+Icono **?** para consultar un paso breve por vez en Inicio, Reportar, Revisión, Reportes, Detalle y Mapa. Anterior/Siguiente/Listo permiten recorrerlo y Cerrar vuelve a la misma pantalla; consultar instrucciones no ejecuta acciones del reporte, permisos, GPS o avisos. Abrir otra vez reinicia la guía; girar conserva el paso. Se reduce la orientación repetida de Inicio y se mantienen los avisos necesarios para decidir. **26 casos Android distintos aprobados/ocho nuevos**, sin fallos; emulador propio API 37. [Alcance y límites de validación](FASE_43.md) · [Mejora E11](MEJORAS_UTILES.md).
+
+**28/28 = 100% de construcción funcional local permanece.** E11 mejora el uso sin ampliar el denominador del PDF. Trabajo local **Unreleased**, sin subir código/APK, integrar main o crear tag/Release; la oficial sigue siendo **0.6.2 / código 30**, con fases 35–42. Login/loading se conservan.
+
 ## Entrega acumulada 0.6.2 — fases 35–42
 
 **16 de octubre de 2026 · Android 0.6.2 / código 30 · Release oficial publicada.** Se agrupan **las ocho fases posteriores a 0.6.1**, no únicamente las dos últimas: [35, Actividad](FASE_35.md), [36, avisos manuales](FASE_36.md), [37, mensaje a contacto](FASE_37.md), [38, permisos](FASE_38.md), [39, fotografía y sesión](FASE_39.md), [40, alta y consulta administrativa](FASE_40.md), [41, cambio e historial](FASE_41.md) y [42, recorrido de avisos sobre cambios reales](FASE_42.md).

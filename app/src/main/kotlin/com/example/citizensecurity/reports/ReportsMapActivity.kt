@@ -43,6 +43,8 @@ import com.example.citizensecurity.report.parseReportSearchFilters
 import com.example.citizensecurity.report.ReportSearchFilterValidation
 import java.time.ZoneId
 import com.example.citizensecurity.preview.PreviewTheme
+import com.example.citizensecurity.tutorial.GuidedTourButton
+import com.example.citizensecurity.tutorial.TourTopic
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -182,6 +184,7 @@ class ReportsMapActivity : ReportWorkspaceActivity() {
         )
         Scaffold(
             topBar = { TopAppBar(title = { Text("Reportes en el mapa") },
+                actions = { GuidedTourButton(TourTopic.MAP) },
                 navigationIcon = { TextButton(onClick = ::finish) { Text("Volver") } }) },
         ) { padding ->
             BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {

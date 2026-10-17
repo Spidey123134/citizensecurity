@@ -21,16 +21,28 @@
             android:text="@string/home_brand"
             android:textSize="16sp"
             android:textColor="#2ECC71" />
-        <TextView
-            android:id="@+id/home_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:accessibilityHeading="true"
-            android:text="@string/home_title"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/home_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:accessibilityHeading="true"
+                android:text="@string/home_title"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF" />
+            <androidx.compose.ui.platform.ComposeView
+                android:id="@+id/home_tour"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="12dp" />
+        </LinearLayout>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -104,13 +116,6 @@
             android:textStyle="bold"
             android:textSize="20sp"
             android:textColor="#FFFFFF" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/home_report_description"
-            android:textSize="16sp"
-            android:textColor="#E2E8F0" />
         <Button
             android:id="@+id/tools_preview_interface"
             android:layout_width="match_parent"
@@ -130,13 +135,6 @@
             android:textStyle="bold"
             android:textSize="20sp"
             android:textColor="#FFFFFF" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/home_list_description"
-            android:textSize="16sp"
-            android:textColor="#E2E8F0" />
         <Button
             android:id="@+id/tools_reports"
             android:layout_width="match_parent"
@@ -156,13 +154,6 @@
             android:textStyle="bold"
             android:textSize="20sp"
             android:textColor="#FFFFFF" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/home_map_description"
-            android:textSize="16sp"
-            android:textColor="#E2E8F0" />
         <Button
             android:id="@+id/tools_reports_map"
             android:layout_width="match_parent"

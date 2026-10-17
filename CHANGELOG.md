@@ -2,7 +2,10 @@
 
 ## [Unreleased]
 
-Sin fases posteriores al corte 0.6.2 preparadas para esta entrega.
+- **Fase 43 / E11, recorrido guiado contextual:** icono **?** voluntario en Inicio, Reportar, Revisión, Reportes, Detalle y Mapa. Un paso corto por vez, controles Anterior/Siguiente/Listo y cierre; abrir de nuevo reinicia la guía y girar conserva el paso.
+- Orientaciones repetidas de Inicio trasladadas a la guía; los avisos de seguridad, errores, permisos y decisiones de consentimiento conservan su lugar. La guía no navega, guarda, concede permisos, inicia GPS o publica avisos; no usa datos ficticios, privados o API de IA.
+- **26 casos Android distintos aprobados, ocho nuevos**, sin fallos/errores/omitidos: ocho del recorrido y 18 regresiones de Inicio, revisión, búsqueda y filtros del mapa. Compilación Kotlin debug/release y ensamblados internos debug/test correctos; lint sin errores/22 avisos existentes por variante. Sin ejecutar de nuevo las suites JVM/dominio/datos de cortes anteriores ni sumarlas a esta cifra. [Alcance y comprobaciones](docs/FASE_43.md).
+- Trabajo **local Unreleased**. La oficial **0.6.2 / código 30**, su APK, tag y Release conservan su contenido. **28/28 = 100% de construcción funcional local** permanece; E11 no añade criterios al PDF. La aceptación física se registra aparte.
 
 ## [0.6.2] — 2026-10-16 · Release oficial publicada
 

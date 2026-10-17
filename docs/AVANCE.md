@@ -1,5 +1,11 @@
 # Avance del plan del proyecto
 
+## Corte local Unreleased — fase 43: recorrido guiado
+
+La mejora **E11**, solicitada después de publicar 0.6.2, incorpora una guía breve por pantalla mediante el icono **?**. Se consulta voluntariamente en Inicio, Reportar, Revisión, Reportes, Detalle y Mapa; sus controles solo recorren las instrucciones. Las acciones reales y sus comprobaciones conservan gestos separados. **26 casos Android distintos aprobados/ocho nuevos**, sin fallos; compilación y lint sin errores. [Alcance y límites de validación](FASE_43.md).
+
+El avance del PDF permanece en **28/28 = 100% de construcción funcional local**, con aceptación física completa y producción registradas aparte. E11 amplía utilidad, sin añadir criterios ni atribuir nuevas pruebas a la entrega anterior. Este corte queda local **Unreleased**; la oficial **0.6.2 / código 30**, sus archivos, tag, Release y GitHub/main conservan el corte de fases 35–42.
+
 ## Corte de entrega 0.6.2 — fases 35–42 acumuladas
 
 **16 de octubre de 2026 · Android 0.6.2 / código 30 · Release oficial publicada.** La entrega reúne **todas las fases posteriores a la oficial 0.6.1: 35–42**. Actividad, avisos manuales, mensaje a contactos, legibilidad del borrador y administración local con consulta/cambio/historial quedan en un mismo corte. [Entrega](ENTREGA_0_6_2.md) · [Guía de prueba](PROBAR_0_6_2.md).

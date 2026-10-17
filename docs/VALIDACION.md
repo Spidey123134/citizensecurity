@@ -1,5 +1,27 @@
 # Validación y comprobaciones del proyecto
 
+## Recorrido guiado contextual — fase 43, Unreleased · 16 de octubre de 2026
+
+**26 casos Android distintos aprobados, ocho nuevos; cero fallos, errores u omitidos.** El corte verifica esta ampliación de interfaz, sin sumar los 1431 casos históricos de fase 42 ni presentar suites JVM, dominio o datos como ejecutadas de nuevo.
+
+| Suite Android API 37 | Aprobados | Alcance |
+| --- | ---: | --- |
+| GuidedTourUiTest | 8 nuevos | Apertura voluntaria, pasos/retroceso/fin/repetición, Back, giro, campos y revisión intactos, consulta/detalle, mapa sin GPS y letra 130% horizontal |
+| ReportHomeUiTest | 8 regresiones | Accesos reales, estado del borrador e intento previo, retorno y conservación de archivos |
+| ReportDraftUiTest, selección de revisión | 4 regresiones | Campos faltantes, contenido revisado, corrección y recreación/retorno sin guardar |
+| ReportsSearchUiTest, selección | 4 regresiones | Texto/filtros, consulta vacía, detalle/retorno/giro y paginación |
+| ReportsMapFiltersUiTest | 2 regresiones | Fechas y prioridad, muestra aplicada y necesidad de otra consulta explícita |
+
+Los ocho casos nuevos usan los almacenes SQLite y diarios privados del fixture aislado. Abrir/avanzar/cerrar la guía no modifica los campos, reportes, borrador o intento durable; no obtiene GPS ni ejecuta los botones explicados. El registro técnico para probar Detalle se siembra únicamente en el fixture, sin crear ejemplos en el producto. La regla de pruebas concede ubicación y conserva/restaura el ajuste de ubicación en el emulador propio; ninguna concesión procede de la guía ni se aplica a un teléfono físico. El estado del tutorial contiene tema, apertura e índice, sin copiar datos privados.
+
+Compilación Kotlin debug/release y ensamblados internos debug/test correctos. **Lint app: cero errores y 22 avisos existentes por variante**, sin aumento. No se ensambló otra APK pública ni una APK release. Los archivos oficiales de 0.6.2 se conservaron: la APK publicada mantiene SHA-256 `114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4`. El binario interno de este tutorial tiene otra identidad, `1056c2bfa6a5f4f0870deea5a50c1d40812c0380832614968d85700cfebe4bad`, y no se atribuye a aquella descarga.
+
+Revisión visual de la captura estable con letra 130% en horizontal: tarjeta opaca, explicación legible y controles accesibles mediante desplazamiento. El primer screenshot capturó la animación nativa de aparición del diálogo; se movió únicamente la captura del test después de avanzar/volver. La repetición del mismo caso aprobó `OK (1 test)` y no aumenta los 26 distintos; no cambió el producto ni su binario. No se afirma una prueba con lector de pantalla real, muerte del proceso, API 26/fabricantes o aceptación física completa.
+
+Logs y captura ignorados: `tour43-build.log`, `tour43-new-native.log` (8), `tour43-regression-native.log` (18), `tour43-capture-build.log`, `tour43-large-text-static.log` (un caso repetido) y `tour43-large-text-static.png`, bajo `.gradle/validacion/`. Recibo `tour43-test-proof.json`. Emulador propio de solo lectura API 37 cerrado al terminar; letra restaurada a 1.0 y ningún teléfono instalado o modificado. Código en rama local `development/phase43-tour`, sin push, actualización de main, tag, Release o APK publicada.
+
+**E11 es una mejora de uso:** el PDF conserva **28/28 = 100% de construcción funcional local**, con aceptación física completa separada. [Fase 43](FASE_43.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
 ## Entrega acumulada 0.6.2 — comprobación final · 16 de octubre de 2026
 
 **Publicada y verificada:** [Release oficial v0.6.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.2), 16 de octubre de 2026 a las 20:47:01 UTC. Tag sobre `bbb8a261d10727fe106e36d34f2d76eaae4834a0`, fuente integrada mediante PR #30; no es borrador ni prerelease y figura como Latest. Se descargaron desde GitHub la [APK final](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.2/citizensecurity-0.6.2-academico.apk) y [SHA256SUMS-0.6.2.txt](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.2/SHA256SUMS-0.6.2.txt): la APK conserva el hash y los 56.200.431 bytes indicados abajo; el checksum coincide byte por byte. El digest del asset de GitHub coincide también. Los dos assets de 0.6.1 mantienen tamaños y digests anteriores. Recibo local `release062-final/release-proof.json` actualizado con id 415365999 y resultado de descarga; ningún teléfono modificado.

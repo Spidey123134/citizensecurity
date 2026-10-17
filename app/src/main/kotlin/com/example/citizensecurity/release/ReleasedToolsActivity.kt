@@ -7,6 +7,11 @@ import android.widget.Button
 import android.widget.TextView
 import com.example.citizensecurity.account.ReportWorkspaceActivity
 import androidx.activity.addCallback
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
@@ -16,8 +21,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.citizensecurity.CitizenSecurityApplication
 import com.example.citizensecurity.R
 import com.example.citizensecurity.preview.ReportDraftActivity
+import com.example.citizensecurity.preview.PreviewTheme
 import com.example.citizensecurity.reports.ReportsActivity
 import com.example.citizensecurity.reports.ReportsMapActivity
+import com.example.citizensecurity.tutorial.GuidedTourButton
+import com.example.citizensecurity.tutorial.TourTopic
 import kotlinx.coroutines.launch
 
 /** Functional home. Opening or refreshing it only reads the private recovery journals. */
@@ -32,6 +40,16 @@ class ReleasedToolsActivity : ReportWorkspaceActivity() {
         super.onCreate(savedInstanceState)
         if (!hasReportWorkspace) return
         setContentView(R.layout.activity_released_tools)
+        findViewById<ComposeView>(R.id.home_tour).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
+            setContent {
+                PreviewTheme {
+                    Surface(color = MaterialTheme.colorScheme.surface, shape = CircleShape) {
+                        GuidedTourButton(TourTopic.HOME)
+                    }
+                }
+            }
+        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.home_root)) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(bars.left, bars.top, bars.right, bars.bottom)

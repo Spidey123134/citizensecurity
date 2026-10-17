@@ -1,5 +1,11 @@
 # CITIZENSECURITY
 
+## Desarrollo local Unreleased — fase 43: recorrido guiado
+
+Un icono **?** permite abrir instrucciones breves de la pantalla actual: Inicio, Reportar, Revisión, Reportes, Detalle y Mapa. Muestra un paso por vez, con Anterior, Siguiente, Listo y Cerrar; se puede consultar otra vez sin ejecutar las acciones explicadas. Reduce la orientación repetida de Inicio y conserva los avisos de seguridad y decisiones de permiso/consentimiento. **26 casos Android distintos aprobados, ocho nuevos**, en emulador propio API 37. [Fase 43 y límites de validación](docs/FASE_43.md).
+
+Es la mejora adicional **E11**; el PDF conserva **28/28 = 100% de construcción funcional local**. Este trabajo queda **Unreleased y local**, sin publicar APK, actualizar GitHub/main o cambiar la oficial **0.6.2 / código 30**. Login y loading del compañero se conservan.
+
 ## Entrega acumulada 0.6.2 — fases 35–42
 
 **16 de octubre de 2026 · Android 0.6.2 / código 30 · Release oficial publicada.** Esta entrega reúne **todo el desarrollo posterior a la oficial 0.6.1: fases 35, 36, 37, 38, 39, 40, 41 y 42**. Incluye Actividad de reportes, avisos voluntarios con revisión manual, mensaje revisado para un contacto, corrección de las fotografías del borrador y administración local con consulta, cambios de estado e historial reales. Las mejoras anteriores de cámara/galería, PDF, contactos, ayuda, GPS y mapa siguen incluidas.
