@@ -1,223 +1,331 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0D231E">
-<ScrollView
-    android:id="@+id/tools_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="#0D231E">
-    <LinearLayout
+    android:background="#F4F5FB">
+
+    <ScrollView
+        android:id="@+id/tools_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
-        <TextView
+        android:layout_height="match_parent"
+        android:background="#F4F5FB"
+        android:fillViewport="true">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/home_brand"
-            android:textSize="16sp"
-            android:textColor="#2ECC71" />
-        <TextView
-            android:id="@+id/home_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:accessibilityHeading="true"
-            android:text="@string/home_title"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/home_intro"
-            android:textSize="16sp"
-            android:textColor="#E2E8F0" />
-        <TextView
-            android:id="@+id/home_account"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="@string/account_home_guest"
-            android:textSize="16sp"
-            android:textColor="#E2E8F0" />
-        <Button
-            android:id="@+id/home_help"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="52dp"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#A12D32"
-            android:textColor="#FFFFFF"
-            android:textAllCaps="false"
-            android:text="@string/home_help" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/home_help_description"
-            android:textSize="14sp"
-            android:textColor="#E2E8F0" />
-        <Button
-            android:id="@+id/home_quick_help"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#007F78"
-            android:textColor="#FFFFFF"
-            android:textAllCaps="false"
-            android:text="@string/home_quick_help" />
-        <TextView
-            android:id="@+id/home_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:padding="16dp"
-            android:background="#163832"
-            android:accessibilityLiveRegion="polite"
-            android:text="@string/home_checking"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF" />
-        <Button
-            android:id="@+id/home_retry"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="52dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#007F78"
-            android:textColor="#FFFFFF"
-            android:textAllCaps="false"
-            android:text="@string/home_retry"
-            android:visibility="gone" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:accessibilityHeading="true"
-            android:text="@string/home_report_heading"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="#FFFFFF" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/home_report_description"
-            android:textSize="16sp"
-            android:textColor="#E2E8F0" />
-        <Button
-            android:id="@+id/tools_preview_interface"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="52dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#007F78"
-            android:textColor="#FFFFFF"
-            android:textAllCaps="false"
-            android:text="@string/home_new_report" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:accessibilityHeading="true"
-            android:text="@string/home_list_heading"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="#FFFFFF" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/home_list_description"
-            android:textSize="16sp"
-            android:textColor="#E2E8F0" />
-        <Button
-            android:id="@+id/tools_reports"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="52dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#007F78"
-            android:textColor="#FFFFFF"
-            android:textAllCaps="false"
-            android:text="@string/home_list_button" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:accessibilityHeading="true"
-            android:text="@string/home_map_heading"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="#FFFFFF" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/home_map_description"
-            android:textSize="16sp"
-            android:textColor="#E2E8F0" />
-        <Button
-            android:id="@+id/tools_reports_map"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="52dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="#007F78"
-            android:textColor="#FFFFFF"
-            android:textAllCaps="false"
-            android:text="@string/home_map_button" />
-        <Button
-            android:id="@+id/home_activity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="52dp"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#007F78"
-            android:textColor="#FFFFFF"
-            android:textAllCaps="false"
-            android:text="@string/home_activity" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/home_activity_description"
-            android:textSize="14sp"
-            android:textColor="#E2E8F0" />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="@string/home_local_notice"
-            android:textSize="14sp"
-            android:textColor="#E2E8F0" />
-        <Button
-            android:id="@+id/home_administration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="52dp"
-            android:layout_marginTop="16dp"
-            android:visibility="gone"
-            android:backgroundTint="#007F78"
-            android:textColor="#FFFFFF"
-            android:textAllCaps="false"
-            android:text="@string/home_administration" />
-        <Button
-            android:id="@+id/tools_back"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="52dp"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#234D43"
-            android:textColor="#FFFFFF"
-            android:textAllCaps="false"
-            android:text="@string/home_back" />
-    </LinearLayout>
-</ScrollView>
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Tarjeta Principal de Bienvenida / Encabezado -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_white"
+                android:elevation="6dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/home_brand"
+                    android:textColor="#7C3AED"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/home_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:accessibilityHeading="true"
+                    android:text="@string/home_title"
+                    android:textColor="#111827"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/home_intro"
+                    android:textColor="#6B7280"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/home_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/account_home_guest"
+                    android:textColor="#8B5CF6"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Sección de Ayuda / Emergencia -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_card_white"
+                android:elevation="6dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <Button
+                    android:id="@+id/home_help"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
+                    android:backgroundTint="#EF4444"
+                    android:text="@string/home_help"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/home_help_description"
+                    android:textColor="#6B7280"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/home_quick_help"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:layout_marginTop="10dp"
+                    android:backgroundTint="#7C3AED"
+                    android:text="@string/home_quick_help"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <!-- Estado del sistema -->
+                <TextView
+                    android:id="@+id/home_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:accessibilityLiveRegion="polite"
+                    android:background="@drawable/bg_edit_text"
+                    android:padding="16dp"
+                    android:text="@string/home_checking"
+                    android:textColor="#374151"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/home_retry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
+                    android:layout_marginTop="10dp"
+                    android:backgroundTint="#7C3AED"
+                    android:text="@string/home_retry"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- Sección: Crear Reporte -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_card_white"
+                android:elevation="6dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    android:text="@string/home_report_heading"
+                    android:textColor="#111827"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/home_report_description"
+                    android:textColor="#6B7280"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/tools_preview_interface"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="#7C3AED"
+                    android:text="@string/home_new_report"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Sección: Lista de Reportes -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_card_white"
+                android:elevation="6dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    android:text="@string/home_list_heading"
+                    android:textColor="#111827"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/home_list_description"
+                    android:textColor="#6B7280"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/tools_reports"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="#7C3AED"
+                    android:text="@string/home_list_button"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Sección: Mapa de Reportes -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_card_white"
+                android:elevation="6dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    android:text="@string/home_map_heading"
+                    android:textColor="#111827"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/home_map_description"
+                    android:textColor="#6B7280"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/tools_reports_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="#7C3AED"
+                    android:text="@string/home_map_button"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Sección: Actividad y Otros -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_card_white"
+                android:elevation="6dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <Button
+                    android:id="@+id/home_activity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
+                    android:backgroundTint="#7C3AED"
+                    android:text="@string/home_activity"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/home_activity_description"
+                    android:textColor="#6B7280"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/home_local_notice"
+                    android:textColor="#9CA3AF"
+                    android:textSize="13sp" />
+
+                <Button
+                    android:id="@+id/home_administration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="#7C3AED"
+                    android:text="@string/home_administration"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/tools_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_button_outline"
+                    android:text="@string/home_back"
+                    android:textAllCaps="false"
+                    android:textColor="#7C3AED"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 </FrameLayout>

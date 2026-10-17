@@ -4,98 +4,137 @@
     android:id="@+id/main_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#36A760"
-    android:gravity="center_horizontal"
+    android:background="#F4F5FB"
+    android:gravity="center"
     android:orientation="vertical"
     android:padding="24dp">
 
-    <!-- Espaciador superior -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- Título Citizen Security -->
-    <TextView
-        android:id="@+id/title_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Citizen Security"
-        android:textColor="#FFFFFF"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        tools:ignore="HardcodedText" />
-
-    <!-- Campo Username -->
-    <EditText
-        android:id="@+id/user"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="40dp"
-        android:background="@android:drawable/editbox_background_normal"
-        android:drawablePadding="12dp"
-        android:hint="Usuario"
-        android:inputType="text"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        tools:ignore="HardcodedText" />
-
-    <!-- Campo Password -->
-    <EditText
-        android:id="@+id/pass"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="16dp"
-        android:background="@android:drawable/editbox_background_normal"
-        android:drawablePadding="12dp"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        tools:ignore="HardcodedText" />
-
-    <!-- Botón Login -->
-    <Button
-        android:id="@+id/login_button"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="24dp"
-        android:text="Crear Cuenta"
-        android:textColor="#1F6036"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        tools:ignore="HardcodedText,VisualLintButtonSize" />
-
-    <!-- Enlaces inferiores -->
-    <RelativeLayout
+    <!-- Tarjeta Contenedora Blanca -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
+        android:background="@drawable/bg_card_white"
+        android:elevation="8dp"
+        android:orientation="vertical"
+        android:padding="28dp">
 
+        <!-- Ícono Superior de Seguridad -->
+        <ImageView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/bg_icon_container"
+            android:contentDescription="Icono de seguridad"
+            android:padding="12dp"
+            android:src="@android:drawable/ic_menu_camera"
+            tools:ignore="HardcodedText,ImageViewTint" />
+
+        <!-- Título -->
         <TextView
-            android:id="@+id/login_link"
+            android:id="@+id/title_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="48dp"
-            android:minHeight="48dp"
-            android:gravity="center"
-            android:layout_centerInParent="true"
-            android:padding="8dp"
-            android:text="Iniciar sesión"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="Crear cuenta"
+            android:textColor="#111827"
+            android:textSize="26sp"
             android:textStyle="bold"
-            android:clickable="true"
-            android:focusable="true"
             tools:ignore="HardcodedText" />
 
-    </RelativeLayout>
+        <!-- Subtítulo -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="6dp"
+            android:text="Regístrate para comenzar"
+            android:textColor="#8B5CF6"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
 
-    <!-- Espaciador inferior -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        <!-- Etiqueta Usuario o Correo -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="USUARIO"
+            android:textColor="#6B7280"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <!-- Campo Username -->
+        <EditText
+            android:id="@+id/user"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_edit_text"
+            android:hint="nombre"
+            android:inputType="textEmailAddress"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#111827"
+            android:textColorHint="#9CA3AF"
+            android:textSize="14sp"
+            tools:ignore="HardcodedText" />
+
+        <!-- Etiqueta Contraseña -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="CONTRASEÑA"
+            android:textColor="#6B7280"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <!-- Campo Password -->
+        <EditText
+            android:id="@+id/pass"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_edit_text"
+            android:hint="••••••••"
+            android:inputType="textPassword"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="#111827"
+            android:textColorHint="#9CA3AF"
+            android:textSize="16sp"
+            tools:ignore="HardcodedText" />
+
+        <!-- Botón Registrarse (Mantiene ID login_button) -->
+        <Button
+            android:id="@+id/login_button"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="28dp"
+            android:backgroundTint="#7C3AED"
+            android:text="Registrarse"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText,VisualLintButtonSize" />
+
+        <!-- Enlace para volver (Mantiene ID login_link) -->
+        <Button
+            android:id="@+id/login_link"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_button_outline"
+            android:text="¿Ya tienes cuenta? Iniciar sesión"
+            android:textAllCaps="false"
+            android:textColor="#7C3AED"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText,VisualLintButtonSize" />
+
+    </LinearLayout>
 
 </LinearLayout>
