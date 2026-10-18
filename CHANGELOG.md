@@ -2,7 +2,24 @@
 
 ## [Unreleased]
 
-Sin fases posteriores al corte 0.6.2 preparadas para esta entrega.
+El refinamiento posterior del recorrido guiado se registrará aquí después de la entrega autorizada 0.6.3; todavía no se atribuye a su APK.
+
+## [0.6.3] — validada, publicación pendiente, 2026-10-18
+
+- Entrega de fases 43–44 combinada con las novedades de GitHub, Android 0.6.3 / código 31. **1675 casos distintos aprobados: 1121 ejecutados** —1077 JVM de app, 42 Android de app y dos etapas de actualización— **y 554 recibos intactos reutilizados** —216 dominio JVM, 158 datos JVM y 180 datos Android— por identidad de fuentes. Cero fallos, errores u omitidos finales. Kotlin/ensamblados debug y release y lint sin errores; app conserva 22 avisos por variante, datos sin incidencias. Publicación y descarga verificada continúan pendientes.
+- APK final de 56,151,110 bytes, SHA-256 `0109149d9f9e6ea1a6883b46fe6915dde7bba9e20fba45c5219dfea6892d1780`, con el mismo certificado académico de 0.6.2. Actualización real 0.6.2 → 0.6.3 aprobada en emulador propio: dos invocaciones, preservación de bytes antes de abrir, esquema 4 → 5, foto/contactos/historial intactos y Cerrado con resultado Sin confirmar sin eventos inventados.
+- Configuración compartida **app** para ejecutar **CITIZENSECURITY.app** desde Android Studio. Las guías nuevas explican cómo probar el tutorial y declarar el resultado conservando datos anteriores. [Entrega](docs/ENTREGA_0_6_3.md) · [Guía](docs/PROBAR_0_6_3.md).
+- Ajuste del área visible del login al abrir el teclado para poder desplazar y alcanzar las acciones inferiores, conservando el diseño del compañero.
+- Las cifras y marcas locales de las fases siguientes describen su validación histórica; la nueva autorización permite incluirlas en esta entrega, sin sumar sus totales como ejecuciones nuevas.
+
+- **Fase 44 / E12, resultado del incidente, implementado y validado localmente:** tres resultados independientes del estado administrativo: Sin confirmar, Solucionado y Sigue sin solucionarse. La decisión del usuario permite declarar al autor real y al administrador local autorizado, identificando quién actuó.
+- Motivo de 5–500 caracteres, revisión y confirmación separadas; correcciones mediante otra declaración, con historial de UUID/rol/fecha/motivo y resultado anterior/nuevo. Autor tomado del evento real de creación y capacidad administrativa `DECLARE_RESOLUTION` separada; `admin/admin` no recibe permiso.
+- Migración aditiva de reportes a esquema 5, sin inferir una solución para folios antiguos o Cerrados; recuperación de recibos por lectura y reintento explícito de la misma operación. Revisión conservada al girar y permiso de consulta revalidado independientemente cuando se pierde la capacidad de declarar. Pendientes en memoria, sin diario durable ni repetición automática al reabrir el proceso. [Alcance](docs/FASE_44.md).
+- **Corte de fase 44: 1662 casos distintos aprobados / 108 nuevos**, cero fallos/errores/omitidos finales. JVM 1451: dominio 216, datos 158 y app 1077, ejecutados. Android 211: datos 180 y app 31 —ocho nuevos de resultado y 23 regresiones— en emulador propio API 37. Kotlin debug/release y ensamblados internos debug/test correctos; lint app cero errores/22 avisos existentes por variante, datos sin incidencias. Se cuentan las definiciones una vez, sin sumar intentos previos o cortes históricos; aceptación física, API 26 y muerte completa del proceso siguen aparte. [Validación](docs/VALIDACION.md).
+- **Fase 43 / E11, recorrido guiado contextual:** icono **?** voluntario en Inicio, Reportar, Revisión, Reportes, Detalle y Mapa. Un paso corto por vez, controles Anterior/Siguiente/Listo y cierre; abrir de nuevo reinicia la guía y girar conserva el paso.
+- Orientaciones repetidas de Inicio trasladadas a la guía; los avisos de seguridad, errores, permisos y decisiones de consentimiento conservan su lugar. La guía no navega, guarda, concede permisos, inicia GPS o publica avisos; no usa datos ficticios, privados o API de IA.
+- **26 casos Android distintos aprobados, ocho nuevos**, sin fallos/errores/omitidos: ocho del recorrido y 18 regresiones de Inicio, revisión, búsqueda y filtros del mapa. Compilación Kotlin debug/release y ensamblados internos debug/test correctos; lint sin errores/22 avisos existentes por variante. Sin ejecutar de nuevo las suites JVM/dominio/datos de cortes anteriores ni sumarlas a esta cifra. [Alcance y comprobaciones](docs/FASE_43.md).
+- Trabajo **local Unreleased**. La oficial **0.6.2 / código 30**, su APK, tag y Release conservan su contenido. **28/28 = 100% de construcción funcional local** permanece; E11 no añade criterios al PDF. La aceptación física se registra aparte.
 
 ## [0.6.2] — 2026-10-16 · Release oficial publicada
 

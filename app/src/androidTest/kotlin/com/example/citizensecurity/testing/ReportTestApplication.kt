@@ -63,7 +63,12 @@ class ReportTestApplication : CitizenSecurityApplication() {
         if (session.account != null) return buildReportWorkspace(session, fixture::refresh, fixture::currentFix)
         return ReportWorkspace(session, accountSession, ReportWorkspaceStorage(fixture.repository,
             fixture.repository, fixture.repository, fixture.similarLookup ?: fixture.repository,
-            fixture.journal, fixture.checkpoint, fixture.photoStore), fixture::refresh, fixture::currentFix)
+            fixture.journal, fixture.checkpoint, fixture.photoStore,
+            resolutionAccess = { checkWrite -> object : com.example.citizensecurity.domain.ReportResolutionRepository {
+                override suspend fun read(query: com.example.citizensecurity.domain.ReportResolutionQuery) = fixture.repository.readResolution(query)
+                override suspend fun receipt(command: com.example.citizensecurity.domain.ReportResolutionCommand) = fixture.repository.findResolutionReceipt(command)
+                override suspend fun record(command: com.example.citizensecurity.domain.ReportResolutionCommand) = fixture.repository.recordResolution(command, checkWrite)
+            } }), fixture::refresh, fixture::currentFix)
     }
 
     override fun openReportAlertsRepository(session: AccountSessionState, checkCurrent: () -> Unit): ReportAlertsRepository {

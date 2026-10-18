@@ -25,9 +25,12 @@ import com.example.citizensecurity.report.ReportPagedSearchViewModel
 import com.example.citizensecurity.report.ReportHistoryViewModel
 
 class ReportsActivity : ReportWorkspaceActivity() {
+    internal lateinit var resolutionModel: com.example.citizensecurity.resolution.ReportResolutionViewModel
+        private set
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!hasReportWorkspace) return
+        resolutionModel = com.example.citizensecurity.resolution.bindReportResolution(this, reportWorkspace)
         val query = ViewModelProvider(this, ReportQueryViewModel.factory(reportWorkspace.repository))[ReportQueryViewModel::class.java]
         val pages = ViewModelProvider(this, ReportPagedSearchViewModel.factory(reportWorkspace.listPageRepository))[ReportPagedSearchViewModel::class.java]
         val history = ViewModelProvider(this, ReportHistoryViewModel.factory(reportWorkspace.historyRepository))[ReportHistoryViewModel::class.java]
@@ -41,6 +44,7 @@ class ReportsActivity : ReportWorkspaceActivity() {
                         pages = pages,
                         history = history,
                         evidence = evidence,
+                        resolution = resolutionModel,
                         onShareEvidence = { ready, isCurrent -> shareEvidence(evidence, exporter, ready, isCurrent) },
                         onMessage = { folio ->
                             if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && ensureReportWorkspaceCurrent()) {

@@ -1,5 +1,23 @@
 # Avance del plan del proyecto
 
+## Entrega 0.6.3 validada — integración y mejoras de uso
+
+**18 de octubre de 2026 · Android 0.6.3 / código 31.** La petición actual autoriza combinar las novedades de GitHub con fases 43–44 y publicar una nueva Release. Reúne **seis recorridos guiados/20 pasos** y el **resultado del incidente declarado por autor o administrador**, con motivo, actor e historial, separado del seguimiento. Se prepara también el acceso **app** de Android Studio. [Entrega](ENTREGA_0_6_3.md) · [Guía de prueba](PROBAR_0_6_3.md).
+
+El porcentaje se mantiene en **28/28 = 100% de construcción funcional local**. E11/E12 amplían utilidad y no inflan el PDF. **1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**, sin fallos, errores u omitidos finales. Binario/firma, 42 recorridos Android de app y actualización real desde 0.6.2 validados; esquema 4 → 5 y datos/foto/contactos/historial conservados. Kotlin, ensamblados y lint sin errores; app conserva 22 avisos por variante. La publicación y descarga verificada continúan pendientes. Las cifras históricas de fases 43/44 no se suman como nuevas pruebas. Las restricciones de publicación inferiores describen los cortes anteriores, sustituidas para esta entrega por la autorización actual. El refinamiento posterior del tutorial se registra aparte.
+
+## Corte local Unreleased — fase 44: resultado del incidente
+
+El usuario eligió que **autor y administrador** puedan indicar si un incidente se solucionó, identificando quién lo marcó. La mejora **E12**, implementada y validada localmente, separa **Sin confirmar / Solucionado / Sigue sin solucionarse** del seguimiento administrativo. Motivo, revisión y confirmación conservan decisiones explícitas; el historial mantiene actor por UUID, rol, fecha y declaraciones previas. Los reportes antiguos no heredan un resultado por estar Cerrados. [Fase 44 y criterios](FASE_44.md).
+
+**1662 casos distintos aprobados / 108 nuevos**, sin fallos/errores/omitidos finales: 1451 JVM y 211 Android API 37, incluidos ocho recorridos nuevos y 23 regresiones de app. Compilación y lint sin errores; [validación y procedencia](VALIDACION.md). El plan original permanece en **28/28 = 100% de construcción funcional local**, con aceptación física y producción aparte. E12 no amplía el denominador ni acredita las pruebas anteriores otra vez. Oficial **0.6.2 / código 30** y sus archivos intactos; fases 43 y 44 siguen locales **Unreleased**, sin publicar por esta continuación.
+
+## Corte local Unreleased — fase 43: recorrido guiado
+
+La mejora **E11**, solicitada después de publicar 0.6.2, incorpora una guía breve por pantalla mediante el icono **?**. Se consulta voluntariamente en Inicio, Reportar, Revisión, Reportes, Detalle y Mapa; sus controles solo recorren las instrucciones. Las acciones reales y sus comprobaciones conservan gestos separados. **26 casos Android distintos aprobados/ocho nuevos**, sin fallos; compilación y lint sin errores. [Alcance y límites de validación](FASE_43.md).
+
+El avance del PDF permanece en **28/28 = 100% de construcción funcional local**, con aceptación física completa y producción registradas aparte. E11 amplía utilidad, sin añadir criterios ni atribuir nuevas pruebas a la entrega anterior. Este corte queda local **Unreleased**; la oficial **0.6.2 / código 30**, sus archivos, tag, Release y GitHub/main conservan el corte de fases 35–42.
+
 ## Corte de entrega 0.6.2 — fases 35–42 acumuladas
 
 **16 de octubre de 2026 · Android 0.6.2 / código 30 · Release oficial publicada.** La entrega reúne **todas las fases posteriores a la oficial 0.6.1: 35–42**. Actividad, avisos manuales, mensaje a contactos, legibilidad del borrador y administración local con consulta/cambio/historial quedan en un mismo corte. [Entrega](ENTREGA_0_6_2.md) · [Guía de prueba](PROBAR_0_6_2.md).

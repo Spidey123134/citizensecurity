@@ -1,5 +1,23 @@
 # Fases de CITIZENSECURITY
 
+## Entrega 0.6.3 validada — fases 43–44
+
+**18 de octubre de 2026 · Android 0.6.3 / código 31.** Se incluyen el **recorrido guiado E11**, el **resultado declarado E12** y la integración con GitHub. **1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**, sin fallos, errores u omitidos finales. Binario/firma, 42 recorridos Android de app y actualización real desde 0.6.2 validados en emulador propio, con migración 4 → 5 y datos/foto/contactos/historial conservados. Kotlin, ensamblados y lint sin errores; app conserva 22 avisos por variante. La publicación y descarga verificada continúan pendientes. [Entrega y desglose](ENTREGA_0_6_3.md) · [Probar en Android Studio](PROBAR_0_6_3.md).
+
+**28/28 = 100% de construcción funcional local permanece**, sin añadir E11/E12 al denominador ni atribuir aceptación física. Las marcas Unreleased inferiores son históricas y su restricción de publicación queda sustituida para esta entrega. Los siguientes refinamientos del tutorial se registran aparte.
+
+## Fase 44 — resultado del incidente, Unreleased local validada
+
+Mejora **E12** por petición del usuario: **Sin confirmar, Solucionado y Sigue sin solucionarse**, independientes de Reportado → En revisión → Atendido → Cerrado. Autor real y administrador local autorizado pueden declarar con motivo, revisión y confirmación; UUID, rol, fecha y cambios anteriores quedan en el historial. Corregir no borra declaraciones; los folios antiguos Cerrados comienzan Sin confirmar si no hay una declaración. Administración sigue limitada al propio espacio de la cuenta asignada en esta instalación. [Alcance y criterios](FASE_44.md) · [Mejoras útiles](MEJORAS_UTILES.md).
+
+**1662 casos distintos aprobados / 108 nuevos**, cero fallos/errores/omitidos finales: 1451 JVM y 211 Android API 37. Los ocho recorridos nuevos comprueban autor/corrección, administrador, académico, giro, migración de un Cerrado, revocación y recuperación con guard real de ventana pausada. Reportes incorpora migración aditiva a esquema 5, sin reconstrucción ni atribuciones retrospectivas. Compilación y lint sin errores; [desglose y límites](FASE_44.md). **28/28 = 100% de construcción funcional local permanece**; E12 amplía utilidad y no acredita aceptación física. Oficial **0.6.2 / código 30** intacta; desarrollo local, sin push/main/tag/Release/APK pública.
+
+## Fase 43 — recorrido guiado contextual, Unreleased local
+
+Icono **?** para consultar un paso breve por vez en Inicio, Reportar, Revisión, Reportes, Detalle y Mapa. Anterior/Siguiente/Listo permiten recorrerlo y Cerrar vuelve a la misma pantalla; consultar instrucciones no ejecuta acciones del reporte, permisos, GPS o avisos. Abrir otra vez reinicia la guía; girar conserva el paso. Se reduce la orientación repetida de Inicio y se mantienen los avisos necesarios para decidir. **26 casos Android distintos aprobados/ocho nuevos**, sin fallos; emulador propio API 37. [Alcance y límites de validación](FASE_43.md) · [Mejora E11](MEJORAS_UTILES.md).
+
+**28/28 = 100% de construcción funcional local permanece.** E11 mejora el uso sin ampliar el denominador del PDF. Trabajo local **Unreleased**, sin subir código/APK, integrar main o crear tag/Release; la oficial sigue siendo **0.6.2 / código 30**, con fases 35–42. Login/loading se conservan.
+
 ## Entrega acumulada 0.6.2 — fases 35–42
 
 **16 de octubre de 2026 · Android 0.6.2 / código 30 · Release oficial publicada.** Se agrupan **las ocho fases posteriores a 0.6.1**, no únicamente las dos últimas: [35, Actividad](FASE_35.md), [36, avisos manuales](FASE_36.md), [37, mensaje a contacto](FASE_37.md), [38, permisos](FASE_38.md), [39, fotografía y sesión](FASE_39.md), [40, alta y consulta administrativa](FASE_40.md), [41, cambio e historial](FASE_41.md) y [42, recorrido de avisos sobre cambios reales](FASE_42.md).

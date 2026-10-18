@@ -46,6 +46,9 @@ import com.example.citizensecurity.domain.ReportHistoryPage
 import com.example.citizensecurity.domain.ReportListPageQuery
 import com.example.citizensecurity.domain.ReportStatus
 import com.example.citizensecurity.domain.ReportStatusEventKind
+import com.example.citizensecurity.resolution.ReportResolutionContent
+import com.example.citizensecurity.resolution.ReportResolutionViewModel
+import com.example.citizensecurity.resolution.ReportResolutionState
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -56,8 +59,10 @@ internal fun AdministrationConsultationScreen(
     model: AdministrationConsultationViewModel,
     onClose: () -> Unit,
     onChangeStatus: ((String?) -> Unit)? = null,
+    resolution: ReportResolutionViewModel? = null,
 ) {
     val state = model.state.collectAsStateWithLifecycle().value
+    val resolutionState = resolution?.state?.collectAsStateWithLifecycle()?.value
     val list = rememberLazyListState()
     val zone = remember { ZoneId.systemDefault() }
     val focus = LocalFocusManager.current
@@ -82,6 +87,14 @@ internal fun AdministrationConsultationScreen(
         model.loadFolio(folio, state)
     }
     LaunchedEffect(model) { model.activate() }
+    LaunchedEffect(state, resolution) {
+        if (state !is AdministrationConsultationState.ReadyReport) resolution?.clear()
+    }
+    LaunchedEffect(resolutionState) {
+        // Losing declaration authority does not imply losing READ. Check its independent
+        // policy, and retire the consultation as well if that capability was revoked.
+        if (resolutionState === ReportResolutionState.Denied) model.checkAccess()
+    }
     LaunchedEffect(state) {
         if (state === AdministrationConsultationState.Denied) {
             folio = ""
@@ -195,6 +208,9 @@ internal fun AdministrationConsultationScreen(
                     }
                     is AdministrationConsultationState.ReadyReport -> {
                         item { ConsultationDetail(state.report, zone) }
+                        if (resolution != null) item {
+                            ReportResolutionContent(resolution, state.report.id) { model.state.value === state }
+                        }
                         if (onChangeStatus != null && state.report.status != ReportStatus.CLOSED) item {
                             Button(onClick = { action { onChangeStatus(state.report.id) } },
                                 modifier = Modifier.fillMaxWidth().testTag("admin_consult_change_status")) {

@@ -1,13 +1,24 @@
 package com.example.citizensecurity.account
 
 import android.app.Activity
+import android.graphics.Bitmap
+import android.graphics.Rect
 import android.os.SystemClock
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.action.ViewActions.scrollTo
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
@@ -17,6 +28,7 @@ import com.example.citizensecurity.data.SqliteAccountRepository
 import com.example.citizensecurity.release.ReleasedToolsActivity
 import com.example.citizensecurity.testing.ReportTestApplication
 import com.example.citizensecurity.testing.ReportTestFixture
+import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -25,7 +37,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Real isolated accounts/report stores; compiled now, execution belongs to grouped 0.6.0. */
+/** Real isolated accounts/report stores; real view gestures also cover the nested, scrollable form. */
 @RunWith(AndroidJUnit4::class)
 class AccountAccessUiTest {
     private lateinit var app: ReportTestApplication
@@ -57,22 +69,22 @@ class AccountAccessUiTest {
 
     @Test fun createAccountReturnsToLoginThenRealLoginAndLogoutPreserveSharedStores() {
         scenario = ActivityScenario.launch(MainActivity::class.java)
-        withResumed<MainActivity> { it.findViewById<TextView>(R.id.create_account_link).performClick() }
+        onView(withId(R.id.create_account_link)).perform(scrollTo(), click())
         awaitActivity<CreateAccountActivity>()
-        withResumed<CreateAccountActivity> {
-            it.findViewById<EditText>(R.id.user).setText("  Alumna_1  ")
-            it.findViewById<EditText>(R.id.pass).setText(password)
-            it.findViewById<Button>(R.id.login_button).performClick()
-        }
+        onView(withId(R.id.user)).perform(scrollTo(), click(), replaceText("  Alumna_1  "))
+        onView(withId(R.id.pass)).perform(scrollTo(), click(), replaceText(password))
+        awaitKeyboard<CreateAccountActivity>()
+        onView(withId(R.id.login_button)).perform(scrollTo(), click())
         awaitActivity<MainActivity>()
         assertNull(app.accountSession.account)
         withResumed<MainActivity> {
             assertEquals("alumna_1", it.findViewById<EditText>(R.id.user).text.toString())
             assertEquals("", it.findViewById<EditText>(R.id.pass).text.toString())
             assertEquals(it.getString(R.string.account_created), it.findViewById<TextView>(R.id.account_status).text.toString())
-            it.findViewById<EditText>(R.id.pass).setText(password)
-            it.findViewById<Button>(R.id.login_button).performClick()
         }
+        onView(withId(R.id.pass)).perform(scrollTo(), click(), replaceText(password))
+        awaitKeyboard<MainActivity>()
+        onView(withId(R.id.login_button)).perform(scrollTo(), click())
         awaitActivity<ReleasedToolsActivity>()
         assertEquals("alumna_1", app.accountSession.account?.username)
         withResumed<ReleasedToolsActivity> {
@@ -112,7 +124,14 @@ class AccountAccessUiTest {
         val account = runBlocking { repository.register("alumna_1", password) }
         app.accountSession.signIn(account)
         scenario = ActivityScenario.launch(MainActivity::class.java)
-        withResumed<MainActivity> { it.findViewById<Button>(R.id.released_tools_entry).performClick() }
+        onView(withId(R.id.pass)).perform(scrollTo(), click(), replaceText(password))
+        awaitKeyboard<MainActivity>()
+        try {
+            onView(withId(R.id.released_tools_entry)).perform(scrollTo(), click())
+        } catch (failure: Throwable) {
+            recordScrollFailure()
+            throw failure
+        }
         awaitActivity<ReleasedToolsActivity>()
         assertNull(app.accountSession.account)
         withResumed<ReleasedToolsActivity> {
@@ -141,5 +160,65 @@ class AccountAccessUiTest {
             SystemClock.sleep(50)
         }
         fail("Expected activity ${T::class.java.simpleName}")
+    }
+
+    private inline fun <reified T : Activity> awaitKeyboard() {
+        val deadline = SystemClock.elapsedRealtime() + 10_000
+        var previousGeometry: String? = null
+        var stableSince = SystemClock.elapsedRealtime()
+        while (SystemClock.elapsedRealtime() < deadline) {
+            var visible = false
+            var geometry = ""
+            var viewportBottom = 0
+            var keyboardTop = 0
+            withResumed<T> { activity ->
+                val root = activity.findViewById<View>(R.id.account_scroll)
+                val insets = ViewCompat.getRootWindowInsets(root)
+                visible = insets?.isVisible(WindowInsetsCompat.Type.ime()) == true
+                geometry = "${root.width}:${root.height}:${root.paddingTop}:${root.paddingBottom}:" +
+                    "${root.scrollY}:${insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom}"
+                val location = IntArray(2)
+                root.getLocationInWindow(location)
+                viewportBottom = location[1] + root.height
+                keyboardTop = activity.window.decorView.height -
+                    (insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0)
+            }
+            // isVisible becomes true before the keyboard's viewport animation has finished.
+            // A real scroll/click must use its settled bounds, not that intermediate frame.
+            if (!visible || geometry != previousGeometry) stableSince = SystemClock.elapsedRealtime()
+            if (visible && geometry == previousGeometry && SystemClock.elapsedRealtime() - stableSince >= 300) {
+                assertTrue("The scroll viewport ($viewportBottom) extends below the keyboard ($keyboardTop)",
+                    viewportBottom <= keyboardTop)
+                return
+            }
+            previousGeometry = if (visible) geometry else null
+            SystemClock.sleep(50)
+        }
+        fail("The keyboard did not reach a stable visible viewport for ${T::class.java.simpleName}")
+    }
+
+    private fun recordScrollFailure() {
+        withResumed<MainActivity> { activity ->
+            val scroll = activity.findViewById<View>(R.id.account_scroll)
+            val entry = activity.findViewById<View>(R.id.released_tools_entry)
+            val rootBounds = Rect()
+            val entryBounds = Rect()
+            scroll.getGlobalVisibleRect(rootBounds)
+            entry.getGlobalVisibleRect(entryBounds)
+            val insets = ViewCompat.getRootWindowInsets(scroll)
+            Log.e("AccountAccessUi", "Academic scroll failure: viewport=$rootBounds " +
+                "padding=${scroll.paddingTop},${scroll.paddingBottom} scrollY=${scroll.scrollY} " +
+                "entry=$entryBounds entryHeight=${entry.height} " +
+                "imeVisible=${insets?.isVisible(WindowInsetsCompat.Type.ime())} " +
+                "ime=${insets?.getInsets(WindowInsetsCompat.Type.ime())}")
+        }
+        runCatching {
+            val capture = InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot() ?: return@runCatching
+            try {
+                File(app.cacheDir, "release063-account-scroll-failure.png").outputStream().use {
+                    capture.compress(Bitmap.CompressFormat.PNG, 100, it)
+                }
+            } finally { capture.recycle() }
+        }
     }
 }

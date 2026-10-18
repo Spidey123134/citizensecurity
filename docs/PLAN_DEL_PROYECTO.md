@@ -1,5 +1,25 @@
 # Plan del proyecto
 
+## Entrega 0.6.3 autorizada — integración de fases 43–44
+
+**18 de octubre de 2026 · Android 0.6.3 / código 31, validada; publicación pendiente.** Se combinaron las novedades de GitHub conservando el trabajo local y el login/loading del compañero. Incluye E11 —recorrido guiado contextual— y E12 —resultado declarado con actor e historial, independiente del estado administrativo—. Configuración **app** compartida para Android Studio y actualización desde 0.6.2 sin borrar datos. [Entrega](ENTREGA_0_6_3.md) · [Guía de prueba](PROBAR_0_6_3.md).
+
+**1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**, sin fallos, errores u omitidos finales. Binario/firma, 42 recorridos Android de app y actualización real desde la oficial 0.6.2 validados en emulador propio: esquema 4 → 5, datos/foto/contactos/historial conservados y Cerrado sin solución inventada. Kotlin, ensamblados y lint sin errores; app conserva 22 avisos por variante. La publicación y descarga verificada continúan pendientes de sus comprobaciones. Después de completar la entrega se continúa refinando el recorrido guiado en otro corte; no atribuir esas mejoras futuras a la APK actual. Esta autorización reemplaza para la entrega las restricciones de publicación históricas de fases 43–44. El PDF mantiene **28/28 = 100% de construcción funcional local**; aceptación física, producción e institución siguen separadas, sin nuevos puntos por E11/E12.
+
+## Continuación local — fase 44, Unreleased
+
+E12 añade resultado declarado e historial independiente del seguimiento: **Sin confirmar / Solucionado / Sigue sin solucionarse**. El autor real y el administrador local autorizado pueden declarar con revisión y confirmación separadas; cada evento conserva cuenta/rol, fecha y motivo. Un reporte Cerrado no se convierte en solucionado. La autoridad se comprueba en el mismo espacio local capturado, sin acceso entre cuentas o instituciones. [Fase 44](FASE_44.md).
+
+**Validada el 17 de octubre: 1662 casos distintos / 108 nuevos, cero fallos, errores u omitidos finales.** Incluye los ocho recorridos nuevos de pantalla, migración aditiva a esquema 5 y conservación del seguimiento. Recuperación por lectura y reintento explícito del mismo UUID, sin diario durable de resolución o prueba nueva de muerte completa del proceso. [Resultados y límites](VALIDACION.md).
+
+Se mantiene **28/28 = 100% de construcción funcional local del PDF**, sin sumar E12 al denominador. La aceptación física completa sigue separada. La oficial permanece en **0.6.2 / código 30**; fases 43–44 son locales Unreleased, sin publicación por continuar. Resultados ejecutados y límites en [Validación](VALIDACION.md).
+
+## Continuación local — fase 43, Unreleased
+
+El usuario pidió un recorrido guiado opcional con un icono de ayuda, como ampliación **E11**. Inicio, formulario, revisión, consulta/detalle y mapa explican su uso por pasos cortos; avanzar el tutorial no ejecuta operaciones del reporte. Las explicaciones orientativas repetidas de Inicio pasan a la guía, conservando los avisos y controles importantes. [Fase 43](FASE_43.md).
+
+Esta mejora no añade criterios al PDF: se conserva **28/28 = 100% de construcción funcional local**, con aceptación física completa registrada por separado. La versión oficial continúa en 0.6.2; el tutorial permanece local y Unreleased hasta que el usuario solicite otra publicación. La validación de esta fase se registra en [Validación](VALIDACION.md), sin sumar los cortes históricos como ejecuciones nuevas.
+
 ## Entrega acumulada 0.6.2 — alcance vigente
 
 **16 de octubre de 2026 · Android 0.6.2 / código 30 · Release oficial publicada.** Esta entrega agrupa **todas las fases 35–42 posteriores a la oficial 0.6.1**: Actividad, preferencias/avisos manuales, mensaje a contactos, permisos, fotografía legible, administración local, cambios con historial y conexión con avisos de eventos reales. [Resumen completo](ENTREGA_0_6_2.md) · [Prueba de aceptación](PROBAR_0_6_2.md).

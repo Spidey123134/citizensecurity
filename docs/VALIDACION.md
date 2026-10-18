@@ -1,5 +1,77 @@
 # Validación y comprobaciones del proyecto
 
+## Entrega 0.6.3 — integración y aceptación final · 18 de octubre de 2026
+
+**Corte de 1675 casos distintos: 1121 ejecutados en esta entrega y 554 recibos reutilizados de código idéntico; cero fallos, errores u omitidos finales.** La reutilización no se presenta como otra ejecución. Fases 43–44 y el rediseño remoto de `1fecef0` quedan combinados, con los controles de sesión, historial y tutorial conservados.
+
+| Procedencia | Casos | Evidencia |
+| --- | ---: | --- |
+| App JVM ejecutados | 1077 | Suite final tras el ajuste de teclado |
+| App Android ejecutados | 42 | Cuentas 3, Inicio 8, guía 8, resultado 8, estado administrativo 8, consulta 3, búsqueda 4 |
+| Actualización real ejecutada | 2 | seed062 y verify063, nonce nuevo, separados por install -r |
+| Dominio JVM reutilizados | 216 | Recibo fase44; módulo sin diferencias respecto a5881492 |
+| Datos JVM reutilizados | 158 | Recibo fase44; módulo sin diferencias respecto a5881492 |
+| Datos Android reutilizados | 180 | Mismo código SQLite/esquema5 que fase44 |
+
+La APK final tiene **56.151.110 bytes**, paquete `com.example.citizensecurity`, versión **0.6.3 / código31**, min26/target37 y SHA-256 `0109149d9f9e6ea1a6883b46fe6915dde7bba9e20fba45c5219dfea6892d1780`. `apksigner verify --print-certs` confirma el certificado académico de las entregas anteriores, SHA-256 `0a4006a1d2ef2ad02a0dad7c51b55c0ba5ffcd096a226eed6456326b2fed3ebd`. Kotlin debug/release y ensamblados internos correctos; lint app **0 errores/22 avisos existentes por variante**, datos sin incidencias.
+
+Se instaló la **oficial0.6.2**, se sembró un fixture privado con foto, contactos, CREATED y tres cambios hasta Cerrado, y se actualizó con la APK final mediante `adb install -r`. Antes de abrir un repositorio nuevo se comprobaron bytes idénticos de SQLite, foto y contactos; después, integridad, migración4→5, campos/autor/historial preservados, Cerrado intacto y resultado Sin confirmar con secuencia0 y ningún evento inventado. Se usó el runner real de Android y reflexión únicamente para construir el repositorio de0.6.2, cuya firma de constructor es anterior. La aceptación tiene nonce nuevo y no sustituye la Application productiva.
+
+La primera integración dejó los insets de teclado en el propio ScrollView. Dos casos de cuentas pasaron, pero el acceso académico quedaba fuera del área que Android consideraba desplazable. Se corrigió el contenedor externo: el FrameLayout recibe los insets y reduce la altura real del ScrollView, conservando la tarjeta del compañero. La aceptación final exige teclado visible y estable, viewport fuera del teclado y gestos reales de scroll/clic; alta→login, acceso académico y giro pasan. El candidato anterior `62ea…` y sus intentos quedan archivados, no publicados. La actualización y los39 recorridos restantes se repitieron sobre el binario corregido; no se suman esos intentos o repeticiones como casos distintos.
+
+Recibo ignorado `release063-final/release-proof.json`; logs `release063-build-final.log`, `release063-account-native-final.log`, `release063-ui-native-final.log`, `release063-final/upgrade-seed-final.log`, `upgrade-verify-final.log` y `signature-final.log`. Los recibos de módulos idénticos se identifican mediante `resolution44-test-proof.json` y ausencia de diferencias de core contra5881492. Toda instrumentación se limitó al emulador propio de solo lectura API37, sin cambios de PIN ni instalaciones, permisos o borrados en teléfono físico. La aceptación física completa, API26/fabricantes y producción institucional siguen separadas del **28/28 funcional local** del PDF.
+
+**Publicación y descarga verificadas pendientes en este punto de preparación.** [Entrega0.6.3](ENTREGA_0_6_3.md) · [Probar en Android Studio](PROBAR_0_6_3.md). El refinamiento posterior del tour tendrá un corte propio y no se atribuye a esta APK.
+
+## Resultado declarado del incidente — fase 44, Unreleased · 17 de octubre de 2026
+
+**1662 casos distintos aprobados / 108 definiciones nuevas; cero fallos, errores u omitidos finales.** Se ejecutaron las tres suites JVM afectadas y las regresiones Android seleccionadas. No se suman los cortes históricos de otras fases ni las repeticiones del diagnóstico como casos adicionales.
+
+| Suite | Distintos aprobados | Nuevos | Alcance |
+| --- | ---: | ---: | --- |
+| Dominio JVM | 216 | 11 | Contratos, identidad, motivos, revisiones y páginas de resolución |
+| Datos JVM / SQLite host | 158 | 10 | SQL real, límites, cadena, UUID y migraciones; regresiones completas del módulo |
+| App JVM | 1077 | 51 | Modelo de resolución 39 y autoridad capturada 12; regresiones del módulo |
+| Datos Android API 37 | 180 | 28 | SQLite, cuentas, guardas, migraciones, fotos, consulta, actividad, administración y resolución |
+| App Android API 37 | 31 | 8 | Resolución integrada 8; guía 8, cambios administrativos 8, consulta 3 y búsqueda 4 |
+| **Total** | **1662** | **108** | **1451 JVM y 211 Android** |
+
+Las ocho pruebas nuevas de pantalla registran cuentas reales en bases privadas del fixture y usan el workspace, asignación administrativa y SQLite productivos. El autor declara Solucionado y corrige a Sigue sin solucionarse, conservando ambos eventos, cuenta/rol, motivo, fecha y operación exacta. El administrador declara en su propio workspace sobre un folio histórico con otro autor; `admin/admin` consulta sin escritura. Revisar y girar mantienen la misma solicitud sin guardar. Cambiar de cuenta retira la ventana privada; corromper el archivo de asignación bloquea la escritura y retira también la consulta al perder READ, conservando sus bytes.
+
+Un caso adversarial revisa con la pantalla real y la pausa antes de invocar técnicamente la confirmación. La guarda productiva final rechaza el commit: cero eventos. Al volver, comprobar el recibo sigue siendo lectura; solo otro gesto reintenta la misma declaración con el mismo UUID y guarda un evento. No se suplanta el backend ni se fabrica un recibo. La solicitud pendiente vive en memoria y sobrevive al giro; **no se probó muerte completa del proceso ni se incorpora un diario durable para este resultado**. Reabrir el proceso consulta SQL sin repetir la operación.
+
+Las 28 pruebas nativas nuevas de datos comprueban autoridad independiente, autor real, actor forjado, cuenta académica, CAS/concurrencia, namespace global de UUID, recibo/replay exactos, respuesta perdida, rol/primer plano/cancelación antes del commit, páginas y cadenas dañadas. La recuperación no crea o migra una base. La migración aditiva 4→5 conserva reporte, foto y seguimiento; las regresiones verifican también las migraciones anteriores. Un Cerrado sin declaraciones permanece Sin confirmar, sin inventar un evento. Resultado y estado administrativo no se modifican entre sí.
+
+El primer intento encontró ocho tests host de Actividad que aún exigían esquema 4: el fixture se actualizó al esquema 5 y a la tabla real de resolución. La primera ejecución de pantalla obtuvo cinco pases y tres fallos: dos clics del helper quedaban fuera del viewport de la lista anidada y un caso esperaba Compose después de que la ventana revocada ya había terminado. La captura confirmó la geometría; el helper ahora desplaza la lista exterior por su API real, exige visibilidad y mantiene el clic táctil y la comprobación de selección. El cambio de cuenta exige la destrucción de la ventana anterior antes de abrir la nueva. Un intento intermedio del harness usó una extensión de scroll inexistente y coincidió con un error interno de lint; la API local correcta, recompilación y lint finales pasaron. Estos intentos se conservan en logs y no cuentan como aprobaciones adicionales. No se relajaron los controles productivos para hacer pasar una prueba.
+
+Kotlin debug/release y ensamblados internos debug/test correctos. **Lint app: cero errores / 22 avisos existentes por variante; datos: sin incidencias.** Los cambios finales del helper se recompilaron y pasaron lint debug otra vez; no cambió el binario productivo. QA interna SHA-256 `86421a97cb7714559204aacbce5d61d0b75a0b522d92b68d0f9fef7cb32a5b79`. Oficial 0.6.2 conservada con SHA-256 `114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4`.
+
+Recibo ignorado `.gradle/validacion/resolution44-test-proof.json`, con clases/casos, timestamps JVM, lint y hashes. Logs `resolution44-build-final.log`, `resolution44-ui-final2-build.log`, `resolution44-data-native.log`, `resolution44-ui-native-final.log` y `resolution44-regression-native.log`; intentos y capturas de diagnóstico `resolution44-*` conservados aparte. Emulador propio API 37 de solo lectura cerrado al terminar, sin cambiar PIN y con letra restaurada a 1.0. Ninguna instalación, permiso, borrado o prueba en teléfono físico; API 26/fabricantes y aceptación física completa siguen separados.
+
+**E12 amplía utilidad; el PDF mantiene 28/28 = 100% de construcción funcional local.** No acredita servidor, producción institucional ni atención policial. Fases 43–44 permanecen locales **Unreleased** en `development/phase44-resolution`, sin push, main, tag, Release ni APK pública. [Fase 44](FASE_44.md) · [Plan](PLAN_DEL_PROYECTO.md) · [Administrador local](ADMINISTRADOR_LOCAL.md).
+
+## Recorrido guiado contextual — fase 43, Unreleased · 16 de octubre de 2026
+
+**26 casos Android distintos aprobados, ocho nuevos; cero fallos, errores u omitidos.** El corte verifica esta ampliación de interfaz, sin sumar los 1431 casos históricos de fase 42 ni presentar suites JVM, dominio o datos como ejecutadas de nuevo.
+
+| Suite Android API 37 | Aprobados | Alcance |
+| --- | ---: | --- |
+| GuidedTourUiTest | 8 nuevos | Apertura voluntaria, pasos/retroceso/fin/repetición, Back, giro, campos y revisión intactos, consulta/detalle, mapa sin GPS y letra 130% horizontal |
+| ReportHomeUiTest | 8 regresiones | Accesos reales, estado del borrador e intento previo, retorno y conservación de archivos |
+| ReportDraftUiTest, selección de revisión | 4 regresiones | Campos faltantes, contenido revisado, corrección y recreación/retorno sin guardar |
+| ReportsSearchUiTest, selección | 4 regresiones | Texto/filtros, consulta vacía, detalle/retorno/giro y paginación |
+| ReportsMapFiltersUiTest | 2 regresiones | Fechas y prioridad, muestra aplicada y necesidad de otra consulta explícita |
+
+Los ocho casos nuevos usan los almacenes SQLite y diarios privados del fixture aislado. Abrir/avanzar/cerrar la guía no modifica los campos, reportes, borrador o intento durable; no obtiene GPS ni ejecuta los botones explicados. El registro técnico para probar Detalle se siembra únicamente en el fixture, sin crear ejemplos en el producto. La regla de pruebas concede ubicación y conserva/restaura el ajuste de ubicación en el emulador propio; ninguna concesión procede de la guía ni se aplica a un teléfono físico. El estado del tutorial contiene tema, apertura e índice, sin copiar datos privados.
+
+Compilación Kotlin debug/release y ensamblados internos debug/test correctos. **Lint app: cero errores y 22 avisos existentes por variante**, sin aumento. No se ensambló otra APK pública ni una APK release. Los archivos oficiales de 0.6.2 se conservaron: la APK publicada mantiene SHA-256 `114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4`. El binario interno de este tutorial tiene otra identidad, `1056c2bfa6a5f4f0870deea5a50c1d40812c0380832614968d85700cfebe4bad`, y no se atribuye a aquella descarga.
+
+Revisión visual de la captura estable con letra 130% en horizontal: tarjeta opaca, explicación legible y controles accesibles mediante desplazamiento. El primer screenshot capturó la animación nativa de aparición del diálogo; se movió únicamente la captura del test después de avanzar/volver. La repetición del mismo caso aprobó `OK (1 test)` y no aumenta los 26 distintos; no cambió el producto ni su binario. No se afirma una prueba con lector de pantalla real, muerte del proceso, API 26/fabricantes o aceptación física completa.
+
+Logs y captura ignorados: `tour43-build.log`, `tour43-new-native.log` (8), `tour43-regression-native.log` (18), `tour43-capture-build.log`, `tour43-large-text-static.log` (un caso repetido) y `tour43-large-text-static.png`, bajo `.gradle/validacion/`. Recibo `tour43-test-proof.json`. Emulador propio de solo lectura API 37 cerrado al terminar; letra restaurada a 1.0 y ningún teléfono instalado o modificado. Código en rama local `development/phase43-tour`, sin push, actualización de main, tag, Release o APK publicada.
+
+**E11 es una mejora de uso:** el PDF conserva **28/28 = 100% de construcción funcional local**, con aceptación física completa separada. [Fase 43](FASE_43.md) · [Plan](PLAN_DEL_PROYECTO.md).
+
 ## Entrega acumulada 0.6.2 — comprobación final · 16 de octubre de 2026
 
 **Publicada y verificada:** [Release oficial v0.6.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.2), 16 de octubre de 2026 a las 20:47:01 UTC. Tag sobre `bbb8a261d10727fe106e36d34f2d76eaae4834a0`, fuente integrada mediante PR #30; no es borrador ni prerelease y figura como Latest. Se descargaron desde GitHub la [APK final](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.2/citizensecurity-0.6.2-academico.apk) y [SHA256SUMS-0.6.2.txt](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.2/SHA256SUMS-0.6.2.txt): la APK conserva el hash y los 56.200.431 bytes indicados abajo; el checksum coincide byte por byte. El digest del asset de GitHub coincide también. Los dos assets de 0.6.1 mantienen tamaños y digests anteriores. Recibo local `release062-final/release-proof.json` actualizado con id 415365999 y resultado de descarga; ningún teléfono modificado.

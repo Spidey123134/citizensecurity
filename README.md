@@ -1,5 +1,25 @@
 # CITIZENSECURITY
 
+## Entrega 0.6.3 validada — fases 43–44 e integración con GitHub
+
+**18 de octubre de 2026 · Android 0.6.3 / código 31 · validación final completada; publicación pendiente.** Se combina GitHub con las mejoras locales: **recorrido guiado** de seis temas/20 pasos y **resultado del incidente** declarado por autor o administrador autorizado, con motivo e historial de quién lo marcó. Cerrado no implica Solucionado. **1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**; compilación/lint sin errores y actualización real desde 0.6.2 comprobada, conservando datos, foto/contactos e historial y migrando esquema 4 → 5. El plan conserva **28/28 = 100% de construcción funcional local**; aceptación física e integración institucional requieren evidencias propias.
+
+[Cambios y estado de entrega](docs/ENTREGA_0_6_3.md) · [Probar y abrir en Android Studio](docs/PROBAR_0_6_3.md). En Studio abre la raíz del proyecto y selecciona **app**, con módulo **CITIZENSECURITY.app**; la configuración compartida evita ejecutar los laboratorios técnicos. Actualiza encima de la app anterior, conservando firma y datos. La numeración preparada no acredita todavía una Release o APK publicada.
+
+Los apartados inferiores conservan **el estado histórico de cada corte**: las restricciones locales de fases 43–44 se sustituyen para esta entrega por la autorización expresa de publicar. Los refinamientos posteriores del tutorial se registrarán por separado.
+
+## Desarrollo local Unreleased — fase 44: resultado del incidente
+
+La ampliación **E12** añade **Sin confirmar, Solucionado y Sigue sin solucionarse**, independientes del seguimiento Reportado → En revisión → Atendido → Cerrado. El autor real o el administrador local autorizado pueden declarar un resultado mediante motivo, revisión y confirmación separadas. El historial identifica UUID, rol, fecha, resultado anterior/nuevo y motivo; corregir conserva las declaraciones anteriores. Un reporte antiguo Cerrado no se considera solucionado por inferencia. [Recorrido, permisos y límites](docs/FASE_44.md).
+
+**1662 casos distintos aprobados / 108 nuevos**, sin fallos, errores u omitidos finales: 1451 JVM y 211 Android en emulador propio API 37. Incluye ocho recorridos nuevos con cuentas/roles/SQLite reales; revisar y girar no escriben, una ventana pausada no confirma y la recuperación exige otro gesto. Compilación y lint sin errores; [desglose y límites](docs/FASE_44.md). El porcentaje del PDF permanece en **28/28 = 100% de construcción funcional local**; E12 no agrega criterios ni aceptación física. Trabajo **local Unreleased**, conservando el recorrido guiado de fase 43 y la oficial **0.6.2 / código 30**, sin push, main, APK pública o Release por esta continuación.
+
+## Desarrollo local Unreleased — fase 43: recorrido guiado
+
+Un icono **?** permite abrir instrucciones breves de la pantalla actual: Inicio, Reportar, Revisión, Reportes, Detalle y Mapa. Muestra un paso por vez, con Anterior, Siguiente, Listo y Cerrar; se puede consultar otra vez sin ejecutar las acciones explicadas. Reduce la orientación repetida de Inicio y conserva los avisos de seguridad y decisiones de permiso/consentimiento. **26 casos Android distintos aprobados, ocho nuevos**, en emulador propio API 37. [Fase 43 y límites de validación](docs/FASE_43.md).
+
+Es la mejora adicional **E11**; el PDF conserva **28/28 = 100% de construcción funcional local**. Este trabajo queda **Unreleased y local**, sin publicar APK, actualizar GitHub/main o cambiar la oficial **0.6.2 / código 30**. Login y loading del compañero se conservan.
+
 ## Entrega acumulada 0.6.2 — fases 35–42
 
 **16 de octubre de 2026 · Android 0.6.2 / código 30 · Release oficial publicada.** Esta entrega reúne **todo el desarrollo posterior a la oficial 0.6.1: fases 35, 36, 37, 38, 39, 40, 41 y 42**. Incluye Actividad de reportes, avisos voluntarios con revisión manual, mensaje revisado para un contacto, corrección de las fotografías del borrador y administración local con consulta, cambios de estado e historial reales. Las mejoras anteriores de cámara/galería, PDF, contactos, ayuda, GPS y mapa siguen incluidas.

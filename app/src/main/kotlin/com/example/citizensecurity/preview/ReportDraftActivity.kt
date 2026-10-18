@@ -49,6 +49,8 @@ import com.example.citizensecurity.domain.Report
 import com.example.citizensecurity.data.PhoneLocationRefreshResult
 import com.example.citizensecurity.maps.*
 import com.example.citizensecurity.report.*
+import com.example.citizensecurity.tutorial.GuidedTourButton
+import com.example.citizensecurity.tutorial.TourTopic
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -306,6 +308,15 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
                     else -> "Nuevo reporte"
                 }) },
                 navigationIcon = { TextButton(onClick = ::goBack) { Text("Volver") } },
+                actions = {
+                    if (submission !is ReportSubmissionState.Saved && submission != ReportSubmissionState.Restoring &&
+                        !(submission is ReportSubmissionState.Error && (submission as ReportSubmissionState.Error).request == null)
+                    ) GuidedTourButton(
+                        if (reviewResult is ReportDraftReview.Valid || submission is ReportSubmissionState.Pending ||
+                            submission is ReportSubmissionState.Saving || submission is ReportSubmissionState.Error
+                        ) TourTopic.REVIEW else TourTopic.REPORT,
+                    )
+                },
             ) },
         ) { padding ->
             val request = selection

@@ -13,10 +13,12 @@ assert len(base) == 2 and "db.execSQL(ReportHistorySql.CREATE_TABLE)" in on_crea
 photos = re.findall(r'"""(.*?)"""\.trimIndent\(\)', source.split("val PHOTO_COLUMNS = listOf(", 1)[1], re.S)
 assert len(photos) == 5
 version = int(re.search(r"const val VERSION = (\d+)", source).group(1))
-assert version == 4
+assert version == 5
 legacy_sql = re.sub(r'\$\{PHOTO_COLUMNS\.joinToString\([^}]*\)\}\s*,', "", base[0])
 current_sql = re.sub(r'\$\{PHOTO_COLUMNS\.joinToString\([^}]*\)\}', ",\n".join(photos), base[0])
 assert "${" not in legacy_sql and "${" not in current_sql
+resolution_source = source_path.with_name("ReportResolutionSql.kt").read_text(encoding="utf-8")
+resolution_sql = re.search(r'val CREATE_TABLE = """(.*?)"""\.trimIndent\(\)', resolution_source, re.S).group(1)
 create, insert, head, operation, cas, first_page, older_page, activity_index = [
     (directory / f"statement{i}.sql").read_text(encoding="utf-8") for i in range(8)
 ]
@@ -37,6 +39,8 @@ def prepare(db, old_version=None):
         db.execute(create)
     if old_version >= 4:
         db.execute(activity_index)
+    if old_version >= 5:
+        db.execute(resolution_sql)
     db.execute(f"PRAGMA user_version = {old_version}")
 
 def report(db, report_id=identity, status="REPORTED", photo=False):
@@ -95,6 +99,7 @@ with connection() as db:
                 db.execute("CREATE TABLE report_status_events (preserve TEXT)")
             db.execute(create)
             db.execute(activity_index)
+            db.execute(resolution_sql)
             db.execute(f"PRAGMA user_version = {version}")
         if mode == "migrationRollback":
             before_schema = db.execute("SELECT * FROM sqlite_master ORDER BY name").fetchall()

@@ -13,7 +13,9 @@ base = re.findall(r'"""(.*?)"""\.trimIndent\(\)', on_create, re.S)
 photos = re.findall(r'"""(.*?)"""\.trimIndent\(\)', source.split("val PHOTO_COLUMNS = listOf(", 1)[1], re.S)
 assert len(base) == 2 and len(photos) == 5
 assert "db.execSQL(ReportActivitySql.CREATE_INDEX)" in on_create
-assert int(re.search(r"const val VERSION = (\d+)", source).group(1)) == 4
+assert int(re.search(r"const val VERSION = (\d+)", source).group(1)) == 5
+resolution_source = source_path.with_name("ReportResolutionSql.kt").read_text(encoding="utf-8")
+resolution_sql = re.search(r'val CREATE_TABLE = """(.*?)"""\.trimIndent\(\)', resolution_source, re.S).group(1)
 table = re.sub(r'\$\{PHOTO_COLUMNS\.joinToString\([^}]*\)\}', ",\n".join(photos), base[0])
 assert "${" not in table
 blocks = [(directory / f"statement{i}.txt").read_text(encoding="utf-8") for i in range(11)]
@@ -29,12 +31,14 @@ def connect(name="activity"):
     db.execute("PRAGMA foreign_keys = ON")
     return db
 
-def prepare(db, version=4):
+def prepare(db, version=5):
     db.execute(table)
     db.execute(base[1])
     db.execute(history)
-    if version == 4:
+    if version >= 4:
         db.execute(index_sql)
+    if version >= 5:
+        db.execute(resolution_sql)
     db.execute(f"PRAGMA user_version = {version}")
 
 def report(db, number, kind="RISK", photo=False):
@@ -69,7 +73,7 @@ def read(db, query=0):
     return [dict(zip(names, row)) for row in cursor.fetchall()]
 
 with connect() as db:
-    prepare(db, 3 if mode == "migration3" else 4)
+    prepare(db, 3 if mode == "migration3" else 5)
     if mode == "legacy":
         report(db, 11, photo=True)
         before = db.execute("SELECT * FROM reports").fetchall()
@@ -125,12 +129,13 @@ with connect() as db:
             assert db.execute("SELECT count(*) FROM sqlite_master WHERE name = 'report_status_events_activity_idx'").fetchone()[0] == 0
             db.execute("BEGIN IMMEDIATE")
             db.execute(index_sql)
-            db.execute("PRAGMA user_version = 4")
+            db.execute(resolution_sql)
+            db.execute("PRAGMA user_version = 5")
             db.execute("COMMIT")
             assert db.execute("SELECT * FROM reports ORDER BY id").fetchall() == reports
             assert db.execute("SELECT * FROM report_status_events ORDER BY operation_id").fetchall() == events
             assert reports[0][-5:] == (identity(999), "a" * 64, 1024, 640, 480)
-            assert db.execute("PRAGMA user_version").fetchone()[0] == 4
+            assert db.execute("PRAGMA user_version").fetchone()[0] == 5
             assert len(read(db)) == 3
         elif mode == "bounded":
             for number in range(100, 300):

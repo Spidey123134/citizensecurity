@@ -30,7 +30,7 @@ internal object ReleasedEntry {
             form.leaveForm()
             createAccount.launch(Intent(activity, CreateAccountActivity::class.java))
         }
-        val container = activity.findViewById<LinearLayout>(R.id.main_container)
+        val container = activity.findViewById<TextView>(R.id.create_account_link).parent as LinearLayout
         val button = Button(activity).apply {
             id = R.id.released_tools_entry
             setText(R.string.released_tools_entry)
@@ -44,11 +44,11 @@ internal object ReleasedEntry {
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT,
         ).apply { topMargin = (12 * activity.resources.displayMetrics.density).toInt() }
-        container.addView(button, container.childCount - 1, params)
+        container.addView(button, params)
         container.addView(TextView(activity).apply {
             setText(R.string.demo_login_hint)
             setTextColor(Color.BLACK)
-        }, container.childCount - 1)
+        })
     }
 
     private fun openTools(activity: ComponentActivity) {

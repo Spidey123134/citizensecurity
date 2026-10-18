@@ -145,7 +145,7 @@ class SqliteReportActivityTest {
             repository.createOnce(id(1), draft(photo = photo)).also { repository.changeStatus(command(id(1), id(2))) }
         }.copy(status = ReportStatus.IN_REVIEW)
         val events = repository(databaseName).use { it.readHistory(ReportHistoryQuery(id(1)))!!.events }
-        raw(databaseName) { it.execSQL("DROP INDEX ${ReportActivitySql.INDEX_NAME}"); it.version = 3 }
+        raw(databaseName) { it.execSQL("DROP TABLE report_resolution_events"); it.execSQL("DROP INDEX ${ReportActivitySql.INDEX_NAME}"); it.version = 3 }
         repository(databaseName).use { repository ->
             assertEquals(report, repository.findById(id(1)))
             assertEquals(events, repository.readHistory(ReportHistoryQuery(id(1)))!!.events)
@@ -154,7 +154,7 @@ class SqliteReportActivityTest {
         assertArrayEquals(photoBytes, photoStore.read(photo))
         assertEquals(photo.id + ".jpg", directory.list()!!.single())
         raw(databaseName) { db ->
-            assertEquals(4, db.version)
+            assertEquals(5, db.version)
             db.rawQuery("PRAGMA index_info(${ReportActivitySql.INDEX_NAME})", null).use { cursor ->
                 val columns = buildList { while (cursor.moveToNext()) add(cursor.getString(2)) }
                 assertEquals(listOf("recorded_at_seconds", "recorded_at_nanos", "operation_id"), columns)
@@ -168,6 +168,7 @@ class SqliteReportActivityTest {
         raw(databaseName) { db ->
             db.execSQL("DELETE FROM report_status_events")
             db.execSQL("DROP INDEX ${ReportActivitySql.INDEX_NAME}")
+            db.execSQL("DROP TABLE report_resolution_events")
             db.version = 3
         }
         repository(databaseName).use { repository ->
@@ -176,7 +177,7 @@ class SqliteReportActivityTest {
             assertEquals(report, repository.findById(id(1)))
             assertFalse(repository.readHistory(ReportHistoryQuery(id(1)))!!.completeFromCreation)
         }
-        raw(databaseName) { assertEquals(4, it.version) }
+        raw(databaseName) { assertEquals(5, it.version) }
     }
 
     @Test fun failedIndexMigrationKeepsVersionRowsPhotoFieldsAndEvents(): Unit = runBlocking {
@@ -186,6 +187,7 @@ class SqliteReportActivityTest {
             db.execSQL("DROP INDEX ${ReportActivitySql.INDEX_NAME}")
             db.execSQL("CREATE TABLE ${ReportActivitySql.INDEX_NAME} (note TEXT)")
             db.execSQL("INSERT INTO ${ReportActivitySql.INDEX_NAME} VALUES ('conservar')")
+            db.execSQL("DROP TABLE report_resolution_events")
             db.version = 3
         }
         val bytes = context.getDatabasePath(databaseName).readBytes()
@@ -222,7 +224,7 @@ class SqliteReportActivityTest {
         }
     }
 
-    @Test fun receiptLookupAcceptsThreeWithoutUpgradeThenAcceptsFourWithoutAnotherWrite(): Unit = runBlocking {
+    @Test fun receiptLookupAcceptsThreeWithoutUpgradeThenAcceptsFiveWithoutAnotherWrite(): Unit = runBlocking {
         val databaseName = name()
         val scope = ReportStatusChangeScope(null, actor)
         val request = ReportStatusChangeRequest(scope, command(id(1), id(2)), now)
@@ -230,7 +232,7 @@ class SqliteReportActivityTest {
             repository.createOnce(id(1), draft())
             SqliteReportStatusChangeAccess(scope, repository) {}.change(request)
         }
-        raw(databaseName) { it.execSQL("DROP INDEX ${ReportActivitySql.INDEX_NAME}"); it.version = 3 }
+        raw(databaseName) { it.execSQL("DROP TABLE report_resolution_events"); it.execSQL("DROP INDEX ${ReportActivitySql.INDEX_NAME}"); it.version = 3 }
         val versionThreeBytes = context.getDatabasePath(databaseName).readBytes()
         repository(databaseName).use { repository ->
             assertEquals(event, SqliteReportStatusChangeAccess(scope, repository) {}.findReceipt(request)!!.event)
@@ -238,12 +240,12 @@ class SqliteReportActivityTest {
         assertArrayEquals(versionThreeBytes, context.getDatabasePath(databaseName).readBytes())
         raw(databaseName) { assertEquals(3, it.version) }
         repository(databaseName).use { it.readActivity(ReportActivityQuery()) }
-        val versionFourBytes = context.getDatabasePath(databaseName).readBytes()
+        val versionFiveBytes = context.getDatabasePath(databaseName).readBytes()
         repository(databaseName).use { repository ->
             assertEquals(event, SqliteReportStatusChangeAccess(scope, repository) {}.findReceipt(request)!!.event)
         }
-        assertArrayEquals(versionFourBytes, context.getDatabasePath(databaseName).readBytes())
-        raw(databaseName) { assertEquals(4, it.version) }
+        assertArrayEquals(versionFiveBytes, context.getDatabasePath(databaseName).readBytes())
+        raw(databaseName) { assertEquals(5, it.version) }
     }
 
     @Test fun invalidRecordedNumericFieldsFailWithoutNormalizingOrReplacingTheDatabase(): Unit = runBlocking {

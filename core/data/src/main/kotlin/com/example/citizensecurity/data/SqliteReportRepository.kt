@@ -38,6 +38,17 @@ import com.example.citizensecurity.domain.ReportStatusPermissionDeniedException
 import com.example.citizensecurity.domain.ReportStatusConflictException
 import com.example.citizensecurity.domain.ReportStatusOperationConflictException
 import com.example.citizensecurity.domain.ReportStatusNotFoundException
+import com.example.citizensecurity.domain.ReportResolution
+import com.example.citizensecurity.domain.ReportResolutionActor
+import com.example.citizensecurity.domain.ReportResolutionActorKind
+import com.example.citizensecurity.domain.ReportResolutionCommand
+import com.example.citizensecurity.domain.ReportResolutionEvent
+import com.example.citizensecurity.domain.ReportResolutionQuery
+import com.example.citizensecurity.domain.ReportResolutionPage
+import com.example.citizensecurity.domain.ReportResolutionPermissionDeniedException
+import com.example.citizensecurity.domain.ReportResolutionNotFoundException
+import com.example.citizensecurity.domain.ReportResolutionConflictException
+import com.example.citizensecurity.domain.ReportResolutionOperationConflictException
 import com.example.citizensecurity.domain.SimilarReportMatch
 import com.example.citizensecurity.domain.SimilarReportPage
 import com.example.citizensecurity.domain.SimilarReportQuery
@@ -70,6 +81,8 @@ class SqliteReportRepository(
     private val createGuard: (NewReport) -> Unit = {},
     private val authorAccountId: String? = null,
     private val statusAuthority: (ReportStatusChangeCommand) -> String = { throw ReportStatusPermissionDeniedException() },
+    private val resolutionAuthority: (reportId: String, creatorAccountId: String?) -> ReportResolutionActor =
+        { _, _ -> throw ReportResolutionPermissionDeniedException() },
 ) : IdempotentReportRepository, ReportMapRepository, SimilarReportRepository, ReportListPageRepository,
     ReportHistoryRepository, ReportActivityRepository, ReportStatusRepository, Closeable {
 
@@ -144,6 +157,9 @@ class SqliteReportRepository(
             findStoredReport(database, requestId)?.let { existing ->
                 ensureActive()
                 return@withOpenRepository resolveExisting(existing, normalized)
+            }
+            if (hasResolutionOperation(database, requestId) || hasHistoryOperation(database, requestId)) {
+                throw ReportRequestConflictException(requestId)
             }
             database.insertOrThrow(TABLE, null, report.toValues())
             insertHistoryEvent(database, report.id, ReportStatusEvent(report.id, 1L,
@@ -224,6 +240,7 @@ class SqliteReportRepository(
         ensureActive()
         database.beginTransaction()
         try {
+            if (hasResolutionOperation(database, command.operationId)) throw ReportStatusOperationConflictException()
             val existing = database.rawQuery(ReportHistorySql.FIND_OPERATION, arrayOf(command.operationId)).use { cursor ->
                 if (cursor.moveToFirst()) cursor.getString(cursor.getColumnIndexOrThrow("report_id")) to cursor.toHistoryEvent()
                 else null
@@ -286,7 +303,7 @@ class SqliteReportRepository(
                         throw android.database.sqlite.SQLiteDatabaseCorruptException(
                             "La base local contiene datos dañados. No se ha eliminado ni recreado.")
                     }).use { database ->
-                    check(database.version in 3..4) { "La recuperación requiere el esquema de historial existente." }
+                    check(database.version in 3..5) { "La recuperación requiere el esquema de historial existente." }
                     ensureActive(); checkCurrent(); requireSameAuthority(command, actor); ensureActive()
                     readStatusChangeReceipt(database, command, actor)
                 }
@@ -296,8 +313,11 @@ class SqliteReportRepository(
         }
 
     private fun readStatusChangeReceipt(database: SQLiteDatabase, command: ReportStatusChangeCommand,
-        actor: String): ReportStatusChangeReceipt? =
-        database.rawQuery(ReportHistorySql.FIND_OPERATION, arrayOf(command.operationId)).use { cursor ->
+        actor: String): ReportStatusChangeReceipt? {
+        if (database.version >= 5 && hasResolutionOperation(database, command.operationId)) {
+            throw ReportStatusOperationConflictException()
+        }
+        return database.rawQuery(ReportHistorySql.FIND_OPERATION, arrayOf(command.operationId)).use { cursor ->
             if (!cursor.moveToFirst()) null else {
                 val reportId = cursor.getString(cursor.getColumnIndexOrThrow("report_id"))
                 val event = cursor.toHistoryEvent()
@@ -309,6 +329,209 @@ class SqliteReportRepository(
                 ReportStatusChangeReceipt(reportId, event)
             }
         }
+    }
+
+    /** Current result and one page share a fresh snapshot. Absence of events means unconfirmed. */
+    suspend fun readResolution(query: ReportResolutionQuery): ReportResolutionPage? = withOpenRepository {
+        val database = databaseForRead()
+        ensureActive()
+        database.beginTransactionNonExclusive()
+        try {
+            if (findStoredReport(database, query.reportId) == null) return@withOpenRepository null
+            val creator = readResolutionCreator(database, query.reportId)
+            val actor = optionalResolutionActor(query.reportId, creator)
+            val head = readResolutionHead(database, query.reportId)
+            val events = database.rawQuery(ReportResolutionSql.page(query), ReportResolutionSql.pageArguments(query)).use { cursor ->
+                buildList { while (cursor.moveToNext()) { ensureActive(); add(cursor.toResolutionEvent()) } }
+            }
+            ensureActive()
+            if (optionalResolutionActor(query.reportId, creator) != actor) throw ReportResolutionPermissionDeniedException()
+            ensureActive()
+            database.setTransactionSuccessful()
+            ReportResolutionPage(query.reportId, head.first, head.second, events.take(query.limit),
+                events.size > query.limit, actor)
+        } finally { database.endTransaction() }
+    }
+
+    /** Exact idempotent append; an independent authority supplies author/admin identity from SQL. */
+    suspend fun recordResolution(command: ReportResolutionCommand, beforeCommit: () -> Unit = {}): ReportResolutionEvent =
+        withOpenRepository {
+            // Do not create storage, or migrate an existing file, merely to reject a writer.
+            val preflight = withExistingResolutionDatabase { database ->
+                val stored = findStoredReport(database, command.reportId)
+                val creator = if (database.version >= 3) readResolutionCreator(database, command.reportId) else null
+                requireResolutionActor(command, creator).also {
+                    // A reused UUID is not a missing request, even if its supplied folio changed.
+                    if (database.version >= 3) readResolutionReceipt(database, command)
+                    if (stored == null) throw ReportResolutionNotFoundException()
+                }
+            }
+            if (preflight == null) {
+                requireResolutionActor(command, null)
+                throw ReportResolutionNotFoundException()
+            }
+            ensureActive()
+            val database = databaseForWrite()
+            ensureActive()
+            database.beginTransaction()
+            try {
+                if (findStoredReport(database, command.reportId) == null) throw ReportResolutionNotFoundException()
+                val creator = readResolutionCreator(database, command.reportId)
+                val actor = requireResolutionActor(command, creator)
+                if (actor != preflight) throw ReportResolutionPermissionDeniedException()
+                ensureActive()
+                val receipt = readResolutionReceipt(database, command)
+                val event = if (receipt != null) receipt else {
+                    val head = readResolutionHead(database, command.reportId)
+                    if (head.first != command.expectedResolution || head.second != command.expectedSequence) {
+                        throw ReportResolutionConflictException()
+                    }
+                    ReportResolutionEvent(command.operationId, command.reportId, command.expectedSequence + 1L,
+                        command.expectedResolution, command.targetResolution, clock.instant(), actor, command.reason).also {
+                        database.execSQL(ReportResolutionSql.INSERT, arrayOf<Any?>(it.operationId, it.reportId, it.sequence,
+                            it.fromResolution.name, it.toResolution.name, it.recordedAt.epochSecond, it.recordedAt.nano,
+                            it.actor.accountId, it.actor.kind.name, it.reason))
+                    }
+                }
+                ensureActive()
+                requireResolutionActor(command, readResolutionCreator(database, command.reportId))
+                // Role checks may block on independent storage. The caller's foreground/session
+                // guard must therefore run LAST, after that final authority read, not before it.
+                beforeCommit()
+                ensureActive()
+                database.setTransactionSuccessful()
+                event
+            } finally { database.endTransaction() }
+        }
+
+    /** A receipt read never creates or migrates storage and never retries a declaration. */
+    suspend fun findResolutionReceipt(command: ReportResolutionCommand): ReportResolutionEvent? = withOpenRepository {
+        var existingDatabase = false
+        val receipt = withExistingResolutionDatabase { database ->
+            existingDatabase = true
+            check(database.version in 3..5) { "La recuperación requiere el esquema de historial existente." }
+            val stored = findStoredReport(database, command.reportId)
+            val creator = readResolutionCreator(database, command.reportId)
+            requireResolutionActor(command, creator)
+            ensureActive()
+            val result = readResolutionReceipt(database, command)
+            if (stored == null) {
+                check(result == null) { "El recibo guardado perdió su reporte. Se conservó sin modificar." }
+                return@withExistingResolutionDatabase null
+            }
+            requireResolutionActor(command, readResolutionCreator(database, command.reportId))
+            ensureActive()
+            result
+        }
+        if (!existingDatabase) requireResolutionActor(command, null)
+        ensureActive()
+        receipt
+    }
+
+    private fun <T> withExistingResolutionDatabase(action: (SQLiteDatabase) -> T): T? {
+        if (databaseFile == null) return if (databaseWasOpened) action(databaseForRead()) else null
+        if (!databaseFile.exists()) return null
+        check(databaseFile.isFile) { "La base local no es un archivo válido." }
+        return SQLiteDatabase.openDatabase(databaseFile.path, null, SQLiteDatabase.OPEN_READONLY,
+            android.database.DatabaseErrorHandler { broken ->
+                runCatching { broken.close() }
+                throw android.database.sqlite.SQLiteDatabaseCorruptException(
+                    "La base local contiene datos dañados. No se ha eliminado ni recreado.")
+            }).use { database ->
+            check(database.version in 1..5) { "El esquema local no admite esta consulta." }
+            action(database)
+        }
+    }
+
+    private fun readResolutionReceipt(database: SQLiteDatabase, command: ReportResolutionCommand): ReportResolutionEvent? {
+        if (hasHistoryOperation(database, command.operationId)) {
+            throw ReportResolutionOperationConflictException()
+        }
+        if (database.version < 5) return null
+        val result = database.rawQuery(ReportResolutionSql.FIND_OPERATION, arrayOf(command.operationId)).use { cursor ->
+            if (!cursor.moveToFirst()) null else cursor.toResolutionEvent().also {
+                if (!it.matches(command)) throw ReportResolutionOperationConflictException()
+            }
+        }
+        // Exact body alone cannot confirm a declaration in a broken chronology. This is a
+        // read-only aggregate/index check; legacy 3/4 returned above without opening a helper.
+        if (result != null) {
+            check(readResolutionHead(database, command.reportId).second >= result.sequence) {
+                "El recibo no pertenece al historial guardado. Se conservó sin modificar."
+            }
+        }
+        return result
+    }
+
+    private fun hasResolutionOperation(database: SQLiteDatabase, operationId: String): Boolean =
+        database.rawQuery(ReportResolutionSql.FIND_OPERATION, arrayOf(operationId)).use { it.moveToFirst() }
+
+    private fun hasHistoryOperation(database: SQLiteDatabase, operationId: String): Boolean =
+        database.rawQuery(ReportHistorySql.FIND_OPERATION, arrayOf(operationId)).use { it.moveToFirst() }
+
+    private fun readResolutionCreator(database: SQLiteDatabase, reportId: String): String? =
+        database.rawQuery(ReportResolutionSql.CREATOR, arrayOf(reportId)).use { cursor ->
+            if (!cursor.moveToFirst()) null else cursor.toHistoryEvent().also { event ->
+                check(event.operationId == reportId) { "El autor guardado no corresponde a la creación de este folio." }
+            }.actorAccountId
+        }
+
+    private fun optionalResolutionActor(reportId: String, creator: String?): ReportResolutionActor? = try {
+        authorizedResolutionActor(reportId, creator)
+    } catch (_: ReportResolutionPermissionDeniedException) { null }
+
+    private fun authorizedResolutionActor(reportId: String, creator: String?): ReportResolutionActor =
+        resolutionAuthority(reportId, creator).also { actor ->
+            if (authorAccountId == null || actor.accountId != authorAccountId ||
+                (actor.kind == ReportResolutionActorKind.AUTHOR && actor.accountId != creator)
+            ) throw ReportResolutionPermissionDeniedException()
+        }
+
+    private fun requireResolutionActor(command: ReportResolutionCommand, creator: String?): ReportResolutionActor =
+        authorizedResolutionActor(command.reportId, creator).also {
+            if (it != command.actor) throw ReportResolutionPermissionDeniedException()
+        }
+
+    private fun readResolutionHead(database: SQLiteDatabase, reportId: String): Pair<ReportResolution, Long> {
+        val sequence = database.rawQuery(ReportResolutionSql.CHAIN, arrayOf(reportId)).use { cursor ->
+            check(cursor.moveToFirst())
+            val count = cursor.getLong(cursor.getColumnIndexOrThrow("event_count"))
+            val first = cursor.getLong(cursor.getColumnIndexOrThrow("first_sequence"))
+            val last = cursor.getLong(cursor.getColumnIndexOrThrow("last_sequence"))
+            check(cursor.getLong(cursor.getColumnIndexOrThrow("broken_links")) == 0L &&
+                (count == 0L || (first == 1L && count == last))) {
+                "El historial de resultados contiene una secuencia incompleta. Se conservó sin modificar."
+            }
+            last
+        }
+        return database.rawQuery(ReportResolutionSql.LATEST, arrayOf(reportId)).use { cursor ->
+            if (!cursor.moveToFirst()) {
+                check(sequence == 0L)
+                ReportResolution.UNCONFIRMED to 0L
+            } else cursor.toResolutionEvent().let { event ->
+                check(event.sequence == sequence)
+                event.toResolution to event.sequence
+            }
+        }
+    }
+
+    private fun Cursor.toResolutionEvent(): ReportResolutionEvent {
+        listOf("sequence", "recorded_at_seconds", "recorded_at_nanos").forEach { name ->
+            check(getType(getColumnIndexOrThrow(name)) == Cursor.FIELD_TYPE_INTEGER) {
+                "El resultado guardado contiene tipos numéricos inválidos."
+            }
+        }
+        val nanos = getLong(getColumnIndexOrThrow("recorded_at_nanos"))
+        check(nanos in 0..999999999) { "La fecha guardada del resultado es inválida." }
+        return ReportResolutionEvent(getString(getColumnIndexOrThrow("operation_id")),
+            getString(getColumnIndexOrThrow("report_id")), getLong(getColumnIndexOrThrow("sequence")),
+            ReportResolution.valueOf(getString(getColumnIndexOrThrow("from_resolution"))),
+            ReportResolution.valueOf(getString(getColumnIndexOrThrow("to_resolution"))),
+            Instant.ofEpochSecond(getLong(getColumnIndexOrThrow("recorded_at_seconds")), nanos),
+            ReportResolutionActor(getString(getColumnIndexOrThrow("actor_account_id")),
+                ReportResolutionActorKind.valueOf(getString(getColumnIndexOrThrow("actor_kind")))),
+            getString(getColumnIndexOrThrow("reason")))
+    }
 
     private data class HistoryHead(val status: ReportStatus, val sequence: Long, val complete: Boolean)
     private fun readHistoryHead(database: SQLiteDatabase, reportId: String): HistoryHead? =
