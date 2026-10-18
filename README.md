@@ -1,5 +1,13 @@
 # CITIZENSECURITY
 
+## Preparación de entrega 0.6.3 — fases 43–44 e integración con GitHub
+
+**18 de octubre de 2026 · Android 0.6.3 / código 31 · binario y actualización validados; publicación pendiente.** Se combina GitHub con las mejoras locales: **recorrido guiado** de seis temas/20 pasos y **resultado del incidente** declarado por autor o administrador autorizado, con motivo e historial de quién lo marcó. Cerrado no implica Solucionado. Compilación y lint sin errores, 1077 JVM de app ejecutados y actualización real desde 0.6.2 aprobada en emulador propio, conservando datos, foto/contactos e historial y migrando esquema 4 → 5. El plan conserva **28/28 = 100% de construcción funcional local**; aceptación física e integración institucional requieren evidencias propias.
+
+[Cambios y estado de entrega](docs/ENTREGA_0_6_3.md) · [Probar y abrir en Android Studio](docs/PROBAR_0_6_3.md). En Studio abre la raíz del proyecto y selecciona **app**, con módulo **CITIZENSECURITY.app**; la configuración compartida evita ejecutar los laboratorios técnicos. Actualiza encima de la app anterior, conservando firma y datos. La numeración preparada no acredita todavía una Release o APK publicada.
+
+Los apartados inferiores conservan **el estado histórico de cada corte**: las restricciones locales de fases 43–44 se sustituyen para esta entrega por la autorización expresa de publicar. Los refinamientos posteriores del tutorial se registrarán por separado.
+
 ## Desarrollo local Unreleased — fase 44: resultado del incidente
 
 La ampliación **E12** añade **Sin confirmar, Solucionado y Sigue sin solucionarse**, independientes del seguimiento Reportado → En revisión → Atendido → Cerrado. El autor real o el administrador local autorizado pueden declarar un resultado mediante motivo, revisión y confirmación separadas. El historial identifica UUID, rol, fecha, resultado anterior/nuevo y motivo; corregir conserva las declaraciones anteriores. Un reporte antiguo Cerrado no se considera solucionado por inferencia. [Recorrido, permisos y límites](docs/FASE_44.md).

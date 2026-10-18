@@ -7,6 +7,9 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -43,7 +46,15 @@ internal class AccountFormBinding(
         // Android must not place the password in its hierarchy Bundle on rotation/process save.
         password.isSaveEnabled = false
         password.isSaveFromParentEnabled = false
-        val container = activity.findViewById<LinearLayout>(R.id.main_container)
+        WindowCompat.setDecorFitsSystemWindows(activity.window, false)
+        // Insets belong to the window container, so ScrollView receives the real visible height.
+        // Padding the scroller itself leaves requestRectangleOnScreen using its full height.
+        ViewCompat.setOnApplyWindowInsetsListener(activity.findViewById(R.id.account_window)) { view, insets ->
+            val safe = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime())
+            view.setPadding(safe.left, safe.top, safe.right, safe.bottom)
+            insets
+        }
+        val container = submit.parent as LinearLayout
         container.addView(status, container.indexOfChild(submit) + 1, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT,
         ))

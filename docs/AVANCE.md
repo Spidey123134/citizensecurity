@@ -1,5 +1,11 @@
 # Avance del plan del proyecto
 
+## Preparación de entrega 0.6.3 — integración y mejoras de uso
+
+**18 de octubre de 2026 · Android 0.6.3 / código 31.** La petición actual autoriza combinar las novedades de GitHub con fases 43–44 y publicar una nueva Release. Reúne **seis recorridos guiados/20 pasos** y el **resultado del incidente declarado por autor o administrador**, con motivo, actor e historial, separado del seguimiento. Se prepara también el acceso **app** de Android Studio. [Entrega](ENTREGA_0_6_3.md) · [Guía de prueba](PROBAR_0_6_3.md).
+
+El porcentaje se mantiene en **28/28 = 100% de construcción funcional local**. E11/E12 amplían utilidad y no inflan el PDF. Binario/firma y actualización real desde 0.6.2 validados, con migración 4 → 5 y datos/foto/contactos/historial conservados; Kotlin, ensamblados y lint sin errores y 1077 JVM de app ejecutados. La publicación y descarga verificada continúan pendientes. Las cifras históricas de fases 43/44 no se suman como nuevas pruebas. Las restricciones de publicación inferiores describen los cortes anteriores, sustituidas para esta entrega por la autorización actual. El refinamiento posterior del tutorial se registra aparte.
+
 ## Corte local Unreleased — fase 44: resultado del incidente
 
 El usuario eligió que **autor y administrador** puedan indicar si un incidente se solucionó, identificando quién lo marcó. La mejora **E12**, implementada y validada localmente, separa **Sin confirmar / Solucionado / Sigue sin solucionarse** del seguimiento administrativo. Motivo, revisión y confirmación conservan decisiones explícitas; el historial mantiene actor por UUID, rol, fecha y declaraciones previas. Los reportes antiguos no heredan un resultado por estar Cerrados. [Fase 44 y criterios](FASE_44.md).

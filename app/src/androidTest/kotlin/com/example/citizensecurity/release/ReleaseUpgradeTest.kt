@@ -34,6 +34,8 @@ import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -44,6 +46,11 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class ReleaseUpgradeTest {
+    @Before fun requireManualUpgradeOptIn() {
+        assumeTrue("Historical two-APK acceptance requires upgradeNonce",
+            !InstrumentationRegistry.getArguments().getString("upgradeNonce").isNullOrEmpty())
+    }
+
     private val context: Context get() = InstrumentationRegistry.getInstrumentation().targetContext
     private val nonce: String get() = requireNotNull(InstrumentationRegistry.getArguments().getString("upgradeNonce"))
         .also { require(UUID.fromString(it).toString() == it) { "A canonical, fresh upgradeNonce is required" } }

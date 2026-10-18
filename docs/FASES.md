@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Preparación de entrega 0.6.3 — fases 43–44
+
+**18 de octubre de 2026 · Android 0.6.3 / código 31.** El usuario autoriza revisar GitHub, combinar las novedades y publicar el trabajo local acumulado. Se incluyen el **recorrido guiado E11**, el **resultado declarado E12** y su integración con el trabajo remoto. Binario/firma y actualización real desde 0.6.2 validados en emulador propio, con migración 4 → 5 y datos/foto/contactos/historial conservados. Kotlin, ensamblados y lint sin errores; 1077 JVM de app ejecutados. La publicación y descarga verificada continúan pendientes. [Entrega](ENTREGA_0_6_3.md) · [Probar en Android Studio](PROBAR_0_6_3.md).
+
+**28/28 = 100% de construcción funcional local permanece**, sin añadir E11/E12 al denominador ni atribuir aceptación física. Las marcas Unreleased inferiores son históricas y su restricción de publicación queda sustituida para esta entrega. Los siguientes refinamientos del tutorial se registran aparte.
+
 ## Fase 44 — resultado del incidente, Unreleased local validada
 
 Mejora **E12** por petición del usuario: **Sin confirmar, Solucionado y Sigue sin solucionarse**, independientes de Reportado → En revisión → Atendido → Cerrado. Autor real y administrador local autorizado pueden declarar con motivo, revisión y confirmación; UUID, rol, fecha y cambios anteriores quedan en el historial. Corregir no borra declaraciones; los folios antiguos Cerrados comienzan Sin confirmar si no hay una declaración. Administración sigue limitada al propio espacio de la cuenta asignada en esta instalación. [Alcance y criterios](FASE_44.md) · [Mejoras útiles](MEJORAS_UTILES.md).

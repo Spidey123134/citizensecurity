@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+El refinamiento posterior del recorrido guiado se registrará aquí después de la entrega autorizada 0.6.3; todavía no se atribuye a su APK.
+
+## [0.6.3] — en preparación, 2026-10-18
+
+- Publicación autorizada para reunir fases 43–44 y combinar los cambios nuevos de GitHub. Android 0.6.3 / código 31; Kotlin/ensamblados debug y release y lint sin errores, 1077 JVM de app ejecutados. Publicación y descarga verificada continúan pendientes.
+- APK final de 56,151,110 bytes, SHA-256 `0109149d9f9e6ea1a6883b46fe6915dde7bba9e20fba45c5219dfea6892d1780`, con el mismo certificado académico de 0.6.2. Actualización real 0.6.2 → 0.6.3 aprobada en emulador propio: dos invocaciones, preservación de bytes antes de abrir, esquema 4 → 5, foto/contactos/historial intactos y Cerrado con resultado Sin confirmar sin eventos inventados.
+- Configuración compartida **app** para ejecutar **CITIZENSECURITY.app** desde Android Studio. Las guías nuevas explican cómo probar el tutorial y declarar el resultado conservando datos anteriores. [Entrega](docs/ENTREGA_0_6_3.md) · [Guía](docs/PROBAR_0_6_3.md).
+- Ajuste del área visible del login al abrir el teclado para poder desplazar y alcanzar las acciones inferiores, conservando el diseño del compañero.
+- Las cifras y marcas locales de las fases siguientes describen su validación histórica; la nueva autorización permite incluirlas en esta entrega, sin sumar sus totales como ejecuciones nuevas.
+
 - **Fase 44 / E12, resultado del incidente, implementado y validado localmente:** tres resultados independientes del estado administrativo: Sin confirmar, Solucionado y Sigue sin solucionarse. La decisión del usuario permite declarar al autor real y al administrador local autorizado, identificando quién actuó.
 - Motivo de 5–500 caracteres, revisión y confirmación separadas; correcciones mediante otra declaración, con historial de UUID/rol/fecha/motivo y resultado anterior/nuevo. Autor tomado del evento real de creación y capacidad administrativa `DECLARE_RESOLUTION` separada; `admin/admin` no recibe permiso.
 - Migración aditiva de reportes a esquema 5, sin inferir una solución para folios antiguos o Cerrados; recuperación de recibos por lectura y reintento explícito de la misma operación. Revisión conservada al girar y permiso de consulta revalidado independientemente cuando se pierde la capacidad de declarar. Pendientes en memoria, sin diario durable ni repetición automática al reabrir el proceso. [Alcance](docs/FASE_44.md).

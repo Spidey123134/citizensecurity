@@ -411,14 +411,24 @@ private fun FilterRow(
 
 @Composable
 private fun ReportCard(report: Report, zone: ZoneId, enabled: Boolean, onSelect: () -> Unit) {
-    Card(Modifier.fillMaxWidth().testTag("list_card_${report.id}")) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(typeLabel(report.type), style = MaterialTheme.typography.titleMedium)
-            Text("Prioridad: ${priorityLabel(report.priority)}")
-            Text("Estado local: ${statusLabel(report.status)}")
-            Text("Incidente: ${formatReportTime(report.occurredAt, zone)}")
+    Card(
+        modifier = Modifier.fillMaxWidth().testTag("list_card_${report.id}"),
+        elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 6.dp),
+        colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                text = typeLabel(report.type),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+            )
+            Text("Prioridad: ${priorityLabel(report.priority)}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("Estado local: ${statusLabel(report.status)}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text("Incidente: ${formatReportTime(report.occurredAt, zone)}", color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(report.description, maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
-            Text("Folio: ${report.id}", style = MaterialTheme.typography.bodySmall)
+            Text("Folio: ${report.id}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
             TextButton(
                 onClick = onSelect,
                 enabled = enabled,
@@ -436,8 +446,13 @@ private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit, 
     isCurrent: () -> Boolean) {
     val context = LocalContext.current
     var copied by remember(report.id) { mutableStateOf(false) }
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 6.dp),
+        colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             DetailField("Folio", report.id, "report_folio")
             OutlinedButton(
                 onClick = {

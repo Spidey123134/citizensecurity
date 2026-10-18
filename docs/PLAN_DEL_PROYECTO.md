@@ -1,5 +1,11 @@
 # Plan del proyecto
 
+## Entrega 0.6.3 autorizada — integración de fases 43–44
+
+**18 de octubre de 2026 · Android 0.6.3 / código 31, en preparación.** Revisar las novedades de GitHub, combinarlas conservando el trabajo local y el login/loading del compañero, validar el corte integrado y publicar la nueva entrega. Incluir E11 —recorrido guiado contextual— y E12 —resultado declarado con actor e historial, independiente del estado administrativo—. Preparar **app** en Android Studio y la aceptación de actualización desde 0.6.2 sin borrar datos. [Entrega](ENTREGA_0_6_3.md) · [Guía de prueba](PROBAR_0_6_3.md).
+
+Binario/firma y actualización real desde la oficial 0.6.2 validados en emulador propio: esquema 4 → 5, datos/foto/contactos/historial conservados y Cerrado sin solución inventada. Kotlin, ensamblados y lint sin errores; 1077 JVM de app ejecutados. La publicación y descarga verificada continúan pendientes de sus comprobaciones. Después de completar la entrega se continúa refinando el recorrido guiado en otro corte; no atribuir esas mejoras futuras a la APK actual. Esta autorización reemplaza para la entrega las restricciones de publicación históricas de fases 43–44. El PDF mantiene **28/28 = 100% de construcción funcional local**; aceptación física, producción e institución siguen separadas, sin nuevos puntos por E11/E12.
+
 ## Continuación local — fase 44, Unreleased
 
 E12 añade resultado declarado e historial independiente del seguimiento: **Sin confirmar / Solucionado / Sigue sin solucionarse**. El autor real y el administrador local autorizado pueden declarar con revisión y confirmación separadas; cada evento conserva cuenta/rol, fecha y motivo. Un reporte Cerrado no se convierte en solucionado. La autoridad se comprueba en el mismo espacio local capturado, sin acceso entre cuentas o instituciones. [Fase 44](FASE_44.md).
