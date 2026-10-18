@@ -1,6 +1,6 @@
 # Entrega acumulada 0.6.3
 
-**18 de octubre de 2026 · Android 0.6.3 / código 31 · validación final completada; publicación pendiente.** El usuario pidió revisar GitHub, combinar el trabajo nuevo y publicar otra Release. Esta entrega reúne las fases 43–44 posteriores a la oficial 0.6.2 y la integración revisada del código remoto. Las fuentes se preparan en el [PR #32](https://github.com/Spidey123134/citizensecurity/pull/32); la integración pública y la Release se confirman por separado. [Guía para probar y abrir en Android Studio](PROBAR_0_6_3.md).
+**18 de octubre de 2026 · Android 0.6.3 / código 31 · Release oficial publicada y descarga verificada.** Esta entrega reúne las fases 43–44 posteriores a la oficial 0.6.2 y la integración revisada del código remoto. El [PR #32](https://github.com/Spidey123134/citizensecurity/pull/32) se integró en main y la [Release v0.6.3](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.3) se publicó a las **18:36:19 UTC**, con tag sobre `a4a36891e192a70a6c8306bd52a4b7953ccb5e83`. [Guía para probar y abrir en Android Studio](PROBAR_0_6_3.md).
 
 Las marcas Unreleased de los cortes de fases 43 y 44 describen su preparación histórica. La solicitud actual autoriza reunirlas en esta entrega. Las mejoras posteriores del recorrido guiado tendrán su propio corte y no se atribuyen a la APK hasta incorporarlas y validarlas.
 
@@ -28,7 +28,7 @@ El tutorial explica las opciones sin guardar reportes, cambiar estados, pedir pe
 
 ## Binario y actualización
 
-APK final preparada **citizensecurity-0.6.3-academico.apk**, con **56,151,110 bytes** y SHA-256 `0109149d9f9e6ea1a6883b46fe6915dde7bba9e20fba45c5219dfea6892d1780`. Su archivo de comprobación es **SHA256SUMS-0.6.3.txt**. Ambos se conservan localmente en `.gradle/validacion/release063-final/`. **La publicación de la Release y la descarga verificada continúan pendientes; este documento todavía no acredita un archivo público 0.6.3.**
+APK final publicada: [citizensecurity-0.6.3-academico.apk](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.3/citizensecurity-0.6.3-academico.apk), con **56,151,110 bytes** y SHA-256 `0109149d9f9e6ea1a6883b46fe6915dde7bba9e20fba45c5219dfea6892d1780`. Su archivo de comprobación es [SHA256SUMS-0.6.3.txt](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.3/SHA256SUMS-0.6.3.txt), de **102 bytes**, SHA-256 `361c668307b0ce0dcf931aadef551806c982e44b77fd3eefe8c48d4e94e73cb0`. Ambos archivos se descargaron de GitHub y se comprobaron: APK con el hash esperado y checksum idéntico al preparado. Copias y recibos locales en `.gradle/validacion/release063-final/`. La oficial 0.6.2 conserva su tag y archivos.
 
 Paquete `com.example.citizensecurity`, minSdk 26 / targetSdk 37 y certificado académico SHA-256 `0a4006a1d2ef2ad02a0dad7c51b55c0ba5ffcd096a226eed6456326b2fed3ebd`, comprobado e idéntico al de la oficial 0.6.2. **Actualizar encima, sin desinstalar ni borrar datos.** Android rechazando una actualización requiere revisar archivo/firma, conservando la instalación anterior.
 
