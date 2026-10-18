@@ -58,7 +58,8 @@ class AdministrationStatusChangeViewModelTest {
         assertEquals(1L, editing(model).snapshot.sequence)
         assertEquals(4, f.reads)
         assertEquals(listOf(1, 1), f.historyLimits)
-        assertEquals(ReportAdministrationPermission.entries.toSet(), f.permissions.toSet())
+        assertEquals(setOf(ReportAdministrationPermission.READ_REPORTS, ReportAdministrationPermission.CHANGE_STATUS),
+            f.permissions.toSet())
     }
 
     @Test fun duplicateLoadWhileInFlightDoesNotStartAnotherRead() = runTest(dispatcher) {

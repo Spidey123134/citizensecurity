@@ -68,6 +68,7 @@ class SqliteReportHistoryTest {
         raw(databaseName) { db ->
             db.execSQL("DROP TABLE report_status_events")
             db.execSQL("UPDATE reports SET status = 'ATTENDED' WHERE id = '$id'")
+            db.execSQL("DROP TABLE report_resolution_events")
             db.version = 2
         }
         authorized(databaseName).use { repository ->
@@ -81,7 +82,7 @@ class SqliteReportHistoryTest {
             assertEquals(1L, event.sequence)
             assertFalse(repository.readHistory(ReportHistoryQuery(id))!!.completeFromCreation)
         }
-        raw(databaseName) { assertEquals(4, it.version) }
+        raw(databaseName) { assertEquals(5, it.version) }
     }
     @Test fun failedMigrationFromTwoPreservesRowsVersionAndExistingTable(): Unit = runBlocking {
         val databaseName = name()
@@ -90,6 +91,7 @@ class SqliteReportHistoryTest {
             db.execSQL("DROP TABLE report_status_events")
             db.execSQL("CREATE TABLE report_status_events (note TEXT)")
             db.execSQL("INSERT INTO report_status_events VALUES ('conservar')")
+            db.execSQL("DROP TABLE report_resolution_events")
             db.version = 2
         }
         val bytes = context.getDatabasePath(databaseName).readBytes()

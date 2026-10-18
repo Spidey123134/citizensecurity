@@ -87,7 +87,8 @@ class LocalAdministratorStore(context: Context, filenameOverride: String? = null
     /** Reread on every boundary, including a transaction's final permission check. */
     fun policy(): ReportAdministrationPolicy = ReportAdministrationPolicy { scope, permission ->
         when (permission) {
-            ReportAdministrationPermission.READ_REPORTS, ReportAdministrationPermission.CHANGE_STATUS -> {
+            ReportAdministrationPermission.READ_REPORTS, ReportAdministrationPermission.CHANGE_STATUS,
+            ReportAdministrationPermission.DECLARE_RESOLUTION -> {
                 val assignment = read()
                 if (assignment?.allows(scope) != true) throw ReportAdministrationPermissionDeniedException()
             }

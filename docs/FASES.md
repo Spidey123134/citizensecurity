@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Fase 44 — resultado del incidente, Unreleased local validada
+
+Mejora **E12** por petición del usuario: **Sin confirmar, Solucionado y Sigue sin solucionarse**, independientes de Reportado → En revisión → Atendido → Cerrado. Autor real y administrador local autorizado pueden declarar con motivo, revisión y confirmación; UUID, rol, fecha y cambios anteriores quedan en el historial. Corregir no borra declaraciones; los folios antiguos Cerrados comienzan Sin confirmar si no hay una declaración. Administración sigue limitada al propio espacio de la cuenta asignada en esta instalación. [Alcance y criterios](FASE_44.md) · [Mejoras útiles](MEJORAS_UTILES.md).
+
+**1662 casos distintos aprobados / 108 nuevos**, cero fallos/errores/omitidos finales: 1451 JVM y 211 Android API 37. Los ocho recorridos nuevos comprueban autor/corrección, administrador, académico, giro, migración de un Cerrado, revocación y recuperación con guard real de ventana pausada. Reportes incorpora migración aditiva a esquema 5, sin reconstrucción ni atribuciones retrospectivas. Compilación y lint sin errores; [desglose y límites](FASE_44.md). **28/28 = 100% de construcción funcional local permanece**; E12 amplía utilidad y no acredita aceptación física. Oficial **0.6.2 / código 30** intacta; desarrollo local, sin push/main/tag/Release/APK pública.
+
 ## Fase 43 — recorrido guiado contextual, Unreleased local
 
 Icono **?** para consultar un paso breve por vez en Inicio, Reportar, Revisión, Reportes, Detalle y Mapa. Anterior/Siguiente/Listo permiten recorrerlo y Cerrar vuelve a la misma pantalla; consultar instrucciones no ejecuta acciones del reporte, permisos, GPS o avisos. Abrir otra vez reinicia la guía; girar conserva el paso. Se reduce la orientación repetida de Inicio y se mantienen los avisos necesarios para decidir. **26 casos Android distintos aprobados/ocho nuevos**, sin fallos; emulador propio API 37. [Alcance y límites de validación](FASE_43.md) · [Mejora E11](MEJORAS_UTILES.md).

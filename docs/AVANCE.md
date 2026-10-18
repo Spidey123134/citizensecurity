@@ -1,5 +1,11 @@
 # Avance del plan del proyecto
 
+## Corte local Unreleased — fase 44: resultado del incidente
+
+El usuario eligió que **autor y administrador** puedan indicar si un incidente se solucionó, identificando quién lo marcó. La mejora **E12**, implementada y validada localmente, separa **Sin confirmar / Solucionado / Sigue sin solucionarse** del seguimiento administrativo. Motivo, revisión y confirmación conservan decisiones explícitas; el historial mantiene actor por UUID, rol, fecha y declaraciones previas. Los reportes antiguos no heredan un resultado por estar Cerrados. [Fase 44 y criterios](FASE_44.md).
+
+**1662 casos distintos aprobados / 108 nuevos**, sin fallos/errores/omitidos finales: 1451 JVM y 211 Android API 37, incluidos ocho recorridos nuevos y 23 regresiones de app. Compilación y lint sin errores; [validación y procedencia](VALIDACION.md). El plan original permanece en **28/28 = 100% de construcción funcional local**, con aceptación física y producción aparte. E12 no amplía el denominador ni acredita las pruebas anteriores otra vez. Oficial **0.6.2 / código 30** y sus archivos intactos; fases 43 y 44 siguen locales **Unreleased**, sin publicar por esta continuación.
+
 ## Corte local Unreleased — fase 43: recorrido guiado
 
 La mejora **E11**, solicitada después de publicar 0.6.2, incorpora una guía breve por pantalla mediante el icono **?**. Se consulta voluntariamente en Inicio, Reportar, Revisión, Reportes, Detalle y Mapa; sus controles solo recorren las instrucciones. Las acciones reales y sus comprobaciones conservan gestos separados. **26 casos Android distintos aprobados/ocho nuevos**, sin fallos; compilación y lint sin errores. [Alcance y límites de validación](FASE_43.md).

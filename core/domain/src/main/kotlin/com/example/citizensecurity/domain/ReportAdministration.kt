@@ -1,7 +1,7 @@
 package com.example.citizensecurity.domain
 
 /** Reading and changing reports are separate capabilities; neither follows from a local login. */
-enum class ReportAdministrationPermission { READ_REPORTS, CHANGE_STATUS }
+enum class ReportAdministrationPermission { READ_REPORTS, CHANGE_STATUS, DECLARE_RESOLUTION }
 
 /**
  * Rechecks one captured owner/actor against the current authority. Constructing a scope or

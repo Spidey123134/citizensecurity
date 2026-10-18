@@ -65,6 +65,8 @@ import com.example.citizensecurity.report.parseReportSearchFilters
 import com.example.citizensecurity.report.ReportSearchFilterValidation
 import com.example.citizensecurity.tutorial.GuidedTourButton
 import com.example.citizensecurity.tutorial.TourTopic
+import com.example.citizensecurity.resolution.ReportResolutionContent
+import com.example.citizensecurity.resolution.ReportResolutionViewModel
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -80,6 +82,7 @@ fun ReportsScreen(
     evidence: ReportEvidenceViewModel? = null,
     onShareEvidence: (ReportEvidenceState.Ready, () -> Boolean) -> Unit = { _, _ -> },
     onMessage: ((String) -> Unit)? = null,
+    resolution: ReportResolutionViewModel? = null,
 ) {
     val queryState by query.state.collectAsStateWithLifecycle()
     val pageState by pages.state.collectAsStateWithLifecycle()
@@ -125,7 +128,7 @@ fun ReportsScreen(
     val focus = LocalFocusManager.current
     val scroll = rememberLazyListState()
     val queryBusy = queryState is ReportQueryState.Loading
-    val leaveDetail = { query.cancelQuery(); history?.clear(); evidence?.clear(); detailFolio = null }
+    val leaveDetail = { query.cancelQuery(); history?.clear(); evidence?.clear(); resolution?.clear(); detailFolio = null }
     fun requestSearchRestart() {
         restartSearchPending = true
         searchRevision++
@@ -166,6 +169,16 @@ fun ReportsScreen(
         if (detailFolio == null || historyFolio != detailFolio) history?.clear()
         if (detailFolio == null || evidence?.state?.value?.evidenceRequest()?.reportId != detailFolio) evidence?.clear()
         if (detailFolio == null) query.cancelQuery() else query.findByFolio(detailFolio.orEmpty())
+    }
+    LaunchedEffect(detailFolio, queryState, resolution) {
+        // Recreating this screen rereads the same folio. Its transient Loading hides the
+        // section without discarding a retained review or generating a different UUID.
+        val sameDetail = when (val current = queryState) {
+            is ReportQueryState.Found -> current.report.id == detailFolio
+            is ReportQueryState.Loading -> current.folio == detailFolio
+            else -> false
+        }
+        if (detailFolio == null || !sameDetail) resolution?.clear()
     }
     LaunchedEffect(validatedFilters, detailFolio != null) {
         if (validatedFilters == null || detailFolio != null) pages.cancelSearch()
@@ -211,7 +224,7 @@ fun ReportsScreen(
                 when (val state = queryState) {
                     is ReportQueryState.Found -> {
                         if (state.report.id == detailFolio) {
-                            item { ReportDetail(state.report, searchZone, onMap, history, evidence, onShareEvidence, onMessage) {
+                            item { ReportDetail(state.report, searchZone, onMap, history, evidence, onShareEvidence, onMessage, resolution) {
                                 detailFolio == state.report.id && query.state.value === state
                             } }
                         } else {
@@ -419,6 +432,7 @@ private fun ReportCard(report: Report, zone: ZoneId, enabled: Boolean, onSelect:
 private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit, history: ReportHistoryViewModel?,
     evidence: ReportEvidenceViewModel?, onShareEvidence: (ReportEvidenceState.Ready, () -> Boolean) -> Unit,
     onMessage: ((String) -> Unit)?,
+    resolution: ReportResolutionViewModel?,
     isCurrent: () -> Boolean) {
     val context = LocalContext.current
     var copied by remember(report.id) { mutableStateOf(false) }
@@ -439,6 +453,7 @@ private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit, 
             DetailField("Prioridad", priorityLabel(report.priority))
             DetailField("Estado local", statusLabel(report.status))
             if (history != null) ReportHistoryContent(report, zone, history, isCurrent)
+            if (resolution != null) ReportResolutionContent(resolution, report.id, isCurrent)
             DetailField("Descripción", report.description, "report_description")
             if (onMessage != null) OutlinedButton(onClick = { if (isCurrent()) onMessage(report.id) },
                 modifier = Modifier.fillMaxWidth().testTag("report_detail_message")) {

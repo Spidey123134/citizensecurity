@@ -1,5 +1,13 @@
 # Plan del proyecto
 
+## Continuación local — fase 44, Unreleased
+
+E12 añade resultado declarado e historial independiente del seguimiento: **Sin confirmar / Solucionado / Sigue sin solucionarse**. El autor real y el administrador local autorizado pueden declarar con revisión y confirmación separadas; cada evento conserva cuenta/rol, fecha y motivo. Un reporte Cerrado no se convierte en solucionado. La autoridad se comprueba en el mismo espacio local capturado, sin acceso entre cuentas o instituciones. [Fase 44](FASE_44.md).
+
+**Validada el 17 de octubre: 1662 casos distintos / 108 nuevos, cero fallos, errores u omitidos finales.** Incluye los ocho recorridos nuevos de pantalla, migración aditiva a esquema 5 y conservación del seguimiento. Recuperación por lectura y reintento explícito del mismo UUID, sin diario durable de resolución o prueba nueva de muerte completa del proceso. [Resultados y límites](VALIDACION.md).
+
+Se mantiene **28/28 = 100% de construcción funcional local del PDF**, sin sumar E12 al denominador. La aceptación física completa sigue separada. La oficial permanece en **0.6.2 / código 30**; fases 43–44 son locales Unreleased, sin publicación por continuar. Resultados ejecutados y límites en [Validación](VALIDACION.md).
+
 ## Continuación local — fase 43, Unreleased
 
 El usuario pidió un recorrido guiado opcional con un icono de ayuda, como ampliación **E11**. Inicio, formulario, revisión, consulta/detalle y mapa explican su uso por pasos cortos; avanzar el tutorial no ejecuta operaciones del reporte. Las explicaciones orientativas repetidas de Inicio pasan a la guía, conservando los avisos y controles importantes. [Fase 43](FASE_43.md).

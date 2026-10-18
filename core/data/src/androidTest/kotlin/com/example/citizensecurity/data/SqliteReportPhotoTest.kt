@@ -53,7 +53,7 @@ class SqliteReportPhotoTest {
             expected.forEach { old -> assertEquals(old, repository.findById(old.id)) }
         }
         readRaw(name) { db ->
-            assertEquals(4, db.version)
+            assertEquals(5, db.version)
             db.rawQuery("SELECT photo_id, photo_sha256, photo_byte_count, photo_width, photo_height FROM reports", null).use { cursor ->
                 assertEquals(2, cursor.count)
                 while (cursor.moveToNext()) (0..4).forEach { assertTrue(cursor.isNull(it)) }
@@ -193,7 +193,7 @@ class SqliteReportPhotoTest {
         SqliteReportRepository(context, name, clock()).use { it.list() }
         writeRaw(name) { db ->
             db.execSQL("ALTER TABLE reports ADD COLUMN future_note TEXT DEFAULT 'conservar'")
-            db.version = 5
+            db.version = 6
         }
         val bytes = context.getDatabasePath(name).readBytes()
         SqliteReportRepository(context, name, clock()).use { repository ->
@@ -201,7 +201,7 @@ class SqliteReportPhotoTest {
         }
         assertArrayEquals(bytes, context.getDatabasePath(name).readBytes())
         readRaw(name) { db ->
-            assertEquals(5, db.version)
+            assertEquals(6, db.version)
             db.rawQuery("SELECT future_note FROM reports", null).use { cursor ->
                 assertEquals(2, cursor.count)
                 while (cursor.moveToNext()) assertEquals("conservar", cursor.getString(0))

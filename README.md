@@ -1,5 +1,11 @@
 # CITIZENSECURITY
 
+## Desarrollo local Unreleased — fase 44: resultado del incidente
+
+La ampliación **E12** añade **Sin confirmar, Solucionado y Sigue sin solucionarse**, independientes del seguimiento Reportado → En revisión → Atendido → Cerrado. El autor real o el administrador local autorizado pueden declarar un resultado mediante motivo, revisión y confirmación separadas. El historial identifica UUID, rol, fecha, resultado anterior/nuevo y motivo; corregir conserva las declaraciones anteriores. Un reporte antiguo Cerrado no se considera solucionado por inferencia. [Recorrido, permisos y límites](docs/FASE_44.md).
+
+**1662 casos distintos aprobados / 108 nuevos**, sin fallos, errores u omitidos finales: 1451 JVM y 211 Android en emulador propio API 37. Incluye ocho recorridos nuevos con cuentas/roles/SQLite reales; revisar y girar no escriben, una ventana pausada no confirma y la recuperación exige otro gesto. Compilación y lint sin errores; [desglose y límites](docs/FASE_44.md). El porcentaje del PDF permanece en **28/28 = 100% de construcción funcional local**; E12 no agrega criterios ni aceptación física. Trabajo **local Unreleased**, conservando el recorrido guiado de fase 43 y la oficial **0.6.2 / código 30**, sin push, main, APK pública o Release por esta continuación.
+
 ## Desarrollo local Unreleased — fase 43: recorrido guiado
 
 Un icono **?** permite abrir instrucciones breves de la pantalla actual: Inicio, Reportar, Revisión, Reportes, Detalle y Mapa. Muestra un paso por vez, con Anterior, Siguiente, Listo y Cerrar; se puede consultar otra vez sin ejecutar las acciones explicadas. Reduce la orientación repetida de Inicio y conserva los avisos de seguridad y decisiones de permiso/consentimiento. **26 casos Android distintos aprobados, ocho nuevos**, en emulador propio API 37. [Fase 43 y límites de validación](docs/FASE_43.md).

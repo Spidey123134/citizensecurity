@@ -1,5 +1,13 @@
 # Administración local: cuenta y uso
 
+## Ampliación local Unreleased — resultado del incidente, fase 44
+
+El detalle guardado y la consulta administrativa incorporan **Resultado del incidente**: elegir Solucionado, Sigue sin solucionarse o corregir a Sin confirmar; escribir un motivo de 5–500 caracteres, revisar y confirmar mediante otro gesto. El historial muestra cuenta por UUID, rol, fecha y motivo y conserva las declaraciones anteriores. Este resultado es independiente del estado del trámite: **Cerrado no implica Solucionado**. [Recorrido completo](FASE_44.md).
+
+El autor se comprueba contra el evento real de creación. Para declarar como administrador se relee la asignación y el permiso separado **DECLARE_RESOLUTION**, dentro del mismo espacio local de cuenta; no da acceso a otras cuentas o teléfonos. Si el administrador también creó el reporte, se registra como Autor. El acceso académico `admin/admin` solo consulta. Al perder la autoridad se retira la preparación y se comprueba por separado si sigue vigente el permiso de consulta.
+
+Ante una confirmación incierta se comprueba el recibo por lectura; cualquier reintento requiere otro gesto y conserva el mismo UUID. La preparación vive en memoria durante el giro. Tras cerrar el proceso se consulta lo realmente guardado sin repetir escrituras. Esta ampliación no está en la oficial 0.6.2; las secciones inferiores describen aquella entrega y sus antecedentes.
+
 **Entrega oficial 0.6.2 / código Android 30, publicada — 16 de octubre de 2026.** Los recorridos de esta guía, desarrollados en fases 40–42, se incluyen en el mismo corte que todas las fases 35–42 posteriores a 0.6.1. Usa la APK final publicada de esa entrega. [Cambios y archivo](ENTREGA_0_6_2.md) · [Pasos de prueba](PROBAR_0_6_2.md). Las referencias inferiores a desarrollo local, PR #30 o APK oficial 0.6.1 conservan el momento histórico de cada validación; no describen el alcance final de 0.6.2.
 
 **16 de octubre de 2026 · ampliación local de fase 42, validada.** Desde el recibo de un cambio confirmado se puede abrir su actividad y el panel de avisos. El alta y el cambio de estado conservan los pasos de fases 40/41 descritos debajo; esta ampliación todavía no está en la APK oficial **0.6.1** ni actualiza el PR #30 de fase 40.

@@ -1,5 +1,32 @@
 # Validación y comprobaciones del proyecto
 
+## Resultado declarado del incidente — fase 44, Unreleased · 17 de octubre de 2026
+
+**1662 casos distintos aprobados / 108 definiciones nuevas; cero fallos, errores u omitidos finales.** Se ejecutaron las tres suites JVM afectadas y las regresiones Android seleccionadas. No se suman los cortes históricos de otras fases ni las repeticiones del diagnóstico como casos adicionales.
+
+| Suite | Distintos aprobados | Nuevos | Alcance |
+| --- | ---: | ---: | --- |
+| Dominio JVM | 216 | 11 | Contratos, identidad, motivos, revisiones y páginas de resolución |
+| Datos JVM / SQLite host | 158 | 10 | SQL real, límites, cadena, UUID y migraciones; regresiones completas del módulo |
+| App JVM | 1077 | 51 | Modelo de resolución 39 y autoridad capturada 12; regresiones del módulo |
+| Datos Android API 37 | 180 | 28 | SQLite, cuentas, guardas, migraciones, fotos, consulta, actividad, administración y resolución |
+| App Android API 37 | 31 | 8 | Resolución integrada 8; guía 8, cambios administrativos 8, consulta 3 y búsqueda 4 |
+| **Total** | **1662** | **108** | **1451 JVM y 211 Android** |
+
+Las ocho pruebas nuevas de pantalla registran cuentas reales en bases privadas del fixture y usan el workspace, asignación administrativa y SQLite productivos. El autor declara Solucionado y corrige a Sigue sin solucionarse, conservando ambos eventos, cuenta/rol, motivo, fecha y operación exacta. El administrador declara en su propio workspace sobre un folio histórico con otro autor; `admin/admin` consulta sin escritura. Revisar y girar mantienen la misma solicitud sin guardar. Cambiar de cuenta retira la ventana privada; corromper el archivo de asignación bloquea la escritura y retira también la consulta al perder READ, conservando sus bytes.
+
+Un caso adversarial revisa con la pantalla real y la pausa antes de invocar técnicamente la confirmación. La guarda productiva final rechaza el commit: cero eventos. Al volver, comprobar el recibo sigue siendo lectura; solo otro gesto reintenta la misma declaración con el mismo UUID y guarda un evento. No se suplanta el backend ni se fabrica un recibo. La solicitud pendiente vive en memoria y sobrevive al giro; **no se probó muerte completa del proceso ni se incorpora un diario durable para este resultado**. Reabrir el proceso consulta SQL sin repetir la operación.
+
+Las 28 pruebas nativas nuevas de datos comprueban autoridad independiente, autor real, actor forjado, cuenta académica, CAS/concurrencia, namespace global de UUID, recibo/replay exactos, respuesta perdida, rol/primer plano/cancelación antes del commit, páginas y cadenas dañadas. La recuperación no crea o migra una base. La migración aditiva 4→5 conserva reporte, foto y seguimiento; las regresiones verifican también las migraciones anteriores. Un Cerrado sin declaraciones permanece Sin confirmar, sin inventar un evento. Resultado y estado administrativo no se modifican entre sí.
+
+El primer intento encontró ocho tests host de Actividad que aún exigían esquema 4: el fixture se actualizó al esquema 5 y a la tabla real de resolución. La primera ejecución de pantalla obtuvo cinco pases y tres fallos: dos clics del helper quedaban fuera del viewport de la lista anidada y un caso esperaba Compose después de que la ventana revocada ya había terminado. La captura confirmó la geometría; el helper ahora desplaza la lista exterior por su API real, exige visibilidad y mantiene el clic táctil y la comprobación de selección. El cambio de cuenta exige la destrucción de la ventana anterior antes de abrir la nueva. Un intento intermedio del harness usó una extensión de scroll inexistente y coincidió con un error interno de lint; la API local correcta, recompilación y lint finales pasaron. Estos intentos se conservan en logs y no cuentan como aprobaciones adicionales. No se relajaron los controles productivos para hacer pasar una prueba.
+
+Kotlin debug/release y ensamblados internos debug/test correctos. **Lint app: cero errores / 22 avisos existentes por variante; datos: sin incidencias.** Los cambios finales del helper se recompilaron y pasaron lint debug otra vez; no cambió el binario productivo. QA interna SHA-256 `86421a97cb7714559204aacbce5d61d0b75a0b522d92b68d0f9fef7cb32a5b79`. Oficial 0.6.2 conservada con SHA-256 `114323c0a97e9adc07fa3f2f7996d6054df65b982f1d0bf19699dacd11d836a4`.
+
+Recibo ignorado `.gradle/validacion/resolution44-test-proof.json`, con clases/casos, timestamps JVM, lint y hashes. Logs `resolution44-build-final.log`, `resolution44-ui-final2-build.log`, `resolution44-data-native.log`, `resolution44-ui-native-final.log` y `resolution44-regression-native.log`; intentos y capturas de diagnóstico `resolution44-*` conservados aparte. Emulador propio API 37 de solo lectura cerrado al terminar, sin cambiar PIN y con letra restaurada a 1.0. Ninguna instalación, permiso, borrado o prueba en teléfono físico; API 26/fabricantes y aceptación física completa siguen separados.
+
+**E12 amplía utilidad; el PDF mantiene 28/28 = 100% de construcción funcional local.** No acredita servidor, producción institucional ni atención policial. Fases 43–44 permanecen locales **Unreleased** en `development/phase44-resolution`, sin push, main, tag, Release ni APK pública. [Fase 44](FASE_44.md) · [Plan](PLAN_DEL_PROYECTO.md) · [Administrador local](ADMINISTRADOR_LOCAL.md).
+
 ## Recorrido guiado contextual — fase 43, Unreleased · 16 de octubre de 2026
 
 **26 casos Android distintos aprobados, ocho nuevos; cero fallos, errores u omitidos.** El corte verifica esta ampliación de interfaz, sin sumar los 1431 casos históricos de fase 42 ni presentar suites JVM, dominio o datos como ejecutadas de nuevo.

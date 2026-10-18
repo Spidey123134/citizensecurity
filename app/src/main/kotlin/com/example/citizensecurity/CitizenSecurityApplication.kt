@@ -6,6 +6,10 @@ import com.example.citizensecurity.account.AccountSessionState
 import com.example.citizensecurity.account.ReportWorkspace
 import com.example.citizensecurity.account.ReportWorkspaceStorage
 import com.example.citizensecurity.account.ReportAdministrationBinding
+import com.example.citizensecurity.account.reportResolutionAuthority
+import com.example.citizensecurity.domain.ReportResolutionRepository
+import com.example.citizensecurity.domain.ReportResolutionQuery
+import com.example.citizensecurity.domain.ReportResolutionCommand
 import com.example.citizensecurity.domain.ReportStatusChangeAccess
 import com.example.citizensecurity.domain.ReportStatusChangeJournal
 import com.example.citizensecurity.domain.ReportStatusChangeRequest
@@ -147,6 +151,7 @@ open class CitizenSecurityApplication : Application() {
             currentLocation().also { checkSession() }
         }, elapsedRealtimeNanos = SystemClock::elapsedRealtimeNanos)
         val repository = SqliteReportRepository(this, names.databaseName, authorAccountId = session.account?.id,
+            resolutionAuthority = reportResolutionAuthority(session, checkSession) { administrationPolicy },
             statusAuthority = {
                 checkSession()
                 val scope = administrationScope ?: throw com.example.citizensecurity.domain.ReportStatusPermissionDeniedException()
@@ -171,7 +176,14 @@ open class CitizenSecurityApplication : Application() {
         return ReportWorkspace(session, accountSession, ReportWorkspaceStorage(repository, repository,
             repository, repository, ReportSubmissionStore(this, names.submissionFileName),
             ReportDraftCheckpointStore(this, names.checkpointFileName), photos, repository::close,
-            statusChangeAccess = { scope, policy -> SqliteReportStatusChangeAccess(scope, repository, policy) }),
+            statusChangeAccess = { scope, policy -> SqliteReportStatusChangeAccess(scope, repository, policy) },
+            resolutionAccess = { checkWrite -> object : ReportResolutionRepository {
+                override suspend fun read(query: ReportResolutionQuery) = repository.readResolution(query)
+                override suspend fun receipt(command: ReportResolutionCommand) = repository.findResolutionReceipt(command)
+                override suspend fun record(command: ReportResolutionCommand) = repository.recordResolution(command) {
+                    checkSession(); checkWrite(); checkSession()
+                }
+            } }),
             refreshLocation, currentLocation)
     }
 

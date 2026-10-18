@@ -15,6 +15,10 @@ import com.example.citizensecurity.domain.ReportSubmissionJournal
 import com.example.citizensecurity.domain.ReportAdministrationPolicy
 import com.example.citizensecurity.domain.ReportStatusChangeAccess
 import com.example.citizensecurity.domain.ReportStatusChangeScope
+import com.example.citizensecurity.domain.ReportResolutionRepository
+import com.example.citizensecurity.domain.ReportResolutionQuery
+import com.example.citizensecurity.domain.ReportResolutionCommand
+import com.example.citizensecurity.domain.ReportResolutionPermissionDeniedException
 import com.example.citizensecurity.domain.SimilarReportRepository
 import com.example.citizensecurity.maps.IncidentLocationViewModel
 import java.util.concurrent.atomic.AtomicBoolean
@@ -35,6 +39,7 @@ class ReportWorkspaceStorage(
     val photoStore: ReportPhotoStore,
     val release: () -> Unit = {},
     val statusChangeAccess: ((ReportStatusChangeScope, ReportAdministrationPolicy) -> ReportStatusChangeAccess)? = null,
+    val resolutionAccess: ((() -> Unit) -> ReportResolutionRepository)? = null,
 )
 
 /** One immutable owner for the whole Activity/model lifetime; no dynamic account lookups. */
@@ -48,6 +53,7 @@ class ReportWorkspace(
     private val closed = AtomicBoolean(false)
     private val release = storage.release
     private val statusChangeAccess = storage.statusChangeAccess
+    private val resolutionAccess = storage.resolutionAccess
     val photoStore = storage.photoStore
     private val access = ScopedReportAccess(storage.repository, storage.listPageRepository,
         storage.mapRepository, storage.similarRepository, storage.submissionJournal,
@@ -60,6 +66,18 @@ class ReportWorkspace(
     val checkpointJournal = access.reportDraftCheckpointJournal
     val historyRepository = access.reportHistoryRepository
     val activityRepository = access.reportActivityRepository
+
+    /** Construction never reads files. Every operation remains tied to this exact session. */
+    fun openResolutionRepository(checkWrite: () -> Unit): ReportResolutionRepository {
+        checkActive()
+        val delegate = resolutionAccess?.invoke(checkWrite) ?: throw ReportResolutionPermissionDeniedException()
+        checkActive()
+        return object : ReportResolutionRepository {
+            override suspend fun read(query: ReportResolutionQuery) = checked { delegate.read(query) }
+            override suspend fun record(command: ReportResolutionCommand) = checked { delegate.record(command) }
+            override suspend fun receipt(command: ReportResolutionCommand) = checked { delegate.receipt(command) }
+        }
+    }
 
     /** Factory only: the binding checks authority on IO before entering this captured source. */
     internal fun createStatusChangeAccess(scope: ReportStatusChangeScope, policy: ReportAdministrationPolicy): ReportStatusChangeAccess {
