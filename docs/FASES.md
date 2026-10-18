@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Fase 45 — guía del resultado, Unreleased local validada
+
+Refina E11 después de publicar 0.6.3: ayuda de **48 dp** junto a Resultado del incidente, con cuatro pasos generales sobre resultado y seguimiento independientes, actor/rol/fecha/motivo, revisión/confirmación e historial/recibo. El desarrollo suma **siete temas/24 pasos**; consultar instrucciones no declara, obtiene GPS o ejecuta acciones. [Alcance y criterios](FASE_45.md).
+
+**18 Android distintos ejecutados y aprobados, dos nuevos y 16 regresiones**, sin fallos, errores u omitidos: guía inicial ocho y resolución ocho repetidos. Giro conserva el paso abierto, revisión y el mismo comando/UUID; SQLite y GPS permanecen sin acciones de la guía. Kotlin debug/release y ensamblados internos correctos; lint cero errores/22 avisos anteriores por variante. Sin suites JVM/core nuevas. El PDF conserva **28/28 = 100% de construcción funcional local**, aceptación física aparte. Trabajo local **Unreleased**; la oficial 0.6.3 conserva seis temas/20 pasos, sus fuentes y archivos publicados. No se publica otra entrega por este refinamiento.
+
 ## Entrega oficial 0.6.3 — fases 43–44
 
 **18 de octubre de 2026 · Android 0.6.3 / código 31 · [Release oficial publicada](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.3).** Se incluyen el **recorrido guiado E11**, el **resultado declarado E12** y la integración con GitHub. **1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**, sin fallos, errores u omitidos finales. Binario/firma, 42 recorridos Android de app y actualización real desde 0.6.2 validados en emulador propio, con migración 4 → 5 y datos/foto/contactos/historial conservados. Kotlin, ensamblados y lint sin errores; app conserva 22 avisos por variante. Código integrado en main, APK y checksum publicados y descargados de nuevo para verificarlos. [Entrega y desglose](ENTREGA_0_6_3.md) · [Probar en Android Studio](PROBAR_0_6_3.md).

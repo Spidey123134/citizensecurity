@@ -1,5 +1,21 @@
 # Validación y comprobaciones del proyecto
 
+## Ayuda del resultado — fase 45, local Unreleased · 18 de octubre de 2026
+
+**18 casos Android distintos ejecutados y aprobados: dos nuevos y 16 de regresión; cero fallos, errores u omitidos.** Este corte corresponde al refinamiento posterior a la publicación de 0.6.3, sin sumar sus pruebas ni presentar recibos anteriores como nuevas ejecuciones.
+
+| Suite | Casos | Evidencia |
+| --- | ---: | --- |
+| GuidedResolutionTourUiTest | 2 nuevos | Autor real y acceso académico, 15.039 s |
+| GuidedTourUiTest | 8 de regresión | Seis temas previos, navegación, reapertura, giro, texto grande/horizontal y ausencia de acciones |
+| ReportResolutionFlowUiTest | 8 de regresión | Declaración/corrección, actor, revisión/giro, guardas, incertidumbre, cuentas y migración |
+
+Las 16 regresiones finalizaron en 101.083 s. En la nueva guía, abrir, avanzar, cerrar y girar en el paso 2 conservaron la preparación y el mismo objeto de comando revisado, con su UUID y motivo. Las lecturas independientes de SQLite compararon resultado, secuencia, eventos y estado administrativo sin escrituras nuevas. El actor se verificó además en el estado real de la app: Autor con UUID de la cuenta registrada y académico sin actor ni controles de declaración. Ningún recorrido inició GPS. La recarga transitoria del detalle al girar conservó el diálogo y no requirió modificar el modelo o sus permisos.
+
+Kotlin debug/release, ensamblados internos debug/test y lint de ambas variantes correctos: **0 errores/22 avisos existentes por variante**. Captura horizontal `tour45-resolution-rotated.png` inspeccionada, texto legible y acciones desplazables; la regresión de letra 130% también pasó. No se ejecutaron nuevas suites JVM/core ni aceptación física, API 26/fabricantes, TalkBack real o muerte completa de proceso para este corte.
+
+Recibo ignorado `.gradle/validacion/tour45-test-proof.json`; logs `tour45-build.log`, `tour45-test-final-build.log`, `tour45-lint-final.log`, `tour45-new-native.log` y `tour45-regression-native.log`. QA interna SHA-256 `e513cbe0cb7ecb397f2926474c7c7b1c1c89229d9816ab844c17be3260fafe6e`; distinta de la APK oficial y sin publicar. Dominio, datos y numeración Android no tienen diferencias frente a v0.6.3. La copia descargada de la oficial conserva SHA-256 `0109149d9f9e6ea1a6883b46fe6915dde7bba9e20fba45c5219dfea6892d1780`. [Fase 45](FASE_45.md). La aceptación física permanece separada del 28/28 de construcción local del PDF.
+
 ## Entrega 0.6.3 — integración y aceptación final · 18 de octubre de 2026
 
 **Corte de 1675 casos distintos: 1121 ejecutados en esta entrega y 554 recibos reutilizados de código idéntico; cero fallos, errores u omitidos finales.** La reutilización no se presenta como otra ejecución. Fases 43–44 y el rediseño remoto de `1fecef0` quedan combinados, con los controles de sesión, historial y tutorial conservados.

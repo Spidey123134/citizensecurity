@@ -1,5 +1,11 @@
 # Avance del plan del proyecto
 
+## Corte local Unreleased — fase 45: explicar el resultado
+
+La continuación solicitada después de publicar 0.6.3 refina E11 mediante ayuda junto a Resultado del incidente. Un acceso de **48 dp** abre cuatro pasos generales sobre resultado/seguimiento, quién declaró y por qué, revisión/confirmación e historial/recibo: **siete temas/24 pasos en desarrollo**, sin datos privados ni acciones automáticas. [Fase 45](FASE_45.md).
+
+**18 Android distintos ejecutados y aprobados, dos nuevos y 16 regresiones**, sin fallos, errores u omitidos. Giro conserva paso, preparación y comando/UUID; SQLite permanece intacto y la guía no captura GPS. Kotlin debug/release y ensamblados internos correctos; lint cero errores/22 avisos anteriores por variante. Sin suites JVM/core nuevas; no se suman pruebas históricas a este corte. El avance previo del PDF permanece en **28/28 = 100% de construcción funcional local**, separado de aceptación física. Trabajo local Unreleased: la oficial 0.6.3, sus seis temas/20 pasos y archivos conservan su identidad; no se publica otra entrega.
+
 ## Entrega oficial 0.6.3 — integración y mejoras de uso
 
 **18 de octubre de 2026 · Android 0.6.3 / código 31 · [Release oficial publicada](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.3).** Integra GitHub con fases 43–44: **seis recorridos guiados/20 pasos** y el **resultado del incidente declarado por autor o administrador**, con motivo, actor e historial, separado del seguimiento. Incluye el acceso **app** de Android Studio. [Entrega](ENTREGA_0_6_3.md) · [Guía de prueba](PROBAR_0_6_3.md).

@@ -2,7 +2,9 @@
 
 ## [Unreleased]
 
-El refinamiento posterior del recorrido guiado se registrará aquí después de la entrega autorizada 0.6.3; todavía no se atribuye a su APK.
+- **Fase 45 / E11, refinamiento local de la guía:** icono de ayuda con área de toque de 48 dp junto a Resultado del incidente y cuatro pasos generales sobre resultado/seguimiento, actor/rol/fecha/motivo, revisión/confirmación e historial/recibo. El desarrollo pasa a siete temas/24 pasos; la APK oficial 0.6.3 conserva seis/20.
+- La guía sigue siendo voluntaria, sin datos privados ni acciones automáticas de reportes, GPS, permisos, avisos o mensajes. Los gestos de declaración y sus permisos permanecen independientes. [Alcance](docs/FASE_45.md).
+- **Fase 45 validada: 18 Android distintos ejecutados y aprobados, dos nuevos y 16 regresiones**, cero fallos, errores u omitidos. Guía conserva preparación/comando/UUID, paso 2 al girar y resultado/secuencia/eventos/seguimiento SQL, sin capturar GPS; autor real y académico de lectura comprobados. Kotlin debug/release y ensamblados internos correctos; lint cero errores/22 avisos anteriores por variante. Sin suites JVM/core nuevas ni aceptación física, API 26 o muerte completa del proceso. El PDF conserva 28/28 de construcción funcional local. Trabajo local Unreleased, sin otra Release ni modificar los archivos oficiales. [Evidencia y límites](docs/FASE_45.md).
 
 ## [0.6.3] — 2026-10-18
 

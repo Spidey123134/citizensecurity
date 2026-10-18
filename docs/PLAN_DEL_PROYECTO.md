@@ -1,5 +1,11 @@
 # Plan del proyecto
 
+## Continuación local — fase 45, Unreleased
+
+Después de la entrega 0.6.3, refinar el recorrido guiado E11 junto a Resultado del incidente: acceso de ayuda de **48 dp**, cuatro pasos generales y **siete temas/24 pasos** en el desarrollo. Explicar que Cerrado no significa Solucionado; identificar cuenta/rol/fecha/motivo y separar revisión, confirmación, historial y consulta del recibo. La guía no incorpora datos privados ni ejecuta acciones, GPS o permisos. [Fase 45](FASE_45.md).
+
+**Validada: 18 Android distintos ejecutados y aprobados, dos nuevos y 16 regresiones**, sin fallos, errores u omitidos. Preparación y comando/UUID conservados, paso abierto restaurado al girar y SQLite sin declaraciones de la guía; GPS no se solicita. Kotlin debug/release y ensamblados internos correctos; lint cero errores/22 avisos anteriores por variante. Sin suites JVM/core nuevas; resultados físicos, API 26 y muerte completa del proceso separados. Mantener **28/28 = 100% de construcción funcional local** previamente acreditado y la aceptación física separada. Desarrollo local Unreleased, sin otra Release, integración en main o alteración de la fuente/APK/checksum oficiales 0.6.3. Sus seis temas/20 pasos conservan el corte publicado.
+
 ## Entrega oficial 0.6.3 — integración de fases 43–44
 
 **18 de octubre de 2026 · Android 0.6.3 / código 31 · [Release oficial publicada](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.3).** Se combinaron las novedades de GitHub conservando el trabajo local y el login/loading del compañero. Incluye E11 —recorrido guiado contextual— y E12 —resultado declarado con actor e historial, independiente del estado administrativo—. Configuración **app** compartida para Android Studio y actualización desde 0.6.2 sin borrar datos. [Entrega](ENTREGA_0_6_3.md) · [Guía de prueba](PROBAR_0_6_3.md).

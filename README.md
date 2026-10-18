@@ -1,5 +1,11 @@
 # CITIZENSECURITY
 
+## Desarrollo local Unreleased — fase 45: ayuda del resultado
+
+Se refina el recorrido guiado con un acceso de ayuda de **48 dp** junto a **Resultado del incidente**. Añade cuatro pasos sobre Cerrado y Solucionado, actor/rol/fecha/motivo, revisión y confirmación separadas e historial/recibo: **siete temas/24 pasos en desarrollo**, frente a los seis/20 de la oficial 0.6.3. La guía es voluntaria, general y no ejecuta acciones ni copia datos privados. [Alcance y validación](docs/FASE_45.md).
+
+**18 Android distintos ejecutados y aprobados, dos nuevos**, sin fallos, errores u omitidos. La guía conserva revisión/UUID, paso al girar y datos SQLite, sin activar GPS; compilación y lint sin errores. Este corte queda **local Unreleased**, sin otra Release o APK pública y sin sumar cifras históricas como pruebas de esta fase. El **28/28 = 100% de construcción funcional local** del PDF se conserva; aceptación física aparte. La entrega oficial descrita abajo mantiene sus fuentes, archivos e identidad.
+
 ## Entrega oficial 0.6.3 — fases 43–44 e integración con GitHub
 
 **18 de octubre de 2026 · Android 0.6.3 / código 31 · Release oficial publicada y descarga verificada.** Integra las novedades de GitHub con el **recorrido guiado** de seis temas/20 pasos y el **resultado del incidente** declarado por autor o administrador autorizado, con motivo e historial de quién lo marcó. Cerrado no implica Solucionado. **1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**; compilación/lint sin errores y actualización real desde 0.6.2 comprobada, conservando datos, foto/contactos e historial y migrando esquema 4 → 5. El plan conserva **28/28 = 100% de construcción funcional local**; aceptación física e integración institucional requieren evidencias propias.
