@@ -1,8 +1,8 @@
 # CITIZENSECURITY
 
-## Preparación de entrega 0.6.3 — fases 43–44 e integración con GitHub
+## Entrega 0.6.3 validada — fases 43–44 e integración con GitHub
 
-**18 de octubre de 2026 · Android 0.6.3 / código 31 · binario y actualización validados; publicación pendiente.** Se combina GitHub con las mejoras locales: **recorrido guiado** de seis temas/20 pasos y **resultado del incidente** declarado por autor o administrador autorizado, con motivo e historial de quién lo marcó. Cerrado no implica Solucionado. Compilación y lint sin errores, 1077 JVM de app ejecutados y actualización real desde 0.6.2 aprobada en emulador propio, conservando datos, foto/contactos e historial y migrando esquema 4 → 5. El plan conserva **28/28 = 100% de construcción funcional local**; aceptación física e integración institucional requieren evidencias propias.
+**18 de octubre de 2026 · Android 0.6.3 / código 31 · validación final completada; publicación pendiente.** Se combina GitHub con las mejoras locales: **recorrido guiado** de seis temas/20 pasos y **resultado del incidente** declarado por autor o administrador autorizado, con motivo e historial de quién lo marcó. Cerrado no implica Solucionado. **1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**; compilación/lint sin errores y actualización real desde 0.6.2 comprobada, conservando datos, foto/contactos e historial y migrando esquema 4 → 5. El plan conserva **28/28 = 100% de construcción funcional local**; aceptación física e integración institucional requieren evidencias propias.
 
 [Cambios y estado de entrega](docs/ENTREGA_0_6_3.md) · [Probar y abrir en Android Studio](docs/PROBAR_0_6_3.md). En Studio abre la raíz del proyecto y selecciona **app**, con módulo **CITIZENSECURITY.app**; la configuración compartida evita ejecutar los laboratorios técnicos. Actualiza encima de la app anterior, conservando firma y datos. La numeración preparada no acredita todavía una Release o APK publicada.
 

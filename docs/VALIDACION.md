@@ -1,5 +1,28 @@
 # Validación y comprobaciones del proyecto
 
+## Entrega 0.6.3 — integración y aceptación final · 18 de octubre de 2026
+
+**Corte de 1675 casos distintos: 1121 ejecutados en esta entrega y 554 recibos reutilizados de código idéntico; cero fallos, errores u omitidos finales.** La reutilización no se presenta como otra ejecución. Fases 43–44 y el rediseño remoto de `1fecef0` quedan combinados, con los controles de sesión, historial y tutorial conservados.
+
+| Procedencia | Casos | Evidencia |
+| --- | ---: | --- |
+| App JVM ejecutados | 1077 | Suite final tras el ajuste de teclado |
+| App Android ejecutados | 42 | Cuentas 3, Inicio 8, guía 8, resultado 8, estado administrativo 8, consulta 3, búsqueda 4 |
+| Actualización real ejecutada | 2 | seed062 y verify063, nonce nuevo, separados por install -r |
+| Dominio JVM reutilizados | 216 | Recibo fase44; módulo sin diferencias respecto a5881492 |
+| Datos JVM reutilizados | 158 | Recibo fase44; módulo sin diferencias respecto a5881492 |
+| Datos Android reutilizados | 180 | Mismo código SQLite/esquema5 que fase44 |
+
+La APK final tiene **56.151.110 bytes**, paquete `com.example.citizensecurity`, versión **0.6.3 / código31**, min26/target37 y SHA-256 `0109149d9f9e6ea1a6883b46fe6915dde7bba9e20fba45c5219dfea6892d1780`. `apksigner verify --print-certs` confirma el certificado académico de las entregas anteriores, SHA-256 `0a4006a1d2ef2ad02a0dad7c51b55c0ba5ffcd096a226eed6456326b2fed3ebd`. Kotlin debug/release y ensamblados internos correctos; lint app **0 errores/22 avisos existentes por variante**, datos sin incidencias.
+
+Se instaló la **oficial0.6.2**, se sembró un fixture privado con foto, contactos, CREATED y tres cambios hasta Cerrado, y se actualizó con la APK final mediante `adb install -r`. Antes de abrir un repositorio nuevo se comprobaron bytes idénticos de SQLite, foto y contactos; después, integridad, migración4→5, campos/autor/historial preservados, Cerrado intacto y resultado Sin confirmar con secuencia0 y ningún evento inventado. Se usó el runner real de Android y reflexión únicamente para construir el repositorio de0.6.2, cuya firma de constructor es anterior. La aceptación tiene nonce nuevo y no sustituye la Application productiva.
+
+La primera integración dejó los insets de teclado en el propio ScrollView. Dos casos de cuentas pasaron, pero el acceso académico quedaba fuera del área que Android consideraba desplazable. Se corrigió el contenedor externo: el FrameLayout recibe los insets y reduce la altura real del ScrollView, conservando la tarjeta del compañero. La aceptación final exige teclado visible y estable, viewport fuera del teclado y gestos reales de scroll/clic; alta→login, acceso académico y giro pasan. El candidato anterior `62ea…` y sus intentos quedan archivados, no publicados. La actualización y los39 recorridos restantes se repitieron sobre el binario corregido; no se suman esos intentos o repeticiones como casos distintos.
+
+Recibo ignorado `release063-final/release-proof.json`; logs `release063-build-final.log`, `release063-account-native-final.log`, `release063-ui-native-final.log`, `release063-final/upgrade-seed-final.log`, `upgrade-verify-final.log` y `signature-final.log`. Los recibos de módulos idénticos se identifican mediante `resolution44-test-proof.json` y ausencia de diferencias de core contra5881492. Toda instrumentación se limitó al emulador propio de solo lectura API37, sin cambios de PIN ni instalaciones, permisos o borrados en teléfono físico. La aceptación física completa, API26/fabricantes y producción institucional siguen separadas del **28/28 funcional local** del PDF.
+
+**Publicación y descarga verificadas pendientes en este punto de preparación.** [Entrega0.6.3](ENTREGA_0_6_3.md) · [Probar en Android Studio](PROBAR_0_6_3.md). El refinamiento posterior del tour tendrá un corte propio y no se atribuye a esta APK.
+
 ## Resultado declarado del incidente — fase 44, Unreleased · 17 de octubre de 2026
 
 **1662 casos distintos aprobados / 108 definiciones nuevas; cero fallos, errores u omitidos finales.** Se ejecutaron las tres suites JVM afectadas y las regresiones Android seleccionadas. No se suman los cortes históricos de otras fases ni las repeticiones del diagnóstico como casos adicionales.

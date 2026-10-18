@@ -4,9 +4,9 @@
 
 El refinamiento posterior del recorrido guiado se registrará aquí después de la entrega autorizada 0.6.3; todavía no se atribuye a su APK.
 
-## [0.6.3] — en preparación, 2026-10-18
+## [0.6.3] — validada, publicación pendiente, 2026-10-18
 
-- Publicación autorizada para reunir fases 43–44 y combinar los cambios nuevos de GitHub. Android 0.6.3 / código 31; Kotlin/ensamblados debug y release y lint sin errores, 1077 JVM de app ejecutados. Publicación y descarga verificada continúan pendientes.
+- Entrega de fases 43–44 combinada con las novedades de GitHub, Android 0.6.3 / código 31. **1675 casos distintos aprobados: 1121 ejecutados** —1077 JVM de app, 42 Android de app y dos etapas de actualización— **y 554 recibos intactos reutilizados** —216 dominio JVM, 158 datos JVM y 180 datos Android— por identidad de fuentes. Cero fallos, errores u omitidos finales. Kotlin/ensamblados debug y release y lint sin errores; app conserva 22 avisos por variante, datos sin incidencias. Publicación y descarga verificada continúan pendientes.
 - APK final de 56,151,110 bytes, SHA-256 `0109149d9f9e6ea1a6883b46fe6915dde7bba9e20fba45c5219dfea6892d1780`, con el mismo certificado académico de 0.6.2. Actualización real 0.6.2 → 0.6.3 aprobada en emulador propio: dos invocaciones, preservación de bytes antes de abrir, esquema 4 → 5, foto/contactos/historial intactos y Cerrado con resultado Sin confirmar sin eventos inventados.
 - Configuración compartida **app** para ejecutar **CITIZENSECURITY.app** desde Android Studio. Las guías nuevas explican cómo probar el tutorial y declarar el resultado conservando datos anteriores. [Entrega](docs/ENTREGA_0_6_3.md) · [Guía](docs/PROBAR_0_6_3.md).
 - Ajuste del área visible del login al abrir el teclado para poder desplazar y alcanzar las acciones inferiores, conservando el diseño del compañero.

@@ -1,6 +1,6 @@
 # Probar CitizenSecurity 0.6.3
 
-**18 de octubre de 2026 · Android 0.6.3 / código 31 · binario y actualización validados; publicación pendiente.** El APK final ya conserva la firma anterior y aprobó actualización real desde 0.6.2 en un emulador propio. La publicación y descarga de la Release se confirmarán por separado. [Cambios, identidad del archivo y límites](ENTREGA_0_6_3.md).
+**18 de octubre de 2026 · Android 0.6.3 / código 31 · validación final completada; publicación pendiente.** El APK final conserva la firma anterior, aprobó 42 recorridos Android y la actualización real desde 0.6.2 en un emulador propio. El corte acredita **1675 casos distintos: 1121 ejecutados y 554 recibos intactos reutilizados**. La publicación y descarga de la Release se confirmarán por separado. [Cambios, identidad del archivo y límites](ENTREGA_0_6_3.md).
 
 ## Ejecutar desde Android Studio
 

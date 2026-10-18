@@ -1,6 +1,6 @@
 # Entrega acumulada 0.6.3
 
-**18 de octubre de 2026 · Android 0.6.3 / código 31 · binario y actualización validados; publicación pendiente.** El usuario pidió revisar GitHub, combinar el trabajo nuevo y publicar otra Release. Esta entrega reúne las fases 43–44 posteriores a la oficial 0.6.2 y la integración revisada del código remoto. [Guía para probar y abrir en Android Studio](PROBAR_0_6_3.md).
+**18 de octubre de 2026 · Android 0.6.3 / código 31 · validación final completada; publicación pendiente.** El usuario pidió revisar GitHub, combinar el trabajo nuevo y publicar otra Release. Esta entrega reúne las fases 43–44 posteriores a la oficial 0.6.2 y la integración revisada del código remoto. Las fuentes se preparan en el [PR #32](https://github.com/Spidey123134/citizensecurity/pull/32); la integración pública y la Release se confirman por separado. [Guía para probar y abrir en Android Studio](PROBAR_0_6_3.md).
 
 Las marcas Unreleased de los cortes de fases 43 y 44 describen su preparación histórica. La solicitud actual autoriza reunirlas en esta entrega. Las mejoras posteriores del recorrido guiado tendrán su propio corte y no se atribuyen a la APK hasta incorporarlas y validarlas.
 
@@ -40,9 +40,21 @@ La prueba manual histórica `ReleaseUpgradeTest` se conserva, con opt-in por non
 
 ## Evidencia y avance
 
-Después de combinar GitHub se ejecutaron **1077 casos JVM de app**, y Kotlin/ensamblados debug y release/lint terminaron sin errores. Los **216 casos de dominio, 158 JVM de datos y 180 Android de datos** reutilizan sus recibos de fase 44 por identidad comprobada de las fuentes, sin presentarlos como nuevas ejecuciones. Los recorridos Android de app del corte integrado conservan su cierre pendiente hasta completar las últimas regresiones; [Validación](VALIDACION.md) registra el desglose final.
+**Cierre integrado: 1675 casos distintos aprobados, 1121 ejecutados y 554 recibos reutilizados**, cero fallos, errores u omitidos finales. Se cuenta cada definición una vez, separando ejecución nueva de evidencia anterior:
 
-La prueba de actualización real añade sus **dos invocaciones aprobadas** por separado. El cierre histórico de fase 44 conserva **1662 casos distintos / 108 nuevos** y fase 43 sus 26 Android distintos / ocho nuevos; **no se suman esos cortes históricos, las repeticiones o las invocaciones para inventar un total de Release**. No se ha ejecutado otra aceptación física en el teléfono.
+| Capa | Ejecutados en este corte | Recibos intactos reutilizados |
+|---|---:|---:|
+| App JVM | 1077 | 0 |
+| App Android API 37 | 42 —tres de autenticación y 39 recorridos de regresión— | 0 |
+| Actualización real 0.6.2 → 0.6.3 | 2 —semilla y verificación— | 0 |
+| Dominio JVM | 0 | 216 |
+| Datos JVM | 0 | 158 |
+| Datos Android API 37 | 0 | 180 |
+| **Total** | **1121** | **554** |
+
+Los 554 recibos de dominio/datos proceden del cierre de fase 44 en `5881492`, por identidad comprobada de las fuentes; no se presentan como ejecuciones nuevas. Los 42 Android de app y ambas etapas de actualización corresponden al **APK final con el ajuste del teclado**, no al candidato anterior. Kotlin debug/release, ensamblados y lint correctos: **app cero errores / 22 avisos existentes por variante; datos sin incidencias**. [Validación](VALIDACION.md) conserva la procedencia final.
+
+El cierre histórico de fase 44 conserva **1662 casos distintos / 108 nuevos** y fase 43 sus 26 Android distintos / ocho nuevos; **esos cortes no se suman al total de entrega ni se cuentan repeticiones de diagnóstico como pruebas adicionales**. No se ha ejecutado otra aceptación física en el teléfono.
 
 El plan original permanece en **28/28 = 100% de construcción funcional local**. E11/E12 amplían utilidad sin aumentar el denominador. Aceptación física completa, API 26/fabricantes, TalkBack, muerte completa del proceso y seguridad/integración institucional necesitan evidencias propias.
 
