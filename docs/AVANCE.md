@@ -1,10 +1,10 @@
 # Avance del plan del proyecto
 
-## Entrega 0.6.3 validada — integración y mejoras de uso
+## Entrega oficial 0.6.3 — integración y mejoras de uso
 
-**18 de octubre de 2026 · Android 0.6.3 / código 31.** La petición actual autoriza combinar las novedades de GitHub con fases 43–44 y publicar una nueva Release. Reúne **seis recorridos guiados/20 pasos** y el **resultado del incidente declarado por autor o administrador**, con motivo, actor e historial, separado del seguimiento. Se prepara también el acceso **app** de Android Studio. [Entrega](ENTREGA_0_6_3.md) · [Guía de prueba](PROBAR_0_6_3.md).
+**18 de octubre de 2026 · Android 0.6.3 / código 31 · [Release oficial publicada](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.3).** Integra GitHub con fases 43–44: **seis recorridos guiados/20 pasos** y el **resultado del incidente declarado por autor o administrador**, con motivo, actor e historial, separado del seguimiento. Incluye el acceso **app** de Android Studio. [Entrega](ENTREGA_0_6_3.md) · [Guía de prueba](PROBAR_0_6_3.md).
 
-El porcentaje se mantiene en **28/28 = 100% de construcción funcional local**. E11/E12 amplían utilidad y no inflan el PDF. **1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**, sin fallos, errores u omitidos finales. Binario/firma, 42 recorridos Android de app y actualización real desde 0.6.2 validados; esquema 4 → 5 y datos/foto/contactos/historial conservados. Kotlin, ensamblados y lint sin errores; app conserva 22 avisos por variante. La publicación y descarga verificada continúan pendientes. Las cifras históricas de fases 43/44 no se suman como nuevas pruebas. Las restricciones de publicación inferiores describen los cortes anteriores, sustituidas para esta entrega por la autorización actual. El refinamiento posterior del tutorial se registra aparte.
+El porcentaje se mantiene en **28/28 = 100% de construcción funcional local**. E11/E12 amplían utilidad y no inflan el PDF. **1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**, sin fallos, errores u omitidos finales. Binario/firma, 42 recorridos Android de app y actualización real desde 0.6.2 validados; esquema 4 → 5 y datos/foto/contactos/historial conservados. Kotlin, ensamblados y lint sin errores; app conserva 22 avisos por variante. Código integrado en main y Release, APK y checksum publicados; ambas descargas verificadas. Las cifras históricas de fases 43/44 no se suman como nuevas pruebas. Las restricciones de publicación inferiores describen los cortes anteriores, sustituidas para esta entrega por la autorización actual. El refinamiento posterior del tutorial se registra aparte.
 
 ## Corte local Unreleased — fase 44: resultado del incidente
 

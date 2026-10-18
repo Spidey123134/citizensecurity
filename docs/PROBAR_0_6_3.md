@@ -1,6 +1,6 @@
 # Probar CitizenSecurity 0.6.3
 
-**18 de octubre de 2026 · Android 0.6.3 / código 31 · validación final completada; publicación pendiente.** El APK final conserva la firma anterior, aprobó 42 recorridos Android y la actualización real desde 0.6.2 en un emulador propio. El corte acredita **1675 casos distintos: 1121 ejecutados y 554 recibos intactos reutilizados**. La publicación y descarga de la Release se confirmarán por separado. [Cambios, identidad del archivo y límites](ENTREGA_0_6_3.md).
+**18 de octubre de 2026 · Android 0.6.3 / código 31 · Release oficial publicada y descarga verificada.** Descarga la APK y el checksum desde la [Release v0.6.3](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.3). El APK conserva la firma anterior, aprobó 42 recorridos Android y la actualización real desde 0.6.2 en un emulador propio. El corte acredita **1675 casos distintos: 1121 ejecutados y 554 recibos intactos reutilizados**. [Cambios, identidad del archivo y límites](ENTREGA_0_6_3.md).
 
 ## Ejecutar desde Android Studio
 
@@ -10,7 +10,7 @@
 4. Pulsa **Run ▶**. Si ya tienes la app con la firma académica, conserva los datos e instala encima. Si Studio advierte una firma incompatible, cancela y revisa la firma; no aceptes borrar la instalación para superar el mensaje.
 5. Comprueba la versión del APK que ejecutaste y consulta desde el mismo acceso un folio anterior. Compilar o ejecutar desde Studio no publica una Release de GitHub.
 
-Para obtener cambios compartidos, conserva primero tus modificaciones propias. Con el directorio limpio y la entrega ya integrada en main, usa:
+Para obtener los cambios de la entrega, ya integrada en main, conserva primero tus modificaciones propias. Con el directorio limpio usa:
 
 ```powershell
 git fetch origin
@@ -18,11 +18,11 @@ git switch main
 git pull --ff-only origin main
 ```
 
-Si Git avisa cambios o ramas divergentes, detente para combinarlos conservando tu trabajo. No uses un restablecimiento destructivo para actualizar. En esta preparación la integración/publicación se documenta al completarse; ejecutar comandos no sustituye esa comprobación.
+Si Git avisa cambios o ramas divergentes, detente para combinarlos conservando tu trabajo. No uses un restablecimiento destructivo para actualizar. El código de la entrega está integrado mediante el [PR #32](https://github.com/Spidey123134/citizensecurity/pull/32); estos comandos actualizan tu clon y conservan las publicaciones anteriores.
 
 ## Actualizar mediante APK
 
-Cuando se confirme la publicación, descarga **citizensecurity-0.6.3-academico.apk** y **SHA256SUMS-0.6.3.txt** desde la Release 0.6.3 enlazada en la entrega. El APK final mide **56,151,110 bytes** y su SHA-256 es `0109149d9f9e6ea1a6883b46fe6915dde7bba9e20fba45c5219dfea6892d1780`.
+Descarga [citizensecurity-0.6.3-academico.apk](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.3/citizensecurity-0.6.3-academico.apk) y [SHA256SUMS-0.6.3.txt](https://github.com/Spidey123134/citizensecurity/releases/download/v0.6.3/SHA256SUMS-0.6.3.txt), ya publicados y descargados de nuevo para comprobarlos. El APK final mide **56,151,110 bytes** y su SHA-256 es `0109149d9f9e6ea1a6883b46fe6915dde7bba9e20fba45c5219dfea6892d1780`.
 
 Anota antes un folio y la cuenta o acceso donde lo guardaste. Instala mediante **Actualizar**, sin desinstalar ni borrar datos, e ingresa al mismo espacio. Comprueba campos, foto, contactos e historial previos. La actualización 0.6.2 → 0.6.3 ya aprobó sus dos etapas en emulador propio, conservando bytes anteriores y comprobando esquema 4 → 5. Esta guía permite registrar una aceptación física nueva; no afirma que ya se haya ejecutado en tu teléfono.
 

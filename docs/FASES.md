@@ -1,8 +1,8 @@
 # Fases de CITIZENSECURITY
 
-## Entrega 0.6.3 validada — fases 43–44
+## Entrega oficial 0.6.3 — fases 43–44
 
-**18 de octubre de 2026 · Android 0.6.3 / código 31.** Se incluyen el **recorrido guiado E11**, el **resultado declarado E12** y la integración con GitHub. **1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**, sin fallos, errores u omitidos finales. Binario/firma, 42 recorridos Android de app y actualización real desde 0.6.2 validados en emulador propio, con migración 4 → 5 y datos/foto/contactos/historial conservados. Kotlin, ensamblados y lint sin errores; app conserva 22 avisos por variante. La publicación y descarga verificada continúan pendientes. [Entrega y desglose](ENTREGA_0_6_3.md) · [Probar en Android Studio](PROBAR_0_6_3.md).
+**18 de octubre de 2026 · Android 0.6.3 / código 31 · [Release oficial publicada](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.3).** Se incluyen el **recorrido guiado E11**, el **resultado declarado E12** y la integración con GitHub. **1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**, sin fallos, errores u omitidos finales. Binario/firma, 42 recorridos Android de app y actualización real desde 0.6.2 validados en emulador propio, con migración 4 → 5 y datos/foto/contactos/historial conservados. Kotlin, ensamblados y lint sin errores; app conserva 22 avisos por variante. Código integrado en main, APK y checksum publicados y descargados de nuevo para verificarlos. [Entrega y desglose](ENTREGA_0_6_3.md) · [Probar en Android Studio](PROBAR_0_6_3.md).
 
 **28/28 = 100% de construcción funcional local permanece**, sin añadir E11/E12 al denominador ni atribuir aceptación física. Las marcas Unreleased inferiores son históricas y su restricción de publicación queda sustituida para esta entrega. Los siguientes refinamientos del tutorial se registran aparte.
 
