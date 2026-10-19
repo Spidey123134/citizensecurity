@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Revisión 46 — mantenimiento y estudio, local Unreleased
+
+Corrige la pérdida de GPS visible al ajustar un pin y la pérdida de una declaración preparada al consultar el historial administrativo del mismo folio. Conserva políticas de cercanía, sesiones, actores y revisión; otro folio o acceso revocado siguen retirando la preparación. Añade [guía de estudio](GUIA_ESTUDIO_APP.md), aclara el acceso académico y retira comentarios redundantes sin alterar el diseño o historial.
+
+**1103 casos distintos ejecutados, cinco nuevos**, cero fallos/errores/omitidos: 1080 JVM y 23 Android. Kotlin/ensamblados correctos y lint cero errores/22 avisos anteriores por variante. [Reproducciones, evidencia y límites](REVISION_46.md). No aumenta los 28 criterios ni convierte aceptación física en completada. Trabajo local posterior a fase 45 y a la oficial 0.6.3, sin nueva versión o publicación.
+
 ## Fase 45 — guía del resultado, Unreleased local validada
 
 Refina E11 después de publicar 0.6.3: ayuda de **48 dp** junto a Resultado del incidente, con cuatro pasos generales sobre resultado y seguimiento independientes, actor/rol/fecha/motivo, revisión/confirmación e historial/recibo. El desarrollo suma **siete temas/24 pasos**; consultar instrucciones no declara, obtiene GPS o ejecuta acciones. [Alcance y criterios](FASE_45.md).

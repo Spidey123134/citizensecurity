@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- **Revisión 46:** corregida la pérdida de la lectura GPS visible al ajustar el pin; confirmar sigue revalidando precisión, vigencia, simulación y radio de 5 km. Consultar historial administrativo del mismo folio conserva ahora el motivo y comando de resultado preparados; otro folio o acceso revocado siguen retirándolos.
+- El botón alternativo se llama **Acceso académico sin cuenta** y explica sus límites. Retirados comentarios XML redundantes conservando estructura/diseño e historial. Añadida [guía de estudio](docs/GUIA_ESTUDIO_APP.md), con PDF local de ocho páginas, preguntas y ejercicios.
+- Validación del mantenimiento: **1080 JVM y 23 Android**, cinco casos nuevos, cero fallos/errores/omitidos; Kotlin/ensamblados correctos y lint cero errores/22 avisos anteriores por variante. [Reproducción y límites](docs/REVISION_46.md). Código local, sin nueva versión o publicación.
+
 - **Fase 45 / E11, refinamiento local de la guía:** icono de ayuda con área de toque de 48 dp junto a Resultado del incidente y cuatro pasos generales sobre resultado/seguimiento, actor/rol/fecha/motivo, revisión/confirmación e historial/recibo. El desarrollo pasa a siete temas/24 pasos; la APK oficial 0.6.3 conserva seis/20.
 - La guía sigue siendo voluntaria, sin datos privados ni acciones automáticas de reportes, GPS, permisos, avisos o mensajes. Los gestos de declaración y sus permisos permanecen independientes. [Alcance](docs/FASE_45.md).
 - **Fase 45 validada: 18 Android distintos ejecutados y aprobados, dos nuevos y 16 regresiones**, cero fallos, errores u omitidos. Guía conserva preparación/comando/UUID, paso 2 al girar y resultado/secuencia/eventos/seguimiento SQL, sin capturar GPS; autor real y académico de lectura comprobados. Kotlin debug/release y ensamblados internos correctos; lint cero errores/22 avisos anteriores por variante. Sin suites JVM/core nuevas ni aceptación física, API 26 o muerte completa del proceso. El PDF conserva 28/28 de construcción funcional local. Trabajo local Unreleased, sin otra Release ni modificar los archivos oficiales. [Evidencia y límites](docs/FASE_45.md).

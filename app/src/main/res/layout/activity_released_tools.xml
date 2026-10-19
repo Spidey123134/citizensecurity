@@ -18,8 +18,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="20dp">
-
-            <!-- Tarjeta Principal de Bienvenida / Encabezado -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -79,8 +77,6 @@
                     android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
-
-            <!-- Sección de Ayuda / Emergencia -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -122,8 +118,6 @@
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
                     android:textStyle="bold" />
-
-                <!-- Estado del sistema -->
                 <TextView
                     android:id="@+id/home_status"
                     android:layout_width="match_parent"
@@ -150,8 +144,6 @@
                     android:textStyle="bold"
                     android:visibility="gone" />
             </LinearLayout>
-
-            <!-- Sección: Crear Reporte -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -183,8 +175,6 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
-
-            <!-- Sección: Lista de Reportes -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -216,8 +206,6 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
-
-            <!-- Sección: Mapa de Reportes -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -249,8 +237,6 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
             </LinearLayout>
-
-            <!-- Sección: Actividad y Otros -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

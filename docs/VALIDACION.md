@@ -1,5 +1,13 @@
 # Validación y comprobaciones del proyecto
 
+## Revisión 46 — GPS y conservación de preparación · 18 de octubre de 2026
+
+**1103 casos distintos ejecutados, cinco nuevos; cero fallos, errores u omitidos.** App JVM 1080; Android 23: resultado 10, guía de resultado 2, guía general 8 y acceso 3. Kotlin debug/release y ensamblados internos correctos; lint app cero errores y 22 avisos anteriores por variante. No se ejecutaron suites core nuevas ni se suman los cortes históricos. [Reproducción y cierre](REVISION_46.md).
+
+Rojo real: 30 casos JVM de selección, dos fallos por pérdida de GPS al ajustar pin; Android basal dos fallos por pasar preparación/revisión a Idle al refrescar historial administrativo. El corte final conserva lectura visible, preparación y UUID del mismo folio, manteniendo validación de 5 km/vigencia y limpieza por otro folio o acceso revocado. Las 23 pruebas Android finales pasaron en 159.029 s. Recibo `.gradle/validacion/revision46/test-proof.json`; build y logs `revision46-*`. QA interna SHA `6e187a7acd32fc0bfed7b6e8287dfa71be0c895c702ec8071be3f79e65575eb5`, sin publicar.
+
+La creación del AVD con herramientas antiguas produjo target android-0 para imagen 37.0 y fallos SurfaceFlinger antes de ejecutar producto; se corrigió únicamente el AVD propio a 37.0. Los intentos interrumpidos del entorno no cuentan como fallos de app o aprobados. El emulador aislado de solo lectura 5568 se cerró tras restaurar IME 0/letra 1.0, sin tocar el emulador del usuario, teléfono, PIN o datos. API 26, GPS físico, TalkBack y muerte de proceso no se acreditan por este corte. Guía PDF de ocho páginas renderizadas y revisadas; fuente [de estudio](GUIA_ESTUDIO_APP.md) conservada. Trabajo local, sin push/main/Release ni cambio de versión; oficial 0.6.3 intacta.
+
 ## Ayuda del resultado — fase 45, local Unreleased · 18 de octubre de 2026
 
 **18 casos Android distintos ejecutados y aprobados: dos nuevos y 16 de regresión; cero fallos, errores u omitidos.** Este corte corresponde al refinamiento posterior a la publicación de 0.6.3, sin sumar sus pruebas ni presentar recibos anteriores como nuevas ejecuciones.

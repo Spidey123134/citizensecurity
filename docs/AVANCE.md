@@ -1,5 +1,9 @@
 # Avance del plan del proyecto
 
+## Mantenimiento local — revisión 46
+
+Se corrigieron dos pérdidas de preparación: lectura GPS descartada al ajustar el pin y motivo/comando de resultado descartados al refrescar historial administrativo. Hay una [guía para estudiar la app](GUIA_ESTUDIO_APP.md) y [evidencia del mantenimiento](REVISION_46.md): 1080 JVM y 23 Android aprobados, cinco casos nuevos, sin fallos. No suma criterios al PDF: conserva el 28/28 de construcción local y la aceptación física pendiente. Oficial 0.6.3 intacta; cambios locales sin publicar.
+
 ## Corte local Unreleased — fase 45: explicar el resultado
 
 La continuación solicitada después de publicar 0.6.3 refina E11 mediante ayuda junto a Resultado del incidente. Un acceso de **48 dp** abre cuatro pasos generales sobre resultado/seguimiento, quién declaró y por qué, revisión/confirmación e historial/recibo: **siete temas/24 pasos en desarrollo**, sin datos privados ni acciones automáticas. [Fase 45](FASE_45.md).

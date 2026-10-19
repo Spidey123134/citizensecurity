@@ -1,5 +1,11 @@
 # CITIZENSECURITY
 
+## Guía de estudio y revisión local
+
+La [guía de estudio](docs/GUIA_ESTUDIO_APP.md) explica arquitectura, guardado, mapas/GPS, fotos, cuentas, resultados y recuperación, con archivos de referencia, preguntas y ejercicios. En esta PC hay una copia de lectura de ocho páginas en `output/pdf/Guia_estudio_CitizenSecurity.pdf`.
+
+La [revisión de mantenimiento](docs/REVISION_46.md) registra los fallos encontrados y sus pruebas. El acceso alternativo se identifica ahora como **Acceso académico sin cuenta**; conserva sus datos separados y no concede administración. Este trabajo y el refinamiento del recorrido siguen locales, posteriores a la oficial 0.6.3, sin nueva publicación.
+
 ## Desarrollo local Unreleased — fase 45: ayuda del resultado
 
 Se refina el recorrido guiado con un acceso de ayuda de **48 dp** junto a **Resultado del incidente**. Añade cuatro pasos sobre Cerrado y Solucionado, actor/rol/fecha/motivo, revisión y confirmación separadas e historial/recibo: **siete temas/24 pasos en desarrollo**, frente a los seis/20 de la oficial 0.6.3. La guía es voluntaria, general y no ejecuta acciones ni copia datos privados. [Alcance y validación](docs/FASE_45.md).

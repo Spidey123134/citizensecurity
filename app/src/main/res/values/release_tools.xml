@@ -1,8 +1,8 @@
 <resources>
     <item name="released_tools_entry" type="id" />
-    <string name="released_tools_entry">Desarrollador · funciones básicas</string>
-    <string name="demo_login_hint">Acceso de demostración: admin / admin</string>
-    <string name="demo_login_error">Usa admin / admin para el acceso de demostración.</string>
+    <string name="released_tools_entry">Acceso académico sin cuenta</string>
+    <string name="demo_login_hint">También puedes entrar con admin / admin en modo académico.</string>
+    <string name="demo_login_error">Usa admin / admin para el acceso académico sin cuenta.</string>
     <string-array name="tools_types">
         <item>Emergencia</item><item>Robo</item><item>Accidente</item><item>Incendio</item><item>Riesgo</item><item>Otro</item>
     </string-array>

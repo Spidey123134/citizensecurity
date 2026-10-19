@@ -91,6 +91,55 @@ class IncidentLocationViewModelTest {
     }
 
     @Test
+    fun selectingAPinAfterObtainingGpsKeepsTheVisibleFixWithoutAnotherCapture() = runTest(dispatcher) {
+        var captures = 0
+        val model = model(refresh = { captures++; PhoneLocationRefreshResult.Ready(fix) })
+        model.refreshLocation()
+        runCurrent()
+        assertEquals(IncidentLocationState.Idle(fix), model.state.value)
+
+        model.select(19.433, -99.134)
+
+        assertEquals(fix, (model.state.value as IncidentLocationState.PointSelected).deviceFix)
+        assertEquals(1, captures)
+        assertTrue(model.confirm() is NearbyLocationConfirmation.Confirmed)
+    }
+
+    @Test
+    fun adjustingAReadyPinKeepsGpsButADistantPointStillFailsTheRadiusCheck() = runTest(dispatcher) {
+        var captures = 0
+        val model = model(refresh = { captures++; PhoneLocationRefreshResult.Ready(fix) })
+        model.select(fix.latitude, fix.longitude)
+        model.refreshLocation()
+        runCurrent()
+        assertEquals(fix, (model.state.value as IncidentLocationState.PointSelected).deviceFix)
+
+        model.select(48.8566, 2.3522)
+
+        assertEquals(fix, (model.state.value as IncidentLocationState.PointSelected).deviceFix)
+        assertEquals(1, captures)
+        val result = model.confirm() as NearbyLocationConfirmation.Blocked
+        assertEquals(NearbyIncidentRejection.OUTSIDE_ALLOWED_RADIUS, result.rejection.reason)
+    }
+
+    @Test
+    fun selectingAnotherPinAfterStoppingCannotRestoreTheVisibleFixOrBypassRenewal() = runTest(dispatcher) {
+        var captures = 0
+        val model = model(refresh = { captures++; PhoneLocationRefreshResult.Ready(fix) })
+        model.select(fix.latitude, fix.longitude)
+        model.refreshLocation()
+        runCurrent()
+        model.onStop()
+
+        model.select(19.433, -99.134)
+
+        assertNull((model.state.value as IncidentLocationState.PointSelected).deviceFix)
+        assertEquals(1, captures)
+        assertNull(model.confirm())
+        assertSame(IncidentLocationIssue.RefreshRequired, (model.state.value as IncidentLocationState.Error).issue)
+    }
+
+    @Test
     fun doubleTapsRequestOnlyOneCaptureAndConfirmationWaitsForItsCompletion() = runTest(dispatcher) {
         val completion = CompletableDeferred<PhoneLocationRefreshResult>()
         var calls = 0
