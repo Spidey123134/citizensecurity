@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+- **Fase 47, aceptación y compatibilidad:** los campos de contacto pendientes permanecen en el ViewModel al girar, sin copiarlos al Bundle o al archivo de contactos. Guardar, cancelar o terminar el espacio retiran esa preparación; otra cuenta no la hereda.
+- Los mapas comprueban el requisito OpenGL ES 3 antes de crear la vista nativa. Un equipo incompatible muestra una explicación y permite volver; no inventa un mapa listo, confirma ubicación o guarda datos. Se declara también el requisito gráfico en el manifest.
+- Campos de usuario con teclado de texto, etiquetas vinculadas a usuario/contraseña y orientación del mapa que recomienda localizar primero el teléfono. Se conserva el diseño del login. [Pruebas de aceptación y límites](docs/ACEPTACION_47.md); trabajo local sin nueva versión o publicación.
+- **Fase 47 validada: 1125 casos distintos/diez nuevos**, 1083 JVM y 42 definiciones Android, con 59 ejecuciones entre plataformas; cero fallos/errores/omitidos finales. Reporte completo en API 26 y 37, recuperación con PIDs diferentes y sin duplicar, rechazo seguro en GLES 2 y cuatro estados de permisos por plataforma. Kotlin/ensamblados y lint sin errores; 22 avisos anteriores por variante. Sensores físicos, TalkBack y servidor conservan su alcance pendiente.
+
 - **Revisión 46:** corregida la pérdida de la lectura GPS visible al ajustar el pin; confirmar sigue revalidando precisión, vigencia, simulación y radio de 5 km. Consultar historial administrativo del mismo folio conserva ahora el motivo y comando de resultado preparados; otro folio o acceso revocado siguen retirándolos.
 - El botón alternativo se llama **Acceso académico sin cuenta** y explica sus límites. Retirados comentarios XML redundantes conservando estructura/diseño e historial. Añadida [guía de estudio](docs/GUIA_ESTUDIO_APP.md), con PDF local de ocho páginas, preguntas y ejercicios.
 - Validación del mantenimiento: **1080 JVM y 23 Android**, cinco casos nuevos, cero fallos/errores/omitidos; Kotlin/ensamblados correctos y lint cero errores/22 avisos anteriores por variante. [Reproducción y límites](docs/REVISION_46.md). Código local, sin nueva versión o publicación.

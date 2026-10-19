@@ -1,5 +1,15 @@
 # Validación y comprobaciones del proyecto
 
+## Aceptación y compatibilidad — fase 47 · 19 de octubre de 2026
+
+Comprobaciones en AVD propios API 26 y API 37: recorrido de reporte con foto/folio/PDF/resultado, contactos, cuentas, ayuda, permisos y recuperación durable entre procesos. El requisito GLES 3 de MapLibre se declara y comprueba antes de crear la vista; los equipos incompatibles conservan una salida usable. [Procedimientos, desglose final y límites](ACEPTACION_47.md).
+
+**1125 casos distintos aprobados/diez nuevos:** 1083 JVM y 42 definiciones Android; estas últimas se ejecutaron 59 veces entre las plataformas seleccionadas. Cero fallos, errores u omitidos finales. App Android: API 37/GLES 3, 25; API 26/GLES 3.1, 18; API 26/GLES 2, dos rechazos seguros. Datos Android API 26, 14. Kotlin/ensamblados internos correctos; lint cero errores/22 avisos previos por variante. Recibo `accept47/test-proof.json`; APK interna SHA `41b3d12e9e54fde74cc5fb045e9a01aa278f582d87a43752cc5daa5530ece9fe`. Se cuentan las definiciones una vez, sin sumar repeticiones o suites históricas.
+
+Los intentos de diagnóstico quedan separados de las ejecuciones finales: Contactos perdió sus campos al girar antes del arreglo; MapLibre se cerró nativamente con GLES 2 antes de la guarda. El harness también necesitó esperar la aplicación asíncrona del ajuste GPS y usar el proveedor permitido de Android 8; cambiar solo `location_mode` no preparaba correctamente ese caso. No se relajaron las políticas del producto ni se cuentan esos intentos como aprobaciones adicionales.
+
+El corte se limita al emulador elegido por el usuario y al código local Unreleased. La oficial 0.6.3 permanece intacta. **28/28 funcional local** no equivale a aceptación de sensores físicos, todos los fabricantes, TalkBack, una persona nueva o servidor/sincronización. Los resultados de las fases inferiores conservan su carácter histórico y no se suman a este corte.
+
 ## Revisión 46 — GPS y conservación de preparación · 18 de octubre de 2026
 
 **1103 casos distintos ejecutados, cinco nuevos; cero fallos, errores u omitidos.** App JVM 1080; Android 23: resultado 10, guía de resultado 2, guía general 8 y acceso 3. Kotlin debug/release y ensamblados internos correctos; lint app cero errores y 22 avisos anteriores por variante. No se ejecutaron suites core nuevas ni se suman los cortes históricos. [Reproducción y cierre](REVISION_46.md).

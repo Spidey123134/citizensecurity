@@ -189,6 +189,65 @@ class HelpContactsViewModelTest {
         assertEquals(1, repo.writes)
     }
 
+    @Test fun pendingContactFieldsSurviveRefreshAndInvalidInputButClearOnAcceptedSave() = runTest(dispatcher) {
+        val repo = Repo()
+        val model = model(repo)
+        assertTrue(model.editName("Contacto en preparación"))
+        assertTrue(model.editPhoneNumber("5512345678;911"))
+        assertEquals(0, repo.reads)
+        assertEquals(0, repo.writes)
+        model.load(); runCurrent()
+        val prepared = model.draft.value
+        assertEquals("Contacto en preparación", prepared.name)
+        assertFalse(model.editName("x".repeat(181)))
+        assertFalse(model.editPhoneNumber("1".repeat(81)))
+        assertEquals(prepared, model.draft.value)
+        assertFalse(model.add(prepared.name, prepared.phoneNumber))
+        assertEquals(prepared, model.draft.value)
+        assertEquals(0, repo.writes)
+        model.editPhoneNumber("+52 (55) 1234-5678")
+        val valid = model.draft.value
+        assertTrue(model.add(valid.name, valid.phoneNumber))
+        assertEquals(HelpContactDraft(), model.draft.value)
+        runCurrent()
+        assertEquals(1, repo.writes)
+        assertEquals("+525512345678", repo.current.contacts.single().phoneNumber)
+    }
+
+    @Test fun cancelAndAReplacementModelDoNotRetainOrPersistUnsubmittedContactFields() = runTest(dispatcher) {
+        val repo = Repo()
+        val model = model(repo)
+        model.load(); runCurrent()
+        model.editName("Preparación privada")
+        model.editPhoneNumber("5512345678")
+        model.cancel()
+        assertEquals(HelpContactDraft(), model.draft.value)
+        val replacement = model(repo)
+        assertEquals(HelpContactDraft(), replacement.draft.value)
+        assertEquals(0, repo.writes)
+        assertTrue(repo.current.contacts.isEmpty())
+    }
+
+    @Test fun revokedOrClearedWorkspaceCannotRetainOrEditPrivateContactFields() = runTest(dispatcher) {
+        var active = true
+        val repo = Repo()
+        val model = model(repo) { check(active) }
+        model.editName("Solo la cuenta original")
+        model.editPhoneNumber("5512345678")
+        active = false
+        assertFalse(model.editName("Otra cuenta"))
+        assertEquals(HelpContactDraft(), model.draft.value)
+        assertFalse(model.editPhoneNumber("5523456789"))
+        active = true
+        model.editName("Preparación antes de cerrar")
+        stores.last().clear()
+        assertEquals(HelpContactDraft(), model.draft.value)
+        assertFalse(model.editPhoneNumber("5534567890"))
+        assertEquals(HelpContactDraft(), model.draft.value)
+        assertEquals(0, repo.reads)
+        assertEquals(0, repo.writes)
+    }
+
     private fun model(repo: TrustedContactsRepository, guard: () -> Unit = {}): HelpContactsViewModel {
         val store = ViewModelStore().also { stores.add(it) }
         return ViewModelProvider(store, HelpContactsViewModel.factory(repo, guard, dispatcher))[HelpContactsViewModel::class.java]

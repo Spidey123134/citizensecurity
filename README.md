@@ -1,5 +1,11 @@
 # CITIZENSECURITY
 
+## Aceptación y compatibilidad — fase 47, local Unreleased
+
+Se comprueba el recorrido completo del reporte, la recuperación en otro proceso y los recorridos seleccionados en Android 8/API 26 y Android 17/API 37. Se corrige la pérdida de nombre/teléfono al girar Contactos y se comprueba la capacidad gráfica antes de abrir los mapas. El usuario dispone de emulador en esta sesión; los sensores físicos, TalkBack y el servidor conservan su validación y alcance pendientes. [Procedimientos, evidencia y límites](docs/ACEPTACION_47.md).
+
+La versión sigue siendo 0.6.3/código 31. Estos cambios son locales; la descarga oficial conserva su contenido. **28/28 describe construcción funcional local del PDF**, no aceptación completa o preparación para producción.
+
 ## Guía de estudio y revisión local
 
 La [guía de estudio](docs/GUIA_ESTUDIO_APP.md) explica arquitectura, guardado, mapas/GPS, fotos, cuentas, resultados y recuperación, con archivos de referencia, preguntas y ejercicios. En esta PC hay una copia de lectura de ocho páginas en `output/pdf/Guia_estudio_CitizenSecurity.pdf`.

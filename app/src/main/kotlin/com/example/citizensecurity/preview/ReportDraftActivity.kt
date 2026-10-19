@@ -201,7 +201,11 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
             reviewErrors = (restored as? ReportDraftReview.Invalid)?.errors ?: emptyMap()
             if (restored !is ReportDraftReview.Valid) similarityModel.clear()
         }
-        mapInitialized = runCatching { MapsConfiguration.initialize(this) }.isSuccess
+        mapInitialized = runCatching { MapsConfiguration.initialize(this) }.onFailure { failure ->
+            mapMessage = if (failure is MapsConfiguration.UnsupportedGraphicsException) {
+                MapsConfiguration.UNSUPPORTED_GRAPHICS_MESSAGE
+            } else "No se pudo iniciar el mapa. Vuelve al borrador e inténtalo de nuevo."
+        }.isSuccess
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() = goBack()
         })
@@ -771,7 +775,7 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
             else -> null
         }
         Column(modifier.fillMaxSize().padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text("Toca el lugar exacto. Después busca tu ubicación y confirma el punto.", style = MaterialTheme.typography.bodyMedium)
+            Text("Busca tu ubicación para acercar el mapa. Toca el lugar del incidente y confirma el punto dentro de 5 km.", style = MaterialTheme.typography.bodyMedium)
             if (mapInitialized) AndroidView(
                 factory = { context -> FrameLayout(context).apply {
                     try {
@@ -785,13 +789,14 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
                 onRelease = { container -> if (mapView?.parent === container) closeMap() },
                 modifier = Modifier.fillMaxWidth().weight(1f).testTag("incident_map"),
             ) else {
-                Text("No se pudo iniciar el mapa en este dispositivo.", modifier = Modifier.weight(1f))
+                Text(mapMessage, modifier = Modifier.weight(1f).testTag("incident_map_unavailable")
+                    .semantics { liveRegion = LiveRegionMode.Polite })
             }
             Column(Modifier.fillMaxWidth().heightIn(max = controlsMaxHeight).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            if (!mapReady) {
+            if (!mapReady && mapInitialized) {
                 Text(mapMessage, style = MaterialTheme.typography.bodySmall)
-                if (mapMessage != "Cargando calles…" && mapInitialized) {
+                if (mapMessage != "Cargando calles…") {
                     TextButton(onClick = { mapView?.let(::loadStyle) }) { Text("Reintentar mapa") }
                 }
             }
@@ -809,7 +814,7 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
             else if (!capturing) Text("Actualiza el GPS para comprobar los 5 km.", style = MaterialTheme.typography.bodySmall)
             if (capturing) LinearProgressIndicator(Modifier.fillMaxWidth())
             Button(
-                enabled = !capturing && !permissions.requestInFlight,
+                enabled = mapInitialized && !capturing && !permissions.requestInFlight,
                 onClick = {
                     if (permissions.access == LocationPermissionAccess.Precise) bridge.refreshLocation(request.token)
                     else if (bridge.requestPermission(request.token) == LocationPermissionAction.ExplanationRequired) permissionExplanation = true
@@ -838,6 +843,7 @@ class ReportDraftActivity : ReportWorkspaceActivity() {
     }
 
     private fun createMap(request: ReportLocationSelectionRequest): MapView {
+        MapsConfiguration.requireSupportedGraphics(this)
         closeMap()
         mapAttachment = bridge.prepareMap(request.token)
         val attachment = mapAttachment

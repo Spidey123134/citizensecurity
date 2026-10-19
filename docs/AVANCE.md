@@ -1,5 +1,13 @@
 # Avance del plan del proyecto
 
+## Aceptación — fase 47, local Unreleased · 19 de octubre de 2026
+
+Se amplía la evidencia con recorrido completo hasta folio/foto/PDF/resultado, recuperación en otro proceso y casos seleccionados en API 26 y API 37. Se corrige el formulario de contactos al girar y se protege la apertura de los mapas en equipos sin la capacidad gráfica requerida. [Resultados y procedimientos](ACEPTACION_47.md).
+
+**1125 casos distintos aprobados/diez nuevos:** 1083 JVM y 42 definiciones Android, con 59 ejecuciones entre plataformas. Cero fallos/errores/omitidos finales; compilación y lint sin errores. Recuperación con PID diferente y rechazo seguro de GLES 2 comprobados; no se suman los intentos de diagnóstico o cortes anteriores.
+
+El plan conserva **28/28 de construcción funcional local**. No se asigna un porcentaje global con esas pruebas: sensores físicos, fabricantes, TalkBack, una persona nueva y servidor/sincronización siguen separados. El usuario confirmó que solo puede usar emulador en esta sesión; el alcance del servidor sigue pendiente de elegir. Oficial 0.6.3 intacta; sin publicación nueva.
+
 ## Mantenimiento local — revisión 46
 
 Se corrigieron dos pérdidas de preparación: lectura GPS descartada al ajustar el pin y motivo/comando de resultado descartados al refrescar historial administrativo. Hay una [guía para estudiar la app](GUIA_ESTUDIO_APP.md) y [evidencia del mantenimiento](REVISION_46.md): 1080 JVM y 23 Android aprobados, cinco casos nuevos, sin fallos. No suma criterios al PDF: conserva el 28/28 de construcción local y la aceptación física pendiente. Oficial 0.6.3 intacta; cambios locales sin publicar.
