@@ -1,5 +1,11 @@
 # Fases de CITIZENSECURITY
 
+## Entrega 0.7.0 — fases 45–47 y pulido de contactos
+
+Reúne todas las fases posteriores a 0.6.3: ayuda del resultado, correcciones de GPS/preparación, contactos al girar y compatibilidad gráfica. El pulido añade conservación del contacto ante escritura fallida/resultado incierto y comprobación manual exacta antes de limpiar sus campos. El rojo reprodujo tres fallos con la implementación anterior; el verde completo aprueba 1461 JVM, incluidos cuatro casos nuevos. [Entrega acumulada y cierre Android/actualización](ENTREGA_0_7_0.md).
+
+Preparación de publicación autorizada por el usuario, Android 0.7.0/código 32. Cierre: **1507 casos distintos aprobados**, 1461 JVM y 46 definiciones Android con 61 ejecuciones; actualización real desde 0.6.3 conservando datos y recuperación entre procesos, lint sin errores. Se preservan los cortes históricos, publicaciones anteriores y el 28/28 funcional local; no se atribuye recepción institucional o validación física nueva.
+
 ## Fase 47 — aceptación y compatibilidad, local Unreleased
 
 Recorrido integrado con cuenta/SQLite, foto privada, punto controlado, revisión, folio, consulta, PDF y resultado; dos invocaciones comprueban recuperación durable tras terminar el proceso, con PID distinto y sin escrituras automáticas. Contactos conserva los campos al girar; los mapas explican la incompatibilidad gráfica antes de crear la vista nativa. [Alcance, resultados y pendientes](ACEPTACION_47.md).

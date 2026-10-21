@@ -1,5 +1,17 @@
 # Validación y comprobaciones del proyecto
 
+## Entrega acumulada 0.7.0 · 21 de octubre de 2026
+
+**1507 casos distintos aprobados, con ejecuciones nuevas de este corte:** 1461 JVM (dominio 216, datos 158, app 1087) y 46 definiciones Android con 61 ejecuciones entre plataformas. No se reutilizan ni suman los totales de fases anteriores dentro de esta cifra. API 37: 35 UI, cuatro permisos, dos etapas de proceso y dos de actualización; API 26/GLES 3.1: 12 UI y cuatro permisos; API 26/GLES 2: dos rechazos seguros. Cero fallos/errores/omitidos finales. Kotlin y ensamblados debug/release correctos, lint cero errores/22 avisos anteriores por variante.
+
+El error de Contactos se reprodujo con 18 casos/tres fallos antes del arreglo. El final de esa clase pasa 19 casos, cuatro nuevos: conserva preparación ante fallo o respuesta perdida, solo limpia el contacto exacto y conserva una preparación posterior. La prueba de retorno del mapa falló una vez al buscar la cabecera que LazyColumn había descartado después de desplazar a descripción. Se corrigió únicamente el test para desplazar hasta el inicio antes de ambos clics reales; ese caso repetido pasó. Se conservan las otras 34 aprobaciones del lote intacto, sin repetirlas ni contar el fallo como aprobación adicional.
+
+Actualización real 0.6.3 → 0.7.0 mediante `install -r`, misma Application y certificado, sin borrar datos: bytes SQLite/foto/contactos/checkpoint/pendiente idénticos antes de abrir repositorios, esquema 5, un reporte, cuatro eventos y una declaración conservados; cero filas SQL nuevas por la solicitud pendiente. PIDs 4623 → 4700. Recuperación entre procesos 5709 → 5829 con PID vacío entre etapas, una fila/un resultado y cero escrituras automáticas; no corte durante commit.
+
+APK final de 55,617,944 bytes, SHA-256 `6a312b1986fd4e6d6aff9133eade87d0847d25a80714cdd175c805f9ccd5a1d9`, paquete/certificado académico anteriores, versión 0.7.0/código 32. Recibo ignorado `release070-final/release-proof.json`, logs `release070-*` y checksum `release070-final/SHA256SUMS-0.7.0.txt`. Runner normal y ajustes de ambos AVD restaurados; emuladores propios cerrados conservando sus carpetas. Sin instalaciones/permisos/PIN del teléfono físico.
+
+[Desglose, actualización y límites](ENTREGA_0_7_0.md) · [Probar la entrega](PROBAR_0_7_0.md). Los sensores físicos, TalkBack, una persona nueva y seguridad/servidor/institución siguen separados; 28/28 acredita construcción funcional local.
+
 ## Aceptación y compatibilidad — fase 47 · 19 de octubre de 2026
 
 Comprobaciones en AVD propios API 26 y API 37: recorrido de reporte con foto/folio/PDF/resultado, contactos, cuentas, ayuda, permisos y recuperación durable entre procesos. El requisito GLES 3 de MapLibre se declara y comprueba antes de crear la vista; los equipos incompatibles conservan una salida usable. [Procedimientos, desglose final y límites](ACEPTACION_47.md).

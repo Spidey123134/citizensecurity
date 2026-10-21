@@ -46,6 +46,9 @@ class HelpContactsViewModel(
     private var pending: Job? = null
     private var generation = 0L
     private var uncertain = false
+    private var pendingAddition: PendingAddition? = null
+
+    private class PendingAddition(val editor: HelpContactDraft?, val contact: TrustedContact)
 
     fun editName(value: String): Boolean {
         if (!canEdit() || value.length > 180) return false
@@ -73,13 +76,14 @@ class HelpContactsViewModel(
         if (!canEdit()) return false
         val ready = mutableState.value as? HelpContactsState.Ready ?: return false
         if (uncertain) return false
-        val next = try {
-            ready.snapshot.contacts + TrustedContact.create(name, phoneNumber)
+        val contact = try {
+            TrustedContact.create(name, phoneNumber)
         } catch (_: IllegalArgumentException) {
             mutableState.value = HelpContactsState.Ready(ready.snapshot,
                 "Revisa el nombre (1 a 60 caracteres) y el teléfono (10 a 15 dígitos, + opcional).")
             return false
         }
+        val next = ready.snapshot.contacts + contact
         try {
             TrustedContactsSnapshot.validateContacts(next)
         } catch (_: IllegalArgumentException) {
@@ -88,8 +92,12 @@ class HelpContactsViewModel(
                 else "Ese teléfono ya está en tus contactos.")
             return false
         }
+        val addition = PendingAddition(mutableDraft.value.takeIf {
+            it.name == name && it.phoneNumber == phoneNumber
+        }, contact)
+        pendingAddition = addition
         return replace(ready, next).also { accepted ->
-            if (accepted) clearDraft()
+            if (!accepted && pendingAddition === addition) pendingAddition = null
         }
     }
 
@@ -121,7 +129,21 @@ class HelpContactsViewModel(
         }
     }
 
-    private fun clearDraft() { mutableDraft.value = HelpContactDraft() }
+    private fun clearDraft() {
+        pendingAddition = null
+        mutableDraft.value = HelpContactDraft()
+    }
+
+    private fun settlePendingAddition(snapshot: TrustedContactsSnapshot) {
+        val addition = pendingAddition ?: return
+        pendingAddition = null
+        // A lost response is acknowledged only by the exact stored identity and body.
+        // Do not clear fields edited after this request or preparation unrelated to a deletion.
+        if (addition.editor != null && mutableDraft.value === addition.editor &&
+            snapshot.contacts.any { it == addition.contact }) {
+            clearDraft()
+        }
+    }
 
     override fun onCleared() {
         clearDraft()
@@ -151,6 +173,7 @@ class HelpContactsViewModel(
                 ensureActive(); checkAccess()
                 if (generation == request) {
                     uncertain = false
+                    settlePendingAddition(snapshot)
                     mutableState.value = HelpContactsState.Ready(snapshot)
                 }
             } catch (cancelled: CancellationException) {
@@ -158,6 +181,7 @@ class HelpContactsViewModel(
             } catch (_: Exception) {
                 ensureActive()
                 if (generation == request) {
+                    canEdit() // Retain input for storage failures, but clear it if the workspace was revoked.
                     if (writing) uncertain = true
                     mutableState.value = if (writing) HelpContactsState.WriteUncertain()
                         else HelpContactsState.ReadFailure(uncertain)

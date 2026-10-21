@@ -1,5 +1,11 @@
 # Avance del plan del proyecto
 
+## Entrega 0.7.0 — refinamiento acumulado · 21 de octubre de 2026
+
+Preparación autorizada para publicar fases 45–47 y pulido de contactos: una escritura incierta conserva los campos hasta comprobar el contacto exacto, sin repetir automáticamente. **1507 casos distintos aprobados**: 1461 JVM ejecutadas (216 dominio, 158 datos y 1087 app) y 46 definiciones Android con 61 ejecuciones entre API 26/37. Actualización real desde 0.6.3 y recuperación entre procesos comprobadas sin duplicar ni borrar datos; lint sin errores. [Entrega 0.7.0](ENTREGA_0_7_0.md).
+
+Se conserva **28/28 = 100% de construcción funcional local**, separado de aceptación física, TalkBack, servidor o institución. Publicar una versión no suma hitos. Las restricciones Unreleased de los cortes inferiores son históricas; el usuario autorizó incluirlos en esta entrega.
+
 ## Aceptación — fase 47, local Unreleased · 19 de octubre de 2026
 
 Se amplía la evidencia con recorrido completo hasta folio/foto/PDF/resultado, recuperación en otro proceso y casos seleccionados en API 26 y API 37. Se corrige el formulario de contactos al girar y se protege la apertura de los mapas en equipos sin la capacidad gráfica requerida. [Resultados y procedimientos](ACEPTACION_47.md).

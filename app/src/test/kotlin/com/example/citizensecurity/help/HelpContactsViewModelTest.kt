@@ -135,10 +135,13 @@ class HelpContactsViewModelTest {
         assertEquals(0, repo.reads)
         active = true
         model.load(); runCurrent()
+        model.editName("Casa")
+        model.editPhoneNumber("5512345678")
         repo.afterWrite = { active = false }
         model.add("Casa", "5512345678"); runCurrent()
         assertTrue(model.state.value is HelpContactsState.WriteUncertain)
         assertEquals(1, repo.current.contacts.size)
+        assertEquals(HelpContactDraft(), model.draft.value)
     }
 
     @Test fun aMalformedWriteReceiptIsUncertainAndCannotAuthorizeAnotherWrite() = runTest(dispatcher) {
@@ -189,7 +192,7 @@ class HelpContactsViewModelTest {
         assertEquals(1, repo.writes)
     }
 
-    @Test fun pendingContactFieldsSurviveRefreshAndInvalidInputButClearOnAcceptedSave() = runTest(dispatcher) {
+    @Test fun pendingContactFieldsSurviveRefreshAndInvalidInputButClearOnlyOnConfirmedSave() = runTest(dispatcher) {
         val repo = Repo()
         val model = model(repo)
         assertTrue(model.editName("Contacto en preparación"))
@@ -208,10 +211,116 @@ class HelpContactsViewModelTest {
         model.editPhoneNumber("+52 (55) 1234-5678")
         val valid = model.draft.value
         assertTrue(model.add(valid.name, valid.phoneNumber))
-        assertEquals(HelpContactDraft(), model.draft.value)
+        assertEquals(valid, model.draft.value)
         runCurrent()
+        assertEquals(HelpContactDraft(), model.draft.value)
         assertEquals(1, repo.writes)
         assertEquals("+525512345678", repo.current.contacts.single().phoneNumber)
+    }
+
+    @Test fun failureBeforeContactWritePreservesFieldsAndRequiresReadBeforeExplicitRetry() = runTest(dispatcher) {
+        val repo = Repo().apply { beforeWrite = { throw IOException("not committed") } }
+        val model = model(repo)
+        model.load(); runCurrent()
+        model.editName("Contacto pendiente")
+        model.editPhoneNumber("+52 (55) 1234-5678")
+        val prepared = model.draft.value
+
+        assertTrue(model.add(prepared.name, prepared.phoneNumber))
+        assertEquals(prepared, model.draft.value)
+        runCurrent()
+        assertTrue(model.state.value is HelpContactsState.WriteUncertain)
+        assertEquals(prepared, model.draft.value)
+        assertTrue(repo.current.contacts.isEmpty())
+        assertFalse(model.add(prepared.name, prepared.phoneNumber))
+        assertEquals(1, repo.writes)
+
+        repo.beforeWrite = {}
+        model.load(); runCurrent()
+        assertTrue((model.state.value as HelpContactsState.Ready).snapshot.contacts.isEmpty())
+        assertEquals(prepared, model.draft.value)
+        assertEquals(1, repo.writes)
+        assertTrue(model.add(prepared.name, prepared.phoneNumber))
+        runCurrent()
+        assertEquals(HelpContactDraft(), model.draft.value)
+        assertEquals(2, repo.writes)
+        assertEquals("+525512345678", repo.current.contacts.single().phoneNumber)
+    }
+
+    @Test fun lostContactReceiptRetainsFieldsUntilManualReadConfirmsThatExactContact() = runTest(dispatcher) {
+        val repo = Repo().apply { afterWrite = { throw IOException("response lost") } }
+        val model = model(repo)
+        model.load(); runCurrent()
+        model.editName("Casa")
+        model.editPhoneNumber("+52 (55) 1234-5678")
+        val prepared = model.draft.value
+        model.add(prepared.name, prepared.phoneNumber); runCurrent()
+        val committed = repo.current
+        assertTrue(model.state.value is HelpContactsState.WriteUncertain)
+        assertEquals(prepared, model.draft.value)
+        assertEquals(1, repo.writes)
+
+        repo.readFailure = IOException("read unavailable")
+        model.load(); runCurrent()
+        assertTrue((model.state.value as HelpContactsState.ReadFailure).requiresReload)
+        assertEquals(prepared, model.draft.value)
+        assertEquals(1, repo.writes)
+        repo.readFailure = null
+        model.load(); runCurrent()
+        assertSame(committed, (model.state.value as HelpContactsState.Ready).snapshot)
+        assertEquals(HelpContactDraft(), model.draft.value)
+        assertEquals(1, repo.writes)
+        model.load(); runCurrent()
+        assertEquals(committed.contacts, (model.state.value as HelpContactsState.Ready).snapshot.contacts)
+        assertEquals(1, repo.writes)
+    }
+
+    @Test fun contactWriteCompletionAndDeletionCannotEraseANewerPreparation() = runTest(dispatcher) {
+        val gate = CompletableDeferred<Unit>()
+        val repo = Repo().apply { afterWrite = { gate.await() } }
+        val model = model(repo)
+        model.load(); runCurrent()
+        model.editName("Contacto enviado")
+        model.editPhoneNumber("5512345678")
+        val submitted = model.draft.value
+        model.add(submitted.name, submitted.phoneNumber); runCurrent()
+        assertTrue(model.state.value is HelpContactsState.Writing)
+        model.editName("Otra preparación")
+        model.editPhoneNumber("5523456789")
+        val next = model.draft.value
+        gate.complete(Unit); advanceUntilIdle()
+        assertEquals(next, model.draft.value)
+        val ready = model.state.value as HelpContactsState.Ready
+        assertEquals("Contacto enviado", ready.snapshot.contacts.single().name)
+        assertTrue(model.remove(ready.snapshot.contacts.single().id, ready)); runCurrent()
+        assertEquals(next, model.draft.value)
+        assertTrue((model.state.value as HelpContactsState.Ready).snapshot.contacts.isEmpty())
+        assertEquals(2, repo.writes)
+    }
+
+    @Test fun aDifferentContactIdentityOrBodyCannotAcknowledgeTheUncertainAddition() = runTest(dispatcher) {
+        for (replaceIdentity in listOf(false, true)) {
+            val repo = Repo()
+            repo.afterWrite = {
+                val submitted = repo.current.contacts.single()
+                val changed = if (replaceIdentity) TrustedContact.create(submitted.name, submitted.phoneNumber)
+                    else submitted.copy(name = "Nombre modificado por otro cambio")
+                repo.current = snapshot(listOf(changed))
+                throw IOException("response lost after a competing change")
+            }
+            val model = model(repo)
+            model.load(); runCurrent()
+            model.editName("Casa")
+            model.editPhoneNumber("5512345678")
+            val prepared = model.draft.value
+            model.add(prepared.name, prepared.phoneNumber); runCurrent()
+            assertTrue(model.state.value is HelpContactsState.WriteUncertain)
+            model.load(); runCurrent()
+            assertEquals(1, (model.state.value as HelpContactsState.Ready).snapshot.contacts.size)
+            assertEquals(prepared, model.draft.value)
+            assertFalse(model.add(prepared.name, prepared.phoneNumber))
+            assertEquals(1, repo.writes)
+        }
     }
 
     @Test fun cancelAndAReplacementModelDoNotRetainOrPersistUnsubmittedContactFields() = runTest(dispatcher) {
@@ -258,6 +367,7 @@ class HelpContactsViewModelTest {
         var writes = 0
         val expected = arrayListOf<String?>()
         var readFailure: Exception? = null
+        var beforeWrite: suspend () -> Unit = {}
         var afterWrite: suspend () -> Unit = {}
         var slowRead: (suspend () -> TrustedContactsSnapshot)? = null
         var fakeReceipt: TrustedContactsSnapshot? = null
@@ -265,6 +375,7 @@ class HelpContactsViewModelTest {
         override suspend fun replace(expectedRevision: String?, contacts: List<TrustedContact>): TrustedContactsSnapshot {
             writes++; expected.add(expectedRevision)
             check(current.revision == expectedRevision)
+            beforeWrite()
             current = TrustedContactsSnapshot(UUID.randomUUID().toString(), contacts)
             afterWrite()
             return fakeReceipt ?: current

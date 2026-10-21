@@ -1,5 +1,11 @@
 # Plan del proyecto
 
+## Entrega 0.7.0 — preparación autorizada
+
+La petición del 21 de octubre autoriza refinar y publicar la acumulación completa de fases 45–47, más la recuperación del formulario de contactos ante un guardado incierto. Android 0.7.0/código 32, conservando paquete, firma, datos e interfaz del compañero. [Alcance y pruebas de la entrega](ENTREGA_0_7_0.md) · [Cómo actualizar y probar](PROBAR_0_7_0.md).
+
+El cierre técnico aprueba 1507 casos distintos: 1461 JVM ejecutadas y 46 definiciones Android con 61 ejecuciones entre API 26/37, sin sumar fases históricas. La actualización real desde 0.6.3 conserva datos y firma. El PDF mantiene 28/28 de construcción funcional local. La entrega no incorpora servidor, recepción policial o una nueva aceptación física. Las restricciones locales de los apartados inferiores describen su estado histórico, reemplazadas para esta publicación por la instrucción expresa actual.
+
 ## Continuación local — fase 45, Unreleased
 
 Después de la entrega 0.6.3, refinar el recorrido guiado E11 junto a Resultado del incidente: acceso de ayuda de **48 dp**, cuatro pasos generales y **siete temas/24 pasos** en el desarrollo. Explicar que Cerrado no significa Solucionado; identificar cuenta/rol/fecha/motivo y separar revisión, confirmación, historial y consulta del recibo. La guía no incorpora datos privados ni ejecuta acciones, GPS o permisos. [Fase 45](FASE_45.md).

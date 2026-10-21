@@ -85,7 +85,10 @@ internal fun HelpContactsScreen(
                 }
             }
             is HelpContactsState.WriteUncertain -> {
-                Text("El cambio pudo guardarse, pero no se pudo confirmar. Vuelve a leer los contactos antes de otro cambio.",
+                val message = if (draft.name.isNotEmpty() || draft.phoneNumber.isNotEmpty()) {
+                    "El cambio pudo guardarse, pero no se pudo confirmar. Lo escrito se conserva mientras estés en esta pantalla. Comprueba los contactos antes de intentarlo otra vez."
+                } else "El cambio pudo guardarse, pero no se pudo confirmar. Vuelve a leer los contactos antes de otro cambio."
+                Text(message,
                     Modifier.testTag("help_contacts_uncertain"))
                 OutlinedButton(onClick = { if (checkGesture() && model.state.value === shown) model.load() }) {
                     Text("Comprobar contactos guardados")

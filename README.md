@@ -1,5 +1,11 @@
 # CITIZENSECURITY
 
+## Entrega 0.7.0 — estabilidad, ayuda y conservación de datos
+
+**Android 0.7.0 / código 32 · publicación en preparación.** Agrupa todo el trabajo posterior a 0.6.3: fases 45–47 y el pulido de contactos. La ayuda pasa a siete temas/24 pasos; ajustar el pin conserva la lectura GPS de esa apertura; consultar el historial del mismo folio conserva la declaración preparada. Contactos conserva lo escrito al girar y ante un guardado incierto. Los mapas explican la incompatibilidad gráfica antes de crear la vista nativa.
+
+El producto conserva cuentas locales, reportes con cámara/galería, GPS a 5 km, calles y marcadores, ficha PDF, contactos, seguimiento y resultados con actor e historial. Mantiene el diseño de acceso del compañero. **1507 casos distintos aprobados:** 1461 JVM ejecutadas y 46 definiciones Android con 61 ejecuciones en API 26/37. Actualización real desde 0.6.3 comprobada sin borrar datos; lint sin errores. [Cambios y comprobaciones](docs/ENTREGA_0_7_0.md) · [Actualizar sin borrar datos o abrir en Android Studio](docs/PROBAR_0_7_0.md). La descarga oficial 0.6.3 sigue vigente hasta verificar la publicación nueva; los cortes inferiores describen su preparación histórica.
+
 ## Aceptación y compatibilidad — fase 47, local Unreleased
 
 Se comprueba el recorrido completo del reporte, la recuperación en otro proceso y los recorridos seleccionados en Android 8/API 26 y Android 17/API 37. Se corrige la pérdida de nombre/teléfono al girar Contactos y se comprueba la capacidad gráfica antes de abrir los mapas. El usuario dispone de emulador en esta sesión; los sensores físicos, TalkBack y el servidor conservan su validación y alcance pendientes. [Procedimientos, evidencia y límites](docs/ACEPTACION_47.md).
