@@ -1,5 +1,11 @@
 # Versiones y GitHub Releases
 
+## Entrega 0.7.0 — estabilidad y ayuda, preparación
+
+**21 de octubre de 2026 · código Android 32.** El usuario autorizó refinar y publicar 0.7.0 con todos los cambios posteriores a la oficial 0.6.3: fases 45–47 y recuperación de campos de contacto ante incertidumbre. Archivos previstos: `citizensecurity-0.7.0-academico.apk` y `SHA256SUMS-0.7.0.txt`. Conservar versiones anteriores y actualizar sin borrar datos con el mismo paquete/certificado.
+
+[Entrega y validación](ENTREGA_0_7_0.md) · [Actualizar o abrir en Android Studio](PROBAR_0_7_0.md). La publicación se cierra después de validar la actualización real y descargar/verificar los assets; no se presenta la preparación como publicación ya completada.
+
 ## Entrega oficial 0.6.1 — cámara, ficha y ayuda rápida
 
 **14 de octubre de 2026 · código Android 29 · publicación solicitada expresamente.** [Release v0.6.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.1) agrupa **fases 29–34**: ficha PDF, contactos locales, recuperación durable de una solicitud de cambio, Ayuda inmediata/atajos, cámara junto a galería y mosaico de Ajustes rápidos. Las marcas Unreleased de esos cortes inferiores son antecedentes de preparación, no el estado de esta entrega.

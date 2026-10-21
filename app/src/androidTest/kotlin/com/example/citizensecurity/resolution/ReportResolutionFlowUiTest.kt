@@ -9,6 +9,7 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -18,6 +19,8 @@ import androidx.test.runner.lifecycle.Stage
 import com.example.citizensecurity.account.ReportWorkspace
 import com.example.citizensecurity.account.ReportWorkspaceActivityBinding
 import com.example.citizensecurity.administration.AdministrationConsultationActivity
+import com.example.citizensecurity.administration.AdministrationConsultationState
+import com.example.citizensecurity.administration.AdministrationConsultationViewModel
 import com.example.citizensecurity.data.LocalAdministratorStore
 import com.example.citizensecurity.data.ReportStorageNames
 import com.example.citizensecurity.data.SqliteAccountRepository
@@ -156,6 +159,52 @@ class ReportResolutionFlowUiTest {
         assertEquals(reason, event.reason)
         assertEquals(ReportStatus.REPORTED, reportStatus(report.id))
         node("resolution_event_1").assert(hasAnyDescendant(hasText(administrator.id, substring = true)))
+        assertEquals(0, fixture.refreshCalls)
+    }
+
+    @Test fun refreshingAdministrativeStatusHistoryPreservesTheUnsubmittedResultPreparation() {
+        register("admin_local", assign = true)
+        val report = seedLegacyReport(UUID.randomUUID().toString())
+        launchAdministration(report.id)
+        awaitTag("resolution_current")
+        val reason = "Preparación del resultado que no debe borrarse al leer otro historial"
+        click("resolution_choice_${ReportResolution.UNRESOLVED.name}")
+        node("resolution_reason").performTextReplacement(reason)
+        closeSoftKeyboard()
+        val prepared = resolutionState() as ReportResolutionState.Ready
+        assertEquals(ReportResolution.UNRESOLVED, prepared.target)
+        assertEquals(reason, prepared.reason)
+
+        refreshAdministrativeHistoryWhileReadingIsBlocked {
+            assertSame("A slow read of status history must retain the separate result preparation", prepared, resolutionState())
+        }
+        awaitTag("resolution_current")
+        assertSame(prepared, resolutionState())
+        assertEquals(reason, (resolutionState() as ReportResolutionState.Ready).reason)
+        assertEquals(0L, page(report.id).latestSequence)
+        assertTrue(page(report.id).events.isEmpty())
+        assertEquals(ReportStatus.REPORTED, reportStatus(report.id))
+        assertEquals(0, fixture.refreshCalls)
+    }
+
+    @Test fun refreshingAdministrativeStatusHistoryPreservesTheExactReviewedResultCommand() {
+        register("admin_local", assign = true)
+        val report = seedLegacyReport(UUID.randomUUID().toString())
+        launchAdministration(report.id)
+        awaitTag("resolution_current")
+        val reason = "Revisión del resultado que solo se guardará tras mi confirmación"
+        review(ReportResolution.RESOLVED, reason)
+        val reviewed = reviewedCommand()
+
+        refreshAdministrativeHistoryWhileReadingIsBlocked {
+            assertSame("Reading status history cannot discard or replace a reviewed result UUID", reviewed, reviewedCommand())
+        }
+        awaitTag("resolution_confirm")
+        assertSame(reviewed, reviewedCommand())
+        node("resolution_confirm").assertIsEnabled()
+        assertEquals(0L, page(report.id).latestSequence)
+        assertTrue(page(report.id).events.isEmpty())
+        assertEquals(ReportStatus.REPORTED, reportStatus(report.id))
         assertEquals(0, fixture.refreshCalls)
     }
 
@@ -384,6 +433,42 @@ class ReportResolutionFlowUiTest {
     }
     private fun reviewedCommand(): ReportResolutionCommand {
         return (resolutionState() as ReportResolutionState.Reviewing).command
+    }
+
+    private fun refreshAdministrativeHistoryWhileReadingIsBlocked(assertPreparationRetained: () -> Unit) {
+        val previous = administrationState() as AdministrationConsultationState.ReadyReport
+        // A real exclusive transaction on this test account's own database makes the existing
+        // history reader take long enough to render Loading. No rows are changed or committed.
+        // The actual button still drives the real Activity, policy and SQLite reader.
+        node("admin_consult_history_first")
+        SQLiteDatabase.openDatabase(databaseFile(requireNotNull(account)).path, null, SQLiteDatabase.OPEN_READWRITE).use { lock ->
+            lock.beginTransaction()
+            try {
+                click("admin_consult_history_first")
+                awaitTag("admin_consult_loading")
+                val loading = administrationState() as AdministrationConsultationState.Loading
+                assertNotSame(previous.request, loading.request)
+                assertPreparationRetained()
+            } finally {
+                lock.endTransaction()
+            }
+        }
+        ui.waitUntil(15_000) {
+            val fresh = administrationState()
+            fresh is AdministrationConsultationState.ReadyReport && fresh.request !== previous.request
+        }
+        ui.waitForIdle()
+    }
+
+    private fun administrationState(): AdministrationConsultationState {
+        var state: AdministrationConsultationState? = null
+        instrumentation.runOnMainSync {
+            ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED)
+                .filterIsInstance<AdministrationConsultationActivity>().forEach { activity ->
+                    state = ViewModelProvider(activity)[AdministrationConsultationViewModel::class.java].state.value
+                }
+        }
+        return requireNotNull(state)
     }
     private fun resolutionState(): ReportResolutionState {
         var state: ReportResolutionState? = null

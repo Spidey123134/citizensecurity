@@ -30,6 +30,9 @@ sealed interface HelpContactsState {
     class WriteUncertain : HelpContactsState
 }
 
+/** Unsubmitted contact fields stay in this workspace's memory, never in saved instance state. */
+data class HelpContactDraft(val name: String = "", val phoneNumber: String = "")
+
 /** Reads are harmless; any uncertain mutation blocks other writes until a fresh successful read. */
 class HelpContactsViewModel(
     private val repository: TrustedContactsRepository,
@@ -38,9 +41,26 @@ class HelpContactsViewModel(
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<HelpContactsState>(HelpContactsState.Idle)
     val state: StateFlow<HelpContactsState> = mutableState.asStateFlow()
+    private val mutableDraft = MutableStateFlow(HelpContactDraft())
+    val draft: StateFlow<HelpContactDraft> = mutableDraft.asStateFlow()
     private var pending: Job? = null
     private var generation = 0L
     private var uncertain = false
+    private var pendingAddition: PendingAddition? = null
+
+    private class PendingAddition(val editor: HelpContactDraft?, val contact: TrustedContact)
+
+    fun editName(value: String): Boolean {
+        if (!canEdit() || value.length > 180) return false
+        mutableDraft.value = mutableDraft.value.copy(name = value)
+        return true
+    }
+
+    fun editPhoneNumber(value: String): Boolean {
+        if (!canEdit() || value.length > 80) return false
+        mutableDraft.value = mutableDraft.value.copy(phoneNumber = value)
+        return true
+    }
 
     fun load() {
         if (!viewModelScope.isActive || mutableState.value is HelpContactsState.Writing ||
@@ -53,15 +73,17 @@ class HelpContactsViewModel(
     }
 
     fun add(name: String, phoneNumber: String): Boolean {
+        if (!canEdit()) return false
         val ready = mutableState.value as? HelpContactsState.Ready ?: return false
         if (uncertain) return false
-        val next = try {
-            ready.snapshot.contacts + TrustedContact.create(name, phoneNumber)
+        val contact = try {
+            TrustedContact.create(name, phoneNumber)
         } catch (_: IllegalArgumentException) {
             mutableState.value = HelpContactsState.Ready(ready.snapshot,
                 "Revisa el nombre (1 a 60 caracteres) y el teléfono (10 a 15 dígitos, + opcional).")
             return false
         }
+        val next = ready.snapshot.contacts + contact
         try {
             TrustedContactsSnapshot.validateContacts(next)
         } catch (_: IllegalArgumentException) {
@@ -70,7 +92,13 @@ class HelpContactsViewModel(
                 else "Ese teléfono ya está en tus contactos.")
             return false
         }
-        return replace(ready, next)
+        val addition = PendingAddition(mutableDraft.value.takeIf {
+            it.name == name && it.phoneNumber == phoneNumber
+        }, contact)
+        pendingAddition = addition
+        return replace(ready, next).also { accepted ->
+            if (!accepted && pendingAddition === addition) pendingAddition = null
+        }
     }
 
     /** The caller confirms deletion from the exact visible reading, never an old dialog. */
@@ -81,12 +109,44 @@ class HelpContactsViewModel(
     }
 
     fun cancel() {
+        clearDraft()
         val writing = mutableState.value is HelpContactsState.Writing
         ++generation
         pending?.cancel()
         pending = null
         if (writing) uncertain = true
         mutableState.value = if (uncertain) HelpContactsState.WriteUncertain() else HelpContactsState.Idle
+    }
+
+    private fun canEdit(): Boolean {
+        if (!viewModelScope.isActive) {
+            clearDraft()
+            return false
+        }
+        return try { checkAccess(); true } catch (_: Exception) {
+            clearDraft()
+            false
+        }
+    }
+
+    private fun clearDraft() {
+        pendingAddition = null
+        mutableDraft.value = HelpContactDraft()
+    }
+
+    private fun settlePendingAddition(snapshot: TrustedContactsSnapshot) {
+        val addition = pendingAddition ?: return
+        pendingAddition = null
+        // A lost response is acknowledged only by the exact stored identity and body.
+        // Do not clear fields edited after this request or preparation unrelated to a deletion.
+        if (addition.editor != null && mutableDraft.value === addition.editor &&
+            snapshot.contacts.any { it == addition.contact }) {
+            clearDraft()
+        }
+    }
+
+    override fun onCleared() {
+        clearDraft()
     }
 
     private fun replace(ready: HelpContactsState.Ready, contacts: List<TrustedContact>): Boolean {
@@ -100,7 +160,7 @@ class HelpContactsViewModel(
 
     private fun start(writing: Boolean, operation: suspend () -> TrustedContactsSnapshot): Boolean {
         if (!viewModelScope.isActive) return false
-        try { checkAccess() } catch (_: Exception) { return false }
+        try { checkAccess() } catch (_: Exception) { clearDraft(); return false }
         val request = ++generation
         pending?.cancel()
         val loading: HelpContactsState = if (writing) HelpContactsState.Writing() else HelpContactsState.Reading()
@@ -113,6 +173,7 @@ class HelpContactsViewModel(
                 ensureActive(); checkAccess()
                 if (generation == request) {
                     uncertain = false
+                    settlePendingAddition(snapshot)
                     mutableState.value = HelpContactsState.Ready(snapshot)
                 }
             } catch (cancelled: CancellationException) {
@@ -120,6 +181,7 @@ class HelpContactsViewModel(
             } catch (_: Exception) {
                 ensureActive()
                 if (generation == request) {
+                    canEdit() // Retain input for storage failures, but clear it if the workspace was revoked.
                     if (writing) uncertain = true
                     mutableState.value = if (writing) HelpContactsState.WriteUncertain()
                         else HelpContactsState.ReadFailure(uncertain)

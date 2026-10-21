@@ -1,5 +1,29 @@
 # CITIZENSECURITY
 
+## Entrega 0.7.0 — estabilidad, ayuda y conservación de datos
+
+**Android 0.7.0 / código 32 · publicación en preparación.** Agrupa todo el trabajo posterior a 0.6.3: fases 45–47 y el pulido de contactos. La ayuda pasa a siete temas/24 pasos; ajustar el pin conserva la lectura GPS de esa apertura; consultar el historial del mismo folio conserva la declaración preparada. Contactos conserva lo escrito al girar y ante un guardado incierto. Los mapas explican la incompatibilidad gráfica antes de crear la vista nativa.
+
+El producto conserva cuentas locales, reportes con cámara/galería, GPS a 5 km, calles y marcadores, ficha PDF, contactos, seguimiento y resultados con actor e historial. Mantiene el diseño de acceso del compañero. **1507 casos distintos aprobados:** 1461 JVM ejecutadas y 46 definiciones Android con 61 ejecuciones en API 26/37. Actualización real desde 0.6.3 comprobada sin borrar datos; lint sin errores. [Cambios y comprobaciones](docs/ENTREGA_0_7_0.md) · [Actualizar sin borrar datos o abrir en Android Studio](docs/PROBAR_0_7_0.md). La descarga oficial 0.6.3 sigue vigente hasta verificar la publicación nueva; los cortes inferiores describen su preparación histórica.
+
+## Aceptación y compatibilidad — fase 47, local Unreleased
+
+Se comprueba el recorrido completo del reporte, la recuperación en otro proceso y los recorridos seleccionados en Android 8/API 26 y Android 17/API 37. Se corrige la pérdida de nombre/teléfono al girar Contactos y se comprueba la capacidad gráfica antes de abrir los mapas. El usuario dispone de emulador en esta sesión; los sensores físicos, TalkBack y el servidor conservan su validación y alcance pendientes. [Procedimientos, evidencia y límites](docs/ACEPTACION_47.md).
+
+La versión sigue siendo 0.6.3/código 31. Estos cambios son locales; la descarga oficial conserva su contenido. **28/28 describe construcción funcional local del PDF**, no aceptación completa o preparación para producción.
+
+## Guía de estudio y revisión local
+
+La [guía de estudio](docs/GUIA_ESTUDIO_APP.md) explica arquitectura, guardado, mapas/GPS, fotos, cuentas, resultados y recuperación, con archivos de referencia, preguntas y ejercicios. En esta PC hay una copia de lectura de ocho páginas en `output/pdf/Guia_estudio_CitizenSecurity.pdf`.
+
+La [revisión de mantenimiento](docs/REVISION_46.md) registra los fallos encontrados y sus pruebas. El acceso alternativo se identifica ahora como **Acceso académico sin cuenta**; conserva sus datos separados y no concede administración. Este trabajo y el refinamiento del recorrido siguen locales, posteriores a la oficial 0.6.3, sin nueva publicación.
+
+## Desarrollo local Unreleased — fase 45: ayuda del resultado
+
+Se refina el recorrido guiado con un acceso de ayuda de **48 dp** junto a **Resultado del incidente**. Añade cuatro pasos sobre Cerrado y Solucionado, actor/rol/fecha/motivo, revisión y confirmación separadas e historial/recibo: **siete temas/24 pasos en desarrollo**, frente a los seis/20 de la oficial 0.6.3. La guía es voluntaria, general y no ejecuta acciones ni copia datos privados. [Alcance y validación](docs/FASE_45.md).
+
+**18 Android distintos ejecutados y aprobados, dos nuevos**, sin fallos, errores u omitidos. La guía conserva revisión/UUID, paso al girar y datos SQLite, sin activar GPS; compilación y lint sin errores. Este corte queda **local Unreleased**, sin otra Release o APK pública y sin sumar cifras históricas como pruebas de esta fase. El **28/28 = 100% de construcción funcional local** del PDF se conserva; aceptación física aparte. La entrega oficial descrita abajo mantiene sus fuentes, archivos e identidad.
+
 ## Entrega oficial 0.6.3 — fases 43–44 e integración con GitHub
 
 **18 de octubre de 2026 · Android 0.6.3 / código 31 · Release oficial publicada y descarga verificada.** Integra las novedades de GitHub con el **recorrido guiado** de seis temas/20 pasos y el **resultado del incidente** declarado por autor o administrador autorizado, con motivo e historial de quién lo marcó. Cerrado no implica Solucionado. **1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**; compilación/lint sin errores y actualización real desde 0.6.2 comprobada, conservando datos, foto/contactos e historial y migrando esquema 4 → 5. El plan conserva **28/28 = 100% de construcción funcional local**; aceptación física e integración institucional requieren evidencias propias.

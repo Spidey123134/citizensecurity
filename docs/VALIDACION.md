@@ -1,5 +1,51 @@
 # Validación y comprobaciones del proyecto
 
+## Entrega acumulada 0.7.0 · 21 de octubre de 2026
+
+**1507 casos distintos aprobados, con ejecuciones nuevas de este corte:** 1461 JVM (dominio 216, datos 158, app 1087) y 46 definiciones Android con 61 ejecuciones entre plataformas. No se reutilizan ni suman los totales de fases anteriores dentro de esta cifra. API 37: 35 UI, cuatro permisos, dos etapas de proceso y dos de actualización; API 26/GLES 3.1: 12 UI y cuatro permisos; API 26/GLES 2: dos rechazos seguros. Cero fallos/errores/omitidos finales. Kotlin y ensamblados debug/release correctos, lint cero errores/22 avisos anteriores por variante.
+
+El error de Contactos se reprodujo con 18 casos/tres fallos antes del arreglo. El final de esa clase pasa 19 casos, cuatro nuevos: conserva preparación ante fallo o respuesta perdida, solo limpia el contacto exacto y conserva una preparación posterior. La prueba de retorno del mapa falló una vez al buscar la cabecera que LazyColumn había descartado después de desplazar a descripción. Se corrigió únicamente el test para desplazar hasta el inicio antes de ambos clics reales; ese caso repetido pasó. Se conservan las otras 34 aprobaciones del lote intacto, sin repetirlas ni contar el fallo como aprobación adicional.
+
+Actualización real 0.6.3 → 0.7.0 mediante `install -r`, misma Application y certificado, sin borrar datos: bytes SQLite/foto/contactos/checkpoint/pendiente idénticos antes de abrir repositorios, esquema 5, un reporte, cuatro eventos y una declaración conservados; cero filas SQL nuevas por la solicitud pendiente. PIDs 4623 → 4700. Recuperación entre procesos 5709 → 5829 con PID vacío entre etapas, una fila/un resultado y cero escrituras automáticas; no corte durante commit.
+
+APK final de 55,617,944 bytes, SHA-256 `6a312b1986fd4e6d6aff9133eade87d0847d25a80714cdd175c805f9ccd5a1d9`, paquete/certificado académico anteriores, versión 0.7.0/código 32. Recibo ignorado `release070-final/release-proof.json`, logs `release070-*` y checksum `release070-final/SHA256SUMS-0.7.0.txt`. Runner normal y ajustes de ambos AVD restaurados; emuladores propios cerrados conservando sus carpetas. Sin instalaciones/permisos/PIN del teléfono físico.
+
+[Desglose, actualización y límites](ENTREGA_0_7_0.md) · [Probar la entrega](PROBAR_0_7_0.md). Los sensores físicos, TalkBack, una persona nueva y seguridad/servidor/institución siguen separados; 28/28 acredita construcción funcional local.
+
+## Aceptación y compatibilidad — fase 47 · 19 de octubre de 2026
+
+Comprobaciones en AVD propios API 26 y API 37: recorrido de reporte con foto/folio/PDF/resultado, contactos, cuentas, ayuda, permisos y recuperación durable entre procesos. El requisito GLES 3 de MapLibre se declara y comprueba antes de crear la vista; los equipos incompatibles conservan una salida usable. [Procedimientos, desglose final y límites](ACEPTACION_47.md).
+
+**1125 casos distintos aprobados/diez nuevos:** 1083 JVM y 42 definiciones Android; estas últimas se ejecutaron 59 veces entre las plataformas seleccionadas. Cero fallos, errores u omitidos finales. App Android: API 37/GLES 3, 25; API 26/GLES 3.1, 18; API 26/GLES 2, dos rechazos seguros. Datos Android API 26, 14. Kotlin/ensamblados internos correctos; lint cero errores/22 avisos previos por variante. Recibo `accept47/test-proof.json`; APK interna SHA `41b3d12e9e54fde74cc5fb045e9a01aa278f582d87a43752cc5daa5530ece9fe`. Se cuentan las definiciones una vez, sin sumar repeticiones o suites históricas.
+
+Los intentos de diagnóstico quedan separados de las ejecuciones finales: Contactos perdió sus campos al girar antes del arreglo; MapLibre se cerró nativamente con GLES 2 antes de la guarda. El harness también necesitó esperar la aplicación asíncrona del ajuste GPS y usar el proveedor permitido de Android 8; cambiar solo `location_mode` no preparaba correctamente ese caso. No se relajaron las políticas del producto ni se cuentan esos intentos como aprobaciones adicionales.
+
+El corte se limita al emulador elegido por el usuario y al código local Unreleased. La oficial 0.6.3 permanece intacta. **28/28 funcional local** no equivale a aceptación de sensores físicos, todos los fabricantes, TalkBack, una persona nueva o servidor/sincronización. Los resultados de las fases inferiores conservan su carácter histórico y no se suman a este corte.
+
+## Revisión 46 — GPS y conservación de preparación · 18 de octubre de 2026
+
+**1103 casos distintos ejecutados, cinco nuevos; cero fallos, errores u omitidos.** App JVM 1080; Android 23: resultado 10, guía de resultado 2, guía general 8 y acceso 3. Kotlin debug/release y ensamblados internos correctos; lint app cero errores y 22 avisos anteriores por variante. No se ejecutaron suites core nuevas ni se suman los cortes históricos. [Reproducción y cierre](REVISION_46.md).
+
+Rojo real: 30 casos JVM de selección, dos fallos por pérdida de GPS al ajustar pin; Android basal dos fallos por pasar preparación/revisión a Idle al refrescar historial administrativo. El corte final conserva lectura visible, preparación y UUID del mismo folio, manteniendo validación de 5 km/vigencia y limpieza por otro folio o acceso revocado. Las 23 pruebas Android finales pasaron en 159.029 s. Recibo `.gradle/validacion/revision46/test-proof.json`; build y logs `revision46-*`. QA interna SHA `6e187a7acd32fc0bfed7b6e8287dfa71be0c895c702ec8071be3f79e65575eb5`, sin publicar.
+
+La creación del AVD con herramientas antiguas produjo target android-0 para imagen 37.0 y fallos SurfaceFlinger antes de ejecutar producto; se corrigió únicamente el AVD propio a 37.0. Los intentos interrumpidos del entorno no cuentan como fallos de app o aprobados. El emulador aislado de solo lectura 5568 se cerró tras restaurar IME 0/letra 1.0, sin tocar el emulador del usuario, teléfono, PIN o datos. API 26, GPS físico, TalkBack y muerte de proceso no se acreditan por este corte. Guía PDF de ocho páginas renderizadas y revisadas; fuente [de estudio](GUIA_ESTUDIO_APP.md) conservada. Trabajo local, sin push/main/Release ni cambio de versión; oficial 0.6.3 intacta.
+
+## Ayuda del resultado — fase 45, local Unreleased · 18 de octubre de 2026
+
+**18 casos Android distintos ejecutados y aprobados: dos nuevos y 16 de regresión; cero fallos, errores u omitidos.** Este corte corresponde al refinamiento posterior a la publicación de 0.6.3, sin sumar sus pruebas ni presentar recibos anteriores como nuevas ejecuciones.
+
+| Suite | Casos | Evidencia |
+| --- | ---: | --- |
+| GuidedResolutionTourUiTest | 2 nuevos | Autor real y acceso académico, 15.039 s |
+| GuidedTourUiTest | 8 de regresión | Seis temas previos, navegación, reapertura, giro, texto grande/horizontal y ausencia de acciones |
+| ReportResolutionFlowUiTest | 8 de regresión | Declaración/corrección, actor, revisión/giro, guardas, incertidumbre, cuentas y migración |
+
+Las 16 regresiones finalizaron en 101.083 s. En la nueva guía, abrir, avanzar, cerrar y girar en el paso 2 conservaron la preparación y el mismo objeto de comando revisado, con su UUID y motivo. Las lecturas independientes de SQLite compararon resultado, secuencia, eventos y estado administrativo sin escrituras nuevas. El actor se verificó además en el estado real de la app: Autor con UUID de la cuenta registrada y académico sin actor ni controles de declaración. Ningún recorrido inició GPS. La recarga transitoria del detalle al girar conservó el diálogo y no requirió modificar el modelo o sus permisos.
+
+Kotlin debug/release, ensamblados internos debug/test y lint de ambas variantes correctos: **0 errores/22 avisos existentes por variante**. Captura horizontal `tour45-resolution-rotated.png` inspeccionada, texto legible y acciones desplazables; la regresión de letra 130% también pasó. No se ejecutaron nuevas suites JVM/core ni aceptación física, API 26/fabricantes, TalkBack real o muerte completa de proceso para este corte.
+
+Recibo ignorado `.gradle/validacion/tour45-test-proof.json`; logs `tour45-build.log`, `tour45-test-final-build.log`, `tour45-lint-final.log`, `tour45-new-native.log` y `tour45-regression-native.log`. QA interna SHA-256 `e513cbe0cb7ecb397f2926474c7c7b1c1c89229d9816ab844c17be3260fafe6e`; distinta de la APK oficial y sin publicar. Dominio, datos y numeración Android no tienen diferencias frente a v0.6.3. La copia descargada de la oficial conserva SHA-256 `0109149d9f9e6ea1a6883b46fe6915dde7bba9e20fba45c5219dfea6892d1780`. [Fase 45](FASE_45.md). La aceptación física permanece separada del 28/28 de construcción local del PDF.
+
 ## Entrega 0.6.3 — integración y aceptación final · 18 de octubre de 2026
 
 **Corte de 1675 casos distintos: 1121 ejecutados en esta entrega y 554 recibos reutilizados de código idéntico; cero fallos, errores u omitidos finales.** La reutilización no se presenta como otra ejecución. Fases 43–44 y el rediseño remoto de `1fecef0` quedan combinados, con los controles de sesión, historial y tutorial conservados.

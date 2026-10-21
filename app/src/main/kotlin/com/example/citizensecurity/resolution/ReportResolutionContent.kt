@@ -18,9 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -29,6 +31,8 @@ import com.example.citizensecurity.domain.ReportResolution
 import com.example.citizensecurity.domain.ReportResolutionActor
 import com.example.citizensecurity.domain.ReportResolutionActorKind
 import com.example.citizensecurity.domain.ReportResolutionEvent
+import com.example.citizensecurity.tutorial.GuidedTourButton
+import com.example.citizensecurity.tutorial.TourTopic
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
@@ -50,7 +54,12 @@ fun ReportResolutionContent(model: ReportResolutionViewModel, reportId: String, 
         else -> null
     }
     Column(Modifier.fillMaxWidth().testTag("resolution_section"), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text("Resultado del incidente", style = MaterialTheme.typography.titleMedium)
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Resultado del incidente", Modifier.weight(1f).semantics { heading() },
+                style = MaterialTheme.typography.titleMedium)
+            GuidedTourButton(TourTopic.RESOLUTION)
+        }
         Text("Declaración local de quien reportó o de la administración local. Es independiente del estado de seguimiento.",
             style = MaterialTheme.typography.bodySmall)
         if (state === ReportResolutionState.Denied) {

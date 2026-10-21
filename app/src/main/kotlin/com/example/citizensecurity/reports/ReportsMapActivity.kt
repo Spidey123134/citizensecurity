@@ -139,7 +139,11 @@ class ReportsMapActivity : ReportWorkspaceActivity() {
         appliedTo = savedInstanceState?.getString(APPLIED_TO)?.takeIf { it.length <= 32 }.orEmpty()
         dateError = savedInstanceState?.getString(DATE_ERROR)?.takeIf { it.length <= 256 }
         savedMapState = savedInstanceState?.getBundle(MAP_STATE)
-        mapInitialized = runCatching { MapsConfiguration.initialize(this) }.isSuccess
+        mapInitialized = runCatching { MapsConfiguration.initialize(this) }.onFailure { failure ->
+            mapMessage = if (failure is MapsConfiguration.UnsupportedGraphicsException) {
+                MapsConfiguration.UNSUPPORTED_GRAPHICS_MESSAGE
+            } else "No se pudo iniciar el mapa. Vuelve e inténtalo nuevamente."
+        }.isSuccess
         setContent { CompositionLocalProvider(LocalReportWorkspace provides reportWorkspace) { PreviewTheme { Content() } } }
         if (intent.hasExtra(EXTRA_FOLIO)) readEntryReport()
     }
@@ -204,7 +208,8 @@ class ReportsMapActivity : ReportWorkspaceActivity() {
                         } },
                         onRelease = { container -> if (mapView?.parent === container) closeMap() },
                         modifier = Modifier.fillMaxWidth().weight(1f).testTag("reports_map_canvas"),
-                    ) else Text("No se pudo iniciar el mapa en este dispositivo.", Modifier.weight(1f))
+                    ) else Text(mapMessage, Modifier.weight(1f).testTag("reports_map_unavailable")
+                        .semantics { liveRegion = LiveRegionMode.Polite })
                     // El resultado no debe cambiar la proyección que originó su propia consulta:
                     // Loading/hasMore/selección del folio conservan una altura estable para el mapa.
                     Column(Modifier.fillMaxWidth().height(controlsMaxHeight)
@@ -214,14 +219,14 @@ class ReportsMapActivity : ReportWorkspaceActivity() {
                         if (entryReadInFlight) LinearProgressIndicator(Modifier.fillMaxWidth())
                         if (entryReadFailed) TextButton(onClick = ::readEntryReport,
                             modifier = Modifier.testTag("retry_map_folio")) { Text("Reintentar consulta del folio") }
-                        if (!mapReady) {
+                        if (!mapReady && mapInitialized) {
                             Text(mapMessage, style = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.testTag("map_loading_message"))
-                            if (mapInitialized && map != null && mapMessage != "Cargando calles…") {
+                            if (map != null && mapMessage != "Cargando calles…") {
                                 TextButton(onClick = { mapView?.let(::loadStyle) },
                                     modifier = Modifier.testTag("retry_reports_map")) { Text("Reintentar mapa") }
                             }
-                        } else if (scene == null) {
+                        } else if (mapReady && scene == null) {
                             TextButton(onClick = { resetQuery() },
                                 modifier = Modifier.testTag("retry_map_connection")) { Text("Reintentar conexión de la consulta") }
                         }
@@ -412,6 +417,7 @@ class ReportsMapActivity : ReportWorkspaceActivity() {
     }
 
     private fun createMap(): MapView {
+        MapsConfiguration.requireSupportedGraphics(this)
         closeMap()
         val view = MapView(this)
         mapView = view

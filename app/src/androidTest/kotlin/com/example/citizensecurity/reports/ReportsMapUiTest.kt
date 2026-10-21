@@ -128,9 +128,14 @@ class ReportsMapUiTest {
         }
         ui.onNodeWithTag("report_folio").assertTextEquals(risk.id)
         ui.onNodeWithTag("report_description").performScrollTo().assertTextEquals(risk.description)
+        // La cabecera puede estar fuera de composición después de desplazar el detalle.
         // Primero retorna a su lista y después cierra la Activity de detalle, sin dejarla viva.
-        ui.onNodeWithTag("report_back_list").performScrollTo().performClick()
-        ui.onNodeWithTag("report_back_list").performScrollTo().performClick()
+        ui.onNodeWithTag("report_detail").performScrollToIndex(0)
+        ui.onNodeWithTag("report_back_list").assertIsDisplayed().performClick()
+        ui.waitUntil(10_000) { ui.onAllNodesWithTag("report_list").fetchSemanticsNodes().isNotEmpty() }
+        ui.onNodeWithTag("report_list").performScrollToIndex(0)
+        ui.onNodeWithTag("report_back_list").assertIsDisplayed().performClick()
+        ui.waitUntil(10_000) { ui.onAllNodesWithTag("reports_map_canvas").fetchSemanticsNodes().isNotEmpty() }
         ui.onNodeWithTag("reports_map_canvas").assertExists()
         awaitNative { it.currentSceneState == ReportMapSceneState.Idle && it.renderedMarkerCount() == 0 }
         assertEquals(before, storedRows())

@@ -1,5 +1,31 @@
 # Fases de CITIZENSECURITY
 
+## Entrega 0.7.0 — fases 45–47 y pulido de contactos
+
+Reúne todas las fases posteriores a 0.6.3: ayuda del resultado, correcciones de GPS/preparación, contactos al girar y compatibilidad gráfica. El pulido añade conservación del contacto ante escritura fallida/resultado incierto y comprobación manual exacta antes de limpiar sus campos. El rojo reprodujo tres fallos con la implementación anterior; el verde completo aprueba 1461 JVM, incluidos cuatro casos nuevos. [Entrega acumulada y cierre Android/actualización](ENTREGA_0_7_0.md).
+
+Preparación de publicación autorizada por el usuario, Android 0.7.0/código 32. Cierre: **1507 casos distintos aprobados**, 1461 JVM y 46 definiciones Android con 61 ejecuciones; actualización real desde 0.6.3 conservando datos y recuperación entre procesos, lint sin errores. Se preservan los cortes históricos, publicaciones anteriores y el 28/28 funcional local; no se atribuye recepción institucional o validación física nueva.
+
+## Fase 47 — aceptación y compatibilidad, local Unreleased
+
+Recorrido integrado con cuenta/SQLite, foto privada, punto controlado, revisión, folio, consulta, PDF y resultado; dos invocaciones comprueban recuperación durable tras terminar el proceso, con PID distinto y sin escrituras automáticas. Contactos conserva los campos al girar; los mapas explican la incompatibilidad gráfica antes de crear la vista nativa. [Alcance, resultados y pendientes](ACEPTACION_47.md).
+
+**1125 casos distintos aprobados/diez nuevos**, 1083 JVM y 42 definiciones Android; 59 ejecuciones Android por plataforma, sin fallos/errores/omitidos finales. Kotlin/ensamblados y lint sin errores, con 22 avisos previos por variante. Incluye las dos rutas de rechazo en GLES 2 y cuatro estados de permisos en cada Android; la prueba de proceso conserva datos sin duplicarlos.
+
+El corte usa emuladores propios API 26 y API 37, sin acreditar cámara/GPS físicos, TalkBack o aceptación de una persona nueva. No mata en mitad de una transacción ni restaura comandos de resultado que solo vivían en memoria. **28/28 funcional local permanece**; no se añade un porcentaje global. El servidor sigue pendiente de alcance y no se contratan o despliegan servicios. La oficial 0.6.3 no cambia.
+
+## Revisión 46 — mantenimiento y estudio, local Unreleased
+
+Corrige la pérdida de GPS visible al ajustar un pin y la pérdida de una declaración preparada al consultar el historial administrativo del mismo folio. Conserva políticas de cercanía, sesiones, actores y revisión; otro folio o acceso revocado siguen retirando la preparación. Añade [guía de estudio](GUIA_ESTUDIO_APP.md), aclara el acceso académico y retira comentarios redundantes sin alterar el diseño o historial.
+
+**1103 casos distintos ejecutados, cinco nuevos**, cero fallos/errores/omitidos: 1080 JVM y 23 Android. Kotlin/ensamblados correctos y lint cero errores/22 avisos anteriores por variante. [Reproducciones, evidencia y límites](REVISION_46.md). No aumenta los 28 criterios ni convierte aceptación física en completada. Trabajo local posterior a fase 45 y a la oficial 0.6.3, sin nueva versión o publicación.
+
+## Fase 45 — guía del resultado, Unreleased local validada
+
+Refina E11 después de publicar 0.6.3: ayuda de **48 dp** junto a Resultado del incidente, con cuatro pasos generales sobre resultado y seguimiento independientes, actor/rol/fecha/motivo, revisión/confirmación e historial/recibo. El desarrollo suma **siete temas/24 pasos**; consultar instrucciones no declara, obtiene GPS o ejecuta acciones. [Alcance y criterios](FASE_45.md).
+
+**18 Android distintos ejecutados y aprobados, dos nuevos y 16 regresiones**, sin fallos, errores u omitidos: guía inicial ocho y resolución ocho repetidos. Giro conserva el paso abierto, revisión y el mismo comando/UUID; SQLite y GPS permanecen sin acciones de la guía. Kotlin debug/release y ensamblados internos correctos; lint cero errores/22 avisos anteriores por variante. Sin suites JVM/core nuevas. El PDF conserva **28/28 = 100% de construcción funcional local**, aceptación física aparte. Trabajo local **Unreleased**; la oficial 0.6.3 conserva seis temas/20 pasos, sus fuentes y archivos publicados. No se publica otra entrega por este refinamiento.
+
 ## Entrega oficial 0.6.3 — fases 43–44
 
 **18 de octubre de 2026 · Android 0.6.3 / código 31 · [Release oficial publicada](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.3).** Se incluyen el **recorrido guiado E11**, el **resultado declarado E12** y la integración con GitHub. **1675 casos distintos aprobados: 1121 ejecutados y 554 recibos intactos reutilizados**, sin fallos, errores u omitidos finales. Binario/firma, 42 recorridos Android de app y actualización real desde 0.6.2 validados en emulador propio, con migración 4 → 5 y datos/foto/contactos/historial conservados. Kotlin, ensamblados y lint sin errores; app conserva 22 avisos por variante. Código integrado en main, APK y checksum publicados y descargados de nuevo para verificarlos. [Entrega y desglose](ENTREGA_0_6_3.md) · [Probar en Android Studio](PROBAR_0_6_3.md).

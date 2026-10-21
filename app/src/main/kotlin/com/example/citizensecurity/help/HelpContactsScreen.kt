@@ -41,8 +41,7 @@ internal fun HelpContactsScreen(
     checkGesture: () -> Boolean,
 ) {
     val state by model.state.collectAsState()
-    var name by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
+    val draft by model.draft.collectAsState()
     var deletion by remember { mutableStateOf<Pair<TrustedContact, HelpContactsState.Ready>?>(null) }
     LaunchedEffect(model) { if (model.state.value is HelpContactsState.Idle) model.load() }
     LaunchedEffect(state) { if (deletion?.second !== state) deletion = null }
@@ -86,7 +85,10 @@ internal fun HelpContactsScreen(
                 }
             }
             is HelpContactsState.WriteUncertain -> {
-                Text("El cambio pudo guardarse, pero no se pudo confirmar. Vuelve a leer los contactos antes de otro cambio.",
+                val message = if (draft.name.isNotEmpty() || draft.phoneNumber.isNotEmpty()) {
+                    "El cambio pudo guardarse, pero no se pudo confirmar. Lo escrito se conserva mientras estés en esta pantalla. Comprueba los contactos antes de intentarlo otra vez."
+                } else "El cambio pudo guardarse, pero no se pudo confirmar. Vuelve a leer los contactos antes de otro cambio."
+                Text(message,
                     Modifier.testTag("help_contacts_uncertain"))
                 OutlinedButton(onClick = { if (checkGesture() && model.state.value === shown) model.load() }) {
                     Text("Comprobar contactos guardados")
@@ -107,15 +109,13 @@ internal fun HelpContactsScreen(
                 }
                 shown.validationMessage?.let { Text(it, Modifier.testTag("help_contacts_validation")) }
                 if (shown.snapshot.contacts.size < TrustedContact.MAX_CONTACTS) {
-                    OutlinedTextField(name, { if (it.length <= 180) name = it }, modifier = Modifier.fillMaxWidth().testTag("help_contact_name"),
+                    OutlinedTextField(draft.name, { if (checkGesture()) model.editName(it) }, modifier = Modifier.fillMaxWidth().testTag("help_contact_name"),
                         singleLine = true, label = { Text("Nombre del contacto") })
-                    OutlinedTextField(phone, { if (it.length <= 80) phone = it }, modifier = Modifier.fillMaxWidth().testTag("help_contact_phone"),
+                    OutlinedTextField(draft.phoneNumber, { if (checkGesture()) model.editPhoneNumber(it) }, modifier = Modifier.fillMaxWidth().testTag("help_contact_phone"),
                         singleLine = true, label = { Text("Teléfono · 10 a 15 dígitos") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone))
                     Button(modifier = Modifier.fillMaxWidth().testTag("help_contact_save"), onClick = {
-                        if (checkGesture() && model.state.value === shown && model.add(name, phone)) {
-                            name = ""; phone = ""
-                        }
+                        if (checkGesture() && model.state.value === shown) model.add(draft.name, draft.phoneNumber)
                     }) { Text("Guardar contacto") }
                 }
                 OutlinedButton(onClick = { if (checkGesture() && model.state.value === shown) model.load() }) { Text("Actualizar contactos") }

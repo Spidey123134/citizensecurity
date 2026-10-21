@@ -88,7 +88,23 @@ internal fun AdministrationConsultationScreen(
     }
     LaunchedEffect(model) { model.activate() }
     LaunchedEffect(state, resolution) {
-        if (state !is AdministrationConsultationState.ReadyReport) resolution?.clear()
+        val readingReport = ((state as? AdministrationConsultationState.Loading)?.request
+            as? AdministrationReportRequest)?.reportId
+        val resolutionReport = when (val current = resolution?.state?.value) {
+            is ReportResolutionState.Ready -> current.page.reportId
+            is ReportResolutionState.Reviewing -> current.command.reportId
+            is ReportResolutionState.Working -> current.command.reportId
+            is ReportResolutionState.Uncertain -> current.command.reportId
+            is ReportResolutionState.Confirmed -> current.command.reportId
+            is ReportResolutionState.Loading -> current.reportId
+            is ReportResolutionState.Missing -> current.reportId
+            is ReportResolutionState.Error -> current.reportId
+            else -> null
+        }
+        // Refreshing status history hides this section briefly; it must not discard a
+        // separate result preparation or reviewed UUID belonging to that same report.
+        val readingSameReport = readingReport != null && readingReport == resolutionReport
+        if (state !is AdministrationConsultationState.ReadyReport && !readingSameReport) resolution?.clear()
     }
     LaunchedEffect(resolutionState) {
         // Losing declaration authority does not imply losing READ. Check its independent

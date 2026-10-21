@@ -43,6 +43,7 @@ import com.example.citizensecurity.R
 /** Guidance only: opening or moving through a tour never invokes a product action. */
 enum class TourTopic(val key: String) {
     HOME("home"), REPORT("report"), REVIEW("review"), REPORTS("reports"), DETAIL("detail"), MAP("map"),
+    RESOLUTION("resolution"),
 }
 
 private data class TourStep(val title: String, val body: String)
@@ -140,6 +141,7 @@ private fun topicLabel(topic: TourTopic): String = when (topic) {
     TourTopic.REPORTS -> "Reportes guardados"
     TourTopic.DETAIL -> "Detalle del reporte"
     TourTopic.MAP -> "Reportes en el mapa"
+    TourTopic.RESOLUTION -> "Resultado del incidente"
 }
 
 @Composable
@@ -168,12 +170,18 @@ private fun stepsFor(topic: TourTopic): List<TourStep> = when (topic) {
     )
     TourTopic.DETAIL -> listOf(
         TourStep("Identifica el reporte", "El folio identifica este registro. Puedes copiarlo y revisar la descripción, fechas y fotografía. Ver en el mapa aparece cuando hay un punto guardado."),
-        TourStep("Consulta su historial", "El historial muestra los eventos registrados en este teléfono. Su consulta es independiente de la ficha; un error del historial no borra los datos del reporte."),
+        TourStep("Consulta el resultado y su historial", "Resultado del incidente indica si se declaró solucionado o sigue sin solucionarse, con su propia ayuda. Cerrado es un estado de seguimiento y no confirma solución. Los historiales conservan los cambios locales; un error al consultarlos no borra el reporte."),
         TourStep("Prepara lo que vas a compartir", "La ficha PDF y el mensaje para un contacto tienen su propia revisión. Tú eliges qué incluir y abres otra aplicación con un gesto separado; ver el detalle o este recorrido no comparte datos."),
     )
     TourTopic.MAP -> listOf(
         TourStep("Explora las calles", "Mueve y acerca el mapa hasta la zona que quieres revisar. El centro inicial es solo un punto de navegación; no representa tu ubicación."),
         TourStep("Consulta esta zona", "Elige los filtros y consulta la zona visible. Solo aparecen reportes con coordenadas guardadas en tu espacio de este teléfono. El límite puede dejar coincidencias fuera de la muestra."),
         TourStep("Abre un reporte de la muestra", "Selecciona un marcador y pulsa Abrir reporte, o usa Ver lista de esta zona. El color representa la prioridad indicada por el autor, no una verificación del incidente."),
+    )
+    TourTopic.RESOLUTION -> listOf(
+        TourStep("¿Quedó solucionado?", "Sin confirmar, Solucionado y Sigue sin solucionarse describen el resultado declarado. El estado de seguimiento va por separado: Cerrado no significa Solucionado. Es información local, sin confirmar atención de autoridades."),
+        TourStep("Quién puede declararlo", "El autor del reporte y un administrador local autorizado pueden declarar en su propio espacio. El acceso académico permite consultar. Cada declaración conserva la cuenta, el rol, la fecha y el motivo de quien la guardó."),
+        TourStep("Revisa antes de confirmar", "Elige un resultado, escribe el motivo y pulsa Revisar declaración. Guardar requiere después Confirmar y guardar resultado. Si el problema cambia, otra declaración corrige el resultado y conserva las anteriores en el historial. Esta ayuda no guarda cambios."),
+        TourStep("Si no sabes si se guardó", "Usa Comprobar recibo para consultar el intento pendiente. Reintentar requiere otro gesto y usa la misma declaración. Si cierras la app, al volver se consulta lo guardado; la solicitud pendiente no se conserva ni se repite automáticamente."),
     )
 }

@@ -123,11 +123,18 @@ class IncidentLocationViewModel(
 
     fun select(latitude: Double, longitude: Double) {
         if (session.isClosed || !viewModelScope.isActive) return
+        val displayedFix = when (val previous = mutableState.value) {
+            is IncidentLocationState.Idle -> previous.deviceFix
+            is IncidentLocationState.PointSelected -> previous.deviceFix
+            else -> null
+        }
         proposal = session.select(latitude, longitude) ?: return
         if (activeRequest != null) {
             mutableState.value = IncidentLocationState.Capturing(proposal)
         } else {
-            showProposal()
+            // Ajustar el pin no consume la lectura obtenida en esta apertura. Confirmar
+            // vuelve a consultar evidencia y antigüedad; esta copia solo mantiene la UI.
+            showProposal(displayedFix)
         }
     }
 

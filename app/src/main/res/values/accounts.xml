@@ -12,6 +12,6 @@
     <string name="account_created">Cuenta creada en este teléfono. Escribe tu contraseña para iniciar sesión.</string>
     <string name="account_authenticated">Acceso comprobado.</string>
     <string name="account_home_signed_in">Cuenta local: %1$s. Reportes, fotos y borradores de esta cuenta en este teléfono.</string>
-    <string name="account_home_guest">Modo académico sin cuenta. Conserva los reportes históricos y de demostración; sin acceso a los de cuentas registradas ni permisos administrativos.</string>
+    <string name="account_home_guest">Acceso académico sin cuenta. Sus reportes se guardan por separado de las cuentas registradas. No concede permisos administrativos.</string>
     <string name="account_sign_out">Cerrar sesión</string>
 </resources>

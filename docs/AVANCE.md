@@ -1,5 +1,29 @@
 # Avance del plan del proyecto
 
+## Entrega 0.7.0 — refinamiento acumulado · 21 de octubre de 2026
+
+Preparación autorizada para publicar fases 45–47 y pulido de contactos: una escritura incierta conserva los campos hasta comprobar el contacto exacto, sin repetir automáticamente. **1507 casos distintos aprobados**: 1461 JVM ejecutadas (216 dominio, 158 datos y 1087 app) y 46 definiciones Android con 61 ejecuciones entre API 26/37. Actualización real desde 0.6.3 y recuperación entre procesos comprobadas sin duplicar ni borrar datos; lint sin errores. [Entrega 0.7.0](ENTREGA_0_7_0.md).
+
+Se conserva **28/28 = 100% de construcción funcional local**, separado de aceptación física, TalkBack, servidor o institución. Publicar una versión no suma hitos. Las restricciones Unreleased de los cortes inferiores son históricas; el usuario autorizó incluirlos en esta entrega.
+
+## Aceptación — fase 47, local Unreleased · 19 de octubre de 2026
+
+Se amplía la evidencia con recorrido completo hasta folio/foto/PDF/resultado, recuperación en otro proceso y casos seleccionados en API 26 y API 37. Se corrige el formulario de contactos al girar y se protege la apertura de los mapas en equipos sin la capacidad gráfica requerida. [Resultados y procedimientos](ACEPTACION_47.md).
+
+**1125 casos distintos aprobados/diez nuevos:** 1083 JVM y 42 definiciones Android, con 59 ejecuciones entre plataformas. Cero fallos/errores/omitidos finales; compilación y lint sin errores. Recuperación con PID diferente y rechazo seguro de GLES 2 comprobados; no se suman los intentos de diagnóstico o cortes anteriores.
+
+El plan conserva **28/28 de construcción funcional local**. No se asigna un porcentaje global con esas pruebas: sensores físicos, fabricantes, TalkBack, una persona nueva y servidor/sincronización siguen separados. El usuario confirmó que solo puede usar emulador en esta sesión; el alcance del servidor sigue pendiente de elegir. Oficial 0.6.3 intacta; sin publicación nueva.
+
+## Mantenimiento local — revisión 46
+
+Se corrigieron dos pérdidas de preparación: lectura GPS descartada al ajustar el pin y motivo/comando de resultado descartados al refrescar historial administrativo. Hay una [guía para estudiar la app](GUIA_ESTUDIO_APP.md) y [evidencia del mantenimiento](REVISION_46.md): 1080 JVM y 23 Android aprobados, cinco casos nuevos, sin fallos. No suma criterios al PDF: conserva el 28/28 de construcción local y la aceptación física pendiente. Oficial 0.6.3 intacta; cambios locales sin publicar.
+
+## Corte local Unreleased — fase 45: explicar el resultado
+
+La continuación solicitada después de publicar 0.6.3 refina E11 mediante ayuda junto a Resultado del incidente. Un acceso de **48 dp** abre cuatro pasos generales sobre resultado/seguimiento, quién declaró y por qué, revisión/confirmación e historial/recibo: **siete temas/24 pasos en desarrollo**, sin datos privados ni acciones automáticas. [Fase 45](FASE_45.md).
+
+**18 Android distintos ejecutados y aprobados, dos nuevos y 16 regresiones**, sin fallos, errores u omitidos. Giro conserva paso, preparación y comando/UUID; SQLite permanece intacto y la guía no captura GPS. Kotlin debug/release y ensamblados internos correctos; lint cero errores/22 avisos anteriores por variante. Sin suites JVM/core nuevas; no se suman pruebas históricas a este corte. El avance previo del PDF permanece en **28/28 = 100% de construcción funcional local**, separado de aceptación física. Trabajo local Unreleased: la oficial 0.6.3, sus seis temas/20 pasos y archivos conservan su identidad; no se publica otra entrega.
+
 ## Entrega oficial 0.6.3 — integración y mejoras de uso
 
 **18 de octubre de 2026 · Android 0.6.3 / código 31 · [Release oficial publicada](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.3).** Integra GitHub con fases 43–44: **seis recorridos guiados/20 pasos** y el **resultado del incidente declarado por autor o administrador**, con motivo, actor e historial, separado del seguimiento. Incluye el acceso **app** de Android Studio. [Entrega](ENTREGA_0_6_3.md) · [Guía de prueba](PROBAR_0_6_3.md).

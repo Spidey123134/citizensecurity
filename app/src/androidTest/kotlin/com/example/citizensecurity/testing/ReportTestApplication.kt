@@ -201,7 +201,8 @@ class ReportTestFixture internal constructor(private val context: Context) {
     private fun preciseAllowed() = context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
         PackageManager.PERMISSION_GRANTED
 
-    private fun locationEnabled() = context.getSystemService(LocationManager::class.java).isLocationEnabled
+    private fun locationEnabled() = context.getSystemService(LocationManager::class.java)
+        .isProviderEnabled(LocationManager.GPS_PROVIDER)
 
     companion object {
         const val LATITUDE = 19.4326
@@ -215,20 +216,38 @@ class ReportTestFixtureRule : ExternalResource() {
         private set
     private lateinit var application: ReportTestApplication
     private var previousLocationMode = ""
+    private var previousGpsEnabled = false
 
     override fun before() {
         application = ApplicationProvider.getApplicationContext()
         val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
+        fun grantLocation(permission: String) {
+            if (android.os.Build.VERSION.SDK_INT >= 28) {
+                automation.grantRuntimePermission(application.packageName, permission)
+            } else {
+                shell("pm grant ${application.packageName} $permission")
+            }
+        }
         previousLocationMode = shell("settings get secure location_mode").trim()
+        val locations = application.getSystemService(LocationManager::class.java)
+        previousGpsEnabled = locations.isProviderEnabled(LocationManager.GPS_PROVIDER)
         if (!granted(Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            automation.grantRuntimePermission(application.packageName, Manifest.permission.ACCESS_COARSE_LOCATION)
+            grantLocation(Manifest.permission.ACCESS_COARSE_LOCATION)
         }
         if (!granted(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            automation.grantRuntimePermission(application.packageName, Manifest.permission.ACCESS_FINE_LOCATION)
+            grantLocation(Manifest.permission.ACCESS_FINE_LOCATION)
         }
         shell("settings put secure location_mode 3")
+        if (android.os.Build.VERSION.SDK_INT < 28) shell("settings put secure location_providers_allowed +gps")
         check(granted(Manifest.permission.ACCESS_FINE_LOCATION)) { "Precise permission was not granted by Android" }
-        check(application.getSystemService(LocationManager::class.java).isLocationEnabled) { "Android location is disabled" }
+        val deadline = SystemClock.elapsedRealtime() + 5_000
+        // Android applies the settings change asynchronously, especially after the disabled-GPS case.
+        while (!locations.isProviderEnabled(LocationManager.GPS_PROVIDER) && SystemClock.elapsedRealtime() < deadline) {
+            SystemClock.sleep(25)
+        }
+        check(locations.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            "Android GPS provider is disabled"
+        }
         fixture = application.enableFixture()
     }
 
@@ -241,6 +260,9 @@ class ReportTestFixtureRule : ExternalResource() {
                 // permissions by discarding its read-only emulator after the suite, not from this rule.
                 if (previousLocationMode in listOf("0", "1", "2", "3")) {
                     shell("settings put secure location_mode $previousLocationMode")
+                }
+                if (android.os.Build.VERSION.SDK_INT < 28) {
+                    shell("settings put secure location_providers_allowed ${if (previousGpsEnabled) "+gps" else "-gps"}")
                 }
             }
         }
