@@ -4,11 +4,11 @@
 
 Sin cambios adicionales preparados después de la entrega 0.7.0.
 
-## [0.7.0] — 2026-10-21 · entrega en preparación
+## [0.7.0] — 2026-10-21 · Release oficial publicada
 
 - Reúne **todas las fases 45–47 posteriores a la oficial 0.6.3** y el pulido de contactos de esta entrega. Las marcas locales/Unreleased de los puntos siguientes conservan el estado histórico de sus respectivos cortes; su código se incluye en 0.7.0.
 - **Contactos:** escribir y girar conservan la preparación. Un intento de guardado fallido o incierto también conserva los campos; solo una confirmación o lectura del contacto exacto limpia esa misma preparación. Leer no reintenta automáticamente y una respuesta anterior no borra otro contacto que estés preparando.
-- Android **0.7.0 / código 32**, con el mismo paquete y certificado académico. [Entrega acumulada y validación](docs/ENTREGA_0_7_0.md) · [Actualizar y probar](docs/PROBAR_0_7_0.md). Publicación y descarga pendientes de comprobar.
+- Android **0.7.0 / código 32**, con el mismo paquete y certificado académico. [Release oficial](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.7.0), [APK](https://github.com/Spidey123134/citizensecurity/releases/download/v0.7.0/citizensecurity-0.7.0-academico.apk) y [checksum](https://github.com/Spidey123134/citizensecurity/releases/download/v0.7.0/SHA256SUMS-0.7.0.txt) publicados, descargados y verificados. PR #34 integrado en main; tag sobre `7ce0b802e22bffa9dc9a0c92ed48481bff269aaa`. [Entrega acumulada y validación](docs/ENTREGA_0_7_0.md) · [Actualizar y probar](docs/PROBAR_0_7_0.md).
 - Validación final: **1507 casos distintos aprobados**, 1461 JVM ejecutadas y 46 definiciones Android con 61 ejecuciones en API 26/37; actualización real desde 0.6.3 conservando bytes y datos, recuperación entre procesos sin duplicar, permisos y rechazo seguro GLES 2. Lint cero errores/22 avisos anteriores por variante. Un test de retorno del mapa se ajustó al desplazamiento de su lista virtualizada; no cambió el producto y el caso repetido pasó.
 
 - **Fase 47, aceptación y compatibilidad:** los campos de contacto pendientes permanecen en el ViewModel al girar, sin copiarlos al Bundle o al archivo de contactos. Guardar, cancelar o terminar el espacio retiran esa preparación; otra cuenta no la hereda.
