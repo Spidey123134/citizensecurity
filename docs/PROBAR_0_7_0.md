@@ -1,8 +1,8 @@
 # Probar CitizenSecurity 0.7.0
 
-**21 de octubre de 2026 · Android 0.7.0 / código 32 · Validación cerrada, publicación en preparación.** La entrega reúne las fases 45–47 y el pulido actual, incluyendo la séptima ayuda del recorrido, las correcciones de GPS/preparación, los campos de contactos conservados al girar o ante un guardado incierto y la protección de mapas en equipos sin GLES 3. La actualización real desde 0.6.3 ya pasó en emulador propio API 37. [Cambios, identidad del archivo y comprobaciones](ENTREGA_0_7_0.md).
+**21 de octubre de 2026 · Android 0.7.0 / código 32 · Release oficial publicada y descarga verificada.** La entrega reúne las fases 45–47 y el pulido actual, incluyendo la séptima ayuda del recorrido, las correcciones de GPS/preparación, los campos de contactos conservados al girar o ante un guardado incierto y la protección de mapas en equipos sin GLES 3. La actualización real desde 0.6.3 ya pasó en emulador propio API 37. [Cambios, identidad del archivo y comprobaciones](ENTREGA_0_7_0.md).
 
-**PENDIENTE_PUBLICACION:** sustituir este estado por el enlace verificado de Release y los datos de la APK final. No descargar archivos de una URL prevista como si ya se hubieran publicado. La [Release oficial anterior 0.6.3](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.3) conserva su contenido.
+La [Release oficial v0.7.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.7.0), ID **419228925**, se publicó el **21 de octubre de 2026 a las 06:32:51 UTC**, sin marca de borrador ni prerelease. La APK y el archivo de comprobación se descargaron de nuevo: sus tamaños, SHA-256 y digests de GitHub coinciden. La [Release oficial anterior 0.6.3](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.6.3) conserva su contenido.
 
 ## Ejecutar desde Android Studio
 
@@ -13,7 +13,7 @@
 5. Pulsa **Run ▶**. La configuración `app` conserva el almacenamiento. Si Studio advierte una firma incompatible, cancela para revisar el archivo y su firma; conserva la instalación anterior.
 6. Comprueba que ejecutaste 0.7.0/código 32 y consulta un folio previo desde la misma cuenta o acceso donde se guardó.
 
-Después de que se confirme la integración de esta entrega en main, conserva primero cualquier modificación propia. Con el directorio limpio puedes actualizar el clon así:
+La entrega está integrada en **main** mediante el [PR #34](https://github.com/Spidey123134/citizensecurity/pull/34), commit `7ce0b802e22bffa9dc9a0c92ed48481bff269aaa`, también señalado por el tag `v0.7.0`. Conserva primero cualquier modificación propia. Con el directorio limpio puedes actualizar el clon así:
 
 ```powershell
 git fetch origin
@@ -21,11 +21,11 @@ git switch main
 git pull --ff-only origin main
 ```
 
-Si Git avisa cambios propios o ramas divergentes, combínalos conservando el trabajo. No uses un restablecimiento destructivo para actualizar. **PENDIENTE_INTEGRACION:** añadir el PR/commit efectivo y confirmar que estos comandos ya obtienen 0.7.0 de main. Compilar o ejecutar desde Studio no publica por sí mismo una Release.
+Si Git avisa cambios propios o ramas divergentes, combínalos conservando el trabajo. No uses un restablecimiento destructivo para actualizar. Main contiene el código de 0.7.0; el tag identifica el corte publicado. Compilar o ejecutar desde Studio no publica por sí mismo una Release.
 
 ## Actualizar mediante APK
 
-La APK final preparada `citizensecurity-0.7.0-academico.apk` mide **55,617,944 bytes** y tiene SHA-256 `6a312b1986fd4e6d6aff9133eade87d0847d25a80714cdd175c805f9ccd5a1d9`. Se comprobó que conserva el certificado académico de 0.6.3. **PENDIENTE_PUBLICACION:** añadir los enlaces verificados de la APK y `SHA256SUMS-0.7.0.txt` y confirmar sus descargas. Usa los datos de [Entrega 0.7.0](ENTREGA_0_7_0.md#binario-y-actualización), sin reutilizar el hash de un candidato anterior.
+Descarga la [APK oficial citizensecurity-0.7.0-academico.apk](https://github.com/Spidey123134/citizensecurity/releases/download/v0.7.0/citizensecurity-0.7.0-academico.apk): mide **55,617,944 bytes** y tiene SHA-256 `6a312b1986fd4e6d6aff9133eade87d0847d25a80714cdd175c805f9ccd5a1d9`. Conserva el certificado académico de 0.6.3. El [archivo SHA256SUMS-0.7.0.txt](https://github.com/Spidey123134/citizensecurity/releases/download/v0.7.0/SHA256SUMS-0.7.0.txt) mide **103 bytes** y tiene SHA-256 `b9cf5ecafa8dce0de92f59f6d7453198bc827f7a57aaee92f53e49fc240241a3`. Ambas descargas quedaron verificadas el **21 de octubre de 2026 a las 06:33:32 UTC**, según `.gradle/validacion/release070-final/published-download-receipt.json`; sus hashes coinciden con los digests de `published-release.json`. Usa los datos de [Entrega 0.7.0](ENTREGA_0_7_0.md#binario-y-actualización), sin reutilizar el hash de un candidato anterior.
 
 1. Antes de actualizar, anota un folio y la cuenta o acceso donde lo guardaste. Comprueba que puedas leerlo.
 2. Instala mediante **Actualizar**, encima de la app anterior, sin desinstalar ni borrar almacenamiento.

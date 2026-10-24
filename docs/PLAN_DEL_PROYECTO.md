@@ -1,8 +1,8 @@
 # Plan del proyecto
 
-## Entrega 0.7.0 — preparación autorizada
+## Entrega 0.7.0 — oficial publicada
 
-La petición del 21 de octubre autoriza refinar y publicar la acumulación completa de fases 45–47, más la recuperación del formulario de contactos ante un guardado incierto. Android 0.7.0/código 32, conservando paquete, firma, datos e interfaz del compañero. [Alcance y pruebas de la entrega](ENTREGA_0_7_0.md) · [Cómo actualizar y probar](PROBAR_0_7_0.md).
+La entrega publicada el 21 de octubre reúne la acumulación completa de fases 45–47, más la recuperación del formulario de contactos ante un guardado incierto. Android 0.7.0/código 32, conservando paquete, firma, datos e interfaz del compañero. Integración por PR #34 y descargas APK/checksum verificadas. [Alcance y pruebas de la entrega](ENTREGA_0_7_0.md) · [Cómo actualizar y probar](PROBAR_0_7_0.md).
 
 El cierre técnico aprueba 1507 casos distintos: 1461 JVM ejecutadas y 46 definiciones Android con 61 ejecuciones entre API 26/37, sin sumar fases históricas. La actualización real desde 0.6.3 conserva datos y firma. El PDF mantiene 28/28 de construcción funcional local. La entrega no incorpora servidor, recepción policial o una nueva aceptación física. Las restricciones locales de los apartados inferiores describen su estado histórico, reemplazadas para esta publicación por la instrucción expresa actual.
 

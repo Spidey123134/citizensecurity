@@ -12,6 +12,8 @@ APK final de 55,617,944 bytes, SHA-256 `6a312b1986fd4e6d6aff9133eade87d0847d25a8
 
 [Desglose, actualización y límites](ENTREGA_0_7_0.md) · [Probar la entrega](PROBAR_0_7_0.md). Los sensores físicos, TalkBack, una persona nueva y seguridad/servidor/institución siguen separados; 28/28 acredita construcción funcional local.
 
+**Publicación comprobada:** Release 419228925, 21 de octubre de 2026 a las 06:32:51 UTC; PR #34 y tag v0.7.0 sobre `7ce0b802e22bffa9dc9a0c92ed48481bff269aaa`. APK y checksum descargados de nuevo, mismos bytes/SHA y digest de GitHub; recibo `release070-final/published-download-receipt.json`. Este cierre de guías conserva el tag y los assets publicados.
+
 ## Aceptación y compatibilidad — fase 47 · 19 de octubre de 2026
 
 Comprobaciones en AVD propios API 26 y API 37: recorrido de reporte con foto/folio/PDF/resultado, contactos, cuentas, ayuda, permisos y recuperación durable entre procesos. El requisito GLES 3 de MapLibre se declara y comprueba antes de crear la vista; los equipos incompatibles conservan una salida usable. [Procedimientos, desglose final y límites](ACEPTACION_47.md).

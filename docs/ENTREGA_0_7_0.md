@@ -1,6 +1,6 @@
 # Entrega acumulada 0.7.0
 
-**21 de octubre de 2026 · Android 0.7.0 / código 32 · Validación cerrada, publicación en preparación.** El usuario autorizó refinar y publicar la siguiente entrega como 0.7. Esta versión reúne **todos los cambios locales posteriores a la oficial 0.6.3: fases 45–47 y el pulido de esta entrega**. La publicación, el commit final y los archivos descargados se comprobarán antes de cambiar este estado a publicado.
+**21 de octubre de 2026 · Android 0.7.0 / código 32 · Release oficial publicada y descarga verificada.** Esta versión reúne **todos los cambios posteriores a la oficial 0.6.3: fases 45–47 y el pulido de esta entrega**. La [Release oficial v0.7.0](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.7.0), ID **419228925**, se publicó el **21 de octubre de 2026 a las 06:32:51 UTC**, sin marca de borrador ni prerelease. Los dos archivos se descargaron de nuevo y sus bytes y SHA-256 coinciden con los archivos finales y los digests de GitHub.
 
 Las marcas Unreleased y los números de versión de los documentos anteriores describen sus cortes históricos. No significan que se excluya ese trabajo de la entrega acumulada. La [oficial 0.6.3](ENTREGA_0_6_3.md), su tag y sus archivos conservan su identidad.
 
@@ -38,19 +38,21 @@ El cierre histórico de fase 47 probó un AVD API 26 con GLES 3.1 para el recorr
 
 ## Binario y actualización
 
-| Dato final | Estado de preparación |
+| Dato final | Entrega publicada |
 | --- | --- |
 | Versión Android | 0.7.0 / código 32 |
 | Paquete | `com.example.citizensecurity` |
 | API mínima / objetivo | 26 / 37 |
-| Archivo previsto | `citizensecurity-0.7.0-academico.apk` |
+| APK publicada | [citizensecurity-0.7.0-academico.apk](https://github.com/Spidey123134/citizensecurity/releases/download/v0.7.0/citizensecurity-0.7.0-academico.apk) |
 | Bytes y SHA-256 de la APK final | **55,617,944 bytes** · `6a312b1986fd4e6d6aff9133eade87d0847d25a80714cdd175c805f9ccd5a1d9` |
 | Firma de actualización | Certificado académico comprobado, idéntico al de 0.6.3: SHA-256 `0a4006a1d2ef2ad02a0dad7c51b55c0ba5ffcd096a226eed6456326b2fed3ebd` |
-| Archivo de comprobación previsto | `SHA256SUMS-0.7.0.txt` |
-| PR / commit de integración | **PENDIENTE_INTEGRACION** |
-| Tag / Release / descarga verificada | **PENDIENTE_PUBLICACION** |
+| Archivo de comprobación publicado | [SHA256SUMS-0.7.0.txt](https://github.com/Spidey123134/citizensecurity/releases/download/v0.7.0/SHA256SUMS-0.7.0.txt) |
+| Bytes y SHA-256 del archivo de comprobación | **103 bytes** · `b9cf5ecafa8dce0de92f59f6d7453198bc827f7a57aaee92f53e49fc240241a3` |
+| PR / commit de integración | [PR #34 integrado en main](https://github.com/Spidey123134/citizensecurity/pull/34) · `7ce0b802e22bffa9dc9a0c92ed48481bff269aaa` |
+| Tag / Release | [v0.7.0 · Release 419228925](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.7.0), sobre el commit de integración |
+| Descarga verificada | Ambos archivos: bytes, SHA-256 y digests de GitHub coincidentes; recibo del **21 de octubre de 2026 a las 06:33:32 UTC** |
 
-La actualización se instala **encima de 0.6.3, sin desinstalar ni borrar datos**, conservando paquete y certificado. La firma de la APK final coincide con el certificado académico anterior. Los archivos finales y los recibos de esta preparación están en `.gradle/validacion/release070-final/`; sus bytes/hash no deben confundirse con los candidatos internos anteriores.
+La actualización se instala **encima de 0.6.3, sin desinstalar ni borrar datos**, conservando paquete y certificado. La firma de la APK final coincide con el certificado académico anterior. Los archivos finales y los recibos de esta entrega están en `.gradle/validacion/release070-final/`; sus bytes/hash no deben confundirse con los candidatos internos anteriores. `published-release.json` conserva los datos de la Release publicada y `published-download-receipt.json` registra la comprobación de ambas descargas, el commit del tag y los digests coincidentes.
 
 La aceptación nueva `Release070UpgradeTest` **aprobó sus dos etapas en un emulador propio API 37**, con el runner `AndroidJUnitRunner` y la Application productiva real: `seed063` sobre la APK oficial 0.6.3, instalación real `adb install -r` de la APK final 0.7.0 y `verify070`. Nonce `06e839e8-1b22-4970-b8c3-860528612fb7`; PID de siembra **4623**, PID posterior **4700**. No se desinstaló ni borró almacenamiento entre etapas.
 
@@ -83,7 +85,9 @@ Los cuatro casos de permisos pasan tanto en API 26 como en API 37. La aceptació
 
 El desglose de Android por plataforma es **43 ejecuciones API 37** —34 aprobadas en el lote de interfaz, una repetición dirigida aprobada, cuatro permisos, dos etapas de proceso y dos etapas de actualización— y **18 API 26** —12 recorridos y cuatro permisos con GLES 3, más dos casos con GLES 2—. Son **61 ejecuciones finales**, con 46 definiciones distintas; no se añade el intento de interfaz fallido a ese total.
 
-Recibo enumerado `.gradle/validacion/release070-final/release-proof.json`, con identidades, resultados y procedencia del binario. Logs principales: `release070-build-unit-final.log`, `release070-contacts-red.log`, `release070-native-build-lint.log`, `release070-ui-api26-final.log`, `release070-ui-api37-final.log`, `release070-map-return-api37-final.log`, `release070-permissions-api*-*.log` y `release070-process-api37-{seed,verify}.log`; los logs de actualización están en `release070-final/`. Kotlin debug/release, ensamblados debug/release y firma correctos; lint cero errores y 22 avisos anteriores por variante. La integración y publicación conservan sus comprobaciones pendientes en la tabla del binario.
+Recibo enumerado `.gradle/validacion/release070-final/release-proof.json`, con identidades, resultados y procedencia del binario. Logs principales: `release070-build-unit-final.log`, `release070-contacts-red.log`, `release070-native-build-lint.log`, `release070-ui-api26-final.log`, `release070-ui-api37-final.log`, `release070-map-return-api37-final.log`, `release070-permissions-api*-*.log` y `release070-process-api37-{seed,verify}.log`; los logs de actualización están en `release070-final/`. Kotlin debug/release, ensamblados debug/release y firma correctos; lint cero errores y 22 avisos anteriores por variante. La integración, publicación y descarga verificada están cerradas con la identidad de la tabla del binario.
+
+El runner habitual quedó restaurado, al igual que los ajustes de IME, letra y ubicación. Los AVD propios 5568/5570 quedaron cerrados conservando sus carpetas; el teléfono físico permaneció intacto. Estas tareas de cierre no añaden ejecuciones a los resultados anteriores.
 
 Los resultados históricos siguen consultables: [fase 45](FASE_45.md), [revisión 46](REVISION_46.md), [fase 47](ACEPTACION_47.md) y [validación general](VALIDACION.md). La última fase comprobó recuperación entre procesos con PIDs diferentes y bytes conservados; ese cierre no mató el proceso durante un commit ni comprobó pérdida de energía.
 

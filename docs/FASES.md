@@ -4,7 +4,7 @@
 
 Reúne todas las fases posteriores a 0.6.3: ayuda del resultado, correcciones de GPS/preparación, contactos al girar y compatibilidad gráfica. El pulido añade conservación del contacto ante escritura fallida/resultado incierto y comprobación manual exacta antes de limpiar sus campos. El rojo reprodujo tres fallos con la implementación anterior; el verde completo aprueba 1461 JVM, incluidos cuatro casos nuevos. [Entrega acumulada y cierre Android/actualización](ENTREGA_0_7_0.md).
 
-Preparación de publicación autorizada por el usuario, Android 0.7.0/código 32. Cierre: **1507 casos distintos aprobados**, 1461 JVM y 46 definiciones Android con 61 ejecuciones; actualización real desde 0.6.3 conservando datos y recuperación entre procesos, lint sin errores. Se preservan los cortes históricos, publicaciones anteriores y el 28/28 funcional local; no se atribuye recepción institucional o validación física nueva.
+**Release oficial publicada**, Android 0.7.0/código 32, con APK/checksum descargados y verificados. Cierre: **1507 casos distintos aprobados**, 1461 JVM y 46 definiciones Android con 61 ejecuciones; actualización real desde 0.6.3 conservando datos y recuperación entre procesos, lint sin errores. Se preservan los cortes históricos, publicaciones anteriores y el 28/28 funcional local; no se atribuye recepción institucional o validación física nueva.
 
 ## Fase 47 — aceptación y compatibilidad, local Unreleased
 
