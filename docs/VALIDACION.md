@@ -34,6 +34,12 @@ Rutas actuales de resultados:
 
 El emulador propio se cerró después de verificar instalación, pruebas y launcher, conservando su carpeta. No se cambiaron permisos ni ajustes del dispositivo. La instalación simultánea con la oficial no fue una prueba ejecutada. Los resultados históricos siguientes corresponden al corte original y no acreditan esta revisión.
 
+### Publicación comprobada
+
+[Release 444734423 / v0.1.0-rev.2-beta](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.1.0-rev.2-beta), publicada el 13 de noviembre de 2026 a las 21:01:51 UTC como prerelease. Tag sobre `ef6c60177a3aebd801331b61ea2a00e5410cdf45`. APK, fuentes ZIP y checksum descargados de nuevo: bytes, SHA-256 y digest de GitHub coinciden con los archivos preparados. ZIP de fuentes de 92,147 bytes, SHA-256 `e761ab0512b1586ccdd73eb7dcf00784db74671feab435eb1ff18a4ce039334f`.
+
+Se comprobó que main permanece en `cebc0d46cf8d30ff210c8e5e2a05cb8141aa5d37`, la oficial 0.7.0 continúa como latest y sus archivos mantienen sus identidades. Recibo local: `.gradle/validacion/beta010/published-download-receipt.json`. El cierre de documentación posterior al tag no cambia las fuentes productivas o los archivos publicados.
+
 ## Registro histórico · primera entrega 0.1.0
 
 Verificación local realizada el 2 de octubre de 2026, hora de México. Esta revisión cubre el contrato de validación y el guardado local; el diseño de pantallas corresponde al compañero.
