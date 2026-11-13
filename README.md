@@ -1,40 +1,50 @@
-# CITIZENSECURITY
+# CITIZENSECURITY · Base beta
 
-Proyecto Android académico en Kotlin para registrar y consultar incidentes. El desarrollo se hace una función por vez. En esta primera base los reportes se guardan en el dispositivo; no hay envío a autoridades ni atención de emergencias.
+**0.1.0-rev.2-beta · 13 de noviembre de 2026.** Revisión de la base inicial para organizar el código según el pizarrón de clase. Parte del commit `b4f80a8`; está preparada para publicarse como prerelease independiente de la versión oficial 0.7.
 
-## Primera función
+La primera función valida, guarda y consulta reportes en SQLite local. Esta revisión conserva sus reglas y organiza la aplicación en `MainActivity`, `navigation`, `screen` y `data`. `Home` y `ReportDetails` son contenedores vacíos para continuar el trabajo de interfaz; el inicio muestra `Home`, sin formulario ni registros de ejemplo.
 
-Validar y guardar un reporte local con categoría, prioridad, descripción, fecha y ubicación escrita o coordenadas. La consulta por folio permite comprobar que el registro permanece después de reabrir la base.
+## Estructura real
 
-El módulo `app` contiene una actividad y un contenedor vacío: las interfaces, el menú y la navegación corresponden al compañero. No se incluye una interfaz provisional de formulario ni datos de demostración al iniciar.
+Todo el código está en el módulo `app`, bajo `app/src/main/kotlin/com/example/citizensecurity/`:
 
-## Estructura
+```text
+├── MainActivity.kt
+├── CitizenSecurityApplication.kt
+├── navigation/Navigation.kt
+├── screen/
+│   ├── Home.kt
+│   └── ReportDetails.kt
+└── data/
+    ├── Report.kt
+    ├── ReportRepository.kt
+    ├── ReportValidator.kt
+    ├── AdminReportes.kt
+    └── ReportDatabase.kt
+```
 
-| Módulo | Responsabilidad |
-| --- | --- |
-| `app` | Entrada Android, interfaces y composición de dependencias |
-| `core/domain` | Modelos, contrato del repositorio y validación independiente de Android |
-| `core/data` | SQLite y persistencia del reporte |
+`AdminReportes` implementa `ReportRepository`: valida y crea un reporte, busca por folio y lista los registros. El nombre corresponde al gestor de datos del pizarrón; no añade un rol de administrador. La interfaz usa Kotlin y el contenedor XML `activity_main.xml`.
 
-Lee [Trabajo del equipo](docs/TRABAJO_EQUIPO.md) y [Contrato de la primera función](docs/GUARDAR_REPORTE.md).
-
-## Herramientas
-
-Java 27 para ejecutar Gradle; Java/Kotlin JVM 17 para el código Android. El segundo ajuste determina el bytecode de la aplicación, no la versión del JDK instalado. Android mínimo 8.0 / API 26.
-
-Las versiones de las dependencias están fijadas en `gradle/libs.versions.toml`; el wrapper verifica su descarga con SHA-256.
+- [Estructura de esta beta, diagrama y guion de presentación](docs/ESTRUCTURA_BETA.md).
+- [Documento histórico del primer corte 0.1.0](docs/ESTRUCTURA_INICIAL.md).
+- [Contrato para guardar y consultar](docs/GUARDAR_REPORTE.md).
+- [Trabajo del equipo](docs/TRABAJO_EQUIPO.md), [validación](docs/VALIDACION.md) y [cambios](CHANGELOG.md).
 
 ## Abrir y verificar
 
-Abre esta carpeta completa en Android Studio. Usa JDK 27 para Gradle y Android SDK Platform 37.0 / Build Tools 37.0.0. La ruta del SDK se guarda en `local.properties`, fuera de Git. El JDK local del IDE se configura con `GRADLE_LOCAL_JAVA_HOME` en `.gradle/config.properties`.
+Abre esta carpeta completa en Android Studio. La configuración conserva JDK 27 para ejecutar Gradle, bytecode Java/Kotlin 17, Android SDK Platform 37.0 y Build Tools 37.0.0. Android mínimo: API 26. Las versiones están fijadas en `gradle/libs.versions.toml`; el wrapper verifica su distribución con SHA-256. `local.properties` y la configuración local del JDK quedan fuera de Git.
 
 ```powershell
-.\gradlew.bat :core:domain:test :core:data:lintDebug :app:lintDebug :app:assembleDebug
-.\gradlew.bat :core:data:connectedDebugAndroidTest
+.\gradlew.bat :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
+.\gradlew.bat :app:connectedDebugAndroidTest
 ```
 
-El segundo comando requiere un emulador o teléfono. Los resultados reales de la primera revisión se registran en [Validación](docs/VALIDACION.md).
+El segundo comando requiere un emulador o teléfono. Consulta los resultados y límites de cada revisión en [Validación](docs/VALIDACION.md); las pruebas históricas del 2 de octubre no acreditan por sí solas esta reorganización.
 
-## Siguientes incrementos
+## Instalar la beta
 
-Se elige el siguiente incremento después de revisar esta función. Cuentas, sincronización, fotografías, GPS, administración y notificaciones quedan pendientes. La configuración de un servicio externo deberá acordarse antes de añadirlo.
+El APK de esta revisión usa el nombre **CitizenSecurity Base beta**, `versionName` **0.1.0-rev.2-beta**, `versionCode` **2** y el identificador `com.example.citizensecurity.basebeta`. Puede instalarse junto a la aplicación oficial y guarda sus datos en su propio espacio privado.
+
+La rama `beta/0.1.0-rev2` y la etiqueta prevista `v0.1.0-rev.2-beta` identifican esta entrega. La publicación debe marcarse como prerelease y no como la versión más reciente. La versión oficial 0.7 continúa por separado.
+
+Esta base permite crear, buscar y listar desde su contrato de datos. Editar, borrar, formularios completos, mapas, fotografías, cuentas, sincronización y notificaciones quedan para otros incrementos. Guardar localmente no envía información a autoridades ni solicita atención de emergencias.

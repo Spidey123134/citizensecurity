@@ -4,7 +4,7 @@ La interfaz reúne los datos de un incidente y construye un `NewReport`. El repo
 
 ## API compartida
 
-El contrato está en `com.example.citizensecurity.domain.ReportRepository`.
+En la revisión `0.1.0-rev.2-beta`, el contrato está en `com.example.citizensecurity.data.ReportRepository`, dentro del módulo `app`. `AdminReportes` lo implementa; conserva las operaciones y reglas de la base inicial.
 
 | Operación suspendida | Resultado |
 | --- | --- |
@@ -41,8 +41,8 @@ Para validar antes de guardar se puede usar `ReportValidator().validate(draft, I
 
 ```kotlin
 import com.example.citizensecurity.CitizenSecurityApplication
-import com.example.citizensecurity.domain.NewReport
-import com.example.citizensecurity.domain.Report
+import com.example.citizensecurity.data.NewReport
+import com.example.citizensecurity.data.Report
 
 suspend fun guardarReporte(
     app: CitizenSecurityApplication,
@@ -53,10 +53,12 @@ suspend fun guardarReporte(
 }
 ```
 
-Las tres operaciones son `suspend`; SQLite se ejecuta internamente en `Dispatchers.IO`. No uses `runBlocking` en la interfaz ni crees un repositorio por cada recomposición. La instancia compartida pertenece a la aplicación y dura lo que su proceso; una pantalla no debe cerrarla. Las instancias separadas de `SqliteReportRepository` admiten `close()` cuando termina su uso: cerrar es idempotente, conserva el archivo y exige una instancia nueva para volver a consultarlo.
+Las tres operaciones son `suspend`; SQLite se ejecuta internamente en `Dispatchers.IO`. No uses `runBlocking` en la interfaz ni crees un repositorio por cada actualización de pantalla. La instancia compartida pertenece a la aplicación y dura lo que su proceso; una pantalla no debe cerrarla. Las instancias separadas de `AdminReportes` admiten `close()` cuando termina su uso: cerrar es idempotente, conserva el archivo y exige una instancia nueva para volver a consultarlo.
+
+`Home` y `ReportDetails` siguen vacíos en esta beta: este ejemplo documenta cómo conectar la futura interfaz, no un formulario ya disponible.
 
 ## Persistencia local
 
-Los reportes quedan en el archivo privado `citizensecurity_local_v1.db`, esquema versión 1. Cerrar la conexión o reiniciar la aplicación conserva los registros; borrar los datos de la aplicación o desinstalarla elimina esta base local. Se utiliza un archivo nuevo, sin abrir la base del proyecto anterior. Los cambios de esquema posteriores requieren migraciones explícitas que conserven los datos.
+Los reportes quedan en el archivo privado `citizensecurity_local_v1.db`, esquema versión 1. Cerrar la conexión o reiniciar la aplicación conserva los registros; borrar los datos de la aplicación o desinstalarla elimina esta base local. La beta usa `applicationId` `com.example.citizensecurity.basebeta`, por lo que su almacenamiento está separado del de la aplicación oficial. No importa ni abre automáticamente los datos de otra instalación. Los cambios de esquema posteriores requieren migraciones explícitas que conserven los datos.
 
 Esta entrega permite guardar y consultar. El estado inicial no cambia mediante esta API y el guardado local no envía el reporte a autoridades.

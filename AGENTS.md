@@ -1,5 +1,15 @@
 # Trabajo del equipo
 
+## Alcance vigente — base 0.1.0 revisión 2 beta, 13 de noviembre de 2026
+
+El usuario pidió expresamente reorganizar el CÓDIGO de la primera versión con la estructura del pizarrón y publicar una beta con el documento y diagrama preparados. Esta instrucción sustituye para esta copia las restricciones de estructura de los puntos inferiores: un módulo app, paquetes navigation/screen/data, mismos modelos/reglas/persistencia de b4f80a8. Se permite el traslado de código/pruebas, renombrar el gestor SQLite a AdminReportes y separar los contenedores visuales en Home/ReportDetails/Navigation, conservando la base visual vacía en XML. No añadir formularios, cuentas, edición/borrado de reportes, mapas, GPS u otras funciones de la línea avanzada.
+
+Rama beta/0.1.0-rev2 en worktree propio, sin modificar el checkout avanzado ni sus cambios locales. Versión 0.1.0-rev.2-beta/código2; paquete separado com.example.citizensecurity.basebeta para coexistir con la app actual. La publicación autorizada es tag v0.1.0-rev.2-beta y GitHub prerelease con latest=false, fuentes, APK y checksum; nunca integrar esta rama antigua en main ni sustituir la Release0.7.0. La sesión GitHub requiere autenticación nueva; mantener el intento abierto mientras el usuario autoriza, sin secretos en Git.
+
+Validar reglas/pruebas trasladadas, lint y compilación, instrumentación SQLite y navegación en un emulador propio con serial explícito. No teléfono, borrado de datos del usuario o cambios de PIN. Registrar solo resultados ejecutados y verificar descarga de la APK publicada. Incluir docs/ESTRUCTURA_INICIAL.md (presentación histórica) y docs/ESTRUCTURA_BETA.md (código reorganizado real) en las notas. Los puntos inferiores conservan el estado inicial de octubre.
+
+Cierre técnico beta: 28 JVM y siete Android (cinco SQLite, dos navegación) ejecutados y aprobados, sin fallos/errores/omitidos. Siete traslados equivalentes salvo paquetes/imports/nombre del gestor; sin cambio de reglas o esquema. Build/lint debug y release correctos, lint cero errores/siete avisos por variante. APK 1,502,794 bytes, SHA-256 4263c3bfa9c312083ba2503c5749195493b6f00df4b3164cfe80f39b434fa508, misma firma académica comprobada. AVD propio API26 cerrado conservando carpeta; sin teléfono. La publicación y verificación de descarga siguen pendientes hasta que se complete la autenticación GitHub del usuario; no afirmar entrega publicada antes de confirmarla.
+
 Lee README.md y docs/TRABAJO_EQUIPO.md antes de editar.
 
 - Proyecto Android académico en Kotlin para reportes de incidentes. Mantén el nombre CITIZENSECURITY y el paquete com.example.citizensecurity.

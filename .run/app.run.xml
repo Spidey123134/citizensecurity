@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="app - base beta" type="AndroidRunConfigurationType" factoryName="Android App">
+    <module name="CITIZENSECURITY.app" />
+    <option name="DEPLOY" value="true" />
+    <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+    <option name="DEPLOY_AS_INSTANT" value="false" />
+    <option name="CLEAR_APP_STORAGE" value="false" />
+    <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+    <option name="MODE" value="default_activity" />
+    <option name="RESTORE_ENABLED" value="false" />
+    <method v="2"><option name="Android.Gradle.BeforeRunTask" enabled="true" /></method>
+  </configuration>
+</component>
