@@ -6,7 +6,13 @@ Proyecto Android académico en Kotlin para registrar y consultar incidentes. El 
 
 Validar y guardar un reporte local con categoría, prioridad, descripción, fecha y ubicación escrita o coordenadas. La consulta por folio permite comprobar que el registro permanece después de reabrir la base.
 
-El módulo `app` contiene una actividad y un contenedor vacío: las interfaces, el menú y la navegación corresponden al compañero. No se incluye una interfaz provisional de formulario ni datos de demostración al iniciar.
+## Demostración de Jetpack Compose
+
+Esta rama parte de `v0.2.0` y retoma de `v0.1.0-rev.2-beta` la organización `MainActivity`, `navigation` y `screen`. `MainActivity` abre la interfaz con `setContent`. `Home` y `ReportDetails` se declaran en Kotlin con Jetpack Compose.
+
+En Android Studio, abre la carpeta del proyecto y ejecuta el módulo `app`. Selecciona **Coordenadas completas**, **Par incompleto** o **Fuera de rango**. El detalle enseña los valores y el resultado de `ReportValidator`, el mismo que usa `v0.2.0`. Toca **Volver a inicio** para probar el siguiente caso.
+
+La demostración valida ejemplos locales. Puedes instalar **CitizenSecurity Demo Compose** junto a la app original porque tiene su propio identificador de aplicación.
 
 ## Estructura
 

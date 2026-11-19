@@ -20,6 +20,8 @@ Las 5 pruebas instrumentadas son un conjunto compartido para el guardado y la co
 
 ## Reparto y siguiente paso
 
+La rama `demo/compose-v0.2.0` permite presentar la fase 2 con dos pantallas de Jetpack Compose. La [guía de la demo](../README.md#demostración-de-jetpack-compose) indica cómo ejecutar los tres casos de validación.
+
 Las interfaces, el menú, la navegación y el login corresponden al compañero (`vazdavr-sudo`). El login sigue pendiente y su alcance se acordará antes de conectarlo a servicios o cuentas. Los contratos y la composición compartida de dependencias se coordinan entre ambos, según [Trabajo del equipo](TRABAJO_EQUIPO.md).
 
 La fase 2 está implementada y probada, lista para revisar sus resultados. Después de presentarlos, se elige el siguiente incremento pequeño; la integración visual de Google Maps quedó acordada como próxima línea de trabajo. Cada entrega debe mostrar su resultado observable y las pruebas pertinentes; si necesita ajustes, se atienden antes de pasar a otra función.

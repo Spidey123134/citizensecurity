@@ -2,6 +2,12 @@
 
 Registro de cambios del proyecto. Las fechas usan la hora de México. Los cambios publicados en una rama quedan disponibles para revisión; la integración en `main` se registra cuando ocurre.
 
+## 0.2.0-compose-demo - 2026-11-19
+
+- Pantallas `Home` y `ReportDetails` implementadas con Jetpack Compose en Kotlin. `MainActivity` usa `setContent` y el layout `activity_main.xml` se elimina de la demo.
+- Inicio permite seleccionar tres ejemplos. Detalle muestra las coordenadas y el resultado del validador de `v0.2.0`.
+- La aplicación de demostración tiene su propio identificador para instalarse junto a la original.
+
 ## 0.2.0 — 2026-10-02 — Validación de reportes y ubicación
 
 ### Añadido
