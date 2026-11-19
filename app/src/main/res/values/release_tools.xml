@@ -1,5 +1,4 @@
 <resources>
-    <item name="released_tools_entry" type="id" />
     <string name="released_tools_entry">Desarrollador · funciones 0.2</string>
     <string name="demo_login_hint">Acceso de demostración: admin / admin</string>
     <string name="demo_login_error">Usa admin / admin para el acceso de demostración.</string>

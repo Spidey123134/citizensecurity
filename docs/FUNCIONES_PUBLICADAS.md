@@ -1,5 +1,7 @@
 # Probar las funciones publicadas de 0.2
 
+Para la demostración en Compose, abre la rama `demo/compose-v0.2.1` y ejecuta `app` desde Android Studio. Los siguientes pasos también aplican a la demo.
+
 Abre el proyecto actualizado desde `main` o instala **citizensecurity-0.2.1-debug.apk** de [Release v0.2.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.2.1). El APK es debug, firmado para pruebas académicas. Se conserva el splash y el login visual del compañero.
 
 ## Entrar

@@ -2,6 +2,12 @@
 
 Registro de cambios del proyecto. Las fechas usan la hora de México. Los cambios publicados en una rama quedan disponibles para revisión; la integración en `main` se registra cuando ocurre.
 
+## 0.2.1-compose-demo - 2026-11-19
+
+- Splash, login de demostración y herramientas recreados en Jetpack Compose. Se retiraron los tres layouts XML de esta rama.
+- Las herramientas reutilizan la recepción, la validación y los ejemplos de coordenadas de `v0.2.1`.
+- La demo usa un identificador de aplicación propio para instalarse junto a la versión oficial.
+
 ## 0.2.1 — Herramientas de funciones publicadas — 2026-10-03
 
 Mantenimiento oficial de la línea `0.2`, sobre `main` actualizado. [Release v0.2.1](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.2.1). Se conserva `v0.2.0`; fase 3 / `0.3.0` y el avance `0.4.0` siguen en **Unreleased**.

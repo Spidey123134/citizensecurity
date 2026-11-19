@@ -2,22 +2,25 @@ package com.example.citizensecurity
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
+import com.example.citizensecurity.screen.CitizenSecurityTheme
+import com.example.citizensecurity.screen.SplashScreen
+import kotlinx.coroutines.delay
 
 class SplashActivity : ComponentActivity() {
-
-    private val splashTimeout: Long = 3000
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }, splashTimeout)
+        enableEdgeToEdge()
+        setContent {
+            CitizenSecurityTheme { SplashScreen() }
+            LaunchedEffect(Unit) {
+                delay(3_000)
+                startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                finish()
+            }
+        }
     }
 }

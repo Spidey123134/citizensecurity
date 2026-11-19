@@ -20,6 +20,8 @@ Las pruebas instrumentadas forman una suite compartida para guardado y consulta,
 
 ## Reparto y siguiente paso
 
+La rama `demo/compose-v0.2.1` muestra las funciones publicadas de las fases 1 y 2 en Compose. Consulta el [recorrido de la demo](../README.md#estructura) para presentar las tres pantallas.
+
 Las interfaces, el menú, la navegación y el login corresponden al compañero (`vazdavr-sudo`). El acceso local de demostración `admin / admin` fue solicitado por el usuario. La autenticación real sigue pendiente y se acordará antes de conectarla a servicios o cuentas. Los contratos y la composición compartida de dependencias se coordinan entre ambos, según [Trabajo del equipo](TRABAJO_EQUIPO.md).
 
 El usuario autorizó acoplar la interfaz a nuestra lógica: el puente técnico de [Acoplar interfaz](ACOPLAR_INTERFAZ.md) está implementado y comprobado. El compañero puede conectar después su formulario y mostrar los estados del guardado. Las pruebas técnicas no aceptan funcionalmente esa pantalla ni entregan fase 3. Su código adelantado se conserva para `0.3.0 — Unreleased`. La integración visual de Google Maps sigue siendo una línea acordada posterior.

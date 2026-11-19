@@ -1,14 +1,9 @@
 package com.example.citizensecurity.release
 
 import android.os.Bundle
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Spinner
-import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import com.example.citizensecurity.R
 import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.NewReport
@@ -16,70 +11,43 @@ import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.ReportField
 import com.example.citizensecurity.domain.ReportLocation
 import com.example.citizensecurity.domain.ReportValidator
+import com.example.citizensecurity.screen.CitizenSecurityTheme
+import com.example.citizensecurity.screen.ReleasedToolsScreen
 import java.time.Instant
 
 class ReleasedToolsActivity : ComponentActivity() {
-    private lateinit var result: TextView
-    private lateinit var type: Spinner
-    private lateinit var priority: Spinner
+    private val validator = ReportValidator()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_released_tools)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.tools_container)) { view, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
-            insets
-        }
-        result = findViewById(R.id.tools_result)
-        type = findViewById(R.id.tools_type)
-        priority = findViewById(R.id.tools_priority)
-        type.adapter = ArrayAdapter.createFromResource(this, R.array.tools_types, android.R.layout.simple_spinner_dropdown_item)
-        priority.adapter = ArrayAdapter.createFromResource(this, R.array.tools_priorities, android.R.layout.simple_spinner_dropdown_item)
-        if (savedInstanceState == null) {
-            type.setSelection(IncidentType.RISK.ordinal)
-            priority.setSelection(Priority.MEDIUM.ordinal)
-            findViewById<EditText>(R.id.tools_date).setText(Instant.now().minusSeconds(30).toString())
-        }
-        findViewById<Button>(R.id.tools_receive).setOnClickListener { receive(validate = false) }
-        findViewById<Button>(R.id.tools_validate).setOnClickListener { receive(validate = true) }
-        findViewById<Button>(R.id.tools_locations).setOnClickListener { demonstrateLocations() }
-        findViewById<Button>(R.id.tools_back).setOnClickListener { finish() }
-    }
-
-    private fun receive(validate: Boolean) {
-        fun text(id: Int) = findViewById<EditText>(id).text.toString()
-        val received = Version02Tools.receive(
-            ReportInput(
-                IncidentType.entries[type.selectedItemPosition],
-                Priority.entries[priority.selectedItemPosition],
-                text(R.id.tools_description),
-                text(R.id.tools_date),
-                text(R.id.tools_reference),
-                text(R.id.tools_latitude),
-                text(R.id.tools_longitude),
-            ),
-        )
-        when (received) {
-            is ReportInputResult.Invalid -> result.text = formatErrors(received.errors)
-            is ReportInputResult.Received -> {
-                val draft = received.draft
-                if (validate) {
-                    val errors = ReportValidator().validate(draft, Instant.now())
-                    result.text = if (errors.isValid) getString(
-                        R.string.tools_result_summary, getString(R.string.tools_valid), format(draft),
-                    )
-                    else formatErrors(errors.errors)
-                } else {
-                    result.text = getString(
-                        R.string.tools_result_summary, getString(R.string.tools_received), format(draft),
-                    )
-                }
+        enableEdgeToEdge()
+        setContent {
+            CitizenSecurityTheme {
+                ReleasedToolsScreen(
+                    onReceive = ::receive,
+                    onTestLocations = ::demonstrateLocations,
+                    onBack = ::finish,
+                )
             }
         }
     }
 
-    private fun demonstrateLocations() {
+    private fun receive(input: ReportInput, validate: Boolean): String {
+        val draft = when (val received = Version02Tools.receive(input)) {
+            is ReportInputResult.Invalid -> return formatErrors(received.errors)
+            is ReportInputResult.Received -> received.draft
+        }
+        if (validate) {
+            val validation = validator.validate(draft, Instant.now())
+            if (!validation.isValid) {
+                return formatErrors(validation.errors)
+            }
+        }
+        val summary = if (validate) R.string.tools_valid else R.string.tools_received
+        return getString(R.string.tools_result_summary, getString(summary), format(draft))
+    }
+
+    private fun demonstrateLocations(): String {
         val now = Instant.now()
         val draft = NewReport(
             IncidentType.RISK,
@@ -93,8 +61,8 @@ class ReleasedToolsActivity : ComponentActivity() {
             R.string.tools_location_incomplete to ReportLocation(latitude = 19.4326077),
             R.string.tools_location_outside to ReportLocation(latitude = 91.0, longitude = -99.1332088),
         )
-        result.text = cases.joinToString("\n\n") { (label, location) ->
-            val errors = ReportValidator().validate(draft.copy(location = location), now)
+        return cases.joinToString("\n\n") { (label, location) ->
+            val errors = validator.validate(draft.copy(location = location), now)
             getString(label) + ": " + if (errors.isValid) getString(R.string.tools_approved)
             else errors.errors.values.joinToString(" ")
         }

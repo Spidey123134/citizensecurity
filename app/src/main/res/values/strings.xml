@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">CITIZENSECURITY</string>
+    <string name="app_name">CitizenSecurity Demo Compose</string>
+    <string name="brand_name">Citizen Security</string>
+    <string name="splash_loading">Cargando…</string>
+    <string name="login_username">Usuario</string>
+    <string name="login_password">Contraseña</string>
+    <string name="login_action">Iniciar sesión</string>
 </resources>

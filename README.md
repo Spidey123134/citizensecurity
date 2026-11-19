@@ -10,6 +10,14 @@ El compañero añadió `SplashActivity` y un layout visual de login en [su commi
 
 ## Estructura
 
+La rama `demo/compose-v0.2.1` usa Jetpack Compose para las tres pantallas. Para presentarla, abre el módulo `app` en Android Studio y sigue el flujo de inicio, acceso y herramientas.
+
+1. `SplashScreen.kt` muestra la bienvenida mientras `SplashActivity` prepara el paso al inicio.
+2. `HomeScreen.kt` muestra el login de demostración y el botón **Desarrollador · funciones 0.2**. El botón y el acceso `admin / admin` abren las mismas herramientas.
+3. `ReleasedToolsScreen.kt` reúne los datos y muestra la salida al tocar **Ver datos recibidos**, **Validar reporte** o **Probar ubicaciones**.
+
+Los tres archivos están en `app/src/main/kotlin/com/example/citizensecurity/screen`. Las actividades abren las pantallas con `setContent`. `Version02Tools` convierte las entradas a `NewReport` y `ReportValidator` aplica las reglas de dominio. La aplicación se instala como **CitizenSecurity Demo Compose** y puede convivir con la oficial.
+
 | Módulo | Responsabilidad |
 | --- | --- |
 | `app` | Entrada Android, interfaces y composición de dependencias |
@@ -18,7 +26,7 @@ El compañero añadió `SplashActivity` y un layout visual de login en [su commi
 
 Lee [Trabajo del equipo](docs/TRABAJO_EQUIPO.md) y [Contrato de la primera función](docs/GUARDAR_REPORTE.md).
 
-La [conexión de la interfaz con los reportes](docs/ACOPLAR_INTERFAZ.md) ofrece un `ReportViewModel` con progreso de guardado, errores por campo y confirmación con folio. `MainActivity` conserva el layout del compañero y obtiene el modelo del repositorio compartido. El formulario de reportes y la autenticación siguen pendientes de su parte.
+La [conexión de la interfaz con los reportes](docs/ACOPLAR_INTERFAZ.md) ofrece un `ReportViewModel` con progreso de guardado, errores por campo y confirmación con folio. `MainActivity` obtiene el modelo del repositorio compartido. El formulario de guardado y la autenticación real siguen pendientes.
 
 Para revisar la función por pasos, empieza con [Recibir los datos del reporte](docs/RECIBIR_REPORTE.md). Incluye un ejemplo de consola que reutiliza `NewReport` y permite cambiar los cinco datos sin una pantalla.
 

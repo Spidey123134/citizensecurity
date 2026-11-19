@@ -10,11 +10,11 @@ android {
     }
     buildToolsVersion = "37.0.0"
     defaultConfig {
-        applicationId = "com.example.citizensecurity"
+        applicationId = "com.example.citizensecurity.composedemo"
         minSdk = 26
         targetSdk = 37
         versionCode = 6
-        versionName = "0.2.1"
+        versionName = "0.2.1-compose-demo"
     }
     buildFeatures { compose = true }
     compileOptions {
