@@ -1,5 +1,9 @@
 # Trabajo del equipo
 
+## Base local 0.7.1 · 26 de noviembre de 2026
+
+El usuario pidió continuar desde la 0.7.0 con una versión simple para exponer y seguir desarrollando. La interfaz de la app usa Jetpack Compose sin layouts XML. El grafo está en `CitizenSecurityNavigation.kt` y el recorrido de clase en `docs/PROBAR_0_7_1.md`. La base conserva los módulos de dominio y datos de la 0.7.0.
+
 ## Alcance vigente — refinar y publicar 0.7.0 · 21 de octubre de 2026
 
 El usuario pidió expresamente «refina y publica la release como 0.7». Preparar 0.7.0/código 32 con TODOS los cambios desde la oficial 0.6.3: fases 45–47 y el pulido de contactos de esta entrega. Autoriza rama de entrega, subida, PR, integración a main, tag v0.7.0 y Release oficial con APK/checksum/notas; las restricciones locales de los cortes inferiores conservan su carácter histórico y quedan sustituidas para esta entrega. No otra versión por inferencia. Preservar login/loading del compañero, datos, paquete, firma académica y todas las publicaciones anteriores. GitHub main no tiene cambios nuevos respecto a abd7769 en la primera consulta de esta sesión; volver a comprobar antes de integrar.

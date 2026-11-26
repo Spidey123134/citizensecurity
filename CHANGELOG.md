@@ -2,7 +2,11 @@
 
 ## [Unreleased]
 
-Sin cambios adicionales preparados después de la entrega 0.7.0.
+## [0.7.1] — 2026-11-26 · local
+
+- Carga, acceso, registro e inicio migrados a Jetpack Compose. Se retiraron los cuatro layouts XML de la aplicación.
+- Navigation Compose conecta el recorrido principal. El listado, la actividad y los contactos se abren como destinos Compose. Los flujos con controladores Android propios, como el formulario con GPS y cámara, se abren desde el grafo.
+- Android 0.7.1 / código 33. [Guía de exposición y compilación](docs/PROBAR_0_7_1.md).
 
 ## [0.7.0] — 2026-10-21 · Release oficial publicada
 

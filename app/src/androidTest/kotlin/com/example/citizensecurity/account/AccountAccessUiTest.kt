@@ -1,45 +1,47 @@
 package com.example.citizensecurity.account
 
-import android.app.Activity
-import android.graphics.Bitmap
-import android.graphics.Rect
-import android.os.SystemClock
-import android.util.Log
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.click
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextReplacement
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.text.AnnotatedString
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.replaceText
-import androidx.test.espresso.action.ViewActions.scrollTo
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
-import androidx.test.runner.lifecycle.Stage
 import com.example.citizensecurity.MainActivity
 import com.example.citizensecurity.R
 import com.example.citizensecurity.data.SqliteAccountRepository
-import com.example.citizensecurity.release.ReleasedToolsActivity
 import com.example.citizensecurity.testing.ReportTestApplication
 import com.example.citizensecurity.testing.ReportTestFixture
-import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Real isolated accounts/report stores; real view gestures also cover the nested, scrollable form. */
+/** The Compose routes exercise the real account store and the isolated report store. */
 @RunWith(AndroidJUnit4::class)
 class AccountAccessUiTest {
+    @get:Rule val ui = createEmptyComposeRule()
+
     private lateinit var app: ReportTestApplication
     private lateinit var repository: SqliteAccountRepository
     private lateinit var reports: ReportTestFixture
@@ -56,11 +58,6 @@ class AccountAccessUiTest {
 
     @After fun closeOwnedStoresAndActivities() {
         scenario?.close()
-        InstrumentationRegistry.getInstrumentation().runOnMainSync {
-            ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED)
-                .filter { it.packageName == app.packageName }.forEach(Activity::finish)
-        }
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         app.accountSession.signOut()
         app.accountTestRepository = null
         repository.close()
@@ -68,31 +65,28 @@ class AccountAccessUiTest {
     }
 
     @Test fun createAccountReturnsToLoginThenRealLoginAndLogoutPreserveSharedStores() {
-        scenario = ActivityScenario.launch(MainActivity::class.java)
-        onView(withId(R.id.create_account_link)).perform(scrollTo(), click())
-        awaitActivity<CreateAccountActivity>()
-        onView(withId(R.id.user)).perform(scrollTo(), click(), replaceText("  Alumna_1  "))
-        onView(withId(R.id.pass)).perform(scrollTo(), click(), replaceText(password))
-        awaitKeyboard<CreateAccountActivity>()
-        onView(withId(R.id.login_button)).perform(scrollTo(), click())
-        awaitActivity<MainActivity>()
+        openLogin()
+        ui.onNodeWithTag("create_account_link").performScrollTo().performClick()
+        awaitTag("login_link")
+        awaitTag("user")
+        ui.onNodeWithTag("user").performScrollTo().performTextReplacement("  Alumna_1  ")
+        enterPassword()
+        pressSubmitWithKeyboard()
+        awaitTag("create_account_link")
+        awaitTag("user")
+        awaitText(R.string.account_created)
         assertNull(app.accountSession.account)
-        withResumed<MainActivity> {
-            assertEquals("alumna_1", it.findViewById<EditText>(R.id.user).text.toString())
-            assertEquals("", it.findViewById<EditText>(R.id.pass).text.toString())
-            assertEquals(it.getString(R.string.account_created), it.findViewById<TextView>(R.id.account_status).text.toString())
-        }
-        onView(withId(R.id.pass)).perform(scrollTo(), click(), replaceText(password))
-        awaitKeyboard<MainActivity>()
-        onView(withId(R.id.login_button)).perform(scrollTo(), click())
-        awaitActivity<ReleasedToolsActivity>()
+        assertField("user", "alumna_1")
+        assertField("pass", "")
+
+        enterPassword()
+        pressSubmitWithKeyboard()
+        awaitTag("home_account")
         assertEquals("alumna_1", app.accountSession.account?.username)
-        withResumed<ReleasedToolsActivity> {
-            assertTrue(it.findViewById<TextView>(R.id.home_account).text.contains("alumna_1"))
-            assertEquals(it.getString(R.string.account_sign_out), it.findViewById<Button>(R.id.tools_back).text.toString())
-            it.findViewById<Button>(R.id.tools_back).performClick()
-        }
-        awaitActivity<MainActivity>()
+        ui.onNodeWithTag("home_account").assertTextContains("alumna_1", substring = true)
+        ui.onNodeWithTag("tools_back").performScrollTo()
+            .assertTextContains(app.getString(R.string.account_sign_out)).performClick()
+        awaitTag("released_tools_entry")
         assertNull(app.accountSession.account)
         runBlocking {
             assertNotNull(repository.authenticate("ALUMNA_1", password))
@@ -104,121 +98,75 @@ class AccountAccessUiTest {
     }
 
     @Test fun rotationRestoresUsernameButNeverTheUnsubmittedPassword() {
-        scenario = ActivityScenario.launch(MainActivity::class.java)
-        scenario!!.onActivity {
-            it.findViewById<EditText>(R.id.user).setText("alumna_1")
-            it.findViewById<EditText>(R.id.pass).setText(password)
-        }
-        scenario!!.recreate()
-        scenario!!.onActivity {
-            assertEquals("alumna_1", it.findViewById<EditText>(R.id.user).text.toString())
-            val field = it.findViewById<EditText>(R.id.pass)
-            assertEquals("", field.text.toString())
-            assertFalse(field.isSaveEnabled)
-            assertFalse(field.isSaveFromParentEnabled)
-        }
+        val login = openLogin()
+        ui.onNodeWithTag("user").performTextReplacement("alumna_1")
+        enterPassword()
+        login.recreate()
+        awaitTag("user")
+        assertField("user", "alumna_1")
+        assertField("pass", "")
         assertNull(app.accountSession.account)
     }
 
     @Test fun academicEntryNeverRetainsARealAccountIdentity() {
         val account = runBlocking { repository.register("alumna_1", password) }
         app.accountSession.signIn(account)
-        scenario = ActivityScenario.launch(MainActivity::class.java)
-        onView(withId(R.id.pass)).perform(scrollTo(), click(), replaceText(password))
-        awaitKeyboard<MainActivity>()
-        try {
-            onView(withId(R.id.released_tools_entry)).perform(scrollTo(), click())
-        } catch (failure: Throwable) {
-            recordScrollFailure()
-            throw failure
-        }
-        awaitActivity<ReleasedToolsActivity>()
+        openLogin()
+        enterPassword()
+        ui.onNodeWithTag("released_tools_entry").performScrollTo().assertIsDisplayed().performTouchInput { click() }
+        awaitTag("home_account")
         assertNull(app.accountSession.account)
-        withResumed<ReleasedToolsActivity> {
-            assertEquals(it.getString(R.string.account_home_guest), it.findViewById<TextView>(R.id.home_account).text.toString())
-        }
+        ui.onNodeWithTag("home_account").assertTextContains(app.getString(R.string.account_home_guest))
         assertEquals(0, reports.refreshCalls)
     }
 
-    private inline fun <reified T : Activity> withResumed(crossinline block: (T) -> Unit) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync {
-            val activity = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED)
-                .filterIsInstance<T>().single()
-            block(activity)
-        }
+    private fun openLogin(): ActivityScenario<MainActivity> {
+        val login = ActivityScenario.launch(MainActivity::class.java)
+        scenario = login
+        awaitTag("create_account_link")
+        return login
     }
 
-    private inline fun <reified T : Activity> awaitActivity() {
-        val deadline = SystemClock.elapsedRealtime() + 20_000
-        while (SystemClock.elapsedRealtime() < deadline) {
-            InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-            var ready = false
-            InstrumentationRegistry.getInstrumentation().runOnMainSync {
-                ready = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED).any { it is T }
-            }
-            if (ready) return
-            SystemClock.sleep(50)
-        }
-        fail("Expected activity ${T::class.java.simpleName}")
+    private fun enterPassword() {
+        ui.onNodeWithTag("pass").performScrollTo().performTouchInput { click() }.performTextReplacement(password)
+        awaitKeyboardViewport()
     }
 
-    private inline fun <reified T : Activity> awaitKeyboard() {
-        val deadline = SystemClock.elapsedRealtime() + 10_000
-        var previousGeometry: String? = null
-        var stableSince = SystemClock.elapsedRealtime()
-        while (SystemClock.elapsedRealtime() < deadline) {
-            var visible = false
-            var geometry = ""
-            var viewportBottom = 0
+    private fun pressSubmitWithKeyboard() {
+        ui.onNodeWithTag("login_button").performScrollTo().assertIsDisplayed().performTouchInput { click() }
+    }
+
+    private fun awaitKeyboardViewport() {
+        ui.waitUntil(timeoutMillis = 10_000) {
             var keyboardTop = 0
-            withResumed<T> { activity ->
-                val root = activity.findViewById<View>(R.id.account_scroll)
-                val insets = ViewCompat.getRootWindowInsets(root)
-                visible = insets?.isVisible(WindowInsetsCompat.Type.ime()) == true
-                geometry = "${root.width}:${root.height}:${root.paddingTop}:${root.paddingBottom}:" +
-                    "${root.scrollY}:${insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom}"
-                val location = IntArray(2)
-                root.getLocationInWindow(location)
-                viewportBottom = location[1] + root.height
-                keyboardTop = activity.window.decorView.height -
-                    (insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0)
+            checkNotNull(scenario).onActivity { activity ->
+                val decor = activity.window.decorView
+                val insets = ViewCompat.getRootWindowInsets(decor)
+                if (insets?.isVisible(WindowInsetsCompat.Type.ime()) == true) {
+                    keyboardTop = decor.height - insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                }
             }
-            // isVisible becomes true before the keyboard's viewport animation has finished.
-            // A real scroll/click must use its settled bounds, not that intermediate frame.
-            if (!visible || geometry != previousGeometry) stableSince = SystemClock.elapsedRealtime()
-            if (visible && geometry == previousGeometry && SystemClock.elapsedRealtime() - stableSince >= 300) {
-                assertTrue("The scroll viewport ($viewportBottom) extends below the keyboard ($keyboardTop)",
-                    viewportBottom <= keyboardTop)
-                return
-            }
-            previousGeometry = if (visible) geometry else null
-            SystemClock.sleep(50)
+            keyboardTop > 0 &&
+                ui.onNodeWithTag("account_scroll").fetchSemanticsNode().boundsInWindow.bottom <= keyboardTop + 1
         }
-        fail("The keyboard did not reach a stable visible viewport for ${T::class.java.simpleName}")
     }
 
-    private fun recordScrollFailure() {
-        withResumed<MainActivity> { activity ->
-            val scroll = activity.findViewById<View>(R.id.account_scroll)
-            val entry = activity.findViewById<View>(R.id.released_tools_entry)
-            val rootBounds = Rect()
-            val entryBounds = Rect()
-            scroll.getGlobalVisibleRect(rootBounds)
-            entry.getGlobalVisibleRect(entryBounds)
-            val insets = ViewCompat.getRootWindowInsets(scroll)
-            Log.e("AccountAccessUi", "Academic scroll failure: viewport=$rootBounds " +
-                "padding=${scroll.paddingTop},${scroll.paddingBottom} scrollY=${scroll.scrollY} " +
-                "entry=$entryBounds entryHeight=${entry.height} " +
-                "imeVisible=${insets?.isVisible(WindowInsetsCompat.Type.ime())} " +
-                "ime=${insets?.getInsets(WindowInsetsCompat.Type.ime())}")
+    private fun awaitTag(tag: String) {
+        ui.waitUntil(timeoutMillis = 20_000) {
+            ui.onAllNodesWithTag(tag).fetchSemanticsNodes().size == 1
         }
-        runCatching {
-            val capture = InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot() ?: return@runCatching
-            try {
-                File(app.cacheDir, "release063-account-scroll-failure.png").outputStream().use {
-                    capture.compress(Bitmap.CompressFormat.PNG, 100, it)
-                }
-            } finally { capture.recycle() }
+    }
+
+    private fun awaitText(resource: Int) {
+        val text = app.getString(resource)
+        ui.waitUntil(timeoutMillis = 20_000) {
+            ui.onAllNodesWithText(text).fetchSemanticsNodes().size == 1
         }
+    }
+
+    private fun assertField(tag: String, expected: String) {
+        ui.onNodeWithTag(tag).assert(
+            SemanticsMatcher.expectValue(SemanticsProperties.EditableText, AnnotatedString(expected)),
+        )
     }
 }

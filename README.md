@@ -1,5 +1,11 @@
 # CITIZENSECURITY
 
+## 0.7.1 — Jetpack Compose y Navigation
+
+**Android 0.7.1 · código 33 · versión local para exponer.** La interfaz está escrita en Jetpack Compose y el grafo de navegación se define en Kotlin. El recorrido principal va de Acceso a Inicio, Reportar, Reportes guardados, Mapa, Actividad y Ayuda. La base de datos, las cuentas locales y las reglas de reportes proceden de 0.7.0.
+
+[Cómo abrir la app y mostrarla en clase](docs/PROBAR_0_7_1.md)
+
 ## Entrega 0.7.0 — estabilidad, ayuda y conservación de datos
 
 **Android 0.7.0 / código 32 · Release oficial publicada el 21 de octubre de 2026.** Agrupa todo el trabajo posterior a 0.6.3: fases 45–47 y el pulido de contactos. La ayuda pasa a siete temas/24 pasos; ajustar el pin conserva la lectura GPS de esa apertura; consultar el historial del mismo folio conserva la declaración preparada. Contactos conserva lo escrito al girar y ante un guardado incierto. Los mapas explican la incompatibilidad gráfica antes de crear la vista nativa.

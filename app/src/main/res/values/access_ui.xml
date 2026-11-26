@@ -1,0 +1,11 @@
+<resources>
+    <string name="access_app_title">Citizen Security</string>
+    <string name="access_loading">Cargando…</string>
+    <string name="access_welcome">Bienvenido</string>
+    <string name="access_create">Crear cuenta</string>
+    <string name="access_username">Usuario</string>
+    <string name="access_password">Contraseña</string>
+    <string name="access_login">Iniciar sesión</string>
+    <string name="access_register">Registrarse</string>
+    <string name="access_back_to_login">Ya tengo cuenta</string>
+</resources>

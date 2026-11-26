@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -46,7 +48,7 @@ internal fun HelpContactsScreen(
     LaunchedEffect(model) { if (model.state.value is HelpContactsState.Idle) model.load() }
     LaunchedEffect(state) { if (deletion?.second !== state) deletion = null }
 
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
+    Column(Modifier.fillMaxSize().safeDrawingPadding().imePadding().verticalScroll(rememberScrollState()).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text("Ayuda y contactos", style = MaterialTheme.typography.headlineSmall)
         Text("Si hay peligro inmediato, llama al 911. Abrir el marcador no necesita GPS ni guardar un reporte.")

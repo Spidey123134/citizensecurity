@@ -6,18 +6,13 @@ import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.scrollTo
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
-import com.example.citizensecurity.R
+import com.example.citizensecurity.MainActivity
 import com.example.citizensecurity.data.SqliteReportRepository
 import com.example.citizensecurity.domain.*
-import com.example.citizensecurity.release.ReleasedToolsActivity
 import com.example.citizensecurity.testing.ReportTestApplication
 import com.example.citizensecurity.testing.ReportTestFixtureRule
 import java.time.Instant
@@ -38,7 +33,7 @@ class ReportActivityUiTest {
     private val app get() = ApplicationProvider.getApplicationContext<ReportTestApplication>()
     private val fixture get() = fixtureRule.fixture
     private var scenario: ActivityScenario<ReportActivityActivity>? = null
-    private var home: ActivityScenario<ReleasedToolsActivity>? = null
+    private var home: ActivityScenario<MainActivity>? = null
 
     @Before fun beginAcademicLease() {
         InstrumentationRegistry.getInstrumentation().runOnMainSync { app.accountSession.signOut() }
@@ -55,8 +50,11 @@ class ReportActivityUiTest {
 
     @Test fun homeRouteShowsHonestEmptyActivityWithoutWritingOrStartingGps() {
         assertTrue(runBlocking { fixture.repository.readActivity(ReportActivityQuery()).entries.isEmpty() })
-        home = ActivityScenario.launch(ReleasedToolsActivity::class.java)
-        onView(withId(R.id.home_activity)).perform(scrollTo(), click())
+        home = ActivityScenario.launch(MainActivity::class.java)
+        awaitTag("released_tools_entry")
+        ui.onNodeWithTag("released_tools_entry").performScrollTo().performClick()
+        awaitTag("home_activity")
+        ui.onNodeWithTag("home_activity").performScrollTo().performClick()
         awaitTag("activity_empty")
         ui.onNodeWithTag("activity_empty").assertTextContains("No hay actividad registrada", substring = true)
         ui.onNodeWithTag("activity_changes").performClick()

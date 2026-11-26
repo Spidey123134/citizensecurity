@@ -18,15 +18,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
+import com.example.citizensecurity.MainActivity
 import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.NewReport
 import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.ReportLocation
 import com.example.citizensecurity.maps.ReportMapSceneState
 import com.example.citizensecurity.preview.ReportDraftActivity
-import com.example.citizensecurity.release.ReleasedToolsActivity
 import com.example.citizensecurity.report.ReportDraftState
-import com.example.citizensecurity.reports.ReportsActivity
 import com.example.citizensecurity.reports.ReportsMapActivity
 import com.example.citizensecurity.testing.ReportTestApplication
 import com.example.citizensecurity.testing.ReportTestFixtureRule
@@ -75,7 +74,7 @@ class GuidedTourUiTest {
     }
 
     @Test fun homeTourIsOptInNavigableAndFinishingAllowsAReplayFromTheFirstStep() {
-        launch<ReleasedToolsActivity>()
+        openAcademicHome()
         awaitTag("tour_open_home")
         ui.onNodeWithTag("tour_progress").assertDoesNotExist()
         val before = durableState()
@@ -102,7 +101,7 @@ class GuidedTourUiTest {
     }
 
     @Test fun androidBackDismissesHelpAndLeavesTheUnderlyingHomeOpen() {
-        val home = launch<ReleasedToolsActivity>()
+        val home = openAcademicHome()
         open("home"); next(); progress(2, 4)
         pressBack()
         ui.onNodeWithTag("tour_progress").assertDoesNotExist()
@@ -115,7 +114,7 @@ class GuidedTourUiTest {
     }
 
     @Test fun rotatingTheScreenKeepsAnOpenTourOnItsCurrentStep() {
-        val home = launch<ReleasedToolsActivity>()
+        val home = openAcademicHome()
         open("home"); next(); progress(2, 4)
         val target = otherOrientation(home)
         home.onActivity { it.requestedOrientation = target.requested }
@@ -175,7 +174,8 @@ class GuidedTourUiTest {
         val report = runBlocking { fixture.repository.create(NewReport(IncidentType.RISK, Priority.MEDIUM,
             DESCRIPTION, Instant.now().minusSeconds(60), ReportLocation(REFERENCE, 19.4326, -99.1332))) }
         fixture.clearFix()
-        launch<ReportsActivity>()
+        openAcademicHome()
+        ui.onNodeWithTag("tools_reports").performScrollTo().performClick()
         awaitTag("report_list")
         awaitListItem("report_list", "report_open_${report.id}")
         val durable = durableState()
@@ -213,7 +213,7 @@ class GuidedTourUiTest {
     @Test fun largerTextAndLandscapeKeepTheTourReadableAndItsControlsReachable() {
         previousFontScale = shell("settings get system font_scale").trim()
         shell("settings put system font_scale 1.3")
-        val home = launch<ReleasedToolsActivity>()
+        val home = openAcademicHome()
         home.onActivity { it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
         ui.waitUntil(15_000) {
             var ready = false
@@ -238,6 +238,14 @@ class GuidedTourUiTest {
 
     private inline fun <reified T : Activity> launch(): ActivityScenario<T> =
         ActivityScenario.launch(T::class.java).also { scenario = it }
+
+    private fun openAcademicHome(): ActivityScenario<MainActivity> {
+        val home = launch<MainActivity>()
+        awaitTag("released_tools_entry")
+        ui.onNodeWithTag("released_tools_entry").performScrollTo().performClick()
+        awaitTag("tools_container")
+        return home
+    }
 
     private fun open(topic: String) {
         if (topic == "reports" || topic == "detail") {
@@ -285,7 +293,7 @@ class GuidedTourUiTest {
                 .filter { it.isFile && (it.name.startsWith("submission_ui_") || it.name.startsWith("draft_ui_")) }
                 .associate { it.name to it.readBytes().toList() })
     }
-    private fun otherOrientation(owner: ActivityScenario<ReleasedToolsActivity>): Orientation {
+    private fun otherOrientation(owner: ActivityScenario<MainActivity>): Orientation {
         var portrait = false
         owner.onActivity { portrait = it.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT }
         return if (portrait) Orientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE, Configuration.ORIENTATION_LANDSCAPE)

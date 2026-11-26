@@ -4,28 +4,20 @@ import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Bitmap
-import android.graphics.Rect
 import android.os.ParcelFileDescriptor
 import android.os.SystemClock
 import android.util.Log
-import android.widget.Button
-import android.widget.ScrollView
-import android.widget.TextView
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.test.core.app.ActivityScenario
-import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.scrollTo
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.isEnabled
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
+import com.example.citizensecurity.MainActivity
 import com.example.citizensecurity.R
 import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.NewReport
@@ -35,7 +27,6 @@ import com.example.citizensecurity.domain.ReportLocation
 import com.example.citizensecurity.domain.ReportSubmissionRequest
 import com.example.citizensecurity.preview.ReportDraftActivity
 import com.example.citizensecurity.report.ReportSubmissionState
-import com.example.citizensecurity.reports.ReportsActivity
 import com.example.citizensecurity.reports.ReportsMapActivity
 import com.example.citizensecurity.testing.ReportTestFixtureRule
 import java.io.File
@@ -53,7 +44,7 @@ import org.junit.runner.RunWith
 class ReportHomeUiTest {
     @get:Rule(order = 0) val fixtureRule = ReportTestFixtureRule()
     @get:Rule(order = 1) val ui = createEmptyComposeRule()
-    private var scenario: ActivityScenario<ReleasedToolsActivity>? = null
+    private var scenario: ActivityScenario<MainActivity>? = null
     private var previousFontScale: String? = null
     private val fixture get() = fixtureRule.fixture
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
@@ -77,9 +68,9 @@ class ReportHomeUiTest {
         val before = journalBytes()
         launchHome()
         assertNoHistoricalDemonstrationControls()
-        capture("release056-inicio.png")
+        capture("release071-inicio.png")
 
-        clickHome(R.id.tools_preview_interface)
+        clickHome("tools_preview_interface")
         awaitActivity<ReportDraftActivity>()
         awaitTag("draft_description")
         withResumed<ReportDraftActivity> {
@@ -90,14 +81,14 @@ class ReportHomeUiTest {
         pressBack()
         awaitHome()
 
-        clickHome(R.id.tools_reports)
-        awaitActivity<ReportsActivity>()
+        clickHome("tools_reports")
+        awaitActivity<MainActivity>()
         awaitTag("report_no_data")
         ui.onNodeWithTag("report_no_data").assertExists()
         pressBack()
         awaitHome()
 
-        clickHome(R.id.tools_reports_map)
+        clickHome("tools_reports_map")
         // The route works even if street tiles cannot load; this is not a network acceptance test.
         awaitActivity<ReportsMapActivity>()
         pressBack()
@@ -114,8 +105,8 @@ class ReportHomeUiTest {
     @Test fun helpRouteOpensEmergencyAccessWithoutPreparingAReportOrGps() {
         val before = journalBytes()
         launchHome()
-        clickHome(R.id.home_help)
-        awaitActivity<com.example.citizensecurity.help.HelpContactsActivity>()
+        clickHome("home_help")
+        awaitActivity<MainActivity>()
         awaitTag("help_dial_911")
         ui.onNodeWithTag("help_dial_911").assertExists()
         ui.onNodeWithTag("help_dial_089").assertExists()
@@ -132,7 +123,7 @@ class ReportHomeUiTest {
         launchHome()
         val before = app.accountSession.capture()
         val journals = journalBytes()
-        clickHome(R.id.home_quick_help)
+        clickHome("home_quick_help")
         awaitActivity<com.example.citizensecurity.help.EmergencyAccessActivity>()
         awaitTag("emergency_title")
         assertSame(before, app.accountSession.capture())
@@ -148,7 +139,7 @@ class ReportHomeUiTest {
         val before = journalBytes()
         launchHome()
         awaitHomeText("intento")
-        clickHome(R.id.tools_preview_interface)
+        clickHome("tools_preview_interface")
         awaitActivity<ReportDraftActivity>()
         ui.waitUntil(15_000) {
             var pending = false
@@ -176,7 +167,7 @@ class ReportHomeUiTest {
         awaitHomeText("borrador")
         scenario!!.recreate()
         awaitHomeText("borrador")
-        clickHome(R.id.tools_preview_interface)
+        clickHome("tools_preview_interface")
         awaitActivity<ReportDraftActivity>()
         awaitTag("restore_checkpoint")
         withResumed<ReportDraftActivity> { assertEquals("", it.draftModel.state.value.description) }
@@ -198,24 +189,17 @@ class ReportHomeUiTest {
         assertEquals(0, fixture.refreshCalls)
     }
 
-    @Test fun returningFromSavedReportsReadsTheDraftCreatedWhileHomeWasStopped() {
+    @Test fun returningFromSavedReportsReadsTheDraftCreatedWhileHomeWasHidden() {
         assertTrue(runBlocking { fixture.repository.list().isEmpty() })
         returnProgressStep("01 launch empty home") { launchHome() }
         assertNull(runBlocking { fixture.checkpoint.read() })
-        returnProgressStep("02 click saved reports") { clickHome(R.id.tools_reports) }
-        returnProgressStep("03 await first ReportsActivity resumed") { awaitActivity<ReportsActivity>() }
-        returnProgressStep("04 await first empty list") { awaitTag("report_no_data") }
-        returnProgressStep("05 verify home stopped before seeding") {
-            ui.waitUntil(15_000) {
-                var stopped = false
-                InstrumentationRegistry.getInstrumentation().runOnMainSync {
-                    stopped = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.STOPPED)
-                        .any { it is ReleasedToolsActivity }
-                }
-                stopped
-            }
+        returnProgressStep("02 open saved reports") { clickHome("tools_reports") }
+        returnProgressStep("03 await first empty list") { awaitTag("report_no_data") }
+        returnProgressStep("04 verify home is hidden before seeding") {
+            awaitActivity<MainActivity>()
+            ui.waitUntil(15_000) { ui.onAllNodesWithTag("tools_container").fetchSemanticsNodes().isEmpty() }
         }
-        // Seed the test-owned AtomicFile while its home is stopped. No production UI writes,
+        // Seed the test-owned AtomicFile while its home destination is hidden. No production UI writes,
         // report insertion, or GPS reading occurs in this refresh acceptance scenario.
         val saved = ReportDraftCheckpoint(UUID.randomUUID().toString(), draft(), Instant.now())
         returnProgressStep("06 seed complete draft in owned store") {
@@ -239,21 +223,7 @@ class ReportHomeUiTest {
             }
         }
         returnProgressStep("11 await draft indicator after rotation") { awaitHomeText("borrador") }
-        returnProgressStep("11b await settled native window after rotation") {
-            InstrumentationRegistry.getInstrumentation().uiAutomation.waitForIdle(500, 5_000)
-            ui.waitUntil(15_000) {
-                var ready = false
-                scenario!!.onActivity {
-                    val scroll = it.findViewById<ScrollView>(R.id.tools_container)
-                    ready = it.window.decorView.hasWindowFocus() && !it.window.decorView.isLayoutRequested &&
-                        scroll.width > 0 && scroll.height > 0 && !scroll.isLayoutRequested &&
-                        homeRouteIds.all { id -> it.findViewById<Button>(id).height > 0 }
-                }
-                ready
-            }
-        }
-        returnProgressStep("12 click saved reports again") { clickHome(R.id.tools_reports) }
-        returnProgressStep("13 await second ReportsActivity resumed") { awaitActivity<ReportsActivity>() }
+        returnProgressStep("12 open saved reports again") { clickHome("tools_reports") }
         returnProgressStep("14 await second empty list") { awaitTag("report_no_data") }
         returnProgressStep("15 second Back") { pressBack() }
         returnProgressStep("16 await draft indicator after second return") { awaitHomeText("borrador") }
@@ -274,10 +244,10 @@ class ReportHomeUiTest {
         val before = journalBytes()
         launchHome()
         awaitHomeText("comprobar")
-        clickHome(R.id.home_retry)
+        clickHome("home_retry")
         awaitHomeText("comprobar")
         assertArrayEquals(invalidBytes, file.readBytes())
-        clickHome(R.id.tools_preview_interface)
+        clickHome("tools_preview_interface")
         awaitActivity<ReportDraftActivity>()
         awaitTag("recover_submission")
         ui.onNodeWithText("No se pudo comprobar el último intento").assertExists()
@@ -311,30 +281,32 @@ class ReportHomeUiTest {
         }
         scenario!!.recreate()
         awaitHome()
-        // Font scale, orientation and recreation each enqueue a new Android window/layout.
-        // A completed journal read alone is not evidence that the visible window is settled.
-        InstrumentationRegistry.getInstrumentation().uiAutomation.waitForIdle(500, 5_000)
-        ui.waitUntil(15_000) {
-            var laidOut = false
-            scenario!!.onActivity {
-                val scroll = it.findViewById<ScrollView>(R.id.tools_container)
-                laidOut = scroll.width > 0 && scroll.height > 0 && !scroll.isLayoutRequested &&
-                    homeRouteIds.all { id -> it.findViewById<Button>(id).height > 0 }
-            }
-            laidOut
-        }
-        homeRouteIds.forEach { id ->
+        homeRouteTags.forEach { tag ->
             try {
-                onView(withId(id)).perform(scrollTo()).check(matches(isCompletelyDisplayed()))
-                    .check(matches(isEnabled())).check { view, noView ->
-                        if (noView != null) throw noView
-                        val button = view as Button
-                        assertTrue("Button text is clipped: ${button.text}",
-                            button.height - button.compoundPaddingTop - button.compoundPaddingBottom >= button.layout.height)
+                val button = showHome(tag).assertIsDisplayed().assertIsEnabled().assertHasClickAction()
+                val bounds = button.getUnclippedBoundsInRoot()
+                val viewport = ui.onNodeWithTag("tools_container").getUnclippedBoundsInRoot()
+                assertTrue("Button $tag is clipped: $bounds inside $viewport",
+                    bounds.top.value >= viewport.top.value - 1 && bounds.bottom.value <= viewport.bottom.value + 1 &&
+                        bounds.left.value >= viewport.left.value - 1 && bounds.right.value <= viewport.right.value + 1)
+                val label = ui.onNode(hasAnyAncestor(hasTestTag(tag)) and
+                    SemanticsMatcher.keyIsDefined(SemanticsActions.GetTextLayoutResult), useUnmergedTree = true)
+                val layouts = mutableListOf<TextLayoutResult>()
+                label.performSemanticsAction(SemanticsActions.GetTextLayoutResult) { getLayout ->
+                    assertTrue("Could not measure label for $tag", getLayout(layouts))
+                }
+                assertTrue("No text layout found for $tag", layouts.isNotEmpty())
+                layouts.forEach { layout ->
+                    // Measure the lines, since the paragraph width can include unused constraint space.
+                    val widestLine = (0 until layout.lineCount).maxOf { line ->
+                        layout.getLineRight(line) - layout.getLineLeft(line)
                     }
+                    val text = layout.multiParagraph
+                    assertFalse("Button text is clipped: $tag, layout=${layout.size}, text=${widestLine}×${text.height}",
+                        text.didExceedMaxLines || widestLine > layout.size.width + 1 || text.height > layout.size.height + 1)
+                }
             } catch (failure: Throwable) {
-                // Preserve the strict display assertion and produce measurements before teardown.
-                runCatching { recordLandscapeFailure(id) }
+                runCatching { recordLandscapeFailure(tag) }
                 throw failure
             }
         }
@@ -347,31 +319,38 @@ class ReportHomeUiTest {
     }
 
     private fun launchHome() {
-        scenario = ActivityScenario.launch(ReleasedToolsActivity::class.java)
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        awaitTag("released_tools_entry")
+        ui.onNodeWithTag("released_tools_entry").performScrollTo().performClick()
         awaitHome()
     }
 
     private fun awaitHome() {
-        awaitActivity<ReleasedToolsActivity>()
+        awaitActivity<MainActivity>()
+        awaitTag("tools_container")
+        showHome("home_status")
+        val loading = hasText(context.getString(R.string.home_checking))
         ui.waitUntil(15_000) {
-            var ready = false
-            scenario!!.onActivity { ready = it.findViewById<Button>(R.id.home_retry).isEnabled }
-            ready
+            ui.onAllNodes(hasTestTag("home_status") and !loading).fetchSemanticsNodes().isNotEmpty()
         }
     }
 
     private fun awaitHomeText(fragment: String) {
         awaitHome()
         ui.waitUntil(15_000) {
-            var found = false
-            scenario!!.onActivity {
-                found = it.findViewById<TextView>(R.id.home_status).text.toString().contains(fragment, ignoreCase = true)
-            }
-            found
+            ui.onAllNodes(hasTestTag("home_status") and hasText(fragment, substring = true, ignoreCase = true))
+                .fetchSemanticsNodes().isNotEmpty()
         }
     }
 
-    private fun clickHome(id: Int) = onView(withId(id)).perform(scrollTo(), click())
+    private fun clickHome(tag: String) = showHome(tag).assertIsDisplayed().performClick()
+
+    private fun showHome(tag: String): SemanticsNodeInteraction {
+        if (ui.onAllNodesWithTag(tag).fetchSemanticsNodes().isEmpty()) {
+            ui.onNodeWithTag("tools_container").performScrollToNode(hasTestTag(tag))
+        }
+        return ui.onNodeWithTag(tag).performScrollTo()
+    }
 
     private inline fun <reified T : Activity> awaitActivity() {
         ui.waitUntil(15_000) { var found = false; withResumed<T> { found = true }; found }
@@ -393,13 +372,8 @@ class ReportHomeUiTest {
         .associate { it.name to it.readBytes().toList() }
 
     private fun assertNoHistoricalDemonstrationControls() {
-        scenario!!.onActivity { activity ->
-            listOf("tools_receive", "tools_validate", "tools_locations", "tools_save_example", "tools_description")
-                .forEach { name ->
-                    val id = context.resources.getIdentifier(name, "id", context.packageName)
-                    if (id != 0) assertNull("Historical demonstration is still in the menu: $name", activity.findViewById<android.view.View>(id))
-                }
-        }
+        listOf("tools_receive", "tools_validate", "tools_locations", "tools_save_example", "tools_description")
+            .forEach { tag -> ui.onNodeWithTag(tag, useUnmergedTree = true).assertDoesNotExist() }
     }
 
     private fun draft() = NewReport(IncidentType.RISK, Priority.MEDIUM, DESCRIPTION,
@@ -421,28 +395,10 @@ class ReportHomeUiTest {
         return ParcelFileDescriptor.AutoCloseInputStream(descriptor).use { it.readBytes().toString(Charsets.UTF_8) }
     }
 
-    private fun recordLandscapeFailure(id: Int) {
-        var measurements = ""
-        scenario!!.onActivity { activity ->
-            val scroll = activity.findViewById<ScrollView>(R.id.tools_container)
-            val button = activity.findViewById<Button>(id)
-            fun visible(view: android.view.View): String {
-                val rectangle = Rect()
-                return "${view.getGlobalVisibleRect(rectangle)} $rectangle"
-            }
-            measurements = """
-                configuration=${activity.resources.configuration}
-                decor=${activity.window.decorView.width}x${activity.window.decorView.height} visible=${visible(activity.window.decorView)}
-                scroll=${scroll.width}x${scroll.height} y=${scroll.scrollY} childHeight=${scroll.getChildAt(0).height}
-                scrollPadding=${scroll.paddingLeft},${scroll.paddingTop},${scroll.paddingRight},${scroll.paddingBottom} clipToPadding=${scroll.clipToPadding}
-                scrollVisible=${visible(scroll)} insets=${scroll.rootWindowInsets}
-                button=${context.resources.getResourceEntryName(id)} text=${button.text}
-                buttonSize=${button.width}x${button.height} top=${button.top} bottom=${button.bottom} visible=${visible(button)}
-                textHeight=${button.layout?.height} lines=${button.layout?.lineCount} compoundPadding=${button.compoundPaddingTop},${button.compoundPaddingBottom}
-            """.trimIndent()
-        }
-        File(context.getExternalFilesDir(null), "release056-inicio-landscape-failure.txt").writeText(measurements)
-        capture("release056-inicio-landscape-failure.png")
+    private fun recordLandscapeFailure(tag: String) {
+        capture("release071-inicio-landscape-failure.png")
+        val tree = ui.onRoot(useUnmergedTree = true).printToString()
+        File(context.getExternalFilesDir(null), "release071-inicio-landscape-failure.txt").writeText("$tag\n$tree")
     }
 
     private fun returnProgressStep(step: String, action: () -> Unit) {
@@ -452,7 +408,7 @@ class ReportHomeUiTest {
             recordReturnProgress("AFTER $step")
         } catch (failure: Throwable) {
             runCatching { recordReturnProgress("FAILED $step: ${failure.javaClass.simpleName}: ${failure.message}") }
-            runCatching { capture("release056-inicio-return-failure.png") }
+            runCatching { capture("release071-inicio-return-failure.png") }
             throw failure
         }
     }
@@ -463,20 +419,18 @@ class ReportHomeUiTest {
             val monitor = ActivityLifecycleMonitorRegistry.getInstance()
             activities = Stage.values().flatMap { stage ->
                 monitor.getActivitiesInStage(stage).filter { it.packageName == context.packageName }.map { activity ->
-                    val status = if (activity is ReleasedToolsActivity)
-                        activity.findViewById<TextView>(R.id.home_status)?.text?.toString()?.replace('\n', '|') else null
                     "${activity.javaClass.simpleName}#${System.identityHashCode(activity)}=$stage" +
                         " orientation=${activity.resources.configuration.orientation}" +
-                        " fontScale=${activity.resources.configuration.fontScale} status=$status"
+                        " fontScale=${activity.resources.configuration.fontScale}"
                 }
             }.joinToString("; ")
         }
         val line = "${SystemClock.elapsedRealtime()} $step :: $activities\n"
-        File(context.getExternalFilesDir(null), "release056-inicio-return-progress.txt").appendText(line)
+        File(context.getExternalFilesDir(null), "release071-inicio-return-progress.txt").appendText(line)
         Log.i("ReportHomeReturnTest", line)
     }
 
-    private val homeRouteIds get() = listOf(R.id.home_help, R.id.home_quick_help, R.id.tools_preview_interface, R.id.tools_reports, R.id.tools_reports_map, R.id.tools_back)
+    private val homeRouteTags get() = listOf("home_help", "home_quick_help", "tools_preview_interface", "tools_reports", "home_activity", "tools_reports_map", "tools_back")
 
     private companion object { const val DESCRIPTION = "Un cable caído impide pasar por la entrada norte del parque." }
 }

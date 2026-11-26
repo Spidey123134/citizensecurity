@@ -2,71 +2,108 @@ package com.example.citizensecurity.message
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.citizensecurity.CitizenSecurityApplication
+import com.example.citizensecurity.account.ReportWorkspace
 import com.example.citizensecurity.account.ReportWorkspaceActivity
-import com.example.citizensecurity.account.ReportWorkspaceActivityBinding
+import com.example.citizensecurity.account.canInteract
 import com.example.citizensecurity.help.HelpContactsActivity
 import com.example.citizensecurity.preview.PreviewTheme
 import com.example.citizensecurity.reports.ReportsActivity
 import kotlinx.coroutines.CancellationException
 
 class ReportMessageActivity : ReportWorkspaceActivity() {
-    private lateinit var model: ReportMessageViewModel
-    private var folio = ""
-    private val contactsRoute = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (::model.isInitialized && hasReportWorkspace) model.load(folio)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!hasReportWorkspace) return
-        folio = intent.getStringExtra(ReportsActivity.EXTRA_FOLIO).orEmpty()
-        val contacts = (application as CitizenSecurityApplication).openTrustedContactsRepository(
-            reportWorkspace.session, reportWorkspace::checkActive)
-        model = ViewModelProvider(this, ReportMessageViewModel.factory(
-            reportWorkspace.repository, contacts, reportWorkspace::checkActive))[ReportMessageViewModel::class.java]
-        setContent { PreviewTheme {
-            ReportMessageScreen(model,
-                onSelect = { shown, id -> act { model.selectContact(shown, id) } },
-                onLocation = { shown, selected -> act { model.setIncludeLocation(shown, selected) } },
-                onPrepare = { shown -> act { model.prepare(shown) } },
-                onEdit = { shown -> act { model.edit(shown) } },
-                onOpen = ::openComposer,
-                onReload = { act { model.load(folio) } },
-                onContacts = { act {
-                    contactsRoute.launch(ReportWorkspaceActivityBinding.stamp(
-                        Intent(this, HelpContactsActivity::class.java), reportWorkspace.session))
-                } },
-                onClose = { act { finish() } })
-        } }
-        model.activate(folio)
+        val folio = intent.getStringExtra(ReportsActivity.EXTRA_FOLIO).orEmpty()
+        setContent {
+            PreviewTheme {
+                ReportMessageRoute(
+                    app = application as CitizenSecurityApplication,
+                    workspace = reportWorkspace,
+                    folio = folio,
+                    onBack = ::finish,
+                    onOpenContacts = { startReportActivity(Intent(this, HelpContactsActivity::class.java)) },
+                )
+            }
+        }
     }
+}
 
-    override fun onResume() {
-        super.onResume()
-        if (::model.isInitialized && hasReportWorkspace) model.activate(folio)
+@Composable
+internal fun ReportMessageRoute(
+    app: CitizenSecurityApplication,
+    workspace: ReportWorkspace,
+    folio: String,
+    onBack: () -> Unit,
+    onOpenContacts: () -> Unit,
+) {
+    val context = LocalContext.current
+    val hostActivity = LocalActivity.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val model: ReportMessageViewModel = viewModel(factory = remember(app, workspace) {
+        val contacts = app.openTrustedContactsRepository(workspace.session, workspace::checkActive)
+        ReportMessageViewModel.factory(workspace.repository, contacts, workspace::checkActive)
+    })
+    var reloadContactsOnResume by rememberSaveable { mutableStateOf(false) }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        if (workspace.canInteract(lifecycle)) {
+            if (reloadContactsOnResume) {
+                reloadContactsOnResume = false
+                model.load(folio)
+            } else {
+                model.activate(folio)
+            }
+        }
     }
-
-    override fun onStop() {
-        if (::model.isInitialized && !isChangingConfigurations && model.state.value is ReportMessageState.Opening) {
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        if (hostActivity?.isChangingConfigurations != true && model.state.value is ReportMessageState.Opening) {
             model.cancel()
         }
-        super.onStop()
     }
 
-    private fun canAct() = lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && ensureReportWorkspaceCurrent()
-    private fun act(action: () -> Unit) { if (canAct()) action() }
-
-    private fun openComposer(review: ReportMessageState.Review) = act {
-        model.open(review, ::canAct) { draft ->
-            val outbound = ReportMessageComposer.intent(draft)
-            reportWorkspace.checkActive()
-            if (!canAct()) throw CancellationException("La pantalla ya no está disponible.")
-            startActivity(outbound)
-        }
+    fun canAct() = workspace.canInteract(lifecycle)
+    fun act(action: () -> Unit) {
+        if (canAct()) action()
     }
+
+    ReportMessageScreen(
+        model = model,
+        onSelect = { shown, id -> act { model.selectContact(shown, id) } },
+        onLocation = { shown, selected -> act { model.setIncludeLocation(shown, selected) } },
+        onPrepare = { shown -> act { model.prepare(shown) } },
+        onEdit = { shown -> act { model.edit(shown) } },
+        onOpen = { review ->
+            act {
+                model.open(review, ::canAct) { draft ->
+                    val outbound = ReportMessageComposer.intent(draft)
+                    workspace.checkActive()
+                    if (!canAct()) throw CancellationException("La pantalla ya no está disponible.")
+                    context.startActivity(outbound)
+                }
+            }
+        },
+        onReload = { act { model.load(folio) } },
+        onContacts = {
+            act {
+                reloadContactsOnResume = true
+                onOpenContacts()
+            }
+        },
+        onClose = { act(onBack) },
+    )
 }

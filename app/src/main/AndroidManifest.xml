@@ -22,9 +22,9 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.NoTitleBar">
 
-        <!-- SplashActivity se ejecuta primero -->
         <activity
             android:name=".SplashActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,7 +42,6 @@
         <activity android:name=".alerts.ReportAlertsActivity" android:exported="false" />
         <activity android:name=".message.ReportMessageActivity" android:exported="false" />
         <activity android:name=".reports.ReportsMapActivity" android:exported="false" />
-        <activity android:name=".account.CreateAccountActivity" android:exported="false" />
         <activity android:name=".help.HelpContactsActivity" android:exported="false" />
         <activity android:name=".help.EmergencyAccessActivity" android:exported="true" />
         <service android:name=".help.EmergencyHelpTileService"
@@ -70,13 +69,9 @@
                 android:resource="@xml/evidence_paths" />
         </provider>
 
-        <!-- MainActivity (Login) -->
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".release.ReleasedToolsActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 
     </application>

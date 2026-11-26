@@ -13,8 +13,8 @@ android {
         applicationId = "com.example.citizensecurity"
         minSdk = 26
         targetSdk = 37
-        versionCode = 32
-        versionName = "0.7.0"
+        versionCode = 33
+        versionName = "0.7.1"
         // Upgrade acceptance uses the installed older Application; normal tests use fixtures.
         testInstrumentationRunner = providers.gradleProperty("citizenSecurityTestRunner")
             .orElse("com.example.citizensecurity.testing.ReportTestRunner").get()
@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.navigation.compose)
     implementation(libs.coroutines.android)
     debugImplementation(libs.compose.ui.tooling)
     testImplementation(libs.junit)

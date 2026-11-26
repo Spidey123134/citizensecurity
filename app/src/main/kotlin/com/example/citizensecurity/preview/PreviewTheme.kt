@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-// Paleta alineada con el diseño XML (#F4F5FB de fondo, #7C3AED morado principal, #8B5CF6 secundario, tarjetas blancas #FFFFFF)
 private val Light = lightColorScheme(
     primary = Color(0xFF7C3AED),
     onPrimary = Color.White,
