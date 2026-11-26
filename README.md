@@ -2,7 +2,7 @@
 
 ## 0.7.1 — Jetpack Compose y Navigation
 
-**Android 0.7.1 · código 33 · versión local para exponer.** La interfaz está escrita en Jetpack Compose y el grafo de navegación se define en Kotlin. El recorrido principal va de Acceso a Inicio, Reportar, Reportes guardados, Mapa, Actividad y Ayuda. La base de datos, las cuentas locales y las reglas de reportes proceden de 0.7.0.
+**Android 0.7.1 · código 33 · versión preliminar para exponer.** La interfaz está escrita en Jetpack Compose y el grafo de navegación se define en Kotlin. El recorrido principal va de Acceso a Inicio, Reportar, Reportes guardados, Mapa, Actividad y Ayuda. La base de datos, las cuentas locales y las reglas de reportes proceden de 0.7.0.
 
 [Cómo abrir la app y mostrarla en clase](docs/PROBAR_0_7_1.md)
 

@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-## [0.7.1] — 2026-11-26 · local
+## [0.7.1] — 2026-11-26 · versión preliminar
 
 - Carga, acceso, registro e inicio migrados a Jetpack Compose. Se retiraron los cuatro layouts XML de la aplicación.
 - Navigation Compose conecta el recorrido principal. El listado, la actividad y los contactos se abren como destinos Compose. Los flujos con controladores Android propios, como el formulario con GPS y cámara, se abren desde el grafo.
