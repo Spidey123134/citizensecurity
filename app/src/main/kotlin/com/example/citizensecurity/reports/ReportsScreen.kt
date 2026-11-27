@@ -1,10 +1,6 @@
 package com.example.citizensecurity.reports
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,12 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -38,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -50,7 +43,6 @@ import com.example.citizensecurity.domain.IncidentType
 import com.example.citizensecurity.domain.Priority
 import com.example.citizensecurity.domain.Report
 import com.example.citizensecurity.domain.ReportStatus
-import com.example.citizensecurity.evidence.ReportEvidenceContent
 import com.example.citizensecurity.evidence.ReportEvidenceState
 import com.example.citizensecurity.evidence.ReportEvidenceViewModel
 import com.example.citizensecurity.evidence.evidenceRequest
@@ -65,11 +57,14 @@ import com.example.citizensecurity.report.parseReportSearchFilters
 import com.example.citizensecurity.report.ReportSearchFilterValidation
 import com.example.citizensecurity.tutorial.GuidedTourButton
 import com.example.citizensecurity.tutorial.TourTopic
-import com.example.citizensecurity.resolution.ReportResolutionContent
 import com.example.citizensecurity.resolution.ReportResolutionViewModel
-import java.time.Instant
+import com.example.citizensecurity.screen.reports.FilterRow
+import com.example.citizensecurity.screen.reports.ReportDetail
+import com.example.citizensecurity.screen.reports.formatReportTime
+import com.example.citizensecurity.screen.reports.priorityLabel
+import com.example.citizensecurity.screen.reports.statusLabel
+import com.example.citizensecurity.screen.reports.typeLabel
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun ReportsScreen(
@@ -382,34 +377,6 @@ private fun LocalOnlyNotice() {
 }
 
 @Composable
-private fun FilterRow(
-    items: List<Pair<String, String>>,
-    selected: String?,
-    prefix: String,
-    onSelect: (String?) -> Unit,
-) {
-    Row(
-        Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).testTag("${prefix}_filters"),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        FilterChip(
-            selected = selected == null,
-            onClick = { onSelect(null) },
-            label = { Text("Todos") },
-            modifier = Modifier.testTag("${prefix}_ALL"),
-        )
-        items.forEach { (key, label) ->
-            FilterChip(
-                selected = selected == key,
-                onClick = { onSelect(key) },
-                label = { Text(label) },
-                modifier = Modifier.testTag("${prefix}_$key"),
-            )
-        }
-    }
-}
-
-@Composable
 private fun ReportCard(report: Report, zone: ZoneId, enabled: Boolean, onSelect: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().testTag("list_card_${report.id}"),
@@ -439,71 +406,6 @@ private fun ReportCard(report: Report, zone: ZoneId, enabled: Boolean, onSelect:
 }
 
 @Composable
-private fun ReportDetail(report: Report, zone: ZoneId, onMap: (String) -> Unit, history: ReportHistoryViewModel?,
-    evidence: ReportEvidenceViewModel?, onShareEvidence: (ReportEvidenceState.Ready, () -> Boolean) -> Unit,
-    onMessage: ((String) -> Unit)?,
-    resolution: ReportResolutionViewModel?,
-    isCurrent: () -> Boolean) {
-    val context = LocalContext.current
-    var copied by remember(report.id) { mutableStateOf(false) }
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = androidx.compose.material3.CardDefaults.cardElevation(defaultElevation = 6.dp),
-        colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = MaterialTheme.shapes.medium,
-    ) {
-        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            DetailField("Folio", report.id, "report_folio")
-            OutlinedButton(
-                onClick = {
-                    if (!isCurrent()) return@OutlinedButton
-                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    clipboard.setPrimaryClip(ClipData.newPlainText("Folio del reporte", report.id))
-                    copied = true
-                },
-                modifier = Modifier.testTag("report_copy_folio"),
-            ) { Text("Copiar folio") }
-            if (copied) Text("Folio copiado.", Modifier.semantics { liveRegion = LiveRegionMode.Polite })
-            DetailField("Tipo de incidente", typeLabel(report.type))
-            DetailField("Prioridad", priorityLabel(report.priority))
-            DetailField("Estado local", statusLabel(report.status))
-            if (history != null) ReportHistoryContent(report, zone, history, isCurrent)
-            if (resolution != null) ReportResolutionContent(resolution, report.id, isCurrent)
-            DetailField("Descripción", report.description, "report_description")
-            if (onMessage != null) OutlinedButton(onClick = { if (isCurrent()) onMessage(report.id) },
-                modifier = Modifier.fillMaxWidth().testTag("report_detail_message")) {
-                Text("Preparar mensaje para un contacto")
-            }
-            if (evidence != null) ReportEvidenceContent(report, zone, evidence, isCurrent, onShareEvidence)
-            com.example.citizensecurity.report.ReportPhotoContent(report.photo, tagPrefix = "report_photo")
-            DetailField("Fecha del incidente", formatReportTime(report.occurredAt, zone))
-            DetailField("Guardado en este teléfono", formatReportTime(report.createdAt, zone))
-            DetailField("Referencia", report.location.reference.ifBlank { "Sin referencia escrita" })
-            val latitude = report.location.latitude
-            val longitude = report.location.longitude
-            val hasPoint = latitude != null && longitude != null && latitude.isFinite() && longitude.isFinite() &&
-                latitude in -90.0..90.0 && longitude in -180.0..180.0
-            if (hasPoint) {
-                DetailField("Punto guardado", "$latitude, $longitude")
-                Button(onClick = { if (isCurrent()) onMap(report.id) }, modifier = Modifier.testTag("report_detail_map")) {
-                    Text("Ver en el mapa")
-                }
-            } else {
-                Text("Este reporte no tiene un punto guardado en el mapa.")
-            }
-        }
-    }
-}
-
-@Composable
-private fun DetailField(label: String, value: String, tag: String? = null) {
-    Column {
-        Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-        Text(value, modifier = if (tag == null) Modifier else Modifier.testTag(tag))
-    }
-}
-
-@Composable
 private fun LoadingNotice() {
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         CircularProgressIndicator()
@@ -521,30 +423,5 @@ private fun QueryNotice(state: ReportQueryState) {
     }
     Text(message, Modifier.semantics { liveRegion = LiveRegionMode.Polite })
 }
-
-private fun typeLabel(type: IncidentType): String = when (type) {
-    IncidentType.EMERGENCY -> "Emergencia"
-    IncidentType.THEFT -> "Robo"
-    IncidentType.ACCIDENT -> "Accidente"
-    IncidentType.FIRE -> "Incendio"
-    IncidentType.RISK -> "Riesgo"
-    IncidentType.OTHER -> "Otro"
-}
-
-private fun priorityLabel(priority: Priority): String = when (priority) {
-    Priority.LOW -> "Baja"
-    Priority.MEDIUM -> "Media"
-    Priority.HIGH -> "Alta"
-}
-
-private fun statusLabel(status: ReportStatus): String = when (status) {
-    ReportStatus.REPORTED -> "Guardado localmente"
-    ReportStatus.IN_REVIEW -> "En revisión"
-    ReportStatus.ATTENDED -> "Atendido"
-    ReportStatus.CLOSED -> "Cerrado"
-}
-
-private fun formatReportTime(instant: Instant, zone: ZoneId): String = DateTimeFormatter
-    .ofPattern("dd/MM/yyyy HH:mm:ss z").withZone(zone).format(instant)
 
 private val FULL_FOLIO = Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")

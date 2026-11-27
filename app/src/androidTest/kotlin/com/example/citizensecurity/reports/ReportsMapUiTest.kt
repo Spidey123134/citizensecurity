@@ -135,7 +135,11 @@ class ReportsMapUiTest {
         ui.waitUntil(10_000) { ui.onAllNodesWithTag("report_list").fetchSemanticsNodes().isNotEmpty() }
         ui.onNodeWithTag("report_list").performScrollToIndex(0)
         ui.onNodeWithTag("report_back_list").assertIsDisplayed().performClick()
-        ui.waitUntil(10_000) { ui.onAllNodesWithTag("reports_map_canvas").fetchSemanticsNodes().isNotEmpty() }
+        // Compose may have no attached root while the detail window closes and the map resumes.
+        ui.waitUntil(10_000) {
+            ui.onAllNodesWithTag("reports_map_canvas")
+                .fetchSemanticsNodes(atLeastOneRootRequired = false).isNotEmpty()
+        }
         ui.onNodeWithTag("reports_map_canvas").assertExists()
         awaitNative { it.currentSceneState == ReportMapSceneState.Idle && it.renderedMarkerCount() == 0 }
         assertEquals(before, storedRows())

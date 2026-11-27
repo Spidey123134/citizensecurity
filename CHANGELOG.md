@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.1-rev.2] · 2026-11-27 · versión preliminar
+
+- Conserva el `NavHost` y las pantallas Compose de 0.7.1. Separa los filtros, las etiquetas y el detalle de Reportes en `screen/reports`.
+- Usa código Android 34 y conserva la firma académica de 0.7.0. Se comprobó la actualización real con datos de prueba. [Alcance y verificación](docs/REVISION_0_7_1_2.md).
+
 ## [Unreleased]
 
 ## [0.7.1] — 2026-11-26 · versión preliminar

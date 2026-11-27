@@ -17,8 +17,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
 import androidx.test.runner.lifecycle.Stage
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.Until
 import com.example.citizensecurity.CitizenSecurityApplication
 import com.example.citizensecurity.MainActivity
+import com.example.citizensecurity.R
 import com.example.citizensecurity.SplashActivity
 import com.example.citizensecurity.data.ReportDraftCheckpointStore
 import com.example.citizensecurity.data.ReportPhotoStore
@@ -61,7 +65,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Opt-in acceptance across an actual 0.6.3 -> 0.7.0 install -r, in two invocations.
+ * Opt-in acceptance across 0.6.3 -> 0.7.0 and 0.7.0 -> 0.7.1-rev.2.
+ * Each install -r uses two separate invocations with the same nonce.
  * Uses the installed real Application and private nonce-owned stores. Never clears app data,
  * overwrites a previous fixture, grants an administrator role, calls or sends a message.
  * The same schema 5 is expected; an unchanged schema still needs a preservation check.
@@ -72,9 +77,25 @@ class Release070UpgradeTest {
     private val context: Context get() = instrumentation.targetContext
     private val now = Instant.parse("2026-10-21T18:00:00.123456789Z")
 
-    @Test fun seed063(): Unit = runBlocking {
+    @Test fun seed063(): Unit = runBlocking { seed("0.6.3", 31) }
+
+    @Test fun verify070(): Unit = runBlocking {
+        verify("0.6.3", 31, "0.7.0", 32, ::verifyNormalLauncherEntry)
+    }
+
+    @Test fun seed070(): Unit = runBlocking {
+        seed("0.7.0", 32, expectedSigner = OFFICIAL_SIGNER_SHA256)
+    }
+
+    @Test fun verify071Revision2(): Unit = runBlocking {
+        verify("0.7.0", 32, "0.7.1-rev.2", 34, ::verifyComposeLauncherEntry)
+    }
+
+    private suspend fun seed(sourceVersion: String, sourceVersionCode: Int, expectedSigner: String? = null) {
         val token = requireUpgradeOptIn()
-        assertVersion("0.6.3", 31)
+        assertVersion(sourceVersion, sourceVersionCode)
+        val signers = signatureDigests()
+        expectedSigner?.let { assertEquals(listOf(it), signers) }
         val database = context.getDatabasePath(databaseName(token))
         val bridge = privateFile(bridgeName(token))
         val contactsDirectory = privateFile(contactsDirectoryName(token))
@@ -96,8 +117,8 @@ class Release070UpgradeTest {
         photos.check(photo)
         assertArrayEquals(jpeg, photos.read(photo))
 
-        // Supply every constructor argument reflectively. Seed must execute the installed
-        // official 0.6.3 implementation, not a new Kotlin default-constructor bridge.
+        // Supply every constructor argument reflectively to use the installed official
+        // implementation without relying on a newer Kotlin default-constructor bridge.
         installedRepository(token) { it.photo?.let(photos::check) }.use { repository ->
             repository.createOnce(id(token, "report"), draft(photo))
             transitions(token).forEach { repository.changeStatus(it) }
@@ -123,8 +144,8 @@ class Release070UpgradeTest {
         assertEquals(listOf(contact(token)), contactsStore.read().contacts)
 
         val receipt = JSONObject().put("format", 1).put("nonce", token).put("seedPid", Process.myPid())
-            .put("sourceVersion", "0.6.3").put("sourceVersionCode", 31).put("schema", 5)
-            .put("signerSha256", JSONArray(signatureDigests()))
+            .put("sourceVersion", sourceVersion).put("sourceVersionCode", sourceVersionCode).put("schema", 5)
+            .put("signerSha256", JSONArray(signers))
             .put("databaseSha256", sha256(database.readBytes()))
             .put("contactsSha256", sha256(contactsFile.readBytes()))
             .put("contactsRevision", savedContacts.revision)
@@ -135,20 +156,26 @@ class Release070UpgradeTest {
         val bytes = receipt.toString().toByteArray(Charsets.UTF_8)
         require(bytes.size <= MAX_BRIDGE_BYTES)
         writeNew(bridge, bytes)
-        println("UPGRADE070_SEED nonce=$token pid=${Process.myPid()} version=0.6.3 schema=5 rows=1 resolutionEvents=1 pendingRows=0")
+        println("UPGRADE070_SEED nonce=$token pid=${Process.myPid()} version=$sourceVersion schema=5 rows=1 resolutionEvents=1 pendingRows=0")
     }
 
-    @Test fun verify070(): Unit = runBlocking {
+    private suspend fun verify(
+        sourceVersion: String,
+        sourceVersionCode: Int,
+        targetVersion: String,
+        targetVersionCode: Int,
+        verifyLauncher: () -> Unit,
+    ) {
         val token = requireUpgradeOptIn()
-        assertVersion("0.7.0", 32)
+        assertVersion(targetVersion, targetVersionCode)
         val bridge = privateFile(bridgeName(token))
-        assertTrue("Run seed063 on the official APK before install -r", bridge.isFile)
+        assertTrue("Run the seed test on the official $sourceVersion APK before install -r", bridge.isFile)
         require(bridge.length() in 1..MAX_BRIDGE_BYTES.toLong())
         val receipt = JSONObject(bridge.readText(Charsets.UTF_8))
         assertEquals(1, receipt.getInt("format"))
         assertEquals(token, receipt.getString("nonce"))
-        assertEquals("0.6.3", receipt.getString("sourceVersion"))
-        assertEquals(31, receipt.getInt("sourceVersionCode"))
+        assertEquals(sourceVersion, receipt.getString("sourceVersion"))
+        assertEquals(sourceVersionCode, receipt.getInt("sourceVersionCode"))
         assertEquals(5, receipt.getInt("schema"))
         assertNotEquals("The installed update runs in a different process", receipt.getInt("seedPid"), Process.myPid())
         val previousSigners = receipt.getJSONArray("signerSha256")
@@ -181,9 +208,9 @@ class Release070UpgradeTest {
         assertBytes(receipt, database, contactsFile, photoFile, token)
         assertIntegrity(database)
 
-        verifyNormalLauncherEntry()
+        verifyLauncher()
         assertBytes(receipt, database, contactsFile, photoFile, token)
-        println("UPGRADE070_VERIFIED nonce=$token seedPid=${receipt.getInt("seedPid")} pid=${Process.myPid()} version=0.7.0 schema=5 rows=1 resolutionEvents=1 pendingRows=0")
+        println("UPGRADE070_VERIFIED nonce=$token seedPid=${receipt.getInt("seedPid")} pid=${Process.myPid()} version=$targetVersion schema=5 rows=1 resolutionEvents=1 pendingRows=0")
     }
 
     private fun requireUpgradeOptIn(): String {
@@ -283,14 +310,31 @@ class Release070UpgradeTest {
         durableNames(token).forEach { assertEquals(it, durable.getString(it), sha256(privateFile(it).readBytes())) }
     }
 
-    private fun verifyNormalLauncherEntry() {
+    private fun launcherIntent(): Intent {
         val entry = requireNotNull(context.packageManager.getLaunchIntentForPackage(context.packageName))
         assertEquals(Intent.ACTION_MAIN, entry.action)
         assertTrue(entry.categories.orEmpty().contains(Intent.CATEGORY_LAUNCHER))
-        assertEquals(ComponentName(context, SplashActivity::class.java), entry.component)
+        val component = ComponentName(context, SplashActivity::class.java)
+        assertEquals(component, entry.component)
+        assertTrue(context.packageManager.getActivityInfo(component, 0).exported)
+        return entry
+    }
+
+    private fun verifyComposeLauncherEntry() {
+        ActivityScenario.launch<Activity>(launcherIntent()).use { scenario ->
+            val device = UiDevice.getInstance(instrumentation)
+            val loginButton = By.text(context.getString(R.string.access_login)).pkg(context.packageName)
+            assertTrue("The public launcher must show the Compose sign-in button", device.wait(Until.hasObject(loginButton), 15_000))
+            assertTrue(device.hasObject(By.text(context.getString(R.string.access_welcome)).pkg(context.packageName)))
+            scenario.onActivity { assertEquals(SplashActivity::class.java, it.javaClass) }
+            assertNull((context.applicationContext as CitizenSecurityApplication).accountSession.account)
+        }
+    }
+
+    private fun verifyNormalLauncherEntry() {
         var scenario: ActivityScenario<Activity>? = null
         try {
-            scenario = ActivityScenario.launch(entry)
+            scenario = ActivityScenario.launch(launcherIntent())
             val deadline = SystemClock.elapsedRealtime() + 15_000
             var loginShown = false
             while (!loginShown && SystemClock.elapsedRealtime() < deadline) {
@@ -383,5 +427,8 @@ class Release070UpgradeTest {
     private fun sha256(bytes: ByteArray) = MessageDigest.getInstance("SHA-256").digest(bytes)
         .joinToString("") { "%02x".format(it.toInt() and 0xff) }
 
-    private companion object { const val MAX_BRIDGE_BYTES = 8_192 }
+    private companion object {
+        const val MAX_BRIDGE_BYTES = 8_192
+        const val OFFICIAL_SIGNER_SHA256 = "0a4006a1d2ef2ad02a0dad7c51b55c0ba5ffcd096a226eed6456326b2fed3ebd"
+    }
 }

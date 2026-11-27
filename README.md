@@ -1,5 +1,7 @@
 # CITIZENSECURITY
 
+**0.7.1 rev. 2 · versión preliminar.** Usa la interfaz y la navegación de 0.7.1 y pone los filtros y el detalle de Reportes en `screen/reports`. La APK lleva la firma académica que permite actualizar desde la 0.7.0 oficial. [Cambios y verificación](docs/REVISION_0_7_1_2.md) · [Descargas](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.7.1-rev.2).
+
 ## 0.7.1 — Jetpack Compose y Navigation
 
 **Android 0.7.1 · código 33 · versión preliminar para exponer.** La interfaz está escrita en Jetpack Compose y el grafo de navegación se define en Kotlin. El recorrido principal va de Acceso a Inicio, Reportar, Reportes guardados, Mapa, Actividad y Ayuda. La base de datos, las cuentas locales y las reglas de reportes proceden de 0.7.0.

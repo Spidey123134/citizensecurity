@@ -1,5 +1,15 @@
 # Trabajo del equipo
 
+## Revisión local 0.7.1 rev. 2 · 26 de noviembre de 2026
+
+El usuario autorizó continuar después de revisar la 0.7.1 publicada. Esta revisión parte del commit `76d6ad5` y conserva su interfaz y navegación Compose. Incorpora la separación de filtros, detalle y etiquetas de Reportes de la rev. 2 local. La versión es `0.7.1-rev.2` con código Android 34 para distinguirla de las dos compilaciones con código 33. La rama `development/compose-0.7.1-rev2` conserva aparte el trabajo anterior. Se prepara una APK con el certificado académico de 0.7.0.
+
+El 27 de noviembre el usuario pidió continuar y subir la revisión. El alcance de publicación es la rama `development/compose-0.7.1-rev2`, el tag `v0.7.1-rev.2` y una prerelease en GitHub con APK y checksum. Se conserva la línea estable de 0.7.0 y la preliminar 0.7.1.
+
+Verificar compilación, pruebas de los recorridos afectados y actualización real desde la oficial 0.7.0 en un emulador propio. El resultado de la prueba describe los datos sembrados que se conservaron. Comparar los archivos descargados de GitHub con los preparados antes de dar por cerrada la publicación. Los apartados inferiores corresponden a sus propias entregas.
+
+Cierre técnico el 27 de noviembre: 1,461 JVM y 26 Android API 37 (24 recorridos y dos etapas de actualización) aprobadas. Lint con cero errores y 16 avisos en cada variante. La prueba del regreso al mapa se corrigió para esperar la transición de ventana. La repetición dirigida conservó las comprobaciones y la misma APK. Actualización 0.7.0 → 0.7.1-rev.2 desde el archivo oficial, PID 3147 → 3706 y esquema 5. Conservados datos e historial de la prueba y acceso Compose operativo. APK 56,010,416 bytes, SHA-256 `94deca992e837a906c77fec88e5071c6c040dc5caf9714e3eb876c7c40e04adf`. Certificado académico cotejado y runner habitual restaurado. El emulador propio se cerró con sus ajustes de teclado y letra restaurados.
+
 ## Base local 0.7.1 · 26 de noviembre de 2026
 
 El usuario pidió continuar desde la 0.7.0 con una versión simple para exponer y seguir desarrollando. La interfaz de la app usa Jetpack Compose sin layouts XML. El grafo está en `CitizenSecurityNavigation.kt` y el recorrido de clase en `docs/PROBAR_0_7_1.md`. La base conserva los módulos de dominio y datos de la 0.7.0.
