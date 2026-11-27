@@ -1,5 +1,11 @@
 # Trabajo del equipo
 
+## Entrega 0.7.2 · 27 de noviembre de 2026
+
+El usuario autorizó publicar 0.7.2 como la última versión estable de GitHub. Partir de `1f7a15c` (0.7.1 rev. 2), subir el código Android a 35 y publicar `v0.7.2` con APK y checksum desde `release/0.7.2`. El usuario confirmó que una instalación nueva es suficiente. Verificar la identidad y firma válida del APK, el arranque y los recorridos seleccionados en emulador, y cotejar la descarga publicada con el archivo probado.
+
+Verificación de este corte: ensamblados debug/release correctos y lint debug con cero errores y 16 avisos. Instalación nueva y lanzador de acceso Compose comprobados en API 26. Dos pruebas instrumentadas aprobadas sobre acceso académico e Inicio → Reportes guardados y Mapa. Código de funciones idéntico a la rev. 2. APK de 56,010,408 bytes con firma v2 válida, SHA-256 `169cfae0ac9a25b4bc64fdaf33fea0fb302514dc5a250fbcecd0d0b5fb0cd46b`. Registros locales en `.gradle/validacion/release072/`.
+
 ## Revisión local 0.7.1 rev. 2 · 26 de noviembre de 2026
 
 El usuario autorizó continuar después de revisar la 0.7.1 publicada. Esta revisión parte del commit `76d6ad5` y conserva su interfaz y navegación Compose. Incorpora la separación de filtros, detalle y etiquetas de Reportes de la rev. 2 local. La versión es `0.7.1-rev.2` con código Android 34 para distinguirla de las dos compilaciones con código 33. La rama `development/compose-0.7.1-rev2` conserva aparte el trabajo anterior. Se prepara una APK con el certificado académico de 0.7.0.

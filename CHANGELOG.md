@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.2] · 2026-11-27 · versión estable
+
+- Lleva a la versión estable la interfaz en Jetpack Compose, el grafo de navegación y la organización de los filtros y el detalle de Reportes de la 0.7.1 rev. 2.
+- Android 0.7.2 con código 35. [APK y checksum](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.7.2).
+
 ## [0.7.1-rev.2] · 2026-11-27 · versión preliminar
 
 - Conserva el `NavHost` y las pantallas Compose de 0.7.1. Separa los filtros, las etiquetas y el detalle de Reportes en `screen/reports`.

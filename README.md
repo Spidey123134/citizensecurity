@@ -1,5 +1,7 @@
 # CITIZENSECURITY
 
+**0.7.2 · versión estable · código Android 35.** Integra la interfaz Compose, Navigation Compose y la organización de filtros y detalle de Reportes que se validaron en la 0.7.1 rev. 2. [Descargas de 0.7.2](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.7.2) · [Abrir en Android Studio y mostrar en clase](docs/PROBAR_0_7_1.md).
+
 **0.7.1 rev. 2 · versión preliminar.** Usa la interfaz y la navegación de 0.7.1 y pone los filtros y el detalle de Reportes en `screen/reports`. La APK lleva la firma académica que permite actualizar desde la 0.7.0 oficial. [Cambios y verificación](docs/REVISION_0_7_1_2.md) · [Descargas](https://github.com/Spidey123134/citizensecurity/releases/tag/v0.7.1-rev.2).
 
 ## 0.7.1 — Jetpack Compose y Navigation
